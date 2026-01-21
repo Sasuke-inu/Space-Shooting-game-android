@@ -9,13 +9,14 @@ import Animated, {
 } from "react-native-reanimated"
 import type { Vec2 } from "../types/game"
 import type { ThemeColors } from "../theme/types"
-import type { JoystickSize } from "../state/settingsStore"
+import type { JoystickSize, JoystickPosition } from "../theme/themeStore"
 
 interface VirtualControlsProps {
   onJoystickMove: (value: Vec2) => void
   colors: ThemeColors
   sensitivity?: number
   size?: JoystickSize
+  position?: JoystickPosition
 }
 
 const JOY_DEADZONE = 0.1
@@ -32,6 +33,7 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
   colors,
   sensitivity = 1.0,
   size = 'medium',
+  position = 'center',
 }) => {
   const [joystickActive, setJoystickActive] = useState(false)
   const joystickX = useSharedValue(0)
@@ -139,9 +141,21 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
     },
   }), [colors, sizeConfig])
 
+  // Map position to justifyContent
+  const containerAlignment = useMemo(() => {
+    switch (position) {
+      case 'left':
+        return 'flex-start'
+      case 'right':
+        return 'flex-end'
+      case 'center':
+      default:
+        return 'center'
+    }
+  }, [position])
+
   return (
-    <View style={styles.container}>
-      {/* Center joystick */}
+    <View style={[styles.container, { justifyContent: containerAlignment }]}>
       <GestureDetector gesture={panGesture}>
         <View style={styles.joystickContainer}>
           <View style={[styles.joystickPad, dynamicStyles.joystickPad]}>
@@ -162,6 +176,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+    paddingHorizontal: 20,
     pointerEvents: "box-none",
   },
   joystickContainer: {

@@ -9,6 +9,7 @@ import type { ThemeId, GameTheme, ThemeColors } from './types'
 import { themes, defaultThemeId, getTheme } from './themes'
 
 export type JoystickSize = 'small' | 'medium' | 'large'
+export type JoystickPosition = 'left' | 'center' | 'right'
 
 interface SettingsState {
   // Theme
@@ -21,6 +22,7 @@ interface SettingsState {
   // Controls
   joystickSensitivity: number
   joystickSize: JoystickSize
+  joystickPosition: JoystickPosition
   invertY: boolean
   autoFire: boolean
   hapticsEnabled: boolean
@@ -39,6 +41,7 @@ interface SettingsActions {
   // Controls
   setJoystickSensitivity: (sensitivity: number) => void
   setJoystickSize: (size: JoystickSize) => void
+  setJoystickPosition: (position: JoystickPosition) => void
   setInvertY: (enabled: boolean) => void
   setAutoFire: (enabled: boolean) => void
   setHapticsEnabled: (enabled: boolean) => void
@@ -55,6 +58,7 @@ const defaultSettings: SettingsState = {
   sfxVolume: 0.7,
   joystickSensitivity: 1.0,
   joystickSize: 'medium',
+  joystickPosition: 'center',
   invertY: false,
   autoFire: false,
   hapticsEnabled: true,
@@ -82,6 +86,8 @@ export const useSettingsStore = create<SettingsStore>()(
         set({ joystickSensitivity: Math.max(0.5, Math.min(2, sensitivity)) }),
 
       setJoystickSize: (size: JoystickSize) => set({ joystickSize: size }),
+
+      setJoystickPosition: (position: JoystickPosition) => set({ joystickPosition: position }),
 
       setInvertY: (enabled: boolean) => set({ invertY: enabled }),
 
