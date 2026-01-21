@@ -15,6 +15,7 @@ import type { ShipType } from "../types/game"
 import { SHIP_STATS, ACHIEVEMENTS } from "../types/game"
 import { useGameEngine } from "../utils/gameEngine"
 import { len, angleOf, nor, mul, v } from "../utils/vectorMath"
+import { playSfx } from "../utils/audioManager"
 import type { Vec2 } from "../types/game"
 
 export default function GameScreen() {
@@ -380,7 +381,10 @@ export default function GameScreen() {
       {themeList.map((theme) => (
         <Pressable
           key={theme.id}
-          onPress={() => setTheme(theme.id as ThemeId)}
+          onPress={() => {
+            playSfx('button_click')
+            setTheme(theme.id as ThemeId)
+          }}
           style={{
             width: 90,
             padding: 8,
@@ -414,7 +418,10 @@ export default function GameScreen() {
         return (
           <Pressable
             key={ship}
-            onPress={() => handleShipSelect(ship)}
+            onPress={() => {
+              playSfx('button_click')
+              handleShipSelect(ship)
+            }}
             style={{
               padding: 12,
               borderRadius: 12,
@@ -504,7 +511,10 @@ export default function GameScreen() {
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
         <Pressable
-          onPress={() => onValueChange(Math.max(0, value - 0.1))}
+          onPress={() => {
+            playSfx('button_click')
+            onValueChange(Math.max(0, value - 0.1))
+          }}
           style={{ backgroundColor: colors.buttonSecondary, padding: 8, borderRadius: 8 }}
         >
           <Text style={{ color: colors.textPrimary, fontSize: 16 }}>−</Text>
@@ -513,7 +523,10 @@ export default function GameScreen() {
           <View style={{ width: `${value * 100}%`, height: '100%', backgroundColor: colors.buttonPrimary, borderRadius: 4 }} />
         </View>
         <Pressable
-          onPress={() => onValueChange(Math.min(1, value + 0.1))}
+          onPress={() => {
+            playSfx('button_click')
+            onValueChange(Math.min(1, value + 0.1))
+          }}
           style={{ backgroundColor: colors.buttonSecondary, padding: 8, borderRadius: 8 }}
         >
           <Text style={{ color: colors.textPrimary, fontSize: 16 }}>+</Text>
@@ -525,7 +538,10 @@ export default function GameScreen() {
   // Toggle component
   const Toggle = ({ value, onValueChange, label }: { value: boolean; onValueChange: (v: boolean) => void; label: string }) => (
     <Pressable
-      onPress={() => onValueChange(!value)}
+      onPress={() => {
+        playSfx(value ? 'toggle_off' : 'toggle_on')
+        onValueChange(!value)
+      }}
       style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}
     >
       <Text style={{ color: colors.textSecondary, fontSize: 14 }}>{label}</Text>
@@ -602,7 +618,10 @@ export default function GameScreen() {
             paddingHorizontal: 12,
             paddingVertical: 8,
           }}
-          onPress={() => setShowSettings(true)}
+          onPress={() => {
+            playSfx('screen_transition')
+            setShowSettings(true)
+          }}
         >
           <Text style={{ color: colors.hudText, fontSize: 14 }}>⚙️</Text>
         </Pressable>
@@ -615,7 +634,10 @@ export default function GameScreen() {
             paddingHorizontal: 12,
             paddingVertical: 8,
           }}
-          onPress={() => useGameStore.getState().setPaused(!paused)}
+          onPress={() => {
+            playSfx('button_click')
+            useGameStore.getState().setPaused(!paused)
+          }}
         >
           <Text style={{ color: colors.hudText, fontSize: 14 }}>{paused ? "Resume" : "Pause"}</Text>
         </Pressable>
@@ -628,7 +650,10 @@ export default function GameScreen() {
             paddingHorizontal: 12,
             paddingVertical: 8,
           }}
-          onPress={handleRestart}
+          onPress={() => {
+            playSfx('button_click')
+            handleRestart()
+          }}
         >
           <Text style={{ color: colors.hudText, fontSize: 14 }}>Restart</Text>
         </Pressable>
@@ -696,7 +721,10 @@ export default function GameScreen() {
                 {(['general', 'ship', 'stats'] as const).map((tab) => (
                   <Pressable
                     key={tab}
-                    onPress={() => setSettingsTab(tab)}
+                    onPress={() => {
+                      playSfx('button_click')
+                      setSettingsTab(tab)
+                    }}
                     style={{
                       flex: 1,
                       padding: 8,
@@ -773,7 +801,10 @@ export default function GameScreen() {
                   paddingHorizontal: 16,
                   marginTop: 16,
                 }}
-                onPress={() => setShowSettings(false)}
+                onPress={() => {
+                  playSfx('screen_transition')
+                  setShowSettings(false)
+                }}
               >
                 <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
                   DONE
@@ -842,7 +873,10 @@ export default function GameScreen() {
                   paddingVertical: 16,
                   paddingHorizontal: 16,
                 }}
-                onPress={handleStartGame}
+                onPress={() => {
+                  playSfx('screen_transition')
+                  handleStartGame()
+                }}
               >
                 <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 18, fontWeight: 'bold' }}>
                   START MISSION
@@ -905,7 +939,10 @@ export default function GameScreen() {
                   paddingVertical: 14,
                   paddingHorizontal: 16,
                 }}
-                onPress={handleSubmitScore}
+                onPress={() => {
+                  playSfx('button_click')
+                  handleSubmitScore()
+                }}
               >
                 <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
                   SUBMIT
@@ -1006,7 +1043,10 @@ export default function GameScreen() {
                       paddingVertical: 14,
                       paddingHorizontal: 16,
                     }}
-                    onPress={handleRestart}
+                    onPress={() => {
+                      playSfx('button_click')
+                      handleRestart()
+                    }}
                   >
                     <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
                       PLAY AGAIN
@@ -1037,7 +1077,10 @@ export default function GameScreen() {
                       paddingVertical: 14,
                       paddingHorizontal: 16,
                     }}
-                    onPress={() => useGameStore.getState().setPaused(false)}
+                    onPress={() => {
+                      playSfx('button_click')
+                      useGameStore.getState().setPaused(false)
+                    }}
                   >
                     <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
                       CONTINUE
