@@ -106,6 +106,8 @@ export default function GameScreen() {
   // Challenges
   const challenges = useChallengesStore((s) => s.challenges)
   const activeChallengesCount = challenges.filter((c) => !c.completed).length
+  const recentChallengeCompletion = useChallengesStore((s) => s.recentCompletion)
+  const clearRecentChallengeCompletion = useChallengesStore((s) => s.clearRecentCompletion)
 
   // Handle special ability effects
   useEffect(() => {
@@ -152,6 +154,16 @@ export default function GameScreen() {
       return () => clearTimeout(timer)
     }
   }, [recentUnlock])
+
+  // Challenge completion notification timeout
+  useEffect(() => {
+    if (recentChallengeCompletion) {
+      const timer = setTimeout(() => {
+        clearRecentChallengeCompletion()
+      }, 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [recentChallengeCompletion])
 
   // Initialize game on mount
   useEffect(() => {
@@ -581,6 +593,35 @@ export default function GameScreen() {
           </View>
         </View>
       )}
+
+      {/* Challenge completion notification */}
+      {recentChallengeCompletion && (() => {
+        const completedChallenge = challenges.find((c) => c.id === recentChallengeCompletion)
+        return completedChallenge ? (
+          <View style={{
+            position: 'absolute',
+            top: insets.top + 140,
+            left: 20,
+            right: 20,
+            backgroundColor: colors.panelBg,
+            borderWidth: 2,
+            borderColor: colors.buttonPrimary,
+            borderRadius: 12,
+            padding: 12,
+            zIndex: 100,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 12,
+          }}>
+            <Text style={{ fontSize: 32 }}>{completedChallenge.icon}</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={{ color: colors.buttonPrimary, fontSize: 12, fontWeight: 'bold' }}>CHALLENGE COMPLETE</Text>
+              <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: 'bold' }}>{completedChallenge.name}</Text>
+              <Text style={{ color: colors.comboText, fontSize: 12, marginTop: 2 }}>+{completedChallenge.reward} Credits</Text>
+            </View>
+          </View>
+        ) : null
+      })()}
 
       {/* Top bar */}
       <View
