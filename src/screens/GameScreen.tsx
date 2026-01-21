@@ -11,8 +11,8 @@ import { useSettingsStore, useThemeColors } from "../theme/themeStore"
 import { useStatisticsStore, useAchievementStore, useUpgradesStore } from "../state/progressStore"
 import { themeList } from "../theme/themes"
 import type { ThemeId } from "../theme/types"
-import type { ShipType } from "../types/game"
-import { SHIP_STATS, ACHIEVEMENTS } from "../types/game"
+import type { ShipType, SkinId } from "../types/game"
+import { SHIP_STATS, ACHIEVEMENTS, SHIP_SKINS, SKIN_COSTS } from "../types/game"
 import { useGameEngine } from "../utils/gameEngine"
 import { len, angleOf, nor, mul, v } from "../utils/vectorMath"
 import type { Vec2 } from "../types/game"
@@ -75,6 +75,10 @@ export default function GameScreen() {
   const unlockedShips = useUpgradesStore((s) => s.unlockedShips)
   const upgradesCredits = useUpgradesStore((s) => s.credits)
   const addUpgradeCredits = useUpgradesStore((s) => s.addCredits)
+  const unlockSkin = useUpgradesStore((s) => s.unlockSkin)
+  const selectSkin = useUpgradesStore((s) => s.selectSkin)
+  const isSkinUnlocked = useUpgradesStore((s) => s.isSkinUnlocked)
+  const getSelectedSkin = useUpgradesStore((s) => s.getSelectedSkin)
 
   const [joystickValue, setJoystickValue] = useState<Vec2>({ x: 0, y: 0 })
   const [swipeImpulse, setSwipeImpulse] = useState<Vec2>({ x: 0, y: 0 })
@@ -410,47 +414,133 @@ export default function GameScreen() {
         const shipStats = SHIP_STATS[ship]
         const isUnlocked = unlockedShips.includes(ship)
         const isSelected = player.shipType === ship
+        const selectedSkinId = getSelectedSkin(ship)
 
         return (
-          <Pressable
-            key={ship}
-            onPress={() => handleShipSelect(ship)}
-            style={{
-              padding: 12,
-              borderRadius: 12,
-              borderWidth: 2,
-              borderColor: isSelected ? colors.buttonPrimary : colors.panelBorder,
-              backgroundColor: isSelected ? colors.buttonSecondary : 'transparent',
-              opacity: isUnlocked ? 1 : 0.5,
-            }}
-          >
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: 'bold', textTransform: 'capitalize' }}>
-                {ship} {isSelected && '✓'}
-              </Text>
-              {!isUnlocked && (
-                <Text style={{ color: colors.textMuted, fontSize: 12 }}>🔒 Locked</Text>
-              )}
-            </View>
-            <View style={{ marginTop: 8, gap: 4 }}>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Speed</Text>
-                <Text style={{ color: colors.textPrimary, fontSize: 12 }}>{(shipStats.speed * 100).toFixed(0)}%</Text>
+          <View key={ship} style={{ gap: 8 }}>
+            <Pressable
+              onPress={() => handleShipSelect(ship)}
+              style={{
+                padding: 12,
+                borderRadius: 12,
+                borderWidth: 2,
+                borderColor: isSelected ? colors.buttonPrimary : colors.panelBorder,
+                backgroundColor: isSelected ? colors.buttonSecondary : 'transparent',
+                opacity: isUnlocked ? 1 : 0.5,
+              }}
+            >
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: 'bold', textTransform: 'capitalize' }}>
+                  {ship} {isSelected && '✓'}
+                </Text>
+                {!isUnlocked && (
+                  <Text style={{ color: colors.textMuted, fontSize: 12 }}>🔒 Locked</Text>
+                )}
               </View>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Fire Rate</Text>
-                <Text style={{ color: colors.textPrimary, fontSize: 12 }}>{(shipStats.fireRate * 100).toFixed(0)}%</Text>
+              <View style={{ marginTop: 8, gap: 4 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Speed</Text>
+                  <Text style={{ color: colors.textPrimary, fontSize: 12 }}>{(shipStats.speed * 100).toFixed(0)}%</Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Fire Rate</Text>
+                  <Text style={{ color: colors.textPrimary, fontSize: 12 }}>{(shipStats.fireRate * 100).toFixed(0)}%</Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Hull</Text>
+                  <Text style={{ color: colors.textPrimary, fontSize: 12 }}>{shipStats.hull}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Special</Text>
+                  <Text style={{ color: colors.comboText, fontSize: 12 }}>{shipStats.special}</Text>
+                </View>
               </View>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Hull</Text>
-                <Text style={{ color: colors.textPrimary, fontSize: 12 }}>{shipStats.hull}</Text>
+            </Pressable>
+
+            {/* Skin Selection Grid */}
+            {isUnlocked && (
+              <View style={{ paddingLeft: 8 }}>
+                <Text style={{ color: colors.textSecondary, fontSize: 12, marginBottom: 6, fontWeight: '600' }}>
+                  Skins:
+                </Text>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                  {(['default', 'stealth', 'neon', 'gold', 'veteran'] as SkinId[]).map((skinId) => {
+                    const skin = SHIP_SKINS[ship][skinId]
+                    const isUnlockedSkin = isSkinUnlocked(ship, skinId)
+                    const isSelectedSkin = selectedSkinId === skinId
+                    const cost = SKIN_COSTS[skinId]
+
+                    return (
+                      <Pressable
+                        key={skinId}
+                        onPress={() => {
+                          if (isUnlockedSkin) {
+                            selectSkin(ship, skinId)
+                          }
+                        }}
+                        style={{
+                          width: 58,
+                          padding: 8,
+                          borderRadius: 8,
+                          borderWidth: 2,
+                          borderColor: isSelectedSkin ? colors.buttonPrimary : colors.panelBorder,
+                          backgroundColor: isSelectedSkin ? colors.buttonSecondary : 'transparent',
+                          opacity: isUnlockedSkin ? 1 : 0.5,
+                          alignItems: 'center',
+                        }}
+                      >
+                        {/* Color swatch */}
+                        <View style={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: 16,
+                          backgroundColor: skin.colors.primary,
+                          borderWidth: 2,
+                          borderColor: skin.colors.secondary,
+                          marginBottom: 4,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}>
+                          {!isUnlockedSkin && (
+                            <Text style={{ fontSize: 16 }}>🔒</Text>
+                          )}
+                          {isSelectedSkin && isUnlockedSkin && (
+                            <Text style={{ fontSize: 14 }}>✓</Text>
+                          )}
+                        </View>
+
+                        {/* Skin name */}
+                        <Text style={{
+                          color: colors.textSecondary,
+                          fontSize: 9,
+                          textAlign: 'center',
+                          marginBottom: 2,
+                        }}>
+                          {skin.name}
+                        </Text>
+
+                        {/* Cost for locked skins */}
+                        {!isUnlockedSkin && cost > 0 && (
+                          <Text style={{
+                            color: colors.comboText,
+                            fontSize: 8,
+                            fontWeight: 'bold',
+                          }}>
+                            {cost}
+                          </Text>
+                        )}
+
+                        {/* Achievement indicator */}
+                        {!isUnlockedSkin && skin.achievementRequired && (
+                          <Text style={{ fontSize: 8 }}>🏆</Text>
+                        )}
+                      </Pressable>
+                    )
+                  })}
+                </View>
               </View>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Special</Text>
-                <Text style={{ color: colors.comboText, fontSize: 12 }}>{shipStats.special}</Text>
-              </View>
-            </View>
-          </Pressable>
+            )}
+          </View>
         )
       })}
     </View>
