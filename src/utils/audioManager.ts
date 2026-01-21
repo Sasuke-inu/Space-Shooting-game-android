@@ -8,17 +8,29 @@ import { useSettingsStore } from '../theme/themeStore'
 // Sound effect types
 export type SoundEffect =
   | 'shoot_player'
-  | 'shoot_enemy'
   | 'explosion_small'
   | 'explosion_large'
+  | 'explosion_boss'
   | 'powerup_pickup'
-  | 'hit_damage'
-  | 'low_health'
-  | 'combo'
+  | 'player_damage'
+  | 'combo_milestone'
+  | 'boss_warning'
 
 // Sound pool for reusable sounds
 interface SoundPool {
   [key: string]: Audio.Sound | null
+}
+
+// Map sound effect types to asset files
+const SOUND_FILES: Record<SoundEffect, any> = {
+  shoot_player: require('../../assets/sounds/shoot_player.mp3'),
+  explosion_small: require('../../assets/sounds/explosion_small.mp3'),
+  explosion_large: require('../../assets/sounds/explosion_large.mp3'),
+  explosion_boss: require('../../assets/sounds/explosion_boss.mp3'),
+  powerup_pickup: require('../../assets/sounds/powerup_pickup.mp3'),
+  player_damage: require('../../assets/sounds/player_damage.mp3'),
+  combo_milestone: require('../../assets/sounds/combo_milestone.mp3'),
+  boss_warning: require('../../assets/sounds/boss_warning.mp3'),
 }
 
 class AudioManager {
@@ -34,14 +46,28 @@ class AudioManager {
         staysActiveInBackground: false,
         shouldDuckAndroid: true,
       })
+      await this.preloadSounds()
       this.initialized = true
     } catch (error) {
       console.warn('AudioManager init failed:', error)
     }
   }
 
-  // Generate simple beep sounds procedurally since we don't have audio files
-  // In production, replace with actual sound file loading
+  private async preloadSounds() {
+    // Load all sound files into the pool
+    for (const [effect, assetPath] of Object.entries(SOUND_FILES)) {
+      try {
+        const { sound } = await Audio.Sound.createAsync(assetPath, {
+          shouldPlay: false,
+        })
+        this.sounds[effect] = sound
+      } catch (error) {
+        console.warn(`Failed to load sound: ${effect}`, error)
+        this.sounds[effect] = null
+      }
+    }
+  }
+
   async playSfx(effect: SoundEffect) {
     const sfxVolume = useSettingsStore.getState().sfxVolume
 
@@ -50,43 +76,17 @@ class AudioManager {
     try {
       await this.init()
 
-      // For now, we'll use a simple approach - in production you'd load actual files
-      // This is a placeholder that works without audio files
-      const soundConfig = this.getSoundConfig(effect)
-
-      // Create a simple tone using expo-av
-      // Note: In a real implementation, you'd have actual audio files
-      // For demonstration, we'll just log the sound effect
-      if (__DEV__) {
-        // In development, just log - actual sounds would need audio files
-        // console.log(`[SFX] ${effect} at volume ${sfxVolume}`)
+      const sound = this.sounds[effect]
+      if (!sound) {
+        // Sound failed to load during preload
+        return
       }
 
+      // Set volume and replay the sound
+      await sound.setVolumeAsync(sfxVolume)
+      await sound.replayAsync()
     } catch (error) {
       // Silently fail - sound effects are non-critical
-    }
-  }
-
-  private getSoundConfig(effect: SoundEffect): { frequency: number; duration: number } {
-    switch (effect) {
-      case 'shoot_player':
-        return { frequency: 800, duration: 50 }
-      case 'shoot_enemy':
-        return { frequency: 400, duration: 80 }
-      case 'explosion_small':
-        return { frequency: 200, duration: 150 }
-      case 'explosion_large':
-        return { frequency: 100, duration: 300 }
-      case 'powerup_pickup':
-        return { frequency: 1200, duration: 200 }
-      case 'hit_damage':
-        return { frequency: 300, duration: 100 }
-      case 'low_health':
-        return { frequency: 500, duration: 400 }
-      case 'combo':
-        return { frequency: 1000, duration: 100 }
-      default:
-        return { frequency: 440, duration: 100 }
     }
   }
 
