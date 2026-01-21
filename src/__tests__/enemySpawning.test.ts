@@ -4,19 +4,14 @@
  */
 
 import { create } from 'zustand'
+import { ENEMY_STATS } from '../types/game'
+import { getEnemySpawnWeights } from '../state/gameStore'
 
 describe('Enemy Spawning Logic', () => {
   // ------------------------------------------------------------------ //
   //                         Enemy Types Tests
   // ------------------------------------------------------------------ //
   describe('Enemy Types', () => {
-    const ENEMY_STATS = {
-      scout: { hp: 30, speed: 180, damage: 10, fireRate: 1.2, points: 75 },
-      tank: { hp: 150, speed: 60, damage: 25, fireRate: 2.0, points: 200 },
-      sniper: { hp: 50, speed: 40, damage: 35, fireRate: 3.0, points: 150 },
-      bomber: { hp: 80, speed: 100, damage: 15, fireRate: 1.5, points: 125 },
-      teleporter: { hp: 60, speed: 120, damage: 15, fireRate: 1.8, points: 150 },
-    }
 
     test('scout is fastest but weakest', () => {
       expect(ENEMY_STATS.scout.speed).toBeGreaterThan(ENEMY_STATS.tank.speed)
@@ -54,14 +49,6 @@ describe('Enemy Spawning Logic', () => {
   //                         Spawn Weight Tests
   // ------------------------------------------------------------------ //
   describe('Enemy Spawn Weights', () => {
-    const getEnemySpawnWeights = (wave: number) => ({
-      scout: 40,
-      tank: wave >= 3 ? 20 : 0,
-      sniper: wave >= 5 ? 15 : 0,
-      bomber: wave >= 7 ? 15 : 0,
-      teleporter: wave >= 9 ? 10 : 0,
-    })
-
     test('only scouts spawn on wave 1', () => {
       const weights = getEnemySpawnWeights(1)
       expect(weights.scout).toBe(40)

@@ -187,7 +187,7 @@ describe('progressStore logic', () => {
       highestScore: 0,
       highestWave: 0,
       bestAccuracy: 0,
-      killsByEnemyType: { scout: 0, tank: 0, sniper: 0, bomber: 0 },
+      killsByEnemyType: { scout: 0, tank: 0, sniper: 0, bomber: 0, teleporter: 0 },
       killsByBossType: { destroyer: 0, carrier: 0, dreadnought: 0 },
       totalBossesDefeated: 0,
       totalPowerUpsCollected: 0,

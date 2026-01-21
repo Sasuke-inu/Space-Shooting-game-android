@@ -334,6 +334,58 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
           const enemyFillColor = enemyColor + '20' // Add transparency
           const hpPercent = e.hp / e.maxHp
 
+          // Teleporter-specific rendering
+          if (e.type === 'teleporter') {
+            const teleporterColor = '#cc66ff' // Purple
+
+            // Shimmer effect (constant subtle opacity change)
+            const shimmer = 0.85 + Math.sin(time * 5) * 0.15
+
+            // Warning glow when about to teleport
+            const aboutToTeleport = e.teleportTimer !== undefined && e.teleportTimer < 0.5
+            const glowIntensity = aboutToTeleport && e.teleportTimer !== undefined ? (1 - e.teleportTimer * 2) : 0
+
+            return (
+              <Group
+                key={`enemy-${i}`}
+                transform={[{ translateX: e.pos.x }, { translateY: e.pos.y }]}
+              >
+                {/* Draw glow if about to teleport */}
+                {aboutToTeleport && (
+                  <Circle
+                    cx={0}
+                    cy={0}
+                    r={20 + glowIntensity * 10}
+                    color={teleporterColor}
+                    opacity={glowIntensity * 0.5}
+                  />
+                )}
+
+                {/* Diamond/crystal shape */}
+                <Path
+                  path={`M 0,-15 L 15,0 L 0,15 L -15,0 Z`}
+                  color={teleporterColor}
+                  style="fill"
+                  opacity={shimmer}
+                />
+                <Path
+                  path={`M 0,-15 L 15,0 L 0,15 L -15,0 Z`}
+                  color={teleporterColor}
+                  style="stroke"
+                  strokeWidth={2}
+                />
+
+                {/* Health bar for damaged teleporters */}
+                {hpPercent < 1 && (
+                  <Group>
+                    <Rect x={-15} y={-25} width={30} height={4} color={colors.panelBorder} />
+                    <Rect x={-15} y={-25} width={30 * hpPercent} height={4} color={teleporterColor} />
+                  </Group>
+                )}
+              </Group>
+            )
+          }
+
           return (
             <Group
               key={`enemy-${i}`}

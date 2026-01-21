@@ -73,6 +73,7 @@ export const getEnemySpawnWeights = (wave: number): Record<EnemyType, number> =>
   tank: wave >= 3 ? 20 : 0,
   sniper: wave >= 5 ? 15 : 0,
   bomber: wave >= 7 ? 15 : 0,
+  teleporter: wave >= 9 ? 10 : 0,
 })
 
 interface GameStore extends GameState {
@@ -399,6 +400,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         type: enemyType,
         chargeTime: enemyType === 'sniper' ? 0 : undefined,
         bombCooldown: enemyType === 'bomber' ? 3 : undefined,
+        teleportTimer: enemyType === 'teleporter' ? 0 : undefined,
       }
       return { enemies: [...state.enemies, newEnemy] }
     }),
@@ -437,6 +439,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
           type: enemyType,
           chargeTime: enemyType === 'sniper' ? 0 : undefined,
           bombCooldown: enemyType === 'bomber' ? 3 : undefined,
+          teleportTimer: enemyType === 'teleporter' ? 0 : undefined,
         })
       }
 

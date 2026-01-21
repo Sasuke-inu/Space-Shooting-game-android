@@ -33,7 +33,7 @@ export interface Asteroid {
 //                         Enemy Types
 // ------------------------------------------------------------------ //
 
-export type EnemyType = 'scout' | 'tank' | 'sniper' | 'bomber'
+export type EnemyType = 'scout' | 'tank' | 'sniper' | 'bomber' | 'teleporter'
 
 export interface Enemy {
   pos: Vec2
@@ -48,6 +48,7 @@ export interface Enemy {
   chargeTime?: number    // Sniper charge time
   bombCooldown?: number  // Bomber bomb cooldown
   stunDuration?: number  // EMP stun duration remaining
+  teleportTimer?: number // Teleporter teleport cooldown
 }
 
 export const ENEMY_STATS: Record<EnemyType, { hp: number; speed: number; damage: number; fireRate: number; points: number }> = {
@@ -55,6 +56,7 @@ export const ENEMY_STATS: Record<EnemyType, { hp: number; speed: number; damage:
   tank: { hp: 150, speed: 60, damage: 25, fireRate: 2.0, points: 200 },
   sniper: { hp: 50, speed: 40, damage: 35, fireRate: 3.0, points: 150 },
   bomber: { hp: 80, speed: 100, damage: 15, fireRate: 1.5, points: 125 },
+  teleporter: { hp: 60, speed: 120, damage: 15, fireRate: 1.8, points: 150 },
 }
 
 // ------------------------------------------------------------------ //
