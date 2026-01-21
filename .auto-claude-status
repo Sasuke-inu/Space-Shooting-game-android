@@ -1,0 +1,25 @@
+{
+  "active": true,
+  "spec": "026-quick-restart",
+  "state": "building",
+  "subtasks": {
+    "completed": 2,
+    "total": 6,
+    "in_progress": 1,
+    "failed": 0
+  },
+  "phase": {
+    "current": "Quick Restart Implementation",
+    "id": null,
+    "total": 6
+  },
+  "workers": {
+    "active": 0,
+    "max": 1
+  },
+  "session": {
+    "number": 4,
+    "started_at": "2026-01-22T09:44:47.538011"
+  },
+  "last_update": "2026-01-22T09:51:59.403657"
+}
