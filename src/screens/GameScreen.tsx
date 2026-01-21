@@ -15,6 +15,7 @@ import type { ShipType } from "../types/game"
 import { SHIP_STATS, ACHIEVEMENTS } from "../types/game"
 import { useGameEngine } from "../utils/gameEngine"
 import { len, angleOf, nor, mul, v } from "../utils/vectorMath"
+import { hapticSelection } from "../utils/haptics"
 import type { Vec2 } from "../types/game"
 
 export default function GameScreen() {
@@ -325,6 +326,7 @@ export default function GameScreen() {
   }, [paused, joystickValue, playerAng, swipeImpulse, player.vel, fireOnce, updateGame, autoFire, colors])
 
   const handleRestart = () => {
+    hapticSelection()
     recordGameEndStats()
     const store = useGameStore.getState()
     store.resetGame()
