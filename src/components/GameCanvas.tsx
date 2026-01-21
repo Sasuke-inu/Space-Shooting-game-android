@@ -217,22 +217,38 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
     })(),
   }), [])
 
-  // Draw asteroid (still needs to be dynamic per asteroid)
-  const createAsteroidPath = (a: Asteroid) => {
-    const path = Skia.Path.Make()
-    const r = a.radius
-    for (let i = 0; i < 10; i++) {
-      const t = (i / 10) * Math.PI * 2
-      const rr = r * (0.75 + Math.sin(t * 3 + a.ang) * 0.15)
-      const p = fromAngle(t, rr)
-      if (i === 0) {
-        path.moveTo(p.x, p.y)
-      } else {
-        path.lineTo(p.x, p.y)
+  // Memoized asteroid path templates (3 shape variants for variety)
+  const asteroidPaths = useMemo(() => {
+    const createAsteroidTemplate = (variant: number) => {
+      const path = Skia.Path.Make()
+      const baseRadius = 1 // Unit circle, will be scaled
+      for (let i = 0; i < 10; i++) {
+        const t = (i / 10) * Math.PI * 2
+        // Use variant to create different shapes
+        const rr = baseRadius * (0.75 + Math.sin(t * 3 + variant * 0.7) * 0.15)
+        const p = fromAngle(t, rr)
+        if (i === 0) {
+          path.moveTo(p.x, p.y)
+        } else {
+          path.lineTo(p.x, p.y)
+        }
       }
+      path.close()
+      return path
     }
-    path.close()
-    return path
+
+    return [
+      createAsteroidTemplate(0),
+      createAsteroidTemplate(1),
+      createAsteroidTemplate(2),
+    ]
+  }, [])
+
+  // Get cached asteroid path by variant
+  const getAsteroidPath = (asteroid: Asteroid) => {
+    // Use asteroid angle to select a variant (0, 1, or 2)
+    const variant = Math.floor(Math.abs(asteroid.ang * 10)) % 3
+    return asteroidPaths[variant]
   }
 
   const getEnemyPath = (type: EnemyType) => {
@@ -352,12 +368,12 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
 
         {/* Asteroids */}
         {asteroids.map((a, i) => (
-          <Group key={`asteroid-${i}`} transform={[{ translateX: a.pos.x }, { translateY: a.pos.y }, { rotate: a.ang }]}>
+          <Group key={`asteroid-${i}`} transform={[{ translateX: a.pos.x }, { translateY: a.pos.y }, { rotate: a.ang }, { scale: a.radius }]}>
             <Path
-              path={createAsteroidPath(a)}
+              path={getAsteroidPath(a)}
               color={colors.asteroid}
               style="stroke"
-              strokeWidth={2}
+              strokeWidth={2 / a.radius}
             />
           </Group>
         ))}
