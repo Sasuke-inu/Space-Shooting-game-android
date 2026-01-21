@@ -399,4 +399,166 @@ describe('Special Abilities Logic', () => {
       expect(targetedEnemy?.id).toBe('c') // Bug: should be 'b'
     })
   })
+
+  // ------------------------------------------------------------------ //
+  //                         Ability Flash Tests
+  // ------------------------------------------------------------------ //
+  describe('Ability Flash', () => {
+    interface AbilityFlash {
+      intensity: number
+      duration: number
+      elapsed: number
+      abilityType: string
+    }
+
+    const createFlashStore = () =>
+      create<{
+        abilityFlash: AbilityFlash | null
+        triggerAbilityFlash: (abilityType: string) => void
+        updateAbilityFlash: (dt: number) => void
+        getAbilityFlashOpacity: () => number
+      }>((set, get) => ({
+        abilityFlash: null,
+
+        triggerAbilityFlash: (abilityType) =>
+          set({
+            abilityFlash: {
+              intensity: 0.6,
+              duration: 0.3,
+              elapsed: 0,
+              abilityType,
+            },
+          }),
+
+        updateAbilityFlash: (dt) =>
+          set((state) => {
+            if (!state.abilityFlash) return state
+            const newElapsed = state.abilityFlash.elapsed + dt
+            if (newElapsed >= state.abilityFlash.duration) {
+              return { abilityFlash: null }
+            }
+            return {
+              abilityFlash: {
+                ...state.abilityFlash,
+                elapsed: newElapsed,
+              },
+            }
+          }),
+
+        getAbilityFlashOpacity: () => {
+          const flash = get().abilityFlash
+          if (!flash) return 0
+
+          const progress = flash.elapsed / flash.duration
+          const decay = 1 - progress
+          const opacity = flash.intensity * decay
+
+          return opacity
+        },
+      }))
+
+    test('flash triggers on activation', () => {
+      const store = createFlashStore()
+      store.getState().triggerAbilityFlash('emp_blast')
+
+      expect(store.getState().abilityFlash).not.toBeNull()
+      expect(store.getState().abilityFlash?.abilityType).toBe('emp_blast')
+    })
+
+    test('flash has correct duration', () => {
+      const store = createFlashStore()
+      store.getState().triggerAbilityFlash('missile_barrage')
+
+      expect(store.getState().abilityFlash?.duration).toBe(0.3)
+    })
+
+    test('flash has correct initial intensity', () => {
+      const store = createFlashStore()
+      store.getState().triggerAbilityFlash('time_warp')
+
+      expect(store.getState().abilityFlash?.intensity).toBe(0.6)
+      expect(store.getState().abilityFlash?.elapsed).toBe(0)
+    })
+
+    test('opacity decays over time', () => {
+      const store = createFlashStore()
+      store.getState().triggerAbilityFlash('shield_burst')
+
+      // Initial opacity should be at full intensity
+      const initialOpacity = store.getState().getAbilityFlashOpacity()
+      expect(initialOpacity).toBe(0.6)
+
+      // After 0.15s (half duration), opacity should be half
+      store.getState().updateAbilityFlash(0.15)
+      const halfwayOpacity = store.getState().getAbilityFlashOpacity()
+      expect(halfwayOpacity).toBeCloseTo(0.3, 1)
+
+      // After another 0.1s (total 0.25s), opacity should be low
+      store.getState().updateAbilityFlash(0.1)
+      const nearEndOpacity = store.getState().getAbilityFlashOpacity()
+      expect(nearEndOpacity).toBeCloseTo(0.1, 1)
+    })
+
+    test('flash clears after duration', () => {
+      const store = createFlashStore()
+      store.getState().triggerAbilityFlash('emp_blast')
+
+      // Flash should exist initially
+      expect(store.getState().abilityFlash).not.toBeNull()
+
+      // After full duration, flash should be cleared
+      store.getState().updateAbilityFlash(0.3)
+      expect(store.getState().abilityFlash).toBeNull()
+      expect(store.getState().getAbilityFlashOpacity()).toBe(0)
+    })
+
+    test('flash clears after exceeding duration', () => {
+      const store = createFlashStore()
+      store.getState().triggerAbilityFlash('missile_barrage')
+
+      // Update with time exceeding duration
+      store.getState().updateAbilityFlash(0.5)
+      expect(store.getState().abilityFlash).toBeNull()
+    })
+
+    test('flash stores correct ability type for each ship', () => {
+      const store = createFlashStore()
+
+      // Fighter -> missile_barrage
+      store.getState().triggerAbilityFlash('missile_barrage')
+      expect(store.getState().abilityFlash?.abilityType).toBe('missile_barrage')
+
+      // Scout -> time_warp
+      store.getState().triggerAbilityFlash('time_warp')
+      expect(store.getState().abilityFlash?.abilityType).toBe('time_warp')
+
+      // Tank -> shield_burst
+      store.getState().triggerAbilityFlash('shield_burst')
+      expect(store.getState().abilityFlash?.abilityType).toBe('shield_burst')
+
+      // Interceptor -> emp_blast
+      store.getState().triggerAbilityFlash('emp_blast')
+      expect(store.getState().abilityFlash?.abilityType).toBe('emp_blast')
+    })
+
+    test('opacity returns 0 when no flash is active', () => {
+      const store = createFlashStore()
+      expect(store.getState().getAbilityFlashOpacity()).toBe(0)
+    })
+
+    test('multiple updates correctly track elapsed time', () => {
+      const store = createFlashStore()
+      store.getState().triggerAbilityFlash('emp_blast')
+
+      // Update in small increments
+      store.getState().updateAbilityFlash(0.1)
+      expect(store.getState().abilityFlash?.elapsed).toBeCloseTo(0.1)
+
+      store.getState().updateAbilityFlash(0.1)
+      expect(store.getState().abilityFlash?.elapsed).toBeCloseTo(0.2)
+
+      store.getState().updateAbilityFlash(0.05)
+      expect(store.getState().abilityFlash?.elapsed).toBeCloseTo(0.25)
+    })
+  })
 })
