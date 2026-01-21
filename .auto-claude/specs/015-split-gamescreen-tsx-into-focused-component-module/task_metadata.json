@@ -1,0 +1,9 @@
+{
+  "sourceType": "ideation",
+  "ideationType": "code_quality",
+  "ideaId": "cq-001",
+  "rationale": "Components over 400 lines significantly increase cognitive load and make code reviews difficult. Each inline component (ThemeSelector, ShipSelector, etc.) should be its own reusable module. The modal UIs are especially good extraction candidates as they're self-contained UI blocks.",
+  "category": "refactoring",
+  "codeQualitySeverity": "major",
+  "priority": "high"
+}

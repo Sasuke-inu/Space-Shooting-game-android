@@ -1,0 +1,24 @@
+{
+  "project_type": "single",
+  "services": {
+    "frontend": {
+      "path": ".",
+      "tech_stack": ["react-native", "expo", "typescript", "zustand", "react-native-skia"],
+      "port": 8081,
+      "dev_command": "npm start",
+      "test_command": "npm test"
+    }
+  },
+  "infrastructure": {
+    "docker": false,
+    "database": null
+  },
+  "conventions": {
+    "linter": "eslint",
+    "formatter": "prettier",
+    "testing": "jest",
+    "component_export": "named",
+    "component_type": "functional",
+    "props_interface": "ComponentNameProps"
+  }
+}

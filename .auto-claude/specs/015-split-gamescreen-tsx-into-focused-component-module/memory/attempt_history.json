@@ -1,0 +1,184 @@
+{
+  "subtasks": {
+    "subtask-1-2": {
+      "attempts": [
+        {
+          "session": 1,
+          "timestamp": "2026-01-22T03:13:32.863245",
+          "approach": "Implemented: Extract Slider component (lines 499-523)",
+          "success": true,
+          "error": null
+        }
+      ],
+      "status": "completed"
+    },
+    "subtask-1-3": {
+      "attempts": [
+        {
+          "session": 2,
+          "timestamp": "2026-01-22T03:15:46.195085",
+          "approach": "Implemented: Extract Toggle component (lines 526-549)",
+          "success": true,
+          "error": null
+        }
+      ],
+      "status": "completed"
+    },
+    "subtask-1-4": {
+      "attempts": [
+        {
+          "session": 3,
+          "timestamp": "2026-01-22T03:18:49.867757",
+          "approach": "Implemented: Extract StatRow component (lines 491-496)",
+          "success": true,
+          "error": null
+        }
+      ],
+      "status": "completed"
+    },
+    "subtask-2-1": {
+      "attempts": [
+        {
+          "session": 4,
+          "timestamp": "2026-01-22T03:21:17.362039",
+          "approach": "Implemented: Extract ThemeSelector component (lines 378-404)",
+          "success": true,
+          "error": null
+        }
+      ],
+      "status": "completed"
+    },
+    "subtask-2-2": {
+      "attempts": [
+        {
+          "session": 5,
+          "timestamp": "2026-01-22T03:25:24.169819",
+          "approach": "Implemented: Extract ShipSelector component (lines 407-457)",
+          "success": true,
+          "error": null
+        }
+      ],
+      "status": "completed"
+    },
+    "subtask-2-4": {
+      "attempts": [
+        {
+          "session": 1,
+          "timestamp": "2026-01-22T03:55:08.507099",
+          "approach": "Implemented: Create barrel export file (index.ts)",
+          "success": true,
+          "error": null
+        }
+      ],
+      "status": "completed"
+    },
+    "subtask-3-1": {
+      "attempts": [
+        {
+          "session": 2,
+          "timestamp": "2026-01-22T03:57:18.286272",
+          "approach": "Implemented: Extract InstructionsModal component (lines 787-854)",
+          "success": true,
+          "error": null
+        }
+      ],
+      "status": "completed"
+    },
+    "subtask-3-2": {
+      "attempts": [
+        {
+          "session": 3,
+          "timestamp": "2026-01-22T04:00:11.316957",
+          "approach": "Implemented: Extract NameInputModal component (lines 856-917)",
+          "success": true,
+          "error": null
+        }
+      ],
+      "status": "completed"
+    },
+    "subtask-3-3": {
+      "attempts": [
+        {
+          "session": 4,
+          "timestamp": "2026-01-22T04:04:03.950092",
+          "approach": "Implemented: Extract PauseGameOverModal component (lines 919-1051)",
+          "success": true,
+          "error": null
+        }
+      ],
+      "status": "completed"
+    },
+    "subtask-3-5": {
+      "attempts": [
+        {
+          "session": 1,
+          "timestamp": "2026-01-22T04:43:18.693660",
+          "approach": "Implemented: Update barrel export with modal components",
+          "success": true,
+          "error": null
+        }
+      ],
+      "status": "completed"
+    },
+    "subtask-4-1": {
+      "attempts": [
+        {
+          "session": 2,
+          "timestamp": "2026-01-22T04:49:47.576557",
+          "approach": "Implemented: Replace inline components with imports in GameScreen.tsx",
+          "success": true,
+          "error": null
+        }
+      ],
+      "status": "completed"
+    },
+    "subtask-4-2": {
+      "attempts": [
+        {
+          "session": 3,
+          "timestamp": "2026-01-22T04:53:07.409006",
+          "approach": "Implemented: Verify GameScreen compiles and runs",
+          "success": true,
+          "error": null
+        }
+      ],
+      "status": "completed"
+    },
+    "subtask-5-1": {
+      "attempts": [
+        {
+          "session": 4,
+          "timestamp": "2026-01-22T04:54:55.072061",
+          "approach": "Implemented: Run all tests to ensure no regressions",
+          "success": true,
+          "error": null
+        },
+        {
+          "session": 2,
+          "timestamp": "2026-01-22T06:00:50.392890",
+          "approach": "Implemented: Run all tests to ensure no regressions",
+          "success": true,
+          "error": null
+        }
+      ],
+      "status": "completed"
+    },
+    "subtask-5-2": {
+      "attempts": [
+        {
+          "session": 5,
+          "timestamp": "2026-01-22T04:56:48.405355",
+          "approach": "Implemented: Run linter and fix any issues",
+          "success": true,
+          "error": null
+        }
+      ],
+      "status": "completed"
+    }
+  },
+  "stuck_subtasks": [],
+  "metadata": {
+    "created_at": "2026-01-22T02:33:20.506091",
+    "last_updated": "2026-01-22T06:00:50.393021"
+  }
+}

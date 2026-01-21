@@ -1,0 +1,95 @@
+{
+  "files_to_modify": {
+    "frontend": [
+      "src/screens/GameScreen.tsx"
+    ]
+  },
+  "files_to_create": {
+    "frontend": [
+      "src/components/game-ui/ThemeSelector.tsx",
+      "src/components/game-ui/ShipSelector.tsx",
+      "src/components/game-ui/StatsDisplay.tsx",
+      "src/components/game-ui/StatRow.tsx",
+      "src/components/game-ui/Slider.tsx",
+      "src/components/game-ui/Toggle.tsx",
+      "src/components/game-ui/modals/SettingsModal.tsx",
+      "src/components/game-ui/modals/InstructionsModal.tsx",
+      "src/components/game-ui/modals/NameInputModal.tsx",
+      "src/components/game-ui/modals/PauseGameOverModal.tsx",
+      "src/components/game-ui/index.ts"
+    ]
+  },
+  "files_to_reference": [
+    "src/components/GameCanvas.tsx",
+    "src/components/VirtualControls.tsx"
+  ],
+  "patterns": {
+    "component_pattern": "Functional components using React.FC with TypeScript interfaces for props",
+    "export_pattern": "Named exports (e.g., export const ComponentName)",
+    "props_interface": "ComponentNameProps interface defined before component",
+    "imports": "Import types from ../types/game and ../theme/types, hooks from state stores"
+  },
+  "existing_implementations": {
+    "description": "Found two existing components (GameCanvas, VirtualControls) that follow consistent patterns with TypeScript interfaces, named exports, and functional components",
+    "relevant_files": [
+      "src/components/GameCanvas.tsx",
+      "src/components/VirtualControls.tsx"
+    ]
+  },
+  "extraction_targets": {
+    "inline_components": {
+      "ThemeSelector": {
+        "lines": "378-404",
+        "description": "Theme selection grid with icons",
+        "dependencies": ["themeList", "themeId", "setTheme", "colors"]
+      },
+      "ShipSelector": {
+        "lines": "407-457",
+        "description": "Ship selection with stats display",
+        "dependencies": ["SHIP_STATS", "unlockedShips", "player.shipType", "handleShipSelect", "colors"]
+      },
+      "StatsDisplay": {
+        "lines": "460-489",
+        "description": "Lifetime statistics display",
+        "dependencies": ["stats", "StatRow", "colors"]
+      },
+      "StatRow": {
+        "lines": "491-496",
+        "description": "Individual stat row component",
+        "dependencies": ["colors"]
+      },
+      "Slider": {
+        "lines": "499-523",
+        "description": "Custom slider for settings",
+        "dependencies": ["colors"]
+      },
+      "Toggle": {
+        "lines": "526-549",
+        "description": "Custom toggle switch",
+        "dependencies": ["colors"]
+      }
+    },
+    "modal_components": {
+      "SettingsModal": {
+        "lines": "676-785",
+        "description": "Tabbed settings modal with theme, audio, controls",
+        "dependencies": ["all inline components", "settings state", "colors"]
+      },
+      "InstructionsModal": {
+        "lines": "787-854",
+        "description": "Welcome/how-to-play modal",
+        "dependencies": ["handleStartGame", "colors"]
+      },
+      "NameInputModal": {
+        "lines": "856-917",
+        "description": "Top 5 score name entry",
+        "dependencies": ["score", "credits", "playerName", "setPlayerName", "handleSubmitScore", "colors"]
+      },
+      "PauseGameOverModal": {
+        "lines": "919-1051",
+        "description": "Pause and game over screens",
+        "dependencies": ["lives", "score", "wave", "credits", "highScores", "handleRestart", "setPaused", "colors"]
+      }
+    }
+  }
+}
