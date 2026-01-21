@@ -287,6 +287,39 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
     fontSize: 16,
   }), [])
 
+  // Memoized color palette - prevents recreation of derived colors every render
+  const colorPalette = useMemo(() => ({
+    // Power-up colors
+    powerUp: {
+      shield: colors.powerUpShield,
+      rapid_fire: colors.powerUpRapidFire,
+      spread_shot: colors.powerUpSpreadShot,
+      magnet: colors.powerUpMagnet,
+    },
+    // Enemy colors
+    enemy: {
+      scout: colors.enemyShip,
+      tank: '#ff6666',
+      sniper: '#9966ff',
+      bomber: '#ff9933',
+      default: colors.enemyShip,
+    },
+    // Enemy fill colors with transparency
+    enemyFill: {
+      scout: colors.enemyShip + '20',
+      tank: '#ff666620',
+      sniper: '#9966ff20',
+      bomber: '#ff993320',
+      default: colors.enemyShip + '20',
+    },
+    // Boss phase colors
+    boss: {
+      phase1: '#ff9900',
+      phase2: '#ff6600',
+      phase3: '#ff0000',
+    },
+  }), [colors])
+
   // Memoized radar dimensions
   const radarDimensions = useMemo(() => ({
     size: 80,
@@ -335,7 +368,7 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
         {/* Power-ups */}
         {powerUps.map((p, i) => {
           const pulseScale = 1 + Math.sin(time * 5) * 0.15
-          const powerUpColor = getPowerUpColor(p.type, colors)
+          const powerUpColor = colorPalette.powerUp[p.type as keyof typeof colorPalette.powerUp] || colors.particle
           return (
             <Group key={`powerup-${i}`} transform={[{ translateX: p.pos.x }, { translateY: p.pos.y }]}>
               {/* Outer glow */}
@@ -380,8 +413,8 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
 
         {/* Enemies with type-specific rendering */}
         {enemies.map((e, i) => {
-          const enemyColor = getEnemyColor(e.type, colors)
-          const enemyFillColor = enemyColor + '20' // Add transparency
+          const enemyColor = colorPalette.enemy[e.type] || colorPalette.enemy.default
+          const enemyFillColor = colorPalette.enemyFill[e.type] || colorPalette.enemyFill.default
           const hpPercent = e.hp / e.maxHp
 
           return (
@@ -434,7 +467,7 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
               cx={0}
               cy={0}
               r={70 + Math.sin(time * 3) * 5}
-              color={boss.phase === 3 ? '#ff0000' : boss.phase === 2 ? '#ff6600' : '#ff9900'}
+              color={boss.phase === 3 ? colorPalette.boss.phase3 : boss.phase === 2 ? colorPalette.boss.phase2 : colorPalette.boss.phase1}
               opacity={0.2}
             />
 
@@ -456,7 +489,7 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
               cx={0}
               cy={10}
               r={15 + Math.sin(time * 5) * 2}
-              color={boss.phase === 3 ? '#ff0000' : boss.phase === 2 ? '#ff6600' : colors.enemyShip}
+              color={boss.phase === 3 ? colorPalette.boss.phase3 : boss.phase === 2 ? colorPalette.boss.phase2 : colors.enemyShip}
               opacity={0.8}
             />
 
@@ -599,7 +632,7 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
 
         {/* HUD - Active power-ups */}
         {activePowerUps.map((p, i) => {
-          const activePowerUpColor = getPowerUpColor(p.type, colors)
+          const activePowerUpColor = colorPalette.powerUp[p.type as keyof typeof colorPalette.powerUp] || colors.particle
           const barWidth = (p.duration / 8) * 60 // 8 seconds max duration
           return (
             <Group key={`active-powerup-${i}`} transform={[{ translateX: width - 80 }, { translateY: 60 + i * 24 }]}>
@@ -674,7 +707,7 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
                 cx={e.pos.x / radarDimensions.scale}
                 cy={e.pos.y / radarDimensions.scale}
                 r={2}
-                color={getEnemyColor(e.type, colors)}
+                color={colorPalette.enemy[e.type] || colorPalette.enemy.default}
               />
             ))}
 
@@ -707,7 +740,7 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
                 cx={p.pos.x / radarDimensions.scale}
                 cy={p.pos.y / radarDimensions.scale}
                 r={2}
-                color={getPowerUpColor(p.type, colors)}
+                color={colorPalette.powerUp[p.type as keyof typeof colorPalette.powerUp] || colors.particle}
               />
             ))}
           </Group>
