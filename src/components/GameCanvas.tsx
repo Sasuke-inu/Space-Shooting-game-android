@@ -99,42 +99,42 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
     return starArray
   }, [width, height])
 
-  // Parallax Layer 1: Distant stars (slowest, 0.3x speed) - optimized
+  // Parallax Layer 1: Distant stars (slowest, 0.25x speed) - optimized
   const distantStars = React.useMemo(() => {
     const starArray = []
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < 50; i++) {
       starArray.push({
         x: (i * 127) % width,
-        baseY: i * 83,
-        size: 0.5 + (i % 3) * 0.3, // Small stars: 0.5-1.1
+        baseY: i * 91,
+        size: 0.3 + (i % 3) * 0.25, // Tiny, subtle stars: 0.3-0.8
       })
     }
     return starArray
   }, [width, height])
 
-  // Parallax Layer 2: Nebula/dust particles (medium speed, 0.6x) - optimized
+  // Parallax Layer 2: Nebula/dust particles (medium speed, 0.65x) - optimized
   const nebulaParticles = React.useMemo(() => {
     const particles = []
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 25; i++) {
       particles.push({
-        x: (i * 157) % width,
-        baseY: i * 103,
-        size: 3 + (i % 5) * 2, // Medium particles: 3-11
-        opacity: 0.15 + (i % 4) * 0.05, // Subtle opacity: 0.15-0.3
+        x: (i * 163) % width,
+        baseY: i * 107,
+        size: 4 + (i % 5) * 2.5, // Wispy nebula clouds: 4-14.5
+        opacity: 0.12 + (i % 5) * 0.04, // Very subtle, atmospheric: 0.12-0.28
       })
     }
     return particles
   }, [width, height])
 
-  // Parallax Layer 3: Close debris (fastest, 1.2x speed) - optimized
+  // Parallax Layer 3: Close debris (fastest, 1.3x speed) - optimized
   const closeDebris = React.useMemo(() => {
     const debris = []
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 15; i++) {
       debris.push({
-        x: (i * 181) % width,
-        baseY: i * 137,
-        baseRotation: i * 37,
-        size: 2 + (i % 4) * 1.5, // Varied sizes: 2-6.5
+        x: (i * 193) % width,
+        baseY: i * 149,
+        baseRotation: i * 41,
+        size: 2.5 + (i % 5) * 1.8, // Prominent foreground debris: 2.5-9.7
       })
     }
     return debris
@@ -300,26 +300,26 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
           />
         )}
 
-        {/* Parallax Layer 1: Distant stars (furthest back, slowest) */}
+        {/* Parallax Layer 1: Distant stars (furthest back, slowest 0.25x) */}
         {distantStars.map((star, i) => (
           <Circle
             key={`distant-${i}`}
             cx={star.x}
-            cy={(star.baseY + time * 2.4) % height}
+            cy={(star.baseY + time * 2.0) % height}
             r={star.size}
-            color={colors.stars}
-            opacity={0.4}
+            color={colors.parallaxDistantStars}
+            opacity={0.25}
           />
         ))}
 
-        {/* Parallax Layer 2: Nebula/dust particles (medium depth) */}
+        {/* Parallax Layer 2: Nebula/dust particles (medium depth, 0.65x) */}
         {nebulaParticles.map((particle, i) => (
           <Circle
             key={`nebula-${i}`}
             cx={particle.x}
-            cy={(particle.baseY + time * 4.8) % height}
+            cy={(particle.baseY + time * 5.2) % height}
             r={particle.size}
-            color={colors.stars}
+            color={colors.parallaxNebula}
             opacity={particle.opacity}
           />
         ))}
@@ -335,13 +335,13 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
           />
         ))}
 
-        {/* Parallax Layer 3: Close debris (closest to foreground, fastest) */}
+        {/* Parallax Layer 3: Close debris (closest to foreground, fastest 1.3x) */}
         {closeDebris.map((debris, i) => (
           <Group
             key={`debris-${i}`}
             transform={[
               { translateX: debris.x },
-              { translateY: (debris.baseY + time * 9.6) % height },
+              { translateY: (debris.baseY + time * 10.4) % height },
               { rotate: ((debris.baseRotation + time * 0.5) % 360) * (Math.PI / 180) },
             ]}
           >
@@ -349,8 +349,8 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
               cx={0}
               cy={0}
               r={debris.size}
-              color={colors.asteroid}
-              opacity={0.3}
+              color={colors.parallaxDebris}
+              opacity={0.4}
             />
           </Group>
         ))}
