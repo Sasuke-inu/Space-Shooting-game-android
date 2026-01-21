@@ -108,6 +108,7 @@ export default function GameScreen() {
   const activeChallengesCount = challenges.filter((c) => !c.completed).length
   const recentChallengeCompletion = useChallengesStore((s) => s.recentCompletion)
   const clearRecentChallengeCompletion = useChallengesStore((s) => s.clearRecentCompletion)
+  const checkAndRefreshChallenges = useChallengesStore((s) => s.checkAndRefreshChallenges)
 
   // Handle special ability effects
   useEffect(() => {
@@ -164,6 +165,11 @@ export default function GameScreen() {
       return () => clearTimeout(timer)
     }
   }, [recentChallengeCompletion])
+
+  // Check and refresh daily challenges on mount
+  useEffect(() => {
+    checkAndRefreshChallenges()
+  }, [])
 
   // Initialize game on mount
   useEffect(() => {
