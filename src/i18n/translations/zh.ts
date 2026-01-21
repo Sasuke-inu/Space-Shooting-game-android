@@ -128,4 +128,43 @@ export const zh: Translations = {
     on: '开',
     off: '关',
   },
+  challenges: {
+    title: '每日挑战',
+    daily: '每日',
+    progress: '进度',
+    reward: '奖励',
+    complete: '完成',
+    completed: '已完成',
+    refresh: '刷新',
+    refreshIn: '刷新时间',
+    noActiveChallenges: '没有活跃的挑战',
+    killCount: {
+      name: '敌人猎手',
+      description: '在战斗中摧毁敌人',
+    },
+    combo: {
+      name: '连击大师',
+      description: '达成连击',
+    },
+    survival: {
+      name: '生存者',
+      description: '存活多个波次',
+    },
+    boss: {
+      name: '首领杀手',
+      description: '击败强大的首领',
+    },
+    accuracy: {
+      name: '神枪手',
+      description: '保持高准确率',
+    },
+    powerUp: {
+      name: '能量收集者',
+      description: '收集能量道具',
+    },
+    noDamage: {
+      name: '无敌',
+      description: '完成波次而不受伤害',
+    },
+  },
 };

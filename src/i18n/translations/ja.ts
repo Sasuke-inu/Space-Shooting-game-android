@@ -128,4 +128,43 @@ export const ja: Translations = {
     on: 'オン',
     off: 'オフ',
   },
+  challenges: {
+    title: 'デイリーチャレンジ',
+    daily: 'デイリー',
+    progress: '進捗',
+    reward: '報酬',
+    complete: '完了',
+    completed: '完了済み',
+    refresh: '更新',
+    refreshIn: '更新まで',
+    noActiveChallenges: 'アクティブなチャレンジがありません',
+    killCount: {
+      name: 'エネミーハンター',
+      description: '戦闘で敵を倒す',
+    },
+    combo: {
+      name: 'コンボマスター',
+      description: 'コンボを達成する',
+    },
+    survival: {
+      name: 'サバイバー',
+      description: '複数のウェーブを生き残る',
+    },
+    boss: {
+      name: 'ボススレイヤー',
+      description: '強力なボスを倒す',
+    },
+    accuracy: {
+      name: 'シャープシューター',
+      description: '高い精度を維持する',
+    },
+    powerUp: {
+      name: 'パワーコレクター',
+      description: 'パワーアップを集める',
+    },
+    noDamage: {
+      name: 'アンタッチャブル',
+      description: 'ダメージを受けずにウェーブをクリアする',
+    },
+  },
 };

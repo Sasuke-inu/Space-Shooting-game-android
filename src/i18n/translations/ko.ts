@@ -128,4 +128,43 @@ export const ko: Translations = {
     on: '켜짐',
     off: '꺼짐',
   },
+  challenges: {
+    title: '일일 도전과제',
+    daily: '일일',
+    progress: '진행률',
+    reward: '보상',
+    complete: '완료',
+    completed: '완료됨',
+    refresh: '새로고침',
+    refreshIn: '갱신까지',
+    noActiveChallenges: '활성 도전과제 없음',
+    killCount: {
+      name: '적 사냥꾼',
+      description: '전투에서 적을 파괴하세요',
+    },
+    combo: {
+      name: '콤보 마스터',
+      description: '콤보 연속을 달성하세요',
+    },
+    survival: {
+      name: '생존자',
+      description: '여러 웨이브에서 생존하세요',
+    },
+    boss: {
+      name: '보스 처치자',
+      description: '강력한 보스를 물리치세요',
+    },
+    accuracy: {
+      name: '명사수',
+      description: '높은 정확도를 유지하세요',
+    },
+    powerUp: {
+      name: '파워 수집가',
+      description: '파워업을 수집하세요',
+    },
+    noDamage: {
+      name: '무적',
+      description: '피해 없이 웨이브를 완료하세요',
+    },
+  },
 };

@@ -128,4 +128,43 @@ export const es: Translations = {
     on: 'Activado',
     off: 'Desactivado',
   },
+  challenges: {
+    title: 'Desafíos Diarios',
+    daily: 'Diario',
+    progress: 'Progreso',
+    reward: 'Recompensa',
+    complete: 'Completar',
+    completed: 'Completado',
+    refresh: 'Actualizar',
+    refreshIn: 'Se actualiza en',
+    noActiveChallenges: 'No hay desafíos activos',
+    killCount: {
+      name: 'Cazador de Enemigos',
+      description: 'Destruye enemigos en batalla',
+    },
+    combo: {
+      name: 'Maestro del Combo',
+      description: 'Logra una racha de combo',
+    },
+    survival: {
+      name: 'Superviviente',
+      description: 'Sobrevive múltiples oleadas',
+    },
+    boss: {
+      name: 'Asesino de Jefes',
+      description: 'Derrota jefes poderosos',
+    },
+    accuracy: {
+      name: 'Tirador Experto',
+      description: 'Mantén alta precisión',
+    },
+    powerUp: {
+      name: 'Coleccionista de Poder',
+      description: 'Recoge potenciadores',
+    },
+    noDamage: {
+      name: 'Intocable',
+      description: 'Completa oleadas sin recibir daño',
+    },
+  },
 };
