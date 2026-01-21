@@ -12,7 +12,7 @@ import Slider from '@react-native-community/slider';
 import { useI18nStore, SUPPORTED_LANGUAGES, LanguageCode } from '../i18n';
 import { useAppSettingsStore, JoystickSize } from '../state/settingsStore';
 import { useSettingsStore, useTheme, themeList } from '../theme';
-import { useStatisticsStore, useAchievementStore, useUpgradesStore } from '../state/progressStore';
+import { useStatisticsStore, useAchievementStore, useUpgradesStore, useThemeUnlockStore } from '../state/progressStore';
 import { ThemeId } from '../theme/types';
 
 type TabType = 'general' | 'controls' | 'account';
@@ -52,7 +52,12 @@ export default function SettingsScreen() {
 
   const { stats, resetStats } = useStatisticsStore();
   const { achievements } = useAchievementStore((s) => ({ achievements: s.achievements }));
-  const { resetUpgrades } = useUpgradesStore();
+  const { credits, resetUpgrades } = useUpgradesStore();
+  const {
+    isThemeUnlocked,
+    getUnlockDescription,
+    purchaseTheme,
+  } = useThemeUnlockStore();
 
   const handleResetProgress = () => {
     Alert.alert(
@@ -90,6 +95,52 @@ export default function SettingsScreen() {
         },
       ]
     );
+  };
+
+  const handleThemeSelect = (selectedThemeId: ThemeId) => {
+    const unlocked = isThemeUnlocked(selectedThemeId);
+
+    if (unlocked) {
+      setTheme(selectedThemeId);
+      setThemeModalVisible(false);
+    } else {
+      // Check if it's a purchasable theme
+      const unlockDesc = getUnlockDescription(selectedThemeId);
+      if (unlockDesc.includes('Purchase')) {
+        // Extract cost from description
+        const costMatch = unlockDesc.match(/(\d+)/);
+        const cost = costMatch ? parseInt(costMatch[0]) : 0;
+
+        Alert.alert(
+          'Theme Locked',
+          `${unlockDesc}\n\nYour credits: ${credits}`,
+          [
+            { text: 'Cancel', style: 'cancel' },
+            {
+              text: 'Purchase',
+              style: 'default',
+              onPress: () => {
+                if (credits >= cost) {
+                  const success = purchaseTheme(selectedThemeId);
+                  if (success) {
+                    setTheme(selectedThemeId);
+                    setThemeModalVisible(false);
+                    Alert.alert('Success!', 'Theme unlocked and applied!');
+                  } else {
+                    Alert.alert('Error', 'Failed to purchase theme');
+                  }
+                } else {
+                  Alert.alert('Insufficient Credits', `You need ${cost - credits} more credits`);
+                }
+              },
+            },
+          ]
+        );
+      } else {
+        // Show unlock requirement
+        Alert.alert('Theme Locked', unlockDesc);
+      }
+    }
   };
 
   const formatTime = (seconds: number): string => {
@@ -550,7 +601,7 @@ export default function SettingsScreen() {
           onPress={() => setThemeModalVisible(false)}
         >
           <View
-            className="w-4/5 rounded-lg p-4"
+            className="w-4/5 rounded-lg p-4 max-h-4/5"
             style={{
               backgroundColor: theme.colors.panelBg,
               borderColor: theme.colors.panelBorder,
@@ -564,36 +615,53 @@ export default function SettingsScreen() {
             >
               {t('settings.theme')}
             </Text>
-            {themeList.map((th) => (
-              <TouchableOpacity
-                key={th.id}
-                className="p-4 rounded-lg mb-2 border"
-                style={{
-                  backgroundColor:
-                    themeId === th.id
-                      ? theme.colors.buttonPrimary + '20'
-                      : theme.colors.background,
-                  borderColor:
-                    themeId === th.id
-                      ? theme.colors.buttonPrimary
-                      : theme.colors.panelBorder,
-                }}
-                onPress={() => {
-                  setTheme(th.id as ThemeId);
-                  setThemeModalVisible(false);
-                }}
-              >
-                <Text style={{ color: theme.colors.textPrimary }}>
-                  {th.icon} {th.name}
-                </Text>
-                <Text
-                  className="text-xs mt-1"
-                  style={{ color: theme.colors.textMuted }}
-                >
-                  {th.description}
-                </Text>
-              </TouchableOpacity>
-            ))}
+            <ScrollView className="max-h-96">
+              {themeList.map((th) => {
+                const unlocked = isThemeUnlocked(th.id as ThemeId);
+                const unlockDesc = getUnlockDescription(th.id as ThemeId);
+
+                return (
+                  <TouchableOpacity
+                    key={th.id}
+                    className="p-4 rounded-lg mb-2 border"
+                    style={{
+                      backgroundColor:
+                        themeId === th.id
+                          ? theme.colors.buttonPrimary + '20'
+                          : theme.colors.background,
+                      borderColor:
+                        themeId === th.id
+                          ? theme.colors.buttonPrimary
+                          : theme.colors.panelBorder,
+                      opacity: unlocked ? 1 : 0.6,
+                    }}
+                    onPress={() => handleThemeSelect(th.id as ThemeId)}
+                  >
+                    <View className="flex-row items-center justify-between">
+                      <View className="flex-1">
+                        <Text style={{ color: theme.colors.textPrimary }}>
+                          {unlocked ? th.icon : '🔒'} {th.name}
+                        </Text>
+                        <Text
+                          className="text-xs mt-1"
+                          style={{ color: theme.colors.textMuted }}
+                        >
+                          {th.description}
+                        </Text>
+                        {!unlocked && (
+                          <Text
+                            className="text-xs mt-1 italic"
+                            style={{ color: theme.colors.textSecondary }}
+                          >
+                            {unlockDesc}
+                          </Text>
+                        )}
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
           </View>
         </TouchableOpacity>
       </Modal>
