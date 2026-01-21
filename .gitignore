@@ -42,3 +42,16 @@ expo.log
 
 # Auto Claude data directory
 .auto-claude/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Auto-claude framework files
+.auto-claude-security.json
+.auto-claude-status
+.claude_settings.json
+
+# Ensure node_modules symlink is ignored
+node_modules
