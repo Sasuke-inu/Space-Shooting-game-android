@@ -128,4 +128,94 @@ export const zh: Translations = {
     on: '开',
     off: '关',
   },
+  skins: {
+    fighter: {
+      default: {
+        name: '标准',
+        description: '经典战斗机配色',
+      },
+      stealth: {
+        name: '隐身',
+        description: '暗黑行动涂装',
+      },
+      neon: {
+        name: '霓虹',
+        description: '明亮赛博朋克风格',
+      },
+      gold: {
+        name: '黄金',
+        description: '高级黄金饰面',
+      },
+      veteran: {
+        name: '老兵',
+        description: '精英飞行员配色',
+      },
+    },
+    scout: {
+      default: {
+        name: '标准',
+        description: '标准侦察机配色',
+      },
+      stealth: {
+        name: '隐身',
+        description: '暗影奔跑者方案',
+      },
+      neon: {
+        name: '霓虹',
+        description: '高速竞速风格',
+      },
+      gold: {
+        name: '黄金',
+        description: '冠军奔跑者饰面',
+      },
+      veteran: {
+        name: '老兵',
+        description: '速度恶魔配色',
+      },
+    },
+    tank: {
+      default: {
+        name: '标准',
+        description: '标准坦克配色',
+      },
+      stealth: {
+        name: '隐身',
+        description: '重装甲黑色',
+      },
+      neon: {
+        name: '霓虹',
+        description: '执行者光辉方案',
+      },
+      gold: {
+        name: '黄金',
+        description: '堡垒黄金电镀',
+      },
+      veteran: {
+        name: '老兵',
+        description: '久经战火的配色',
+      },
+    },
+    interceptor: {
+      default: {
+        name: '标准',
+        description: '标准拦截机配色',
+      },
+      stealth: {
+        name: '隐身',
+        description: '无声猎人方案',
+      },
+      neon: {
+        name: '霓虹',
+        description: '闪电突击风格',
+      },
+      gold: {
+        name: '黄金',
+        description: '王牌飞行员饰面',
+      },
+      veteran: {
+        name: '老兵',
+        description: 'EMP专家配色',
+      },
+    },
+  },
 };

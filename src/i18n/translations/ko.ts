@@ -128,4 +128,94 @@ export const ko: Translations = {
     on: '켜짐',
     off: '꺼짐',
   },
+  skins: {
+    fighter: {
+      default: {
+        name: '스탠다드',
+        description: '클래식 전투기 색상',
+      },
+      stealth: {
+        name: '스텔스',
+        description: '다크 작전 도색',
+      },
+      neon: {
+        name: '네온',
+        description: '밝은 사이버펑크 스타일',
+      },
+      gold: {
+        name: '골드',
+        description: '프리미엄 황금 마감',
+      },
+      veteran: {
+        name: '베테랑',
+        description: '엘리트 파일럿 색상',
+      },
+    },
+    scout: {
+      default: {
+        name: '스탠다드',
+        description: '표준 정찰기 색상',
+      },
+      stealth: {
+        name: '스텔스',
+        description: '그림자 러너 도색',
+      },
+      neon: {
+        name: '네온',
+        description: '고속 레이서 스타일',
+      },
+      gold: {
+        name: '골드',
+        description: '챔피언 러너 마감',
+      },
+      veteran: {
+        name: '베테랑',
+        description: '스피드 데몬 색상',
+      },
+    },
+    tank: {
+      default: {
+        name: '스탠다드',
+        description: '표준 탱크 색상',
+      },
+      stealth: {
+        name: '스텔스',
+        description: '중장갑 블랙',
+      },
+      neon: {
+        name: '네온',
+        description: '집행자 글로우 도색',
+      },
+      gold: {
+        name: '골드',
+        description: '요새 골드 도금',
+      },
+      veteran: {
+        name: '베테랑',
+        description: '전투로 단련된 색상',
+      },
+    },
+    interceptor: {
+      default: {
+        name: '스탠다드',
+        description: '표준 요격기 색상',
+      },
+      stealth: {
+        name: '스텔스',
+        description: '무음 사냥꾼 도색',
+      },
+      neon: {
+        name: '네온',
+        description: '번개 공격 스타일',
+      },
+      gold: {
+        name: '골드',
+        description: '에이스 파일럿 마감',
+      },
+      veteran: {
+        name: '베테랑',
+        description: 'EMP 전문가 색상',
+      },
+    },
+  },
 };

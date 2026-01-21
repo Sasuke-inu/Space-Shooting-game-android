@@ -128,4 +128,94 @@ export const en: Translations = {
     on: 'On',
     off: 'Off',
   },
+  skins: {
+    fighter: {
+      default: {
+        name: 'Standard',
+        description: 'Classic fighter colors',
+      },
+      stealth: {
+        name: 'Stealth',
+        description: 'Dark ops paint scheme',
+      },
+      neon: {
+        name: 'Neon',
+        description: 'Bright cyberpunk style',
+      },
+      gold: {
+        name: 'Gold',
+        description: 'Premium golden finish',
+      },
+      veteran: {
+        name: 'Veteran',
+        description: 'Elite pilot colors',
+      },
+    },
+    scout: {
+      default: {
+        name: 'Standard',
+        description: 'Standard scout colors',
+      },
+      stealth: {
+        name: 'Stealth',
+        description: 'Shadow runner scheme',
+      },
+      neon: {
+        name: 'Neon',
+        description: 'High-speed racer style',
+      },
+      gold: {
+        name: 'Gold',
+        description: 'Champion runner finish',
+      },
+      veteran: {
+        name: 'Veteran',
+        description: 'Speed demon colors',
+      },
+    },
+    tank: {
+      default: {
+        name: 'Standard',
+        description: 'Standard tank colors',
+      },
+      stealth: {
+        name: 'Stealth',
+        description: 'Heavy armor black',
+      },
+      neon: {
+        name: 'Neon',
+        description: 'Enforcer glow scheme',
+      },
+      gold: {
+        name: 'Gold',
+        description: 'Fortress gold plating',
+      },
+      veteran: {
+        name: 'Veteran',
+        description: 'Battle-hardened colors',
+      },
+    },
+    interceptor: {
+      default: {
+        name: 'Standard',
+        description: 'Standard interceptor colors',
+      },
+      stealth: {
+        name: 'Stealth',
+        description: 'Silent hunter scheme',
+      },
+      neon: {
+        name: 'Neon',
+        description: 'Lightning strike style',
+      },
+      gold: {
+        name: 'Gold',
+        description: 'Ace pilot finish',
+      },
+      veteran: {
+        name: 'Veteran',
+        description: 'EMP specialist colors',
+      },
+    },
+  },
 };

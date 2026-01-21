@@ -128,4 +128,94 @@ export const ja: Translations = {
     on: 'オン',
     off: 'オフ',
   },
+  skins: {
+    fighter: {
+      default: {
+        name: 'スタンダード',
+        description: 'クラシックなファイターカラー',
+      },
+      stealth: {
+        name: 'ステルス',
+        description: 'ダークオプスペイント',
+      },
+      neon: {
+        name: 'ネオン',
+        description: '明るいサイバーパンクスタイル',
+      },
+      gold: {
+        name: 'ゴールド',
+        description: 'プレミアムゴールド仕上げ',
+      },
+      veteran: {
+        name: 'ベテラン',
+        description: 'エリートパイロットカラー',
+      },
+    },
+    scout: {
+      default: {
+        name: 'スタンダード',
+        description: 'スタンダードスカウトカラー',
+      },
+      stealth: {
+        name: 'ステルス',
+        description: 'シャドウランナー仕様',
+      },
+      neon: {
+        name: 'ネオン',
+        description: '高速レーサースタイル',
+      },
+      gold: {
+        name: 'ゴールド',
+        description: 'チャンピオンランナー仕上げ',
+      },
+      veteran: {
+        name: 'ベテラン',
+        description: 'スピードデーモンカラー',
+      },
+    },
+    tank: {
+      default: {
+        name: 'スタンダード',
+        description: 'スタンダードタンクカラー',
+      },
+      stealth: {
+        name: 'ステルス',
+        description: '重装甲ブラック',
+      },
+      neon: {
+        name: 'ネオン',
+        description: 'エンフォーサーグロー仕様',
+      },
+      gold: {
+        name: 'ゴールド',
+        description: 'フォートレスゴールドメッキ',
+      },
+      veteran: {
+        name: 'ベテラン',
+        description: '歴戦のカラー',
+      },
+    },
+    interceptor: {
+      default: {
+        name: 'スタンダード',
+        description: 'スタンダードインターセプターカラー',
+      },
+      stealth: {
+        name: 'ステルス',
+        description: 'サイレントハンター仕様',
+      },
+      neon: {
+        name: 'ネオン',
+        description: 'ライトニングストライクスタイル',
+      },
+      gold: {
+        name: 'ゴールド',
+        description: 'エースパイロット仕上げ',
+      },
+      veteran: {
+        name: 'ベテラン',
+        description: 'EMPスペシャリストカラー',
+      },
+    },
+  },
 };
