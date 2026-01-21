@@ -321,14 +321,22 @@ describe('progressStore logic', () => {
   //                         Upgrades Logic Tests
   // ------------------------------------------------------------------ //
   describe('Upgrades Logic', () => {
+    type SkinId = 'default' | 'stealth' | 'neon' | 'gold' | 'veteran'
+
     interface UpgradesTestState {
       credits: number
       upgrades: { damage: number; fireRate: number; piercing: boolean }
       unlockedShips: ShipType[]
+      unlockedSkins: Record<ShipType, SkinId[]>
+      selectedSkins: Record<ShipType, SkinId>
       addCredits: (amount: number) => void
       spendCredits: (amount: number) => boolean
       purchaseUpgrade: (type: 'damage' | 'fireRate' | 'piercing') => boolean
       unlockShip: (ship: ShipType) => void
+      unlockSkin: (ship: ShipType, skinId: SkinId) => boolean
+      selectSkin: (ship: ShipType, skinId: SkinId) => boolean
+      isSkinUnlocked: (ship: ShipType, skinId: SkinId) => boolean
+      getSelectedSkin: (ship: ShipType) => SkinId
       resetUpgrades: () => void
     }
 
@@ -345,10 +353,30 @@ describe('progressStore logic', () => {
       interceptor: 1000,
     }
 
+    const SKIN_COSTS: Record<SkinId, number> = {
+      default: 0,
+      stealth: 250,
+      neon: 500,
+      gold: 750,
+      veteran: 1000,
+    }
+
     const createTestStore = () => create<UpgradesTestState>((set, get) => ({
       credits: 0,
       upgrades: { damage: 0, fireRate: 0, piercing: false },
       unlockedShips: ['fighter'],
+      unlockedSkins: {
+        fighter: ['default'],
+        scout: ['default'],
+        tank: ['default'],
+        interceptor: ['default'],
+      },
+      selectedSkins: {
+        fighter: 'default',
+        scout: 'default',
+        tank: 'default',
+        interceptor: 'default',
+      },
 
       addCredits: (amount) => set((s) => ({ credits: s.credits + amount })),
 
@@ -390,9 +418,56 @@ describe('progressStore logic', () => {
         }
       },
 
+      unlockSkin: (ship, skinId) => {
+        const state = get()
+        if (state.unlockedSkins[ship]?.includes(skinId)) return true
+
+        const cost = SKIN_COSTS[skinId]
+        if (cost === undefined) return false
+        if (state.credits < cost) return false
+
+        set({
+          credits: state.credits - cost,
+          unlockedSkins: {
+            ...state.unlockedSkins,
+            [ship]: [...(state.unlockedSkins[ship] || []), skinId],
+          },
+        })
+        return true
+      },
+
+      selectSkin: (ship, skinId) => {
+        const state = get()
+        if (!state.unlockedSkins[ship]?.includes(skinId)) return false
+
+        set({
+          selectedSkins: {
+            ...state.selectedSkins,
+            [ship]: skinId,
+          },
+        })
+        return true
+      },
+
+      isSkinUnlocked: (ship, skinId) => get().unlockedSkins[ship]?.includes(skinId) ?? false,
+
+      getSelectedSkin: (ship) => get().selectedSkins[ship] || 'default',
+
       resetUpgrades: () => set({
         upgrades: { damage: 0, fireRate: 0, piercing: false },
         unlockedShips: ['fighter'],
+        unlockedSkins: {
+          fighter: ['default'],
+          scout: ['default'],
+          tank: ['default'],
+          interceptor: ['default'],
+        },
+        selectedSkins: {
+          fighter: 'default',
+          scout: 'default',
+          tank: 'default',
+          interceptor: 'default',
+        },
       }),
     }))
 
@@ -472,6 +547,185 @@ describe('progressStore logic', () => {
       store.getState().resetUpgrades()
       expect(store.getState().upgrades.damage).toBe(0)
       expect(store.getState().unlockedShips).toEqual(['fighter'])
+    })
+  })
+
+  // ------------------------------------------------------------------ //
+  //                         Skin Management Tests
+  // ------------------------------------------------------------------ //
+  describe('Skin Management Logic', () => {
+    type SkinId = 'default' | 'stealth' | 'neon' | 'gold' | 'veteran'
+
+    interface SkinTestState {
+      credits: number
+      unlockedSkins: Record<ShipType, SkinId[]>
+      selectedSkins: Record<ShipType, SkinId>
+      addCredits: (amount: number) => void
+      unlockSkin: (ship: ShipType, skinId: SkinId) => boolean
+      selectSkin: (ship: ShipType, skinId: SkinId) => boolean
+      isSkinUnlocked: (ship: ShipType, skinId: SkinId) => boolean
+      getSelectedSkin: (ship: ShipType) => SkinId
+    }
+
+    const SKIN_COSTS: Record<SkinId, number> = {
+      default: 0,
+      stealth: 250,
+      neon: 500,
+      gold: 750,
+      veteran: 1000,
+    }
+
+    const createTestStore = () => create<SkinTestState>((set, get) => ({
+      credits: 0,
+      unlockedSkins: {
+        fighter: ['default'],
+        scout: ['default'],
+        tank: ['default'],
+        interceptor: ['default'],
+      },
+      selectedSkins: {
+        fighter: 'default',
+        scout: 'default',
+        tank: 'default',
+        interceptor: 'default',
+      },
+
+      addCredits: (amount) => set((s) => ({ credits: s.credits + amount })),
+
+      unlockSkin: (ship, skinId) => {
+        const state = get()
+        if (state.unlockedSkins[ship]?.includes(skinId)) return true
+
+        const cost = SKIN_COSTS[skinId]
+        if (cost === undefined) return false
+        if (state.credits < cost) return false
+
+        set({
+          credits: state.credits - cost,
+          unlockedSkins: {
+            ...state.unlockedSkins,
+            [ship]: [...(state.unlockedSkins[ship] || []), skinId],
+          },
+        })
+        return true
+      },
+
+      selectSkin: (ship, skinId) => {
+        const state = get()
+        if (!state.unlockedSkins[ship]?.includes(skinId)) return false
+
+        set({
+          selectedSkins: {
+            ...state.selectedSkins,
+            [ship]: skinId,
+          },
+        })
+        return true
+      },
+
+      isSkinUnlocked: (ship, skinId) => get().unlockedSkins[ship]?.includes(skinId) ?? false,
+
+      getSelectedSkin: (ship) => get().selectedSkins[ship] || 'default',
+    }))
+
+    let store: ReturnType<typeof createTestStore>
+
+    beforeEach(() => {
+      store = createTestStore()
+    })
+
+    test('all ships start with default skin unlocked', () => {
+      expect(store.getState().unlockedSkins.fighter).toContain('default')
+      expect(store.getState().unlockedSkins.scout).toContain('default')
+      expect(store.getState().unlockedSkins.tank).toContain('default')
+      expect(store.getState().unlockedSkins.interceptor).toContain('default')
+    })
+
+    test('all ships start with default skin selected', () => {
+      expect(store.getState().selectedSkins.fighter).toBe('default')
+      expect(store.getState().selectedSkins.scout).toBe('default')
+      expect(store.getState().selectedSkins.tank).toBe('default')
+      expect(store.getState().selectedSkins.interceptor).toBe('default')
+    })
+
+    test('isSkinUnlocked returns true for default skins', () => {
+      expect(store.getState().isSkinUnlocked('fighter', 'default')).toBe(true)
+      expect(store.getState().isSkinUnlocked('scout', 'default')).toBe(true)
+    })
+
+    test('isSkinUnlocked returns false for locked skins', () => {
+      expect(store.getState().isSkinUnlocked('fighter', 'stealth')).toBe(false)
+      expect(store.getState().isSkinUnlocked('scout', 'neon')).toBe(false)
+    })
+
+    test('getSelectedSkin returns selected skin', () => {
+      expect(store.getState().getSelectedSkin('fighter')).toBe('default')
+    })
+
+    test('unlockSkin unlocks skin and deducts credits', () => {
+      store.getState().addCredits(1000)
+      const beforeCredits = store.getState().credits
+      const success = store.getState().unlockSkin('fighter', 'stealth')
+      expect(success).toBe(true)
+      expect(store.getState().isSkinUnlocked('fighter', 'stealth')).toBe(true)
+      expect(store.getState().credits).toBe(beforeCredits - SKIN_COSTS.stealth)
+    })
+
+    test('unlockSkin fails when insufficient credits', () => {
+      store.getState().addCredits(100)
+      const success = store.getState().unlockSkin('fighter', 'stealth')
+      expect(success).toBe(false)
+      expect(store.getState().isSkinUnlocked('fighter', 'stealth')).toBe(false)
+    })
+
+    test('unlockSkin returns true if already unlocked', () => {
+      store.getState().addCredits(1000)
+      store.getState().unlockSkin('fighter', 'stealth')
+      const creditsAfterFirst = store.getState().credits
+      const success = store.getState().unlockSkin('fighter', 'stealth')
+      expect(success).toBe(true)
+      expect(store.getState().credits).toBe(creditsAfterFirst)
+    })
+
+    test('selectSkin changes selected skin', () => {
+      store.getState().addCredits(1000)
+      store.getState().unlockSkin('fighter', 'neon')
+      const success = store.getState().selectSkin('fighter', 'neon')
+      expect(success).toBe(true)
+      expect(store.getState().getSelectedSkin('fighter')).toBe('neon')
+    })
+
+    test('selectSkin fails for locked skin', () => {
+      const success = store.getState().selectSkin('fighter', 'stealth')
+      expect(success).toBe(false)
+      expect(store.getState().getSelectedSkin('fighter')).toBe('default')
+    })
+
+    test('skins are ship-specific', () => {
+      store.getState().addCredits(2000)
+      store.getState().unlockSkin('fighter', 'stealth')
+      expect(store.getState().isSkinUnlocked('fighter', 'stealth')).toBe(true)
+      expect(store.getState().isSkinUnlocked('scout', 'stealth')).toBe(false)
+    })
+
+    test('selected skins are ship-specific', () => {
+      store.getState().addCredits(2000)
+      store.getState().unlockSkin('fighter', 'stealth')
+      store.getState().unlockSkin('scout', 'neon')
+      store.getState().selectSkin('fighter', 'stealth')
+      store.getState().selectSkin('scout', 'neon')
+      expect(store.getState().getSelectedSkin('fighter')).toBe('stealth')
+      expect(store.getState().getSelectedSkin('scout')).toBe('neon')
+    })
+
+    test('unlocking multiple skins for same ship', () => {
+      store.getState().addCredits(5000)
+      store.getState().unlockSkin('fighter', 'stealth')
+      store.getState().unlockSkin('fighter', 'neon')
+      store.getState().unlockSkin('fighter', 'gold')
+      expect(store.getState().unlockedSkins.fighter).toContain('stealth')
+      expect(store.getState().unlockedSkins.fighter).toContain('neon')
+      expect(store.getState().unlockedSkins.fighter).toContain('gold')
     })
   })
 })

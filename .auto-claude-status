@@ -1,25 +1,25 @@
 {
   "active": true,
   "spec": "033-ship-visual-customization",
-  "state": "planning",
+  "state": "building",
   "subtasks": {
-    "completed": 0,
-    "total": 0,
+    "completed": 2,
+    "total": 12,
     "in_progress": 1,
     "failed": 0
   },
   "phase": {
-    "current": "Data Layer - Type Definitions",
+    "current": "State Management - Skin Store",
     "id": null,
-    "total": 1
+    "total": 2
   },
   "workers": {
     "active": 0,
     "max": 1
   },
   "session": {
-    "number": 2,
+    "number": 4,
     "started_at": "2026-01-22T05:06:01.649500"
   },
-  "last_update": "2026-01-22T05:11:32.735808"
+  "last_update": "2026-01-22T05:16:37.111525"
 }
