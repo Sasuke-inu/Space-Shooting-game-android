@@ -59,6 +59,8 @@ export default function GameScreen() {
   const bossWarning = useGameStore((s) => s.bossWarning)
   const homingMissiles = useGameStore((s) => s.homingMissiles)
   const timeWarpActive = useGameStore((s) => s.timeWarpActive)
+  const abilityFlash = useGameStore((s) => s.abilityFlash)
+  const getAbilityFlashOpacity = useGameStore((s) => s.getAbilityFlashOpacity)
   const activateSpecialAbility = useGameStore((s) => s.activateSpecialAbility)
   const setShipType = useGameStore((s) => s.setShipType)
   const spawnHomingMissiles = useGameStore((s) => s.spawnHomingMissiles)
@@ -662,6 +664,8 @@ export default function GameScreen() {
             homingMissiles={homingMissiles}
             showRadar={true}
             timeWarpActive={timeWarpActive}
+            abilityFlash={abilityFlash}
+            abilityFlashOpacity={getAbilityFlashOpacity()}
           />
         </View>
       </GestureDetector>

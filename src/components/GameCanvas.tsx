@@ -1,7 +1,7 @@
 import React from "react"
 import { Canvas, Group, Path, Circle, Line, Text, Skia, vec, matchFont, Rect } from "@shopify/react-native-skia"
 import { Platform } from "react-native"
-import type { Asteroid, Enemy, Vec2, PowerUp, ActivePowerUp, ComboState, Boss, HomingMissile, EnemyType } from "../types/game"
+import type { Asteroid, Enemy, Vec2, PowerUp, ActivePowerUp, ComboState, Boss, HomingMissile, EnemyType, AbilityFlash } from "../types/game"
 import type { ThemeColors } from "../theme/types"
 import { fromAngle } from "../utils/vectorMath"
 
@@ -30,6 +30,8 @@ interface GameCanvasProps {
   homingMissiles?: HomingMissile[]
   showRadar?: boolean
   timeWarpActive?: boolean
+  abilityFlash?: AbilityFlash | null
+  abilityFlashOpacity?: number
 }
 
 // Helper to get power-up color from theme
@@ -51,6 +53,17 @@ const getEnemyColor = (type: EnemyType, colors: ThemeColors): string => {
     case 'sniper': return '#9966ff'
     case 'bomber': return '#ff9933'
     default: return colors.enemyShip
+  }
+}
+
+// Ability flash color by ability type
+const getAbilityFlashColor = (abilityType: string): string => {
+  switch (abilityType) {
+    case 'emp_blast': return '0, 255, 255' // cyan
+    case 'missile_barrage': return '255, 165, 0' // orange
+    case 'time_warp': return '100, 150, 255' // blue
+    case 'shield_burst': return '0, 255, 100' // green
+    default: return '255, 255, 255' // white fallback
   }
 }
 
@@ -86,6 +99,8 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
   homingMissiles = [],
   showRadar = true,
   timeWarpActive = false,
+  abilityFlash = null,
+  abilityFlashOpacity = 0,
 }) => {
   // Background stars
   const stars = React.useMemo(() => {
@@ -256,6 +271,17 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
             width={width}
             height={height}
             color="rgba(100, 150, 255, 0.1)"
+          />
+        )}
+
+        {/* Ability flash overlay */}
+        {abilityFlash && abilityFlashOpacity > 0 && (
+          <Rect
+            x={0}
+            y={0}
+            width={width}
+            height={height}
+            color={`rgba(${getAbilityFlashColor(abilityFlash.abilityType)}, ${abilityFlashOpacity})`}
           />
         )}
 
