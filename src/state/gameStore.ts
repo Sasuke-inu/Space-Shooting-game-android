@@ -21,6 +21,7 @@ import type {
 } from "../types/game"
 import { ENEMY_STATS, BOSS_STATS, SHIP_STATS, ABILITY_STATS } from "../types/game"
 import { v, add, fromAngle, rand } from "../utils/vectorMath"
+import { useChallengesStore } from "./challengesStore"
 
 // ------------------------------------------------------------------ //
 //                Gameplay tuning (feel free to tweak)
@@ -232,6 +233,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set((state) => {
       const nextWave = state.wave + 1
       const isBossWave = nextWave % BOSS_WAVE_INTERVAL === 0
+
+      // Track challenge progress
+      const challengeStore = useChallengesStore.getState()
+      challengeStore.recordWave(nextWave)
+
+      // Track no-damage wave if player took no damage during the previous wave
+      if (!state.sessionDamageTaken) {
+        challengeStore.recordNoDamageWave(1)
+      }
+
       return {
         wave: nextWave,
         bossWarning: isBossWave,
@@ -502,6 +513,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
       const powerUp = state.powerUps[index]
       if (!powerUp) return state
 
+      // Track challenge progress
+      useChallengesStore.getState().recordPowerUpCollected(1)
+
       // Check if already have this power-up active - refresh duration
       const existingIndex = state.activePowerUps.findIndex((p) => p.type === powerUp.type)
       let newActivePowerUps: ActivePowerUp[]
@@ -549,6 +563,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
         Math.floor(newCount / 3),
         COMBO_MULTIPLIERS.length - 1
       )
+
+      // Track challenge progress
+      useChallengesStore.getState().recordCombo(newCount)
+
       return {
         combo: {
           count: newCount,
@@ -676,6 +694,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set((state) => {
       if (!state.boss) return state
       const points = BOSS_STATS[state.boss.type].points
+
+      // Track challenge progress
+      useChallengesStore.getState().recordBossDefeat(1)
+
       return {
         boss: null,
         score: state.score + points,
@@ -804,16 +826,31 @@ export const useGameStore = create<GameStore>((set, get) => ({
   recordDamage: () => set({ sessionDamageTaken: true }),
 
   recordKill: () =>
-    set((state) => ({
-      sessionKillsRecent: state.sessionKillsRecent + 1,
-      sessionKillTimer: 10, // Reset 10 second timer
-      // Note: sessionShotsHit is updated when bullets hit targets, not here
-    })),
+    set((state) => {
+      // Track challenge progress
+      useChallengesStore.getState().recordKill(1)
+
+      return {
+        sessionKillsRecent: state.sessionKillsRecent + 1,
+        sessionKillTimer: 10, // Reset 10 second timer
+        // Note: sessionShotsHit is updated when bullets hit targets, not here
+      }
+    }),
 
   recordShot: (hit) =>
-    set((state) => ({
-      sessionShotsHit: hit ? state.sessionShotsHit + 1 : state.sessionShotsHit,
-    })),
+    set((state) => {
+      const newShotsHit = hit ? state.sessionShotsHit + 1 : state.sessionShotsHit
+
+      // Calculate and track accuracy for challenges
+      if (state.sessionShotsFired > 0) {
+        const accuracy = (newShotsHit / state.sessionShotsFired) * 100
+        useChallengesStore.getState().recordAccuracy(accuracy)
+      }
+
+      return {
+        sessionShotsHit: newShotsHit,
+      }
+    }),
 
   resetWaveTracking: () =>
     set({
