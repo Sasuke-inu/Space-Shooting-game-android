@@ -4,7 +4,7 @@
 
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import secureStorage from '../utils/secureStorage'
 import type { ThemeId, GameTheme, ThemeColors } from './types'
 import { themes, defaultThemeId, getTheme } from './themes'
 
@@ -82,7 +82,7 @@ export const useSettingsStore = create<SettingsStore>()(
     }),
     {
       name: 'settings-storage',
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createJSONStorage(() => secureStorage),
     }
   )
 )

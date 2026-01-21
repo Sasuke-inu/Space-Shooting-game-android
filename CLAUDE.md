@@ -7,7 +7,7 @@ A React Native mobile space shooting game built with Expo and React Native Skia.
 - **Framework**: Expo SDK 53 (React Native 0.79)
 - **Rendering**: React Native Skia for canvas-based game graphics
 - **Styling**: NativeWind (TailwindCSS for React Native)
-- **State Management**: Zustand (with persistence via AsyncStorage)
+- **State Management**: Zustand (with encrypted persistence via Expo SecureStore)
 - **Language**: TypeScript (strict mode)
 - **Testing**: Jest with jest-expo
 
@@ -181,7 +181,21 @@ Settings via Zustand store (`useSettingsStore`):
 - Language code
 - Audio volumes
 - Control preferences
-- All persisted to AsyncStorage
+- All persisted to SecureStore (encrypted)
+
+## Security & Storage
+
+All sensitive game data is encrypted and persisted using **Expo SecureStore**:
+- **Credits & Ship Unlocks** (`progressStore.ts`) - Virtual currency and purchases
+- **Achievements & Statistics** (`progressStore.ts`) - Player progression data
+- **High Scores** (`highScoresStore.ts`) - Leaderboard entries with player names
+- **Settings** (`settingsStore.ts`) - User preferences
+- **Theme Settings** (`themeStore.ts`) - Theme and audio preferences
+- **Language** (`i18n/store.ts`) - Internationalization preferences
+
+SecureStore uses hardware-backed encryption (Keychain on iOS, Keystore on Android) to protect data from unauthorized access on rooted/jailbroken devices or device backups. A custom storage adapter (`src/utils/secureStorage.ts`) wraps expo-secure-store to provide compatibility with Zustand's persist middleware.
+
+**Migration**: Existing AsyncStorage data is automatically migrated to SecureStore on first launch after upgrade via `src/utils/migrateStorage.ts`.
 
 ## Constants (gameStore.ts)
 
@@ -236,5 +250,7 @@ Tests located in `src/__tests__/`:
 - Has patched dependencies for react-native and expo-asset
 - Portrait orientation only
 - Haptic feedback on iOS/Android only
-- Theme, settings, and progress persist across app restarts
+- Theme, settings, and progress persist across app restarts with encryption
 - Credits earned from gameplay for purchasing upgrades and ships
+- Automatic migration from AsyncStorage to SecureStore on first launch after upgrade
+- All sensitive data protected by hardware-backed encryption

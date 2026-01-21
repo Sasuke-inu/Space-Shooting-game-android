@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import secureStorage from '../utils/secureStorage';
 import { LanguageCode } from '../i18n/types';
 
 export type JoystickSize = 'small' | 'medium' | 'large';
@@ -37,7 +37,7 @@ export const useAppSettingsStore = create<AppSettingsState>()(
     }),
     {
       name: 'app-settings-storage',
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createJSONStorage(() => secureStorage),
     }
   )
 );

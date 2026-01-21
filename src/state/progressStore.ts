@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import secureStorage from '../utils/secureStorage'
 import type {
   Achievement,
   AchievementId,
@@ -104,7 +104,7 @@ export const useAchievementStore = create<AchievementState>()(
     }),
     {
       name: 'space-shooter-achievements',
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createJSONStorage(() => secureStorage),
     }
   )
 )
@@ -238,7 +238,7 @@ export const useStatisticsStore = create<StatisticsState>()(
     }),
     {
       name: 'space-shooter-statistics',
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createJSONStorage(() => secureStorage),
     }
   )
 )
@@ -349,7 +349,7 @@ export const useUpgradesStore = create<UpgradesState>()(
     }),
     {
       name: 'space-shooter-upgrades',
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createJSONStorage(() => secureStorage),
     }
   )
 )
