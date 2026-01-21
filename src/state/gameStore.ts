@@ -11,6 +11,7 @@ import type {
   ActivePowerUp,
   ComboState,
   ScreenShake,
+  AbilityFlash,
   Boss,
   BossType,
   ShipType,
@@ -118,6 +119,11 @@ interface GameStore extends GameState {
   updateShake: (dt: number) => void
   getShakeOffset: () => { x: number; y: number }
 
+  // Ability flash actions
+  triggerAbilityFlash: (abilityType: AbilityType) => void
+  updateAbilityFlash: (dt: number) => void
+  getAbilityFlashOpacity: () => number
+
   // Boss actions
   spawnBoss: (type?: BossType) => void
   updateBoss: (update: Partial<Boss>) => void
@@ -194,6 +200,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   // Screen effects
   screenShake: null,
+  abilityFlash: null,
   timeWarpActive: false,
   timeWarpMultiplier: 1,
 
@@ -612,6 +619,46 @@ export const useGameStore = create<GameStore>((set, get) => ({
       x: (Math.random() - 0.5) * intensity * 2,
       y: (Math.random() - 0.5) * intensity * 2,
     }
+  },
+
+  // ------------------------------------------------------------------ //
+  //                         Ability Flash Actions
+  // ------------------------------------------------------------------ //
+
+  triggerAbilityFlash: (abilityType) =>
+    set({
+      abilityFlash: {
+        intensity: 0.6,
+        duration: 0.3,
+        elapsed: 0,
+        abilityType,
+      },
+    }),
+
+  updateAbilityFlash: (dt) =>
+    set((state) => {
+      if (!state.abilityFlash) return state
+      const newElapsed = state.abilityFlash.elapsed + dt
+      if (newElapsed >= state.abilityFlash.duration) {
+        return { abilityFlash: null }
+      }
+      return {
+        abilityFlash: {
+          ...state.abilityFlash,
+          elapsed: newElapsed,
+        },
+      }
+    }),
+
+  getAbilityFlashOpacity: () => {
+    const flash = get().abilityFlash
+    if (!flash) return 0
+
+    const progress = flash.elapsed / flash.duration
+    const decay = 1 - progress
+    const opacity = flash.intensity * decay
+
+    return opacity
   },
 
   // ------------------------------------------------------------------ //

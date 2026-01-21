@@ -316,6 +316,7 @@ export interface GameState {
 
   // Screen effects
   screenShake: ScreenShake | null
+  abilityFlash: AbilityFlash | null
   timeWarpActive: boolean
   timeWarpMultiplier: number
 
