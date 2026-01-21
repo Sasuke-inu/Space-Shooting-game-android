@@ -273,6 +273,17 @@ export interface ScreenShake {
 }
 
 // ------------------------------------------------------------------ //
+//                         Ability Flash
+// ------------------------------------------------------------------ //
+
+export interface AbilityFlash {
+  intensity: number
+  duration: number
+  elapsed: number
+  abilityType: AbilityType
+}
+
+// ------------------------------------------------------------------ //
 //                         Game State
 // ------------------------------------------------------------------ //
 
