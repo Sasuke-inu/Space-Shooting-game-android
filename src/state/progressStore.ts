@@ -11,6 +11,7 @@ import type {
   BossType,
 } from '../types/game'
 import { ACHIEVEMENTS, UPGRADE_COSTS } from '../types/game'
+import { playSfx } from '../utils/audioManager'
 
 // ------------------------------------------------------------------ //
 //                         Achievement Store
@@ -49,6 +50,10 @@ export const useAchievementStore = create<AchievementState>()(
       unlockAchievement: (id) =>
         set((state) => {
           if (state.achievements[id].unlocked) return state
+
+          // Play celebration sound for new achievement
+          playSfx('achievement_unlock')
+
           return {
             achievements: {
               ...state.achievements,
@@ -71,6 +76,9 @@ export const useAchievementStore = create<AchievementState>()(
           const newProgress = Math.min(progress, target)
 
           if (newProgress >= target) {
+            // Play celebration sound for new achievement
+            playSfx('achievement_unlock')
+
             return {
               achievements: {
                 ...state.achievements,
