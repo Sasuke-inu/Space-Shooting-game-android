@@ -30,6 +30,10 @@ import {
 } from "./vectorMath"
 import { hapticLight, hapticMedium, hapticHeavy, hapticWarning } from "./haptics"
 
+// Performance tracking
+let frameCount = 0
+const PERF_LOG_INTERVAL = 60 // Log every 60 frames (~1 second at 60fps)
+
 export const useGameEngine = () => {
   const boom = useCallback((pos: Vec2, color: string, count = 24, speed = 120) => {
     const newParticles: Particle[] = []
@@ -83,6 +87,9 @@ export const useGameEngine = () => {
     thrusting: boolean,
     themeColors: ThemeColors
   ) => {
+    // Performance tracking - start
+    const perfStart = performance.now()
+
     const state = useGameStore.getState()
 
     // Apply time warp effect
@@ -447,6 +454,39 @@ export const useGameEngine = () => {
     if (state.player.hp <= 0) {
       state.loseLife()
       state.triggerShake(15, 400)
+    }
+
+    // Performance tracking - end
+    const perfEnd = performance.now()
+    const frameTime = perfEnd - perfStart
+
+    frameCount++
+    if (frameCount % PERF_LOG_INTERVAL === 0) {
+      const totalEntities =
+        state.bullets.length +
+        state.asteroids.length +
+        state.enemies.length +
+        state.particles.length +
+        state.powerUps.length +
+        state.homingMissiles.length +
+        (state.boss ? 1 : 0)
+
+      // eslint-disable-next-line no-console
+      console.log('[GameEngine Performance]', {
+        frameTime: `${frameTime.toFixed(2)}ms`,
+        entities: {
+          total: totalEntities,
+          bullets: state.bullets.length,
+          asteroids: state.asteroids.length,
+          enemies: state.enemies.length,
+          particles: state.particles.length,
+          powerUps: state.powerUps.length,
+          homingMissiles: state.homingMissiles.length,
+          boss: state.boss ? 1 : 0,
+        },
+        wave: state.wave,
+        score: state.score,
+      })
     }
   }, [boom])
 
