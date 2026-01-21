@@ -300,7 +300,31 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
           />
         )}
 
-        {/* Background stars */}
+        {/* Parallax Layer 1: Distant stars (furthest back, slowest) */}
+        {distantStars.map((star, i) => (
+          <Circle
+            key={`distant-${i}`}
+            cx={star.x}
+            cy={star.y}
+            r={star.size}
+            color={colors.stars}
+            opacity={0.4}
+          />
+        ))}
+
+        {/* Parallax Layer 2: Nebula/dust particles (medium depth) */}
+        {nebulaParticles.map((particle, i) => (
+          <Circle
+            key={`nebula-${i}`}
+            cx={particle.x}
+            cy={particle.y}
+            r={particle.size}
+            color={colors.stars}
+            opacity={particle.opacity}
+          />
+        ))}
+
+        {/* Background stars (standard speed) */}
         {stars.map((star, i) => (
           <Circle
             key={i}
@@ -309,6 +333,26 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
             r={1}
             color={colors.stars}
           />
+        ))}
+
+        {/* Parallax Layer 3: Close debris (closest to foreground, fastest) */}
+        {closeDebris.map((debris, i) => (
+          <Group
+            key={`debris-${i}`}
+            transform={[
+              { translateX: debris.x },
+              { translateY: debris.y },
+              { rotate: debris.rotation * (Math.PI / 180) },
+            ]}
+          >
+            <Circle
+              cx={0}
+              cy={0}
+              r={debris.size}
+              color={colors.asteroid}
+              opacity={0.3}
+            />
+          </Group>
         ))}
 
         {/* Particles */}
