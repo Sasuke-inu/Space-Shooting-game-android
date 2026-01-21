@@ -99,6 +99,9 @@ export const useGameEngine = () => {
     // Update screen shake
     state.updateShake(dt)
 
+    // Update ability flash
+    state.updateAbilityFlash(effectiveDt)
+
     // Update special ability
     state.updateSpecialAbility(dt)
 
