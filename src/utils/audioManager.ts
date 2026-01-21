@@ -82,9 +82,14 @@ class AudioManager {
         return
       }
 
-      // Set volume and replay the sound
-      await sound.setVolumeAsync(sfxVolume)
-      await sound.replayAsync()
+      // Set volume and replay the sound (fire-and-forget for performance)
+      // Don't await to allow simultaneous sounds without blocking
+      sound.setVolumeAsync(sfxVolume).catch(() => {
+        // Silently ignore volume errors
+      })
+      sound.replayAsync().catch(() => {
+        // Silently ignore playback errors
+      })
     } catch (error) {
       // Silently fail - sound effects are non-critical
     }
