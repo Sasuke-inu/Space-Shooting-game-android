@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend Capabilities Showcase</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00f5ff;
+            --secondary: #ff00aa;
+            --accent: #7b2dff;
+            --dark: #0a0a1a;
+            --darker: #050510;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--darker);
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(0, 245, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 0, 170, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(123, 45, 255, 0.05) 0%, transparent 50%);
+            animation: bgRotate 30s linear infinite;
+        }
+
+        @keyframes bgRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Stars */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: linear-gradient(to bottom, rgba(5, 5, 16, 0.9), transparent);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 900px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 50%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: heroText 1s ease-out;
+        }
+
+        @keyframes heroText {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2.5rem;
+            animation: fadeUp 1s ease-out 0.3s both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeUp 1s ease-out 0.5s both;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #000;
+            box-shadow: 0 0 30px rgba(0, 245, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 50px rgba(0, 245, 255, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(0, 245, 255, 0.2);
+        }
+
+        /* Floating Elements */
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .shape-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--primary);
+            opacity: 0.1;
+            top: 10%;
+            left: -10%;
+            animation-delay: 0s;
+        }
+
+        .shape-2 {
+            width: 300px;
+            height: 300px;
+            background: var(--secondary);
+            opacity: 0.1;
+            bottom: 10%;
+            right: -5%;
+            animation-delay: -3s;
+        }
+
+        .shape-3 {
+            width: 200px;
+            height: 200px;
+            background: var(--accent);
+            opacity: 0.15;
+            top: 50%;
+            left: 50%;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        /* Section Styling */
+        section {
+            padding: 6rem 2rem;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-title p {
+            color: rgba(255, 255, 255, 0.6);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 2.5rem;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0, 245, 255, 0.2);
+        }
+
+        .feature-card:hover::before {
+            opacity: 0.05;
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: rgba(255,255,255,0.6);
+            line-height: 1.6;
+        }
+
+        /* 3D Card Section */
+        .showcase-3d {
+            perspective: 1000px;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card-3d {
+            width: 280px;
+            height: 380px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
+        }
+
+        .card-3d:hover {
+            transform: rotateY(15deg) rotateX(5deg);
+        }
+
+        .card-3d-inner {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow:
+                0 25px 50px rgba(0,0,0,0.3),
+                inset 0 0 30px rgba(255,255,255,0.05);
+        }
+
+        .card-3d-inner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+
+        .card-3d img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 0 20px var(--primary));
+        }
+
+        /* Glassmorphism Section */
+        .glass-section {
+            background: linear-gradient(135deg, rgba(0,245,255,0.05), rgba(255,0,170,0.05));
+        }
+
+        .glass-cards {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .glass-card {
+            width: 300px;
+            padding: 2rem;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            background: rgba(255,255,255,0.1);
+            transform: scale(1.05);
+        }
+
+        .glass-card .price {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .glass-card .price span {
+            font-size: 1rem;
+            opacity: 0.7;
+        }
+
+        /* Animated Stats */
+        .stats-section {
+            background: var(--dark);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+        }
+
+        .stat-label {
+            color: rgba(255,255,255,0.6);
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.9rem;
+        }
+
+        /* Animated Progress Bars */
+        .skills-section {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .skill-item {
+            margin-bottom: 2rem;
+        }
+
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .skill-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .skill-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            width: 0;
+            transition: width 1.5s ease-out;
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        /* Interactive Buttons Showcase */
+        .buttons-showcase {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .btn-glow {
+            padding: 1rem 2rem;
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .btn-glow::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: var(--primary);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.5s ease, height 0.5s ease;
+            z-index: -1;
+        }
+
+        .btn-glow:hover {
+            color: #000;
+            box-shadow: 0 0 30px var(--primary);
+        }
+
+        .btn-glow:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-gradient {
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            color: #000;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-gradient:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-gradient:hover::before {
+            left: 100%;
+        }
+
+        .btn-pulse {
+            padding: 1rem 2rem;
+            background: var(--secondary);
+            border: none;
+            color: #fff;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 0, 170, 0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(255, 0, 170, 0); }
+        }
+
+        /* Morphing Shape */
+        .morph-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem 0;
+        }
+
+        .morph-shape {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            animation: morph 8s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #000;
+            box-shadow: 0 0 60px rgba(0, 245, 255, 0.3);
+        }
+
+        @keyframes morph {
+            0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+            25% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+            50% { border-radius: 50% 60% 30% 60% / 30% 60% 70% 40%; }
+            75% { border-radius: 60% 40% 60% 30% / 70% 30% 50% 60%; }
+        }
+
+        /* Testimonial Carousel */
+        .testimonial-section {
+            overflow: hidden;
+        }
+
+        .testimonial-track {
+            display: flex;
+            animation: scroll 20s linear infinite;
+        }
+
+        .testimonial-card {
+            flex-shrink: 0;
+            width: 400px;
+            padding: 2rem;
+            margin: 0 1rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .testimonial-card p {
+            color: rgba(255,255,255,0.8);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Interactive Cursor */
+        .custom-cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-dot {
+            width: 5px;
+            height: 5px;
+            background: var(--primary);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        footer p {
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* Scroll Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Loading Animation */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--darker);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-content {
+            text-align: center;
+        }
+
+        .loader-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .testimonial-card {
+                width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loader" id="loader">
+        <div class="loader-content">
+            <div class="loader-spinner"></div>
+            <p>Loading Experience...</p>
+        </div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="cursor"></div>
+    <div class="cursor-dot" id="cursorDot"></div>
+
+    <!-- Animated Background -->
+    <div class="bg-animation"></div>
+    <div class="stars" id="stars"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">SHOWCASE</div>
+        <ul class="nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#3d">3D Cards</a></li>
+            <li><a href="#glass">Glassmorphism</a></li>
+            <li><a href="#stats">Stats</a></li>
+            <li><a href="#buttons">Buttons</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+        <div class="hero-content">
+            <h1>Frontend Capabilities Showcase</h1>
+            <p>Explore modern CSS animations, 3D transforms, glassmorphism, interactive elements, and cutting-edge web design techniques all in one place.</p>
+            <div class="cta-buttons">
+                <a href="#features" class="btn btn-primary">Explore Features</a>
+                <a href="#buttons" class="btn btn-secondary">View Components</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features">
+        <div class="section-title reveal">
+            <h2>Key Features</h2>
+            <p>Discover the power of modern frontend development with these stunning visual effects</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card reveal">
+                <div class="feature-icon">&#x2728;</div>
+                <h3>CSS Animations</h3>
+                <p>Smooth, performant animations using pure CSS keyframes and transitions for delightful user experiences.</p>
+            </div>
+            <div class="feature-card reveal">
+                <div class="feature-icon">&#x1F4A0;</div>
+                <h3>3D Transforms</h3>
+                <p>Create depth and dimension with CSS 3D transforms, perspective, and preserve-3d for immersive interfaces.</p>
+            </div>
+            <div class="feature-card reveal">
+                <div class="feature-icon">&#x1F300;</div>
+                <h3>Glassmorphism</h3>
+                <p>Modern frosted glass effects using backdrop-filter and subtle transparencies for elegant UI design.</p>
+            </div>
+            <div class="feature-card reveal">
+                <div class="feature-icon">&#x1F3A8;</div>
+                <h3>Gradient Magic</h3>
+                <p>Beautiful linear and radial gradients that create stunning visual effects and depth.</p>
+            </div>
+            <div class="feature-card reveal">
+                <div class="feature-icon">&#x26A1;</div>
+                <h3>Micro-interactions</h3>
+                <p>Subtle hover effects, button animations, and interactive feedback that enhance usability.</p>
+            </div>
+            <div class="feature-card reveal">
+                <div class="feature-icon">&#x1F4F1;</div>
+                <h3>Responsive Design</h3>
+                <p>Fluid layouts that adapt beautifully to any screen size using modern CSS grid and flexbox.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3D Cards Section -->
+    <section id="3d">
+        <div class="section-title reveal">
+            <h2>3D Card Effects</h2>
+            <p>Hover over these cards to see 3D perspective transforms in action</p>
+        </div>
+        <div class="showcase-3d">
+            <div class="card-3d reveal">
+                <div class="card-3d-inner">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">&#x1F680;</div>
+                    <h3>Performance</h3>
+                    <p style="color: rgba(255,255,255,0.6); margin-top: 1rem;">Lightning fast load times with optimized assets</p>
+                </div>
+            </div>
+            <div class="card-3d reveal">
+                <div class="card-3d-inner">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">&#x1F3AF;</div>
+                    <h3>Precision</h3>
+                    <p style="color: rgba(255,255,255,0.6); margin-top: 1rem;">Pixel-perfect designs with attention to detail</p>
+                </div>
+            </div>
+            <div class="card-3d reveal">
+                <div class="card-3d-inner">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">&#x1F4AB;</div>
+                    <h3>Innovation</h3>
+                    <p style="color: rgba(255,255,255,0.6); margin-top: 1rem;">Cutting-edge techniques and modern approaches</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Morphing Shape -->
+    <section>
+        <div class="section-title reveal">
+            <h2>CSS Shape Morphing</h2>
+            <p>Watch this shape continuously morph using pure CSS animations</p>
+        </div>
+        <div class="morph-container reveal">
+            <div class="morph-shape">MORPH</div>
+        </div>
+    </section>
+
+    <!-- Glassmorphism Section -->
+    <section id="glass" class="glass-section">
+        <div class="section-title reveal">
+            <h2>Glassmorphism Cards</h2>
+            <p>Modern frosted glass effect with backdrop-filter blur</p>
+        </div>
+        <div class="glass-cards">
+            <div class="glass-card reveal">
+                <h3 style="margin-bottom: 1rem;">Starter</h3>
+                <div class="price">$9<span>/mo</span></div>
+                <ul style="text-align: left; margin: 1.5rem 0; list-style: none; color: rgba(255,255,255,0.7);">
+                    <li style="padding: 0.5rem 0;">&#x2713; 5 Projects</li>
+                    <li style="padding: 0.5rem 0;">&#x2713; 10GB Storage</li>
+                    <li style="padding: 0.5rem 0;">&#x2713; Email Support</li>
+                </ul>
+                <button class="btn btn-primary" style="width: 100%;">Get Started</button>
+            </div>
+            <div class="glass-card reveal" style="transform: scale(1.05); border-color: var(--primary);">
+                <h3 style="margin-bottom: 1rem;">Pro</h3>
+                <div class="price">$29<span>/mo</span></div>
+                <ul style="text-align: left; margin: 1.5rem 0; list-style: none; color: rgba(255,255,255,0.7);">
+                    <li style="padding: 0.5rem 0;">&#x2713; Unlimited Projects</li>
+                    <li style="padding: 0.5rem 0;">&#x2713; 100GB Storage</li>
+                    <li style="padding: 0.5rem 0;">&#x2713; Priority Support</li>
+                </ul>
+                <button class="btn btn-primary" style="width: 100%;">Get Started</button>
+            </div>
+            <div class="glass-card reveal">
+                <h3 style="margin-bottom: 1rem;">Enterprise</h3>
+                <div class="price">$99<span>/mo</span></div>
+                <ul style="text-align: left; margin: 1.5rem 0; list-style: none; color: rgba(255,255,255,0.7);">
+                    <li style="padding: 0.5rem 0;">&#x2713; Everything in Pro</li>
+                    <li style="padding: 0.5rem 0;">&#x2713; 1TB Storage</li>
+                    <li style="padding: 0.5rem 0;">&#x2713; 24/7 Support</li>
+                </ul>
+                <button class="btn btn-primary" style="width: 100%;">Contact Sales</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section id="stats" class="stats-section">
+        <div class="section-title reveal">
+            <h2>Animated Statistics</h2>
+            <p>Numbers that count up as you scroll into view</p>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-item reveal">
+                <div class="stat-number" data-target="150">0</div>
+                <div class="stat-label">Projects Completed</div>
+            </div>
+            <div class="stat-item reveal">
+                <div class="stat-number" data-target="98">0</div>
+                <div class="stat-label">Client Satisfaction %</div>
+            </div>
+            <div class="stat-item reveal">
+                <div class="stat-number" data-target="50">0</div>
+                <div class="stat-label">Team Members</div>
+            </div>
+            <div class="stat-item reveal">
+                <div class="stat-number" data-target="24">0</div>
+                <div class="stat-label">Awards Won</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section>
+        <div class="section-title reveal">
+            <h2>Animated Progress Bars</h2>
+            <p>Skill bars that animate when they come into view</p>
+        </div>
+        <div class="skills-section">
+            <div class="skill-item reveal">
+                <div class="skill-header">
+                    <span>HTML & CSS</span>
+                    <span>95%</span>
+                </div>
+                <div class="skill-bar">
+                    <div class="skill-progress" data-width="95"></div>
+                </div>
+            </div>
+            <div class="skill-item reveal">
+                <div class="skill-header">
+                    <span>JavaScript</span>
+                    <span>90%</span>
+                </div>
+                <div class="skill-bar">
+                    <div class="skill-progress" data-width="90"></div>
+                </div>
+            </div>
+            <div class="skill-item reveal">
+                <div class="skill-header">
+                    <span>React / Vue</span>
+                    <span>85%</span>
+                </div>
+                <div class="skill-bar">
+                    <div class="skill-progress" data-width="85"></div>
+                </div>
+            </div>
+            <div class="skill-item reveal">
+                <div class="skill-header">
+                    <span>UI/UX Design</span>
+                    <span>80%</span>
+                </div>
+                <div class="skill-bar">
+                    <div class="skill-progress" data-width="80"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Buttons Showcase -->
+    <section id="buttons">
+        <div class="section-title reveal">
+            <h2>Interactive Buttons</h2>
+            <p>Various button styles with unique hover effects</p>
+        </div>
+        <div class="buttons-showcase reveal">
+            <button class="btn-glow">Glow Effect</button>
+            <button class="btn-gradient">Shine Effect</button>
+            <button class="btn-pulse">Pulse Effect</button>
+            <button class="btn btn-primary">Primary CTA</button>
+            <button class="btn btn-secondary">Secondary</button>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonial-section">
+        <div class="section-title reveal">
+            <h2>Infinite Scroll Carousel</h2>
+            <p>Seamless infinite scrolling testimonials</p>
+        </div>
+        <div class="testimonial-track">
+            <div class="testimonial-card">
+                <p>"Absolutely stunning work! The attention to detail and smooth animations really set this apart from other solutions."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar"></div>
+                    <div>
+                        <strong>Alex Johnson</strong>
+                        <div style="color: rgba(255,255,255,0.5); font-size: 0.9rem;">CEO, TechCorp</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <p>"The modern design aesthetic combined with performance optimization is exactly what we needed for our project."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar"></div>
+                    <div>
+                        <strong>Sarah Williams</strong>
+                        <div style="color: rgba(255,255,255,0.5); font-size: 0.9rem;">Designer, Creative Studio</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <p>"Incredible frontend skills! Every animation feels purposeful and enhances the user experience significantly."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar"></div>
+                    <div>
+                        <strong>Michael Chen</strong>
+                        <div style="color: rgba(255,255,255,0.5); font-size: 0.9rem;">Product Manager, StartupXYZ</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <p>"The glassmorphism and 3D effects are beautifully implemented. This showcases true mastery of CSS."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar"></div>
+                    <div>
+                        <strong>Emily Davis</strong>
+                        <div style="color: rgba(255,255,255,0.5); font-size: 0.9rem;">Lead Developer, WebAgency</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Duplicate for seamless loop -->
+            <div class="testimonial-card">
+                <p>"Absolutely stunning work! The attention to detail and smooth animations really set this apart from other solutions."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar"></div>
+                    <div>
+                        <strong>Alex Johnson</strong>
+                        <div style="color: rgba(255,255,255,0.5); font-size: 0.9rem;">CEO, TechCorp</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <p>"The modern design aesthetic combined with performance optimization is exactly what we needed for our project."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar"></div>
+                    <div>
+                        <strong>Sarah Williams</strong>
+                        <div style="color: rgba(255,255,255,0.5); font-size: 0.9rem;">Designer, Creative Studio</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <p>"Incredible frontend skills! Every animation feels purposeful and enhances the user experience significantly."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar"></div>
+                    <div>
+                        <strong>Michael Chen</strong>
+                        <div style="color: rgba(255,255,255,0.5); font-size: 0.9rem;">Product Manager, StartupXYZ</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <p>"The glassmorphism and 3D effects are beautifully implemented. This showcases true mastery of CSS."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar"></div>
+                    <div>
+                        <strong>Emily Davis</strong>
+                        <div style="color: rgba(255,255,255,0.5); font-size: 0.9rem;">Lead Developer, WebAgency</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>Built with pure HTML, CSS & JavaScript - No frameworks needed</p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem;">Showcasing modern frontend capabilities</p>
+    </footer>
+
+    <script>
+        // Loading Screen
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 1000);
+        });
+
+        // Generate Stars
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            star.style.animationDuration = (Math.random() * 2 + 1) + 's';
+            starsContainer.appendChild(star);
+        }
+
+        // Custom Cursor
+        const cursor = document.getElementById('cursor');
+        const cursorDot = document.getElementById('cursorDot');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX - 10 + 'px';
+            cursor.style.top = e.clientY - 10 + 'px';
+            cursorDot.style.left = e.clientX - 2.5 + 'px';
+            cursorDot.style.top = e.clientY - 2.5 + 'px';
+        });
+
+        document.addEventListener('mousedown', () => {
+            cursor.style.transform = 'scale(0.8)';
+        });
+
+        document.addEventListener('mouseup', () => {
+            cursor.style.transform = 'scale(1)';
+        });
+
+        // Scroll Reveal Animation
+        const revealElements = document.querySelectorAll('.reveal');
+
+        const revealOnScroll = () => {
+            revealElements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+
+                if (elementTop < windowHeight - 100) {
+                    element.classList.add('active');
+                }
+            });
+        };
+
+        window.addEventListener('scroll', revealOnScroll);
+        revealOnScroll(); // Initial check
+
+        // Animate Stats
+        const animateStats = () => {
+            const stats = document.querySelectorAll('.stat-number');
+
+            stats.forEach(stat => {
+                const target = parseInt(stat.getAttribute('data-target'));
+                const elementTop = stat.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+
+                if (elementTop < windowHeight - 100 && !stat.classList.contains('animated')) {
+                    stat.classList.add('animated');
+                    let current = 0;
+                    const increment = target / 50;
+
+                    const updateCount = () => {
+                        if (current < target) {
+                            current += increment;
+                            stat.textContent = Math.ceil(current);
+                            requestAnimationFrame(updateCount);
+                        } else {
+                            stat.textContent = target;
+                        }
+                    };
+
+                    updateCount();
+                }
+            });
+        };
+
+        window.addEventListener('scroll', animateStats);
+
+        // Animate Progress Bars
+        const animateProgressBars = () => {
+            const progressBars = document.querySelectorAll('.skill-progress');
+
+            progressBars.forEach(bar => {
+                const elementTop = bar.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+
+                if (elementTop < windowHeight - 100) {
+                    const width = bar.getAttribute('data-width');
+                    bar.style.width = width + '%';
+                }
+            });
+        };
+
+        window.addEventListener('scroll', animateProgressBars);
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 3D Card tilt effect
+        document.querySelectorAll('.card-3d').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = (y - centerY) / 10;
+                const rotateY = (centerX - x) / 10;
+
+                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'rotateX(0) rotateY(0)';
+            });
+        });
+
+        // Parallax effect for floating shapes
+        document.addEventListener('mousemove', (e) => {
+            const shapes = document.querySelectorAll('.shape');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+
+            shapes.forEach((shape, index) => {
+                const speed = (index + 1) * 20;
+                shape.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+            });
+        });
+    </script>
+</body>
+</html>

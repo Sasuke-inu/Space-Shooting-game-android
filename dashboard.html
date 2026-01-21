@@ -1,0 +1,1728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0f0f1a;
+            --bg-secondary: #1a1a2e;
+            --bg-card: #16162a;
+            --bg-hover: #1e1e3a;
+            --accent-1: #6366f1;
+            --accent-2: #8b5cf6;
+            --accent-3: #06b6d4;
+            --accent-4: #10b981;
+            --accent-5: #f59e0b;
+            --accent-6: #ef4444;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: rgba(255, 255, 255, 0.08);
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-section-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            padding-left: 0.75rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 10px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            margin-bottom: 0.25rem;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.1));
+            color: var(--accent-1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .nav-item-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .nav-item-badge {
+            margin-left: auto;
+            background: var(--accent-6);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .user-profile:hover {
+            background: var(--bg-hover);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent-3), var(--accent-4));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 1.5rem 2rem;
+            overflow-y: auto;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .header-left h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .header-left p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.6rem 1rem;
+            width: 280px;
+        }
+
+        .search-box input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            width: 100%;
+            font-size: 0.9rem;
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border-color: var(--accent-1);
+        }
+
+        .icon-btn .badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 18px;
+            height: 18px;
+            background: var(--accent-6);
+            border-radius: 50%;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--card-accent), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-card:nth-child(1) { --card-accent: var(--accent-1); }
+        .stat-card:nth-child(2) { --card-accent: var(--accent-4); }
+        .stat-card:nth-child(3) { --card-accent: var(--accent-3); }
+        .stat-card:nth-child(4) { --card-accent: var(--accent-5); }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .stat-card:nth-child(1) .stat-icon { background: rgba(99, 102, 241, 0.15); color: var(--accent-1); }
+        .stat-card:nth-child(2) .stat-icon { background: rgba(16, 185, 129, 0.15); color: var(--accent-4); }
+        .stat-card:nth-child(3) .stat-icon { background: rgba(6, 182, 212, 0.15); color: var(--accent-3); }
+        .stat-card:nth-child(4) .stat-icon { background: rgba(245, 158, 11, 0.15); color: var(--accent-5); }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+        }
+
+        .stat-trend.up {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-4);
+        }
+
+        .stat-trend.down {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-6);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .chart-tabs {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chart-tab {
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .chart-tab.active {
+            background: var(--accent-1);
+            border-color: var(--accent-1);
+            color: white;
+        }
+
+        .chart-tab:hover:not(.active) {
+            border-color: var(--accent-1);
+            color: var(--accent-1);
+        }
+
+        /* Line Chart */
+        .line-chart {
+            height: 280px;
+            position: relative;
+            padding: 1rem 0;
+        }
+
+        .chart-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .chart-line {
+            fill: none;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .chart-line-1 { stroke: var(--accent-1); }
+        .chart-line-2 { stroke: var(--accent-3); }
+
+        .chart-area-1 {
+            fill: url(#gradient1);
+        }
+
+        .chart-area-2 {
+            fill: url(#gradient2);
+        }
+
+        .chart-grid-line {
+            stroke: var(--border);
+            stroke-dasharray: 5, 5;
+        }
+
+        .chart-label {
+            fill: var(--text-muted);
+            font-size: 11px;
+        }
+
+        .chart-dot {
+            fill: var(--bg-card);
+            stroke-width: 3;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .chart-dot:hover {
+            r: 8;
+        }
+
+        .chart-dot-1 { stroke: var(--accent-1); }
+        .chart-dot-2 { stroke: var(--accent-3); }
+
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        /* Donut Chart */
+        .donut-chart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .donut-chart {
+            width: 200px;
+            height: 200px;
+            position: relative;
+        }
+
+        .donut-svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .donut-segment {
+            fill: none;
+            stroke-width: 25;
+            stroke-linecap: round;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .donut-segment:hover {
+            stroke-width: 30;
+            filter: brightness(1.2);
+        }
+
+        .donut-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .donut-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .donut-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .donut-legend {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+
+        .donut-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            background: var(--bg-hover);
+        }
+
+        .donut-legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 4px;
+        }
+
+        .donut-legend-value {
+            margin-left: auto;
+            font-weight: 600;
+        }
+
+        /* Table Section */
+        .table-section {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .table-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .table-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .view-all-btn {
+            font-size: 0.85rem;
+            color: var(--accent-1);
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .view-all-btn:hover {
+            color: var(--accent-2);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tr:hover td {
+            background: var(--bg-hover);
+        }
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .user-cell-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .user-cell-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-cell-name {
+            font-weight: 500;
+        }
+
+        .user-cell-email {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .status-badge {
+            padding: 0.3rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-completed {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-4);
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-5);
+        }
+
+        .status-cancelled {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-6);
+        }
+
+        /* Activity Feed */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 10px;
+            transition: background 0.2s ease;
+        }
+
+        .activity-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.purchase {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-4);
+        }
+
+        .activity-icon.signup {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--accent-1);
+        }
+
+        .activity-icon.comment {
+            background: rgba(6, 182, 212, 0.15);
+            color: var(--accent-3);
+        }
+
+        .activity-icon.alert {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-5);
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-text strong {
+            color: var(--text-primary);
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Bar Chart */
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 200px;
+            padding: 1rem 0;
+            gap: 0.5rem;
+        }
+
+        .bar-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .bar {
+            width: 100%;
+            max-width: 40px;
+            border-radius: 6px 6px 0 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .bar:hover {
+            filter: brightness(1.2);
+            transform: scaleY(1.02);
+        }
+
+        .bar-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .bar:hover .bar-value {
+            opacity: 1;
+        }
+
+        /* Progress List */
+        .progress-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .progress-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .progress-label {
+            font-size: 0.9rem;
+        }
+
+        .progress-value {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-hover);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .charts-grid,
+            .table-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .header-left h1 {
+                font-size: 1.5rem;
+            }
+
+            .search-box {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-hover);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* Menu Toggle Button */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 200;
+            width: 44px;
+            height: 44px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .menu-toggle span {
+            width: 20px;
+            height: 2px;
+            background: var(--text-primary);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 992px) {
+            .menu-toggle {
+                display: flex;
+            }
+        }
+
+        /* Overlay */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 50;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Overlay for mobile -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Menu Toggle -->
+    <button class="menu-toggle" id="menuToggle">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="logo">
+            <div class="logo-icon">&#x26A1;</div>
+            <span class="logo-text">NexusAI</span>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Main Menu</div>
+            <a class="nav-item active">
+                <span class="nav-item-icon">&#x1F4CA;</span>
+                Dashboard
+            </a>
+            <a class="nav-item">
+                <span class="nav-item-icon">&#x1F4C8;</span>
+                Analytics
+            </a>
+            <a class="nav-item">
+                <span class="nav-item-icon">&#x1F4B3;</span>
+                Transactions
+                <span class="nav-item-badge">12</span>
+            </a>
+            <a class="nav-item">
+                <span class="nav-item-icon">&#x1F4E6;</span>
+                Products
+            </a>
+            <a class="nav-item">
+                <span class="nav-item-icon">&#x1F465;</span>
+                Customers
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Other</div>
+            <a class="nav-item">
+                <span class="nav-item-icon">&#x2699;</span>
+                Settings
+            </a>
+            <a class="nav-item">
+                <span class="nav-item-icon">&#x1F4AC;</span>
+                Support
+            </a>
+            <a class="nav-item">
+                <span class="nav-item-icon">&#x1F4D6;</span>
+                Documentation
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar">JD</div>
+                <div class="user-info">
+                    <div class="user-name">John Doe</div>
+                    <div class="user-role">Administrator</div>
+                </div>
+                <span style="color: var(--text-muted);">&#x22EE;</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1>Dashboard Overview</h1>
+                <p>Welcome back, John! Here's what's happening today.</p>
+            </div>
+            <div class="header-right">
+                <div class="search-box">
+                    <span>&#x1F50D;</span>
+                    <input type="text" placeholder="Search anything...">
+                </div>
+                <button class="icon-btn">
+                    <span>&#x1F514;</span>
+                    <span class="badge">3</span>
+                </button>
+                <button class="icon-btn">
+                    <span>&#x2699;</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card animate-in" style="opacity: 0;">
+                <div class="stat-header">
+                    <div class="stat-icon">&#x1F4B0;</div>
+                    <div class="stat-trend up">&#x2191; 12.5%</div>
+                </div>
+                <div class="stat-value">$84,254</div>
+                <div class="stat-label">Total Revenue</div>
+            </div>
+            <div class="stat-card animate-in" style="opacity: 0;">
+                <div class="stat-header">
+                    <div class="stat-icon">&#x1F6D2;</div>
+                    <div class="stat-trend up">&#x2191; 8.2%</div>
+                </div>
+                <div class="stat-value">1,429</div>
+                <div class="stat-label">Total Orders</div>
+            </div>
+            <div class="stat-card animate-in" style="opacity: 0;">
+                <div class="stat-header">
+                    <div class="stat-icon">&#x1F465;</div>
+                    <div class="stat-trend up">&#x2191; 24.3%</div>
+                </div>
+                <div class="stat-value">8,642</div>
+                <div class="stat-label">Total Customers</div>
+            </div>
+            <div class="stat-card animate-in" style="opacity: 0;">
+                <div class="stat-header">
+                    <div class="stat-icon">&#x2B50;</div>
+                    <div class="stat-trend down">&#x2193; 2.1%</div>
+                </div>
+                <div class="stat-value">4.8</div>
+                <div class="stat-label">Average Rating</div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-grid">
+            <!-- Line Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Revenue Overview</h3>
+                    <div class="chart-tabs">
+                        <button class="chart-tab">Day</button>
+                        <button class="chart-tab active">Week</button>
+                        <button class="chart-tab">Month</button>
+                        <button class="chart-tab">Year</button>
+                    </div>
+                </div>
+                <div class="line-chart">
+                    <svg class="chart-svg" viewBox="0 0 700 280">
+                        <defs>
+                            <linearGradient id="gradient1" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color: rgba(99, 102, 241, 0.3)" />
+                                <stop offset="100%" style="stop-color: rgba(99, 102, 241, 0)" />
+                            </linearGradient>
+                            <linearGradient id="gradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color: rgba(6, 182, 212, 0.3)" />
+                                <stop offset="100%" style="stop-color: rgba(6, 182, 212, 0)" />
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Grid Lines -->
+                        <line class="chart-grid-line" x1="50" y1="50" x2="680" y2="50" />
+                        <line class="chart-grid-line" x1="50" y1="110" x2="680" y2="110" />
+                        <line class="chart-grid-line" x1="50" y1="170" x2="680" y2="170" />
+                        <line class="chart-grid-line" x1="50" y1="230" x2="680" y2="230" />
+
+                        <!-- Y-axis labels -->
+                        <text class="chart-label" x="40" y="55" text-anchor="end">$80k</text>
+                        <text class="chart-label" x="40" y="115" text-anchor="end">$60k</text>
+                        <text class="chart-label" x="40" y="175" text-anchor="end">$40k</text>
+                        <text class="chart-label" x="40" y="235" text-anchor="end">$20k</text>
+
+                        <!-- X-axis labels -->
+                        <text class="chart-label" x="100" y="265">Mon</text>
+                        <text class="chart-label" x="195" y="265">Tue</text>
+                        <text class="chart-label" x="290" y="265">Wed</text>
+                        <text class="chart-label" x="385" y="265">Thu</text>
+                        <text class="chart-label" x="480" y="265">Fri</text>
+                        <text class="chart-label" x="575" y="265">Sat</text>
+                        <text class="chart-label" x="660" y="265">Sun</text>
+
+                        <!-- Area fills -->
+                        <path class="chart-area-1" d="M100,180 L195,120 L290,150 L385,80 L480,110 L575,60 L660,90 L660,230 L100,230 Z" />
+                        <path class="chart-area-2" d="M100,200 L195,170 L290,190 L385,140 L480,160 L575,130 L660,150 L660,230 L100,230 Z" />
+
+                        <!-- Lines -->
+                        <path class="chart-line chart-line-1" d="M100,180 L195,120 L290,150 L385,80 L480,110 L575,60 L660,90" />
+                        <path class="chart-line chart-line-2" d="M100,200 L195,170 L290,190 L385,140 L480,160 L575,130 L660,150" />
+
+                        <!-- Dots -->
+                        <circle class="chart-dot chart-dot-1" cx="100" cy="180" r="5" />
+                        <circle class="chart-dot chart-dot-1" cx="195" cy="120" r="5" />
+                        <circle class="chart-dot chart-dot-1" cx="290" cy="150" r="5" />
+                        <circle class="chart-dot chart-dot-1" cx="385" cy="80" r="5" />
+                        <circle class="chart-dot chart-dot-1" cx="480" cy="110" r="5" />
+                        <circle class="chart-dot chart-dot-1" cx="575" cy="60" r="5" />
+                        <circle class="chart-dot chart-dot-1" cx="660" cy="90" r="5" />
+
+                        <circle class="chart-dot chart-dot-2" cx="100" cy="200" r="5" />
+                        <circle class="chart-dot chart-dot-2" cx="195" cy="170" r="5" />
+                        <circle class="chart-dot chart-dot-2" cx="290" cy="190" r="5" />
+                        <circle class="chart-dot chart-dot-2" cx="385" cy="140" r="5" />
+                        <circle class="chart-dot chart-dot-2" cx="480" cy="160" r="5" />
+                        <circle class="chart-dot chart-dot-2" cx="575" cy="130" r="5" />
+                        <circle class="chart-dot chart-dot-2" cx="660" cy="150" r="5" />
+                    </svg>
+                </div>
+                <div class="chart-legend">
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background: var(--accent-1);"></div>
+                        Revenue
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background: var(--accent-3);"></div>
+                        Expenses
+                    </div>
+                </div>
+            </div>
+
+            <!-- Donut Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Sales by Category</h3>
+                </div>
+                <div class="donut-chart-container">
+                    <div class="donut-chart">
+                        <svg class="donut-svg" viewBox="0 0 100 100">
+                            <circle class="donut-segment" cx="50" cy="50" r="35" stroke="var(--accent-1)"
+                                stroke-dasharray="77 143" stroke-dashoffset="0" />
+                            <circle class="donut-segment" cx="50" cy="50" r="35" stroke="var(--accent-3)"
+                                stroke-dasharray="55 165" stroke-dashoffset="-77" />
+                            <circle class="donut-segment" cx="50" cy="50" r="35" stroke="var(--accent-4)"
+                                stroke-dasharray="44 176" stroke-dashoffset="-132" />
+                            <circle class="donut-segment" cx="50" cy="50" r="35" stroke="var(--accent-5)"
+                                stroke-dasharray="44 176" stroke-dashoffset="-176" />
+                        </svg>
+                        <div class="donut-center">
+                            <div class="donut-value">$42.5k</div>
+                            <div class="donut-label">Total Sales</div>
+                        </div>
+                    </div>
+                    <div class="donut-legend">
+                        <div class="donut-legend-item">
+                            <div class="donut-legend-color" style="background: var(--accent-1);"></div>
+                            <span>Electronics</span>
+                            <span class="donut-legend-value">35%</span>
+                        </div>
+                        <div class="donut-legend-item">
+                            <div class="donut-legend-color" style="background: var(--accent-3);"></div>
+                            <span>Clothing</span>
+                            <span class="donut-legend-value">25%</span>
+                        </div>
+                        <div class="donut-legend-item">
+                            <div class="donut-legend-color" style="background: var(--accent-4);"></div>
+                            <span>Food</span>
+                            <span class="donut-legend-value">20%</span>
+                        </div>
+                        <div class="donut-legend-item">
+                            <div class="donut-legend-color" style="background: var(--accent-5);"></div>
+                            <span>Other</span>
+                            <span class="donut-legend-value">20%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Section -->
+        <div class="table-section">
+            <!-- Recent Orders -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h3 class="table-title">Recent Orders</h3>
+                    <a class="view-all-btn">View All &#x2192;</a>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Product</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-cell-avatar" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">SM</div>
+                                    <div class="user-cell-info">
+                                        <span class="user-cell-name">Sarah Miller</span>
+                                        <span class="user-cell-email">sarah@email.com</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>MacBook Pro 16"</td>
+                            <td>$2,499.00</td>
+                            <td><span class="status-badge status-completed">Completed</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-cell-avatar" style="background: linear-gradient(135deg, #06b6d4, #10b981);">JW</div>
+                                    <div class="user-cell-info">
+                                        <span class="user-cell-name">James Wilson</span>
+                                        <span class="user-cell-email">james@email.com</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>iPhone 15 Pro</td>
+                            <td>$1,199.00</td>
+                            <td><span class="status-badge status-pending">Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-cell-avatar" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">ED</div>
+                                    <div class="user-cell-info">
+                                        <span class="user-cell-name">Emily Davis</span>
+                                        <span class="user-cell-email">emily@email.com</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>AirPods Pro 2</td>
+                            <td>$249.00</td>
+                            <td><span class="status-badge status-completed">Completed</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-cell-avatar" style="background: linear-gradient(135deg, #10b981, #06b6d4);">MC</div>
+                                    <div class="user-cell-info">
+                                        <span class="user-cell-name">Michael Chen</span>
+                                        <span class="user-cell-email">michael@email.com</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>iPad Air</td>
+                            <td>$799.00</td>
+                            <td><span class="status-badge status-cancelled">Cancelled</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-cell-avatar" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">LB</div>
+                                    <div class="user-cell-info">
+                                        <span class="user-cell-name">Lisa Brown</span>
+                                        <span class="user-cell-email">lisa@email.com</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Apple Watch Ultra</td>
+                            <td>$799.00</td>
+                            <td><span class="status-badge status-pending">Pending</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Activity Feed -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h3 class="table-title">Recent Activity</h3>
+                    <a class="view-all-btn">View All &#x2192;</a>
+                </div>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon purchase">&#x1F6D2;</div>
+                        <div class="activity-content">
+                            <div class="activity-text"><strong>Sarah Miller</strong> purchased MacBook Pro</div>
+                            <div class="activity-time">2 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon signup">&#x1F464;</div>
+                        <div class="activity-content">
+                            <div class="activity-text">New user <strong>Alex Johnson</strong> registered</div>
+                            <div class="activity-time">15 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon comment">&#x1F4AC;</div>
+                        <div class="activity-content">
+                            <div class="activity-text"><strong>Emily Davis</strong> left a 5-star review</div>
+                            <div class="activity-time">1 hour ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon alert">&#x26A0;</div>
+                        <div class="activity-content">
+                            <div class="activity-text">Low stock alert for <strong>iPhone 15 Pro</strong></div>
+                            <div class="activity-time">2 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon purchase">&#x1F6D2;</div>
+                        <div class="activity-content">
+                            <div class="activity-text"><strong>James Wilson</strong> placed an order</div>
+                            <div class="activity-time">3 hours ago</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Charts Row -->
+        <div class="charts-grid" style="margin-top: 1.5rem;">
+            <!-- Bar Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Weekly Traffic</h3>
+                </div>
+                <div class="bar-chart" id="barChart">
+                    <div class="bar-item">
+                        <div class="bar" style="height: 60%; background: linear-gradient(to top, var(--accent-1), var(--accent-2));">
+                            <span class="bar-value">2.4k</span>
+                        </div>
+                        <span class="bar-label">Mon</span>
+                    </div>
+                    <div class="bar-item">
+                        <div class="bar" style="height: 80%; background: linear-gradient(to top, var(--accent-1), var(--accent-2));">
+                            <span class="bar-value">3.2k</span>
+                        </div>
+                        <span class="bar-label">Tue</span>
+                    </div>
+                    <div class="bar-item">
+                        <div class="bar" style="height: 45%; background: linear-gradient(to top, var(--accent-1), var(--accent-2));">
+                            <span class="bar-value">1.8k</span>
+                        </div>
+                        <span class="bar-label">Wed</span>
+                    </div>
+                    <div class="bar-item">
+                        <div class="bar" style="height: 90%; background: linear-gradient(to top, var(--accent-1), var(--accent-2));">
+                            <span class="bar-value">3.6k</span>
+                        </div>
+                        <span class="bar-label">Thu</span>
+                    </div>
+                    <div class="bar-item">
+                        <div class="bar" style="height: 70%; background: linear-gradient(to top, var(--accent-1), var(--accent-2));">
+                            <span class="bar-value">2.8k</span>
+                        </div>
+                        <span class="bar-label">Fri</span>
+                    </div>
+                    <div class="bar-item">
+                        <div class="bar" style="height: 100%; background: linear-gradient(to top, var(--accent-4), var(--accent-3));">
+                            <span class="bar-value">4.0k</span>
+                        </div>
+                        <span class="bar-label">Sat</span>
+                    </div>
+                    <div class="bar-item">
+                        <div class="bar" style="height: 55%; background: linear-gradient(to top, var(--accent-1), var(--accent-2));">
+                            <span class="bar-value">2.2k</span>
+                        </div>
+                        <span class="bar-label">Sun</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Section -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Top Products</h3>
+                </div>
+                <div class="progress-list">
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">MacBook Pro</span>
+                            <span class="progress-value">$45,240</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 85%; background: linear-gradient(90deg, var(--accent-1), var(--accent-2));"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">iPhone 15 Pro</span>
+                            <span class="progress-value">$38,120</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 72%; background: linear-gradient(90deg, var(--accent-3), var(--accent-4));"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">iPad Air</span>
+                            <span class="progress-value">$24,680</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 58%; background: linear-gradient(90deg, var(--accent-5), var(--accent-6));"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">AirPods Pro</span>
+                            <span class="progress-value">$18,450</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 42%; background: linear-gradient(90deg, var(--accent-2), var(--accent-1));"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">Apple Watch</span>
+                            <span class="progress-value">$12,890</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 30%; background: linear-gradient(90deg, var(--accent-4), var(--accent-3));"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Mobile Menu Toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('show');
+        });
+
+        // Navigation Active State
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                navItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
+
+        // Chart Tab Switching
+        const chartTabs = document.querySelectorAll('.chart-tab');
+        chartTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                chartTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+            });
+        });
+
+        // Animate Stats on Load
+        const animateValue = (element, start, end, duration) => {
+            const startTime = performance.now();
+            const isDecimal = String(end).includes('.');
+
+            const update = (currentTime) => {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                const current = start + (end - start) * easeOutQuart;
+
+                if (isDecimal) {
+                    element.textContent = current.toFixed(1);
+                } else {
+                    element.textContent = Math.floor(current).toLocaleString();
+                    if (element.textContent.length > 3 && !element.dataset.prefix) {
+                        // Add dollar sign for large numbers
+                    }
+                }
+
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            };
+
+            requestAnimationFrame(update);
+        };
+
+        // Animate stats when page loads
+        window.addEventListener('load', () => {
+            const statValues = document.querySelectorAll('.stat-value');
+
+            setTimeout(() => {
+                statValues.forEach((stat, index) => {
+                    const text = stat.textContent;
+                    let endValue;
+                    let prefix = '';
+
+                    if (text.includes('$')) {
+                        prefix = '$';
+                        endValue = parseFloat(text.replace(/[$,]/g, ''));
+                    } else if (text.includes('.')) {
+                        endValue = parseFloat(text);
+                    } else {
+                        endValue = parseInt(text.replace(/,/g, ''));
+                    }
+
+                    stat.textContent = prefix + '0';
+
+                    setTimeout(() => {
+                        const startTime = performance.now();
+                        const duration = 2000;
+
+                        const animate = (currentTime) => {
+                            const elapsed = currentTime - startTime;
+                            const progress = Math.min(elapsed / duration, 1);
+                            const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                            const current = endValue * easeOutQuart;
+
+                            if (text.includes('$')) {
+                                stat.textContent = '$' + Math.floor(current).toLocaleString();
+                            } else if (text.includes('.')) {
+                                stat.textContent = current.toFixed(1);
+                            } else {
+                                stat.textContent = Math.floor(current).toLocaleString();
+                            }
+
+                            if (progress < 1) {
+                                requestAnimationFrame(animate);
+                            } else {
+                                stat.textContent = text;
+                            }
+                        };
+
+                        requestAnimationFrame(animate);
+                    }, index * 100);
+                });
+            }, 500);
+        });
+
+        // Animate progress bars on scroll
+        const animateProgressBars = () => {
+            const progressFills = document.querySelectorAll('.progress-fill');
+            progressFills.forEach(fill => {
+                const rect = fill.getBoundingClientRect();
+                if (rect.top < window.innerHeight && !fill.classList.contains('animated')) {
+                    fill.classList.add('animated');
+                    const width = fill.style.width;
+                    fill.style.width = '0%';
+                    setTimeout(() => {
+                        fill.style.width = width;
+                    }, 100);
+                }
+            });
+        };
+
+        window.addEventListener('scroll', animateProgressBars);
+        animateProgressBars();
+
+        // Add hover effect to chart dots
+        const chartDots = document.querySelectorAll('.chart-dot');
+        const tooltip = document.createElement('div');
+        tooltip.className = 'tooltip';
+        document.body.appendChild(tooltip);
+
+        chartDots.forEach(dot => {
+            dot.addEventListener('mouseenter', (e) => {
+                const values = ['$35k', '$55k', '$45k', '$70k', '$58k', '$75k', '$65k'];
+                const index = Array.from(chartDots).indexOf(dot) % 7;
+                tooltip.textContent = values[index];
+                tooltip.classList.add('show');
+            });
+
+            dot.addEventListener('mousemove', (e) => {
+                tooltip.style.left = e.pageX + 10 + 'px';
+                tooltip.style.top = e.pageY - 30 + 'px';
+            });
+
+            dot.addEventListener('mouseleave', () => {
+                tooltip.classList.remove('show');
+            });
+        });
+
+        // Animate donut chart segments
+        const donutSegments = document.querySelectorAll('.donut-segment');
+        donutSegments.forEach((segment, index) => {
+            segment.style.opacity = '0';
+            setTimeout(() => {
+                segment.style.transition = 'opacity 0.5s ease, stroke-dasharray 0.8s ease';
+                segment.style.opacity = '1';
+            }, 500 + (index * 150));
+        });
+
+        // Real-time clock (simulated activity)
+        const updateActivityTimes = () => {
+            const times = document.querySelectorAll('.activity-time');
+            const timeTexts = ['Just now', '2 minutes ago', '15 minutes ago', '1 hour ago', '2 hours ago'];
+            times.forEach((time, index) => {
+                if (index < timeTexts.length) {
+                    time.textContent = timeTexts[index];
+                }
+            });
+        };
+
+        setInterval(() => {
+            const firstActivity = document.querySelector('.activity-time');
+            if (firstActivity && firstActivity.textContent === 'Just now') {
+                firstActivity.textContent = '1 minute ago';
+            }
+        }, 60000);
+
+        // Add smooth animations to stat cards
+        const statCards = document.querySelectorAll('.stat-card');
+        statCards.forEach((card, index) => {
+            setTimeout(() => {
+                card.style.opacity = '1';
+            }, index * 100);
+        });
+    </script>
+</body>
+</html>
