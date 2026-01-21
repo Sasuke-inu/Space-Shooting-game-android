@@ -29,6 +29,7 @@ import {
   rand,
 } from "./vectorMath"
 import { hapticLight, hapticMedium, hapticHeavy, hapticWarning } from "./haptics"
+import { playSfx } from "./audioManager"
 
 export const useGameEngine = () => {
   const boom = useCallback((pos: Vec2, color: string, count = 24, speed = 120) => {
@@ -73,6 +74,7 @@ export const useGameEngine = () => {
 
       state.updatePlayer({ cooldown })
       hapticLight()
+      playSfx('shoot_player')
     }
   }, [])
 
@@ -164,6 +166,7 @@ export const useGameEngine = () => {
 
         state.updatePlayer({ cooldown })
         hapticLight()
+        playSfx('shoot_player')
       }
     }
 
