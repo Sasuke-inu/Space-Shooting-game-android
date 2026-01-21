@@ -247,15 +247,25 @@ export const useGameEngine = () => {
       updateHomingMissiles(state, effectiveDt, themeColors)
     }
 
-    // Update particles
+    // Update particles with off-screen culling
+    const PARTICLE_CULL_MARGIN = 50 // Allow particles slightly off-screen before culling
     const newParticles = state.particles
       .map((p) => ({
         ...p,
-        pos: wrap(add(p.pos, mul(p.vel, effectiveDt)), state.w, state.h),
+        pos: add(p.pos, mul(p.vel, effectiveDt)),
         vel: mul(p.vel, 0.98),
         life: p.life - effectiveDt,
       }))
-      .filter((p) => p.life > 0)
+      .filter((p) => {
+        // Remove particles with expired life
+        if (p.life <= 0) return false
+
+        // Remove particles that are off-screen (with margin)
+        if (p.pos.x < -PARTICLE_CULL_MARGIN || p.pos.x > state.w + PARTICLE_CULL_MARGIN) return false
+        if (p.pos.y < -PARTICLE_CULL_MARGIN || p.pos.y > state.h + PARTICLE_CULL_MARGIN) return false
+
+        return true
+      })
     state.updateParticles(newParticles)
 
     // Collisions - bullets vs asteroids
