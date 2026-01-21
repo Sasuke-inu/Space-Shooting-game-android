@@ -42,3 +42,11 @@ expo.log
 
 # Auto Claude data directory
 .auto-claude/
+
+# Environment variables
+.env
+.env.*
+
+# IDE and tool settings
+.claude_settings.json
+.auto-claude-*
