@@ -59,6 +59,11 @@ export interface ThemeColors {
   // Combo
   comboText: string
   comboGlow: string
+
+  // Parallax
+  parallaxDistantStars: string
+  parallaxNebula: string
+  parallaxDebris: string
 }
 
 export interface GameTheme {

@@ -1,0 +1,39 @@
+{
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true
+  },
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Read(./**)",
+      "Write(./**)",
+      "Edit(./**)",
+      "Glob(./**)",
+      "Grep(./**)",
+      "Read(/Users/d/Developer/Space Shooting game/.auto-claude/worktrees/tasks/027-background-parallax-scrolling/**)",
+      "Write(/Users/d/Developer/Space Shooting game/.auto-claude/worktrees/tasks/027-background-parallax-scrolling/**)",
+      "Edit(/Users/d/Developer/Space Shooting game/.auto-claude/worktrees/tasks/027-background-parallax-scrolling/**)",
+      "Glob(/Users/d/Developer/Space Shooting game/.auto-claude/worktrees/tasks/027-background-parallax-scrolling/**)",
+      "Grep(/Users/d/Developer/Space Shooting game/.auto-claude/worktrees/tasks/027-background-parallax-scrolling/**)",
+      "Read(/Users/d/Developer/Space Shooting game/.auto-claude/worktrees/tasks/027-background-parallax-scrolling/.auto-claude/specs/027-background-parallax-scrolling/**)",
+      "Write(/Users/d/Developer/Space Shooting game/.auto-claude/worktrees/tasks/027-background-parallax-scrolling/.auto-claude/specs/027-background-parallax-scrolling/**)",
+      "Edit(/Users/d/Developer/Space Shooting game/.auto-claude/worktrees/tasks/027-background-parallax-scrolling/.auto-claude/specs/027-background-parallax-scrolling/**)",
+      "Read(/Users/d/Developer/Space Shooting game/.auto-claude/**)",
+      "Write(/Users/d/Developer/Space Shooting game/.auto-claude/**)",
+      "Edit(/Users/d/Developer/Space Shooting game/.auto-claude/**)",
+      "Glob(/Users/d/Developer/Space Shooting game/.auto-claude/**)",
+      "Grep(/Users/d/Developer/Space Shooting game/.auto-claude/**)",
+      "Bash(*)",
+      "WebFetch(*)",
+      "WebSearch(*)",
+      "mcp__context7__resolve-library-id(*)",
+      "mcp__context7__get-library-docs(*)",
+      "mcp__graphiti-memory__search_nodes(*)",
+      "mcp__graphiti-memory__search_facts(*)",
+      "mcp__graphiti-memory__add_episode(*)",
+      "mcp__graphiti-memory__get_episodes(*)",
+      "mcp__graphiti-memory__get_entity_edge(*)"
+    ]
+  }
+}

@@ -39,3 +39,6 @@ android/
 
 # Expo log
 expo.log
+
+# Auto Claude data directory
+.auto-claude/

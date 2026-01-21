@@ -1,0 +1,25 @@
+{
+  "active": true,
+  "spec": "027-background-parallax-scrolling",
+  "state": "planning",
+  "subtasks": {
+    "completed": 0,
+    "total": 0,
+    "in_progress": 1,
+    "failed": 0
+  },
+  "phase": {
+    "current": "Theme Color Definitions",
+    "id": null,
+    "total": 2
+  },
+  "workers": {
+    "active": 0,
+    "max": 1
+  },
+  "session": {
+    "number": 2,
+    "started_at": "2026-01-22T09:44:42.197859"
+  },
+  "last_update": "2026-01-22T09:48:20.711963"
+}

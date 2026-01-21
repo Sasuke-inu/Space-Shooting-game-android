@@ -78,6 +78,11 @@ export const neonVoidTheme: GameTheme = {
     // Combo
     comboText: '#ffdd4d',
     comboGlow: 'rgba(255, 221, 77, 0.6)',
+
+    // Parallax
+    parallaxDistantStars: 'rgba(136, 255, 255, 0.15)',
+    parallaxNebula: 'rgba(42, 239, 201, 0.08)',
+    parallaxDebris: 'rgba(136, 255, 255, 0.25)',
   },
 }
 
@@ -147,6 +152,11 @@ export const nomadTheme: GameTheme = {
     // Combo
     comboText: '#ffd700',
     comboGlow: 'rgba(255, 215, 0, 0.6)',
+
+    // Parallax
+    parallaxDistantStars: 'rgba(240, 192, 112, 0.12)',
+    parallaxNebula: 'rgba(212, 165, 116, 0.1)',
+    parallaxDebris: 'rgba(232, 165, 75, 0.2)',
   },
 }
 
@@ -216,6 +226,11 @@ export const sakuraTheme: GameTheme = {
     // Combo
     comboText: '#fff44f',
     comboGlow: 'rgba(255, 244, 79, 0.6)',
+
+    // Parallax
+    parallaxDistantStars: 'rgba(255, 200, 221, 0.15)',
+    parallaxNebula: 'rgba(255, 143, 171, 0.1)',
+    parallaxDebris: 'rgba(255, 175, 204, 0.22)',
   },
 }
 
@@ -285,6 +300,11 @@ export const forestMatrixTheme: GameTheme = {
     // Combo
     comboText: '#ffd700',
     comboGlow: 'rgba(255, 215, 0, 0.6)',
+
+    // Parallax
+    parallaxDistantStars: 'rgba(57, 255, 20, 0.12)',
+    parallaxNebula: 'rgba(127, 255, 0, 0.08)',
+    parallaxDebris: 'rgba(0, 255, 127, 0.2)',
   },
 }
 
@@ -354,6 +374,11 @@ export const infernoTheme: GameTheme = {
     // Combo
     comboText: '#ffd700',
     comboGlow: 'rgba(255, 215, 0, 0.6)',
+
+    // Parallax
+    parallaxDistantStars: 'rgba(255, 107, 53, 0.15)',
+    parallaxNebula: 'rgba(255, 69, 0, 0.12)',
+    parallaxDebris: 'rgba(255, 215, 0, 0.25)',
   },
 }
 
@@ -423,6 +448,11 @@ export const arcticTheme: GameTheme = {
     // Combo
     comboText: '#ffd700',
     comboGlow: 'rgba(255, 215, 0, 0.6)',
+
+    // Parallax
+    parallaxDistantStars: 'rgba(176, 224, 230, 0.15)',
+    parallaxNebula: 'rgba(135, 206, 235, 0.1)',
+    parallaxDebris: 'rgba(224, 247, 255, 0.22)',
   },
 }
 
