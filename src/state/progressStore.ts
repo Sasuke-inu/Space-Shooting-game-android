@@ -11,7 +11,7 @@ import type {
   BossType,
   SkinId,
 } from '../types/game'
-import { ACHIEVEMENTS, UPGRADE_COSTS, SKIN_COSTS } from '../types/game'
+import { ACHIEVEMENTS, UPGRADE_COSTS, SKIN_COSTS, SHIP_SKINS } from '../types/game'
 
 // ------------------------------------------------------------------ //
 //                         Achievement Store
@@ -47,55 +47,65 @@ export const useAchievementStore = create<AchievementState>()(
       achievements: initializeAchievements(),
       recentUnlock: null,
 
-      unlockAchievement: (id) =>
-        set((state) => {
-          if (state.achievements[id].unlocked) return state
-          return {
-            achievements: {
-              ...state.achievements,
-              [id]: {
-                ...state.achievements[id],
-                unlocked: true,
-                unlockedAt: Date.now(),
-              },
+      unlockAchievement: (id) => {
+        const state = get()
+        if (state.achievements[id].unlocked) return
+
+        set({
+          achievements: {
+            ...state.achievements,
+            [id]: {
+              ...state.achievements[id],
+              unlocked: true,
+              unlockedAt: Date.now(),
             },
-            recentUnlock: id,
-          }
-        }),
+          },
+          recentUnlock: id,
+        })
 
-      updateProgress: (id, progress) =>
-        set((state) => {
-          const achievement = state.achievements[id]
-          if (achievement.unlocked) return state
+        // Check if any skins can be unlocked with this achievement
+        const upgradesStore = useUpgradesStore.getState()
+        upgradesStore.checkAndUnlockAchievementSkins()
+      },
 
-          const target = achievement.target || 1
-          const newProgress = Math.min(progress, target)
+      updateProgress: (id, progress) => {
+        const state = get()
+        const achievement = state.achievements[id]
+        if (achievement.unlocked) return
 
-          if (newProgress >= target) {
-            return {
-              achievements: {
-                ...state.achievements,
-                [id]: {
-                  ...achievement,
-                  progress: newProgress,
-                  unlocked: true,
-                  unlockedAt: Date.now(),
-                },
-              },
-              recentUnlock: id,
-            }
-          }
+        const target = achievement.target || 1
+        const newProgress = Math.min(progress, target)
 
-          return {
+        if (newProgress >= target) {
+          set({
             achievements: {
               ...state.achievements,
               [id]: {
                 ...achievement,
                 progress: newProgress,
+                unlocked: true,
+                unlockedAt: Date.now(),
               },
             },
-          }
-        }),
+            recentUnlock: id,
+          })
+
+          // Check if any skins can be unlocked with this achievement
+          const upgradesStore = useUpgradesStore.getState()
+          upgradesStore.checkAndUnlockAchievementSkins()
+          return
+        }
+
+        set({
+          achievements: {
+            ...state.achievements,
+            [id]: {
+              ...achievement,
+              progress: newProgress,
+            },
+          },
+        })
+      },
 
       clearRecentUnlock: () => set({ recentUnlock: null }),
 
@@ -266,6 +276,8 @@ interface UpgradesState {
   selectSkin: (ship: ShipType, skinId: SkinId) => boolean
   isSkinUnlocked: (ship: ShipType, skinId: SkinId) => boolean
   getSelectedSkin: (ship: ShipType) => SkinId
+  canUnlockSkin: (ship: ShipType, skinId: SkinId) => { canUnlock: boolean; reason?: string }
+  checkAndUnlockAchievementSkins: () => void
   resetUpgrades: () => void
 }
 
@@ -364,6 +376,27 @@ export const useUpgradesStore = create<UpgradesState>()(
         const state = get()
         if (state.unlockedSkins[ship]?.includes(skinId)) return true
 
+        const skinData = SHIP_SKINS[ship]?.[skinId]
+        if (!skinData) return false
+
+        // Check if skin requires an achievement
+        if (skinData.achievementRequired) {
+          const achievementStore = useAchievementStore.getState()
+          const hasAchievement = achievementStore.isUnlocked(skinData.achievementRequired as AchievementId)
+
+          if (!hasAchievement) return false
+
+          // Achievement-based skins are free to unlock once achievement is met
+          set({
+            unlockedSkins: {
+              ...state.unlockedSkins,
+              [ship]: [...(state.unlockedSkins[ship] || []), skinId],
+            },
+          })
+          return true
+        }
+
+        // Credit-based unlock
         const cost = SKIN_COSTS[skinId]
         if (cost === undefined) return false
         if (state.credits < cost) return false
@@ -394,6 +427,75 @@ export const useUpgradesStore = create<UpgradesState>()(
       isSkinUnlocked: (ship, skinId) => get().unlockedSkins[ship]?.includes(skinId) ?? false,
 
       getSelectedSkin: (ship) => get().selectedSkins[ship] || 'default',
+
+      canUnlockSkin: (ship, skinId) => {
+        const state = get()
+        if (state.unlockedSkins[ship]?.includes(skinId)) {
+          return { canUnlock: false, reason: 'Already unlocked' }
+        }
+
+        const skinData = SHIP_SKINS[ship]?.[skinId]
+        if (!skinData) {
+          return { canUnlock: false, reason: 'Skin does not exist' }
+        }
+
+        // Check achievement requirement
+        if (skinData.achievementRequired) {
+          const achievementStore = useAchievementStore.getState()
+          const hasAchievement = achievementStore.isUnlocked(skinData.achievementRequired as AchievementId)
+
+          if (!hasAchievement) {
+            const achievementData = ACHIEVEMENTS[skinData.achievementRequired as AchievementId]
+            return {
+              canUnlock: false,
+              reason: `Requires achievement: ${achievementData?.name || 'Unknown'}`,
+            }
+          }
+
+          return { canUnlock: true }
+        }
+
+        // Check credit requirement
+        const cost = SKIN_COSTS[skinId]
+        if (cost === undefined) {
+          return { canUnlock: false, reason: 'Invalid skin cost' }
+        }
+
+        if (state.credits < cost) {
+          return { canUnlock: false, reason: `Not enough credits (need ${cost})` }
+        }
+
+        return { canUnlock: true }
+      },
+
+      checkAndUnlockAchievementSkins: () => {
+        const state = get()
+        const achievementStore = useAchievementStore.getState()
+        const shipTypes: ShipType[] = ['fighter', 'scout', 'tank', 'interceptor']
+
+        shipTypes.forEach((ship) => {
+          const skins = SHIP_SKINS[ship]
+          Object.entries(skins).forEach(([skinId, skinData]) => {
+            // Skip if already unlocked
+            if (state.unlockedSkins[ship]?.includes(skinId as SkinId)) return
+
+            // Check if skin requires achievement
+            if (skinData.achievementRequired) {
+              const hasAchievement = achievementStore.isUnlocked(skinData.achievementRequired as AchievementId)
+
+              if (hasAchievement) {
+                // Auto-unlock this achievement-based skin
+                set((currentState) => ({
+                  unlockedSkins: {
+                    ...currentState.unlockedSkins,
+                    [ship]: [...(currentState.unlockedSkins[ship] || []), skinId as SkinId],
+                  },
+                }))
+              }
+            }
+          })
+        })
+      },
 
       resetUpgrades: () =>
         set({
