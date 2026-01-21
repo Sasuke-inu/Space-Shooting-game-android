@@ -183,25 +183,30 @@ export const useGameEngine = () => {
     stateUpdates.sessionKillTimer = updatedSessionKillTimer
     stateUpdates.sessionKillsRecent = updatedSessionKillTimer <= 0 ? 0 : state.sessionKillsRecent
 
-    // Update combo timer
-    let updatedCombo = state.combo
-    if (state.combo.timer > 0) {
-      const newTimer = state.combo.timer - dt
-      if (newTimer <= 0) {
-        updatedCombo = { count: 0, multiplier: 1, timer: 0 }
-      } else {
-        updatedCombo = { ...state.combo, timer: newTimer }
+    // Update combo timer (mutate local copy)
+    let updatedCombo = { ...state.combo }
+    if (updatedCombo.timer > 0) {
+      updatedCombo.timer -= dt
+      if (updatedCombo.timer <= 0) {
+        updatedCombo.count = 0
+        updatedCombo.multiplier = 1
+        updatedCombo.timer = 0
       }
     }
     stateUpdates.combo = updatedCombo
 
-    // Update active power-ups
-    let updatedActivePowerUps = state.activePowerUps
-      .map((p) => ({ ...p, duration: p.duration - dt }))
-      .filter((p) => p.duration > 0)
+    // Update active power-ups (mutate during map)
+    const updatedActivePowerUps: typeof state.activePowerUps = []
+    for (let i = 0; i < state.activePowerUps.length; i++) {
+      const p = state.activePowerUps[i]
+      const newDuration = p.duration - dt
+      if (newDuration > 0) {
+        updatedActivePowerUps.push({ type: p.type, duration: newDuration })
+      }
+    }
     stateUpdates.activePowerUps = updatedActivePowerUps
 
-    // Update screen shake
+    // Update screen shake (mutate local copy)
     let updatedScreenShake = state.screenShake
     if (state.screenShake) {
       const newElapsed = state.screenShake.elapsed + dt
@@ -209,14 +214,15 @@ export const useGameEngine = () => {
         updatedScreenShake = null
       } else {
         updatedScreenShake = {
-          ...state.screenShake,
+          intensity: state.screenShake.intensity,
+          duration: state.screenShake.duration,
           elapsed: newElapsed,
         }
       }
     }
     stateUpdates.screenShake = updatedScreenShake
 
-    // Update special ability
+    // Update special ability (mutate local copy)
     let newCooldown = state.player.specialCooldown - dt
     let specialReady = state.player.specialReady
     if (newCooldown <= 0) {
@@ -225,14 +231,23 @@ export const useGameEngine = () => {
     }
     let updatedSpecialAbility = state.specialAbility
     if (state.specialAbility && state.specialAbility.isActive) {
-      if (state.specialAbility.duration > 0) {
+      const newDuration = state.specialAbility.duration - dt
+      if (newDuration > 0) {
         updatedSpecialAbility = {
-          ...state.specialAbility,
-          duration: state.specialAbility.duration - dt,
-          isActive: state.specialAbility.duration > dt,
+          type: state.specialAbility.type,
+          isActive: true,
+          duration: newDuration,
+          cooldown: state.specialAbility.cooldown,
+          maxCooldown: state.specialAbility.maxCooldown,
         }
       } else {
-        updatedSpecialAbility = { ...state.specialAbility, isActive: false }
+        updatedSpecialAbility = {
+          type: state.specialAbility.type,
+          isActive: false,
+          duration: 0,
+          cooldown: state.specialAbility.cooldown,
+          maxCooldown: state.specialAbility.maxCooldown,
+        }
       }
     }
     stateUpdates.specialAbility = updatedSpecialAbility
@@ -264,16 +279,14 @@ export const useGameEngine = () => {
     const newPlayerCooldown = Math.max(0, state.player.cooldown - dt * cooldownRate)
     const newInv = Math.max(0, state.player.inv - dt)
 
-    // Build updated player object
-    let updatedPlayer = {
-      ...state.player,
-      pos: newPos,
-      vel: newVel,
-      cooldown: newPlayerCooldown,
-      inv: newInv,
-      specialCooldown: newCooldown,
-      specialReady,
-    }
+    // Build updated player object (mutate copy)
+    const updatedPlayer = { ...state.player }
+    updatedPlayer.pos = newPos
+    updatedPlayer.vel = newVel
+    updatedPlayer.cooldown = newPlayerCooldown
+    updatedPlayer.inv = newInv
+    updatedPlayer.specialCooldown = newCooldown
+    updatedPlayer.specialReady = specialReady
 
     // Track bullets to add
     let bulletsToAdd: Bullet[] = []
@@ -310,21 +323,36 @@ export const useGameEngine = () => {
       hapticLight()
     }
 
-    // Update bullets
-    let updatedBullets = [...state.bullets, ...bulletsToAdd]
-      .map((b) => ({
-        ...b,
-        pos: wrap(add(b.pos, mul(b.vel, effectiveDt)), state.w, state.h),
-        life: b.life - effectiveDt,
-      }))
-      .filter((b) => b.life > 0)
+    // Update bullets (mutate during iteration)
+    const allBullets = [...state.bullets, ...bulletsToAdd]
+    let updatedBullets: Bullet[] = []
+    for (let i = 0; i < allBullets.length; i++) {
+      const b = allBullets[i]
+      const newLife = b.life - effectiveDt
+      if (newLife > 0) {
+        updatedBullets.push({
+          pos: wrap(add(b.pos, mul(b.vel, effectiveDt)), state.w, state.h),
+          vel: b.vel,
+          life: newLife,
+          friendly: b.friendly,
+          damage: b.damage,
+        })
+      }
+    }
 
-    // Update asteroids (with increasing animation speed)
-    let updatedAsteroids = state.asteroids.map((a) => ({
-      ...a,
-      pos: wrap(add(a.pos, mul(a.vel, effectiveDt * animSpeedMultiplier)), state.w, state.h),
-      ang: a.ang + a.spin * effectiveDt * animSpeedMultiplier,
-    }))
+    // Update asteroids (with increasing animation speed) - mutate during iteration
+    let updatedAsteroids: Asteroid[] = []
+    for (let i = 0; i < state.asteroids.length; i++) {
+      const a = state.asteroids[i]
+      updatedAsteroids.push({
+        pos: wrap(add(a.pos, mul(a.vel, effectiveDt * animSpeedMultiplier)), state.w, state.h),
+        vel: a.vel,
+        radius: a.radius,
+        spin: a.spin,
+        ang: a.ang + a.spin * effectiveDt * animSpeedMultiplier,
+        tier: a.tier,
+      })
+    }
 
     // Track enemy bullets to add
     const enemyBulletsToAdd: Bullet[] = []
@@ -341,22 +369,28 @@ export const useGameEngine = () => {
       time: stateUpdates.time!,
     }
 
-    let updatedEnemies = state.enemies.map((e) => {
+    // Update enemies - mutate during iteration
+    let updatedEnemies: Enemy[] = []
+    for (let i = 0; i < state.enemies.length; i++) {
+      const e = state.enemies[i]
       // Handle stun duration
       if (e.stunDuration && e.stunDuration > 0) {
         const newStunDuration = e.stunDuration - effectiveDt
         // Stunned enemies don't move or shoot
         if (newStunDuration > 0) {
-          return { ...e, stunDuration: newStunDuration }
+          const stunnedEnemy = { ...e }
+          stunnedEnemy.stunDuration = newStunDuration
+          updatedEnemies.push(stunnedEnemy)
+          continue
         }
         // Stun expired, clear it and continue normal behavior
-        return updateEnemyBehaviorBatched(
-          { ...e, stunDuration: undefined },
-          enemyUpdateContext
-        )
+        const unStunnedEnemy = { ...e }
+        unStunnedEnemy.stunDuration = undefined
+        updatedEnemies.push(updateEnemyBehaviorBatched(unStunnedEnemy, enemyUpdateContext))
+      } else {
+        updatedEnemies.push(updateEnemyBehaviorBatched(e, enemyUpdateContext))
       }
-      return updateEnemyBehaviorBatched(e, enemyUpdateContext)
-    })
+    }
 
     // Add enemy bullets to the bullets array
     updatedBullets = [...updatedBullets, ...enemyBulletsToAdd]
@@ -385,11 +419,13 @@ export const useGameEngine = () => {
       }
     }
 
-    // Update power-ups (lifetime countdown and magnet attraction)
-    const updatedPowerUps = state.powerUps
-      .map((p) => {
-        let newPowerUp = { ...p, lifetime: p.lifetime - effectiveDt }
-
+    // Update power-ups (lifetime countdown and magnet attraction) - mutate during iteration
+    const updatedPowerUps: PowerUp[] = []
+    for (let i = 0; i < state.powerUps.length; i++) {
+      const p = state.powerUps[i]
+      const newLifetime = p.lifetime - effectiveDt
+      if (newLifetime > 0) {
+        let newPos = p.pos
         // Magnet power-up attracts nearby power-ups
         if (hasMagnet) {
           const toPlayer = sub(newPos, p.pos)
@@ -397,13 +433,16 @@ export const useGameEngine = () => {
           if (distance < 200 && distance > 10) {
             const pullStrength = 300 * effectiveDt
             const pullDir = nor(toPlayer)
-            newPowerUp.pos = add(p.pos, mul(pullDir, pullStrength))
+            newPos = add(p.pos, mul(pullDir, pullStrength))
           }
         }
-
-        return newPowerUp
-      })
-      .filter((p) => p.lifetime > 0)
+        updatedPowerUps.push({
+          pos: newPos,
+          type: p.type,
+          lifetime: newLifetime,
+        })
+      }
+    }
 
     // Update homing missiles
     let updatedHomingMissiles = state.homingMissiles
@@ -627,11 +666,9 @@ export const useGameEngine = () => {
               newPhase = 2
             }
 
-            updatedBoss = {
-              ...updatedBoss,
-              hp: newBossHp,
-              phase: newPhase as 1 | 2 | 3,
-            }
+            // Mutate boss directly
+            updatedBoss.hp = newBossHp
+            updatedBoss.phase = newPhase as 1 | 2 | 3
 
             bulletsToRemove.add(bIdx)
             boom(b.pos, themeColors.particleExplosion, 8, 140)
@@ -660,7 +697,9 @@ export const useGameEngine = () => {
     updatedBullets.forEach((b, bIdx) => {
       if (!b.friendly && dist2(b.pos, newPos) < 16 * 16) {
         if (updatedPlayer.inv <= 0 && !hasShield) {
-          updatedPlayer = { ...updatedPlayer, hp: updatedPlayer.hp - 18, inv: 0.6 }
+          // Mutate player damage directly
+          updatedPlayer.hp = updatedPlayer.hp - 18
+          updatedPlayer.inv = 0.6
           sessionDamageTaken = true
           newScreenShake = { intensity: 10, duration: 150, elapsed: 0 }
           hapticWarning()
@@ -678,16 +717,22 @@ export const useGameEngine = () => {
       updatedAsteroids = updatedAsteroids.filter((_, i) => !asteroidsToRemove.has(i))
     }
 
-    // Apply enemy damage and removals (deferred to avoid race conditions)
+    // Apply enemy damage and removals (deferred to avoid race conditions) - mutate during iteration
     if (enemyDamage.size > 0 || enemiesToRemove.size > 0) {
-      updatedEnemies = updatedEnemies
-        .map((e, idx) => {
-          if (enemiesToRemove.has(idx)) return null
-          const dmg = enemyDamage.get(idx)
-          if (dmg) return { ...e, hp: e.hp - dmg }
-          return e
-        })
-        .filter((e): e is Enemy => e !== null)
+      const damagedEnemies: Enemy[] = []
+      for (let idx = 0; idx < updatedEnemies.length; idx++) {
+        if (enemiesToRemove.has(idx)) continue
+        const e = updatedEnemies[idx]
+        const dmg = enemyDamage.get(idx)
+        if (dmg) {
+          const damagedEnemy = { ...e }
+          damagedEnemy.hp = e.hp - dmg
+          damagedEnemies.push(damagedEnemy)
+        } else {
+          damagedEnemies.push(e)
+        }
+      }
+      updatedEnemies = damagedEnemies
     }
 
     // Spawn power-ups from defeated enemies
@@ -703,7 +748,9 @@ export const useGameEngine = () => {
       if (playerNearby.some(e => e.pos === a.pos)) {
         if (dist2(newPos, a.pos) < (a.radius + 12) * (a.radius + 12)) {
           if (updatedPlayer.inv <= 0 && !hasShield) {
-            updatedPlayer = { ...updatedPlayer, hp: updatedPlayer.hp - 28, inv: 1.0 }
+            // Mutate player damage directly
+            updatedPlayer.hp = updatedPlayer.hp - 28
+            updatedPlayer.inv = 1.0
             sessionDamageTaken = true
             boom(newPos, themeColors.particleCollision, 18, 200)
             newScreenShake = { intensity: 12, duration: 200, elapsed: 0 }
@@ -719,7 +766,9 @@ export const useGameEngine = () => {
       if (playerNearby.some(ent => ent.pos === e.pos)) {
         if (dist2(newPos, e.pos) < 22 * 22) {
           if (updatedPlayer.inv <= 0 && !hasShield) {
-            updatedPlayer = { ...updatedPlayer, hp: updatedPlayer.hp - 20, inv: 0.9 }
+            // Mutate player damage directly
+            updatedPlayer.hp = updatedPlayer.hp - 20
+            updatedPlayer.inv = 0.9
             sessionDamageTaken = true
             boom(newPos, themeColors.particleCollision, 18, 200)
             newScreenShake = { intensity: 12, duration: 200, elapsed: 0 }
@@ -735,7 +784,9 @@ export const useGameEngine = () => {
       if (playerNearby.some(ent => ent.pos === updatedBoss!.pos)) {
         if (dist2(newPos, updatedBoss.pos) < 60 * 60) {
           if (updatedPlayer.inv <= 0 && !hasShield) {
-            updatedPlayer = { ...updatedPlayer, hp: updatedPlayer.hp - 40, inv: 1.5 }
+            // Mutate player damage directly
+            updatedPlayer.hp = updatedPlayer.hp - 40
+            updatedPlayer.inv = 1.5
             sessionDamageTaken = true
             boom(newPos, themeColors.particleCollision, 24, 250)
             newScreenShake = { intensity: 15, duration: 300, elapsed: 0 }
@@ -845,12 +896,17 @@ export const useGameEngine = () => {
       }
     }
 
-    // Apply homing missile damage
+    // Apply homing missile damage - mutate during iteration
     if (homingMissileUpdates.enemiesToDamage.size > 0) {
       const deadIndices = new Set<number>()
-      updatedEnemies = updatedEnemies.map((enemy, idx) => {
+      const damagedEnemies: Enemy[] = []
+      for (let idx = 0; idx < updatedEnemies.length; idx++) {
+        const enemy = updatedEnemies[idx]
         const damage = homingMissileUpdates.enemiesToDamage.get(idx)
-        if (!damage) return enemy
+        if (!damage) {
+          damagedEnemies.push(enemy)
+          continue
+        }
 
         const newHp = enemy.hp - damage
         if (newHp <= 0) {
@@ -858,10 +914,13 @@ export const useGameEngine = () => {
           score += Math.floor(ENEMY_STATS[enemy.type].points * updatedCombo.multiplier)
           sessionKillsRecent++
           newSessionKillTimer = 10
-          return { ...enemy, hp: newHp }
+        } else {
+          const damagedEnemy = { ...enemy }
+          damagedEnemy.hp = newHp
+          damagedEnemies.push(damagedEnemy)
         }
-        return { ...enemy, hp: newHp }
-      }).filter((_, idx) => !deadIndices.has(idx))
+      }
+      updatedEnemies = damagedEnemies
     }
     if (homingMissileUpdates.bossDamage > 0 && updatedBoss) {
       const newBossHp = updatedBoss.hp - homingMissileUpdates.bossDamage
@@ -873,7 +932,11 @@ export const useGameEngine = () => {
       } else if (stats.phases >= 2 && hpPercent <= 0.66 && updatedBoss.phase < 2) {
         newPhase = 2
       }
-      updatedBoss = { ...updatedBoss, hp: newBossHp, phase: newPhase as 1 | 2 | 3 }
+      // Mutate boss copy
+      const bossUpdate = { ...updatedBoss }
+      bossUpdate.hp = newBossHp
+      bossUpdate.phase = newPhase as 1 | 2 | 3
+      updatedBoss = bossUpdate
     }
 
     // Spawn boss if needed
@@ -907,20 +970,22 @@ export const useGameEngine = () => {
       newScreenShake = { intensity: 15, duration: 400, elapsed: 0 }
       if (lives <= 0) {
         paused = true
-        updatedActivePowerUps = []
-        updatedCombo = { count: 0, multiplier: 1, timer: 0 }
+        updatedActivePowerUps.length = 0
+        updatedCombo.count = 0
+        updatedCombo.multiplier = 1
+        updatedCombo.timer = 0
         stateUpdates.timeWarpActive = false
         stateUpdates.timeWarpMultiplier = 1
       } else {
-        updatedPlayer = {
-          ...updatedPlayer,
-          pos: v(state.w / 2, state.h / 2),
-          vel: v(),
-          hp: SHIP_STATS[updatedPlayer.shipType].hull,
-          inv: 2,
-        }
-        updatedActivePowerUps = []
-        updatedCombo = { count: 0, multiplier: 1, timer: 0 }
+        // Mutate player respawn directly
+        updatedPlayer.pos = v(state.w / 2, state.h / 2)
+        updatedPlayer.vel = v()
+        updatedPlayer.hp = SHIP_STATS[updatedPlayer.shipType].hull
+        updatedPlayer.inv = 2
+        updatedActivePowerUps.length = 0
+        updatedCombo.count = 0
+        updatedCombo.multiplier = 1
+        updatedCombo.timer = 0
         stateUpdates.timeWarpActive = false
         stateUpdates.timeWarpMultiplier = 1
       }
@@ -1018,7 +1083,20 @@ function updateEnemyBehaviorBatched(
   const d = len(toP)
   const dir = nor(toP)
 
-  let newEnemy = { ...e }
+  // Create new enemy object - we'll mutate properties as needed
+  const newEnemy: Enemy = {
+    pos: e.pos,
+    vel: e.vel,
+    ang: e.ang,
+    cooldown: e.cooldown,
+    hp: e.hp,
+    maxHp: e.maxHp,
+    aiTimer: e.aiTimer,
+    type: e.type,
+    chargeTime: e.chargeTime,
+    bombCooldown: e.bombCooldown,
+    stunDuration: e.stunDuration,
+  }
 
   switch (e.type) {
     case 'scout':
@@ -1445,16 +1523,23 @@ function updateBossBehaviorBatched(
     newSpecialCooldown = 5 - boss.phase * 0.5
   }
 
+  // Create updated boss - mutate properties
+  const updatedBoss: Boss = {
+    pos: newPos,
+    vel: newVel,
+    ang: Math.PI / 2,
+    hp: boss.hp,
+    maxHp: boss.maxHp,
+    type: boss.type,
+    phase: boss.phase,
+    cooldown: newCooldown,
+    specialCooldown: newSpecialCooldown,
+    aiTimer: boss.aiTimer + dt,
+    isActive: boss.isActive,
+  }
+
   return {
-    boss: {
-      ...boss,
-      pos: newPos,
-      vel: newVel,
-      ang: Math.PI / 2,
-      cooldown: newCooldown,
-      specialCooldown: newSpecialCooldown,
-      aiTimer: boss.aiTimer + dt,
-    },
+    boss: updatedBoss,
     bullets,
   }
 }
@@ -1597,9 +1682,16 @@ function updateHomingMissilesBatched(
   let bossDamage = 0
 
   for (const missile of missiles) {
-    let newMissile = { ...missile, life: missile.life - dt }
+    const newLife = missile.life - dt
+    if (newLife <= 0) continue
 
-    if (newMissile.life <= 0) continue
+    // Create new missile - mutate properties as needed
+    const newMissile: HomingMissile = {
+      pos: missile.pos,
+      vel: missile.vel,
+      life: newLife,
+      targetId: missile.targetId,
+    }
 
     // Find closest target
     let closestDist = Infinity
