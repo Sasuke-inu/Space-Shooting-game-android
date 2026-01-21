@@ -441,6 +441,439 @@ describe('challengesStore logic', () => {
   })
 
   // ------------------------------------------------------------------ //
+  //                    Record Methods Tests
+  // ------------------------------------------------------------------ //
+  describe('Record Methods', () => {
+    interface ChallengesTestState {
+      challenges: Challenge[]
+      updateProgress: (id: string, progress: number) => void
+      recordKill: (count?: number) => void
+      recordCombo: (comboCount: number) => void
+      recordBossDefeat: (count?: number) => void
+      recordPowerUpCollected: (count?: number) => void
+      recordWave: (wave: number) => void
+      recordAccuracy: (accuracy: number) => void
+      recordNoDamageWave: (count?: number) => void
+    }
+
+    const createTestStore = () => create<ChallengesTestState>((set, get) => ({
+      challenges: [
+        {
+          id: 'kill-1',
+          type: 'kill_count',
+          name: 'Enemy Hunter',
+          description: 'Destroy 50 enemies',
+          target: 50,
+          progress: 0,
+          completed: false,
+          reward: 200,
+          icon: '🎯',
+        },
+        {
+          id: 'combo-1',
+          type: 'combo',
+          name: 'Combo Master',
+          description: 'Achieve a 10x combo',
+          target: 10,
+          progress: 0,
+          completed: false,
+          reward: 250,
+          icon: '🔥',
+        },
+        {
+          id: 'boss-1',
+          type: 'boss',
+          name: 'Boss Slayer',
+          description: 'Defeat 2 bosses',
+          target: 2,
+          progress: 0,
+          completed: false,
+          reward: 400,
+          icon: '👑',
+        },
+        {
+          id: 'power-1',
+          type: 'power_up',
+          name: 'Power Collector',
+          description: 'Collect 20 power-ups',
+          target: 20,
+          progress: 0,
+          completed: false,
+          reward: 150,
+          icon: '💎',
+        },
+        {
+          id: 'wave-1',
+          type: 'survival',
+          name: 'Survivor',
+          description: 'Reach wave 10',
+          target: 10,
+          progress: 0,
+          completed: false,
+          reward: 300,
+          icon: '🛡️',
+        },
+        {
+          id: 'accuracy-1',
+          type: 'accuracy',
+          name: 'Sharpshooter',
+          description: 'Achieve 80% accuracy',
+          target: 80,
+          progress: 0,
+          completed: false,
+          reward: 350,
+          icon: '🎯',
+        },
+        {
+          id: 'no-damage-1',
+          type: 'no_damage',
+          name: 'Flawless',
+          description: 'Complete 5 waves without damage',
+          target: 5,
+          progress: 0,
+          completed: false,
+          reward: 400,
+          icon: '✨',
+        },
+      ],
+
+      updateProgress: (id, progress) =>
+        set((state) => {
+          const challengeIndex = state.challenges.findIndex((c) => c.id === id)
+          if (challengeIndex === -1) return state
+
+          const challenge = state.challenges[challengeIndex]
+          if (challenge.completed) return state
+
+          const newProgress = Math.min(progress, challenge.target)
+          const newChallenges = [...state.challenges]
+          newChallenges[challengeIndex] = {
+            ...challenge,
+            progress: newProgress,
+          }
+
+          if (newProgress >= challenge.target) {
+            newChallenges[challengeIndex].completed = true
+          }
+
+          return { challenges: newChallenges }
+        }),
+
+      recordKill: (count = 1) => {
+        const state = get()
+        const killChallenges = state.challenges.filter((c) => c.type === 'kill_count' && !c.completed)
+
+        killChallenges.forEach((challenge) => {
+          const newProgress = challenge.progress + count
+          get().updateProgress(challenge.id, newProgress)
+        })
+      },
+
+      recordCombo: (comboCount) => {
+        const state = get()
+        const comboChallenges = state.challenges.filter((c) => c.type === 'combo' && !c.completed)
+
+        comboChallenges.forEach((challenge) => {
+          if (comboCount > challenge.progress) {
+            get().updateProgress(challenge.id, comboCount)
+          }
+        })
+      },
+
+      recordBossDefeat: (count = 1) => {
+        const state = get()
+        const bossChallenges = state.challenges.filter((c) => c.type === 'boss' && !c.completed)
+
+        bossChallenges.forEach((challenge) => {
+          const newProgress = challenge.progress + count
+          get().updateProgress(challenge.id, newProgress)
+        })
+      },
+
+      recordPowerUpCollected: (count = 1) => {
+        const state = get()
+        const powerUpChallenges = state.challenges.filter((c) => c.type === 'power_up' && !c.completed)
+
+        powerUpChallenges.forEach((challenge) => {
+          const newProgress = challenge.progress + count
+          get().updateProgress(challenge.id, newProgress)
+        })
+      },
+
+      recordWave: (wave) => {
+        const state = get()
+        const survivalChallenges = state.challenges.filter((c) => c.type === 'survival' && !c.completed)
+
+        survivalChallenges.forEach((challenge) => {
+          if (wave > challenge.progress) {
+            get().updateProgress(challenge.id, wave)
+          }
+        })
+      },
+
+      recordAccuracy: (accuracy) => {
+        const state = get()
+        const accuracyChallenges = state.challenges.filter((c) => c.type === 'accuracy' && !c.completed)
+
+        accuracyChallenges.forEach((challenge) => {
+          if (accuracy > challenge.progress) {
+            get().updateProgress(challenge.id, Math.floor(accuracy))
+          }
+        })
+      },
+
+      recordNoDamageWave: (count = 1) => {
+        const state = get()
+        const noDamageChallenges = state.challenges.filter((c) => c.type === 'no_damage' && !c.completed)
+
+        noDamageChallenges.forEach((challenge) => {
+          const newProgress = challenge.progress + count
+          get().updateProgress(challenge.id, newProgress)
+        })
+      },
+    }))
+
+    let store: ReturnType<typeof createTestStore>
+
+    beforeEach(() => {
+      store = createTestStore()
+    })
+
+    // Kill tracking tests
+    test('recordKill updates kill_count challenges', () => {
+      store.getState().recordKill()
+      const challenge = store.getState().challenges.find((c) => c.id === 'kill-1')
+      expect(challenge?.progress).toBe(1)
+    })
+
+    test('recordKill supports custom count', () => {
+      store.getState().recordKill(5)
+      const challenge = store.getState().challenges.find((c) => c.id === 'kill-1')
+      expect(challenge?.progress).toBe(5)
+    })
+
+    test('recordKill accumulates progress', () => {
+      store.getState().recordKill(10)
+      store.getState().recordKill(15)
+      const challenge = store.getState().challenges.find((c) => c.id === 'kill-1')
+      expect(challenge?.progress).toBe(25)
+    })
+
+    test('recordKill auto-completes at target', () => {
+      store.getState().recordKill(50)
+      const challenge = store.getState().challenges.find((c) => c.id === 'kill-1')
+      expect(challenge?.completed).toBe(true)
+    })
+
+    test('recordKill ignores completed challenges', () => {
+      store.getState().recordKill(50)
+      store.getState().recordKill(10)
+      const challenge = store.getState().challenges.find((c) => c.id === 'kill-1')
+      expect(challenge?.progress).toBe(50)
+    })
+
+    // Combo tracking tests
+    test('recordCombo updates combo challenges', () => {
+      store.getState().recordCombo(5)
+      const challenge = store.getState().challenges.find((c) => c.id === 'combo-1')
+      expect(challenge?.progress).toBe(5)
+    })
+
+    test('recordCombo only updates if higher', () => {
+      store.getState().recordCombo(8)
+      store.getState().recordCombo(5)
+      const challenge = store.getState().challenges.find((c) => c.id === 'combo-1')
+      expect(challenge?.progress).toBe(8)
+    })
+
+    test('recordCombo updates to higher value', () => {
+      store.getState().recordCombo(5)
+      store.getState().recordCombo(12)
+      const challenge = store.getState().challenges.find((c) => c.id === 'combo-1')
+      expect(challenge?.progress).toBe(10)
+    })
+
+    test('recordCombo auto-completes at target', () => {
+      store.getState().recordCombo(10)
+      const challenge = store.getState().challenges.find((c) => c.id === 'combo-1')
+      expect(challenge?.completed).toBe(true)
+    })
+
+    test('recordCombo ignores completed challenges', () => {
+      store.getState().recordCombo(10)
+      store.getState().recordCombo(15)
+      const challenge = store.getState().challenges.find((c) => c.id === 'combo-1')
+      expect(challenge?.progress).toBe(10)
+    })
+
+    // Boss defeat tests
+    test('recordBossDefeat updates boss challenges', () => {
+      store.getState().recordBossDefeat()
+      const challenge = store.getState().challenges.find((c) => c.id === 'boss-1')
+      expect(challenge?.progress).toBe(1)
+    })
+
+    test('recordBossDefeat supports custom count', () => {
+      store.getState().recordBossDefeat(2)
+      const challenge = store.getState().challenges.find((c) => c.id === 'boss-1')
+      expect(challenge?.progress).toBe(2)
+    })
+
+    test('recordBossDefeat auto-completes at target', () => {
+      store.getState().recordBossDefeat(2)
+      const challenge = store.getState().challenges.find((c) => c.id === 'boss-1')
+      expect(challenge?.completed).toBe(true)
+    })
+
+    test('recordBossDefeat ignores completed challenges', () => {
+      store.getState().recordBossDefeat(2)
+      store.getState().recordBossDefeat(1)
+      const challenge = store.getState().challenges.find((c) => c.id === 'boss-1')
+      expect(challenge?.progress).toBe(2)
+    })
+
+    // Power-up tracking tests
+    test('recordPowerUpCollected updates power_up challenges', () => {
+      store.getState().recordPowerUpCollected()
+      const challenge = store.getState().challenges.find((c) => c.id === 'power-1')
+      expect(challenge?.progress).toBe(1)
+    })
+
+    test('recordPowerUpCollected supports custom count', () => {
+      store.getState().recordPowerUpCollected(5)
+      const challenge = store.getState().challenges.find((c) => c.id === 'power-1')
+      expect(challenge?.progress).toBe(5)
+    })
+
+    test('recordPowerUpCollected accumulates progress', () => {
+      store.getState().recordPowerUpCollected(10)
+      store.getState().recordPowerUpCollected(10)
+      const challenge = store.getState().challenges.find((c) => c.id === 'power-1')
+      expect(challenge?.progress).toBe(20)
+    })
+
+    test('recordPowerUpCollected auto-completes at target', () => {
+      store.getState().recordPowerUpCollected(20)
+      const challenge = store.getState().challenges.find((c) => c.id === 'power-1')
+      expect(challenge?.completed).toBe(true)
+    })
+
+    test('recordPowerUpCollected ignores completed challenges', () => {
+      store.getState().recordPowerUpCollected(20)
+      store.getState().recordPowerUpCollected(5)
+      const challenge = store.getState().challenges.find((c) => c.id === 'power-1')
+      expect(challenge?.progress).toBe(20)
+    })
+
+    // Wave tracking tests
+    test('recordWave updates survival challenges', () => {
+      store.getState().recordWave(5)
+      const challenge = store.getState().challenges.find((c) => c.id === 'wave-1')
+      expect(challenge?.progress).toBe(5)
+    })
+
+    test('recordWave only updates if higher', () => {
+      store.getState().recordWave(8)
+      store.getState().recordWave(5)
+      const challenge = store.getState().challenges.find((c) => c.id === 'wave-1')
+      expect(challenge?.progress).toBe(8)
+    })
+
+    test('recordWave updates to higher wave', () => {
+      store.getState().recordWave(5)
+      store.getState().recordWave(12)
+      const challenge = store.getState().challenges.find((c) => c.id === 'wave-1')
+      expect(challenge?.progress).toBe(10)
+    })
+
+    test('recordWave auto-completes at target', () => {
+      store.getState().recordWave(10)
+      const challenge = store.getState().challenges.find((c) => c.id === 'wave-1')
+      expect(challenge?.completed).toBe(true)
+    })
+
+    test('recordWave ignores completed challenges', () => {
+      store.getState().recordWave(10)
+      store.getState().recordWave(15)
+      const challenge = store.getState().challenges.find((c) => c.id === 'wave-1')
+      expect(challenge?.progress).toBe(10)
+    })
+
+    // Accuracy tracking tests
+    test('recordAccuracy updates accuracy challenges', () => {
+      store.getState().recordAccuracy(65.5)
+      const challenge = store.getState().challenges.find((c) => c.id === 'accuracy-1')
+      expect(challenge?.progress).toBe(65)
+    })
+
+    test('recordAccuracy floors decimal values', () => {
+      store.getState().recordAccuracy(79.9)
+      const challenge = store.getState().challenges.find((c) => c.id === 'accuracy-1')
+      expect(challenge?.progress).toBe(79)
+    })
+
+    test('recordAccuracy only updates if higher', () => {
+      store.getState().recordAccuracy(75)
+      store.getState().recordAccuracy(70)
+      const challenge = store.getState().challenges.find((c) => c.id === 'accuracy-1')
+      expect(challenge?.progress).toBe(75)
+    })
+
+    test('recordAccuracy updates to higher value', () => {
+      store.getState().recordAccuracy(65)
+      store.getState().recordAccuracy(85)
+      const challenge = store.getState().challenges.find((c) => c.id === 'accuracy-1')
+      expect(challenge?.progress).toBe(80)
+    })
+
+    test('recordAccuracy auto-completes at target', () => {
+      store.getState().recordAccuracy(80)
+      const challenge = store.getState().challenges.find((c) => c.id === 'accuracy-1')
+      expect(challenge?.completed).toBe(true)
+    })
+
+    test('recordAccuracy ignores completed challenges', () => {
+      store.getState().recordAccuracy(80)
+      store.getState().recordAccuracy(90)
+      const challenge = store.getState().challenges.find((c) => c.id === 'accuracy-1')
+      expect(challenge?.progress).toBe(80)
+    })
+
+    // No damage tracking tests
+    test('recordNoDamageWave updates no_damage challenges', () => {
+      store.getState().recordNoDamageWave()
+      const challenge = store.getState().challenges.find((c) => c.id === 'no-damage-1')
+      expect(challenge?.progress).toBe(1)
+    })
+
+    test('recordNoDamageWave supports custom count', () => {
+      store.getState().recordNoDamageWave(3)
+      const challenge = store.getState().challenges.find((c) => c.id === 'no-damage-1')
+      expect(challenge?.progress).toBe(3)
+    })
+
+    test('recordNoDamageWave accumulates progress', () => {
+      store.getState().recordNoDamageWave(2)
+      store.getState().recordNoDamageWave(3)
+      const challenge = store.getState().challenges.find((c) => c.id === 'no-damage-1')
+      expect(challenge?.progress).toBe(5)
+    })
+
+    test('recordNoDamageWave auto-completes at target', () => {
+      store.getState().recordNoDamageWave(5)
+      const challenge = store.getState().challenges.find((c) => c.id === 'no-damage-1')
+      expect(challenge?.completed).toBe(true)
+    })
+
+    test('recordNoDamageWave ignores completed challenges', () => {
+      store.getState().recordNoDamageWave(5)
+      store.getState().recordNoDamageWave(2)
+      const challenge = store.getState().challenges.find((c) => c.id === 'no-damage-1')
+      expect(challenge?.progress).toBe(5)
+    })
+  })
+
+  // ------------------------------------------------------------------ //
   //                    Challenge Completion Tests
   // ------------------------------------------------------------------ //
   describe('Challenge Completion', () => {
