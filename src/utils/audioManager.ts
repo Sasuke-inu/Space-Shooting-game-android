@@ -15,6 +15,11 @@ export type SoundEffect =
   | 'hit_damage'
   | 'low_health'
   | 'combo'
+  | 'button_click'
+  | 'screen_transition'
+  | 'toggle_on'
+  | 'toggle_off'
+  | 'achievement_unlock'
 
 // Sound pool for reusable sounds
 interface SoundPool {
@@ -85,6 +90,16 @@ class AudioManager {
         return { frequency: 500, duration: 400 }
       case 'combo':
         return { frequency: 1000, duration: 100 }
+      case 'button_click':
+        return { frequency: 600, duration: 40 }
+      case 'screen_transition':
+        return { frequency: 700, duration: 200 }
+      case 'toggle_on':
+        return { frequency: 900, duration: 60 }
+      case 'toggle_off':
+        return { frequency: 500, duration: 60 }
+      case 'achievement_unlock':
+        return { frequency: 1400, duration: 300 }
       default:
         return { frequency: 440, duration: 100 }
     }
