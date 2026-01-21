@@ -42,3 +42,13 @@ expo.log
 
 # Auto Claude data directory
 .auto-claude/
+
+# Environment variables (should never be committed)
+.env
+.env.local
+.env.*.local
+
+# Auto-claude framework files (should not be committed)
+.auto-claude-security.json
+.auto-claude-status
+.claude_settings.json
