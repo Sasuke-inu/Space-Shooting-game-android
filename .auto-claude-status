@@ -1,25 +1,25 @@
 {
   "active": true,
   "spec": "029-daily-challenges-system",
-  "state": "planning",
+  "state": "building",
   "subtasks": {
-    "completed": 0,
-    "total": 0,
+    "completed": 2,
+    "total": 15,
     "in_progress": 1,
     "failed": 0
   },
   "phase": {
-    "current": "Types & Constants Foundation",
+    "current": "Challenge Store Implementation",
     "id": null,
-    "total": 1
+    "total": 2
   },
   "workers": {
     "active": 0,
     "max": 1
   },
   "session": {
-    "number": 2,
+    "number": 4,
     "started_at": "2026-01-22T09:44:39.796085"
   },
-  "last_update": "2026-01-22T09:49:01.778168"
+  "last_update": "2026-01-22T09:52:38.750916"
 }
