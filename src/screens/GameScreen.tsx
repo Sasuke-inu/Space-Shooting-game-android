@@ -325,6 +325,7 @@ export default function GameScreen() {
   }, [paused, joystickValue, playerAng, swipeImpulse, player.vel, fireOnce, updateGame, autoFire, colors])
 
   const handleRestart = () => {
+    recordGameEndStats()
     const store = useGameStore.getState()
     store.resetGame()
     store.spawnAsteroids(5)
