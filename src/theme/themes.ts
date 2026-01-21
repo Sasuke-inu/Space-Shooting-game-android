@@ -565,6 +565,75 @@ export const synthwaveTheme: GameTheme = {
 }
 
 // ------------------------------------------------------------------ //
+//                         9. Winter
+// ------------------------------------------------------------------ //
+export const winterTheme: GameTheme = {
+  id: 'winter',
+  name: 'Winter',
+  description: 'Icy crystalline frost',
+  icon: '❄️',
+
+  colors: {
+    // Canvas
+    background: '#0d0f1a',
+    backgroundRgba: 'rgba(13, 15, 26, 1)',
+    stars: 'rgba(200, 220, 240, 0.4)',
+
+    // Player
+    playerShip: '#c0d8e8',
+    playerShipFill: 'rgba(192, 216, 232, 0.15)',
+    playerBullet: '#f0f8ff',
+    thrusterFlame: '#a8d8ea',
+
+    // Enemies
+    enemyShip: '#5b8fb9',
+    enemyShipFill: 'rgba(91, 143, 185, 0.15)',
+    enemyBullet: '#6495ed',
+
+    // Objects
+    asteroid: '#8ba9c0',
+    particle: '#d0e5f0',
+    particleHit: '#b8d4e6',
+    particleExplosion: '#7fb3d5',
+    particleDamage: '#ff8fa3',
+    particleCollision: '#f0f8ff',
+
+    // HUD
+    hudText: '#c0d8e8',
+    hudAccent: '#a8d8ea',
+    hullBar: '#a8d8ea',
+    hullBarBg: '#5b8fb9',
+
+    // UI
+    panelBg: '#12151f',
+    panelBorder: '#3d5a73',
+    buttonPrimary: '#a8d8ea',
+    buttonSecondary: '#1a2030',
+    buttonText: '#0d0f1a',
+    modalOverlay: 'rgba(0, 0, 0, 0.85)',
+    textPrimary: '#a8d8ea',
+    textSecondary: '#c0d8e8',
+    textMuted: '#8ba9c0',
+
+    // Controls
+    joystickPad: 'rgba(26, 32, 48, 0.6)',
+    joystickStick: '#a8d8ea',
+    joystickBorder: '#3d5a73',
+    joystickGlow: 'rgba(168, 216, 234, 0.55)',
+
+    // Power-ups
+    powerUpShield: '#5dade2',
+    powerUpRapidFire: '#ff6b9d',
+    powerUpSpreadShot: '#f8f8ff',
+    powerUpMagnet: '#c39bd3',
+
+    // Combo
+    comboText: '#f0f8ff',
+    comboGlow: 'rgba(240, 248, 255, 0.7)',
+  },
+}
+
+// ------------------------------------------------------------------ //
 //                         Theme Registry
 // ------------------------------------------------------------------ //
 
@@ -577,6 +646,7 @@ export const themes: Partial<Record<ThemeId, GameTheme>> = {
   'arctic': arcticTheme,
   'halloween': halloweenTheme,
   'synthwave': synthwaveTheme,
+  'winter': winterTheme,
 }
 
 export const themeList: GameTheme[] = Object.values(themes)
