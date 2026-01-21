@@ -5,10 +5,12 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler"
 import { Audio } from "expo-av"
 import { GameCanvas } from "../components/GameCanvas"
 import { VirtualControls } from "../components/VirtualControls"
+import ChallengesModal from "../components/ChallengesModal"
 import { useGameStore, MAX_DT, JOY_DEADZONE } from "../state/gameStore"
 import { useHighScoresStore } from "../state/highScoresStore"
 import { useSettingsStore, useThemeColors } from "../theme/themeStore"
 import { useStatisticsStore, useAchievementStore, useUpgradesStore } from "../state/progressStore"
+import { useChallengesStore } from "../state/challengesStore"
 import { themeList } from "../theme/themes"
 import type { ThemeId } from "../theme/types"
 import type { ShipType } from "../types/game"
@@ -93,12 +95,17 @@ export default function GameScreen() {
   const [showShipSelect, setShowShipSelect] = useState(false)
   const [showStats, setShowStats] = useState(false)
   const [showAchievements, setShowAchievements] = useState(false)
+  const [showChallenges, setShowChallenges] = useState(false)
   const [playerName, setPlayerName] = useState("")
   const [settingsTab, setSettingsTab] = useState<'general' | 'ship' | 'stats'>('general')
 
   const highScores = useHighScoresStore((s) => s.scores)
   const isTopFive = useHighScoresStore((s) => s.isTopFive)
   const addScore = useHighScoresStore((s) => s.addScore)
+
+  // Challenges
+  const challenges = useChallengesStore((s) => s.challenges)
+  const activeChallengesCount = challenges.filter((c) => !c.completed).length
 
   // Handle special ability effects
   useEffect(() => {
@@ -614,6 +621,40 @@ export default function GameScreen() {
             borderRadius: 8,
             paddingHorizontal: 12,
             paddingVertical: 8,
+            position: 'relative',
+          }}
+          onPress={() => setShowChallenges(true)}
+        >
+          <Text style={{ color: colors.hudText, fontSize: 14 }}>🎯</Text>
+          {activeChallengesCount > 0 && (
+            <View
+              style={{
+                position: 'absolute',
+                top: -4,
+                right: -4,
+                backgroundColor: colors.buttonPrimary,
+                borderRadius: 10,
+                minWidth: 18,
+                height: 18,
+                justifyContent: 'center',
+                alignItems: 'center',
+                paddingHorizontal: 4,
+              }}
+            >
+              <Text style={{ color: '#fff', fontSize: 10, fontWeight: 'bold' }}>
+                {activeChallengesCount}
+              </Text>
+            </View>
+          )}
+        </Pressable>
+        <Pressable
+          style={{
+            backgroundColor: colors.buttonSecondary,
+            borderWidth: 1,
+            borderColor: colors.panelBorder,
+            borderRadius: 8,
+            paddingHorizontal: 12,
+            paddingVertical: 8,
           }}
           onPress={() => useGameStore.getState().setPaused(!paused)}
         >
@@ -1049,6 +1090,12 @@ export default function GameScreen() {
           </Pressable>
         </Modal>
       )}
+
+      {/* Challenges Modal */}
+      <ChallengesModal
+        visible={showChallenges}
+        onClose={() => setShowChallenges(false)}
+      />
     </View>
   )
 }
