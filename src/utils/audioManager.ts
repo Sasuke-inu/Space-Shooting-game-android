@@ -50,6 +50,7 @@ class AudioManager {
   async playSfx(effect: SoundEffect) {
     const sfxVolume = useSettingsStore.getState().sfxVolume
 
+    // Respect volume setting - if muted, don't play
     if (sfxVolume <= 0) return
 
     try {
@@ -61,6 +62,9 @@ class AudioManager {
 
       // Create a simple tone using expo-av
       // Note: In a real implementation, you'd have actual audio files
+      // When real audio is implemented, volume should be applied like:
+      // await sound.setVolumeAsync(sfxVolume)
+
       // For demonstration, we'll just log the sound effect
       if (__DEV__) {
         // In development, just log - actual sounds would need audio files
