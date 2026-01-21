@@ -99,6 +99,47 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
     return starArray
   }, [width, height, time])
 
+  // Parallax Layer 1: Distant stars (slowest, 0.3x speed)
+  const distantStars = React.useMemo(() => {
+    const starArray = []
+    for (let i = 0; i < 60; i++) {
+      starArray.push({
+        x: (i * 127) % width,
+        y: ((i * 83 + time * 2.4) % height),
+        size: 0.5 + (i % 3) * 0.3, // Small stars: 0.5-1.1
+      })
+    }
+    return starArray
+  }, [width, height, time])
+
+  // Parallax Layer 2: Nebula/dust particles (medium speed, 0.6x)
+  const nebulaParticles = React.useMemo(() => {
+    const particles = []
+    for (let i = 0; i < 30; i++) {
+      particles.push({
+        x: (i * 157) % width,
+        y: ((i * 103 + time * 4.8) % height),
+        size: 3 + (i % 5) * 2, // Medium particles: 3-11
+        opacity: 0.15 + (i % 4) * 0.05, // Subtle opacity: 0.15-0.3
+      })
+    }
+    return particles
+  }, [width, height, time])
+
+  // Parallax Layer 3: Close debris (fastest, 1.2x speed)
+  const closeDebris = React.useMemo(() => {
+    const debris = []
+    for (let i = 0; i < 20; i++) {
+      debris.push({
+        x: (i * 181) % width,
+        y: ((i * 137 + time * 9.6) % height),
+        size: 2 + (i % 4) * 1.5, // Varied sizes: 2-6.5
+        rotation: (i * 37 + time * 0.5) % 360, // Slow rotation
+      })
+    }
+    return debris
+  }, [width, height, time])
+
   // Draw ship function
   const createShipPath = () => {
     const path = Skia.Path.Make()
