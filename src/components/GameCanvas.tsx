@@ -87,58 +87,58 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
   showRadar = true,
   timeWarpActive = false,
 }) => {
-  // Background stars
+  // Background stars - optimized: only recalculate on size changes
   const stars = React.useMemo(() => {
     const starArray = []
     for (let i = 0; i < 40; i++) {
       starArray.push({
         x: (i * 97) % width,
-        y: ((i * 57 + time * 8) % height),
+        baseY: i * 57,
       })
     }
     return starArray
-  }, [width, height, time])
+  }, [width, height])
 
-  // Parallax Layer 1: Distant stars (slowest, 0.3x speed)
+  // Parallax Layer 1: Distant stars (slowest, 0.3x speed) - optimized
   const distantStars = React.useMemo(() => {
     const starArray = []
     for (let i = 0; i < 60; i++) {
       starArray.push({
         x: (i * 127) % width,
-        y: ((i * 83 + time * 2.4) % height),
+        baseY: i * 83,
         size: 0.5 + (i % 3) * 0.3, // Small stars: 0.5-1.1
       })
     }
     return starArray
-  }, [width, height, time])
+  }, [width, height])
 
-  // Parallax Layer 2: Nebula/dust particles (medium speed, 0.6x)
+  // Parallax Layer 2: Nebula/dust particles (medium speed, 0.6x) - optimized
   const nebulaParticles = React.useMemo(() => {
     const particles = []
     for (let i = 0; i < 30; i++) {
       particles.push({
         x: (i * 157) % width,
-        y: ((i * 103 + time * 4.8) % height),
+        baseY: i * 103,
         size: 3 + (i % 5) * 2, // Medium particles: 3-11
         opacity: 0.15 + (i % 4) * 0.05, // Subtle opacity: 0.15-0.3
       })
     }
     return particles
-  }, [width, height, time])
+  }, [width, height])
 
-  // Parallax Layer 3: Close debris (fastest, 1.2x speed)
+  // Parallax Layer 3: Close debris (fastest, 1.2x speed) - optimized
   const closeDebris = React.useMemo(() => {
     const debris = []
     for (let i = 0; i < 20; i++) {
       debris.push({
         x: (i * 181) % width,
-        y: ((i * 137 + time * 9.6) % height),
+        baseY: i * 137,
+        baseRotation: i * 37,
         size: 2 + (i % 4) * 1.5, // Varied sizes: 2-6.5
-        rotation: (i * 37 + time * 0.5) % 360, // Slow rotation
       })
     }
     return debris
-  }, [width, height, time])
+  }, [width, height])
 
   // Draw ship function
   const createShipPath = () => {
@@ -305,7 +305,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
           <Circle
             key={`distant-${i}`}
             cx={star.x}
-            cy={star.y}
+            cy={(star.baseY + time * 2.4) % height}
             r={star.size}
             color={colors.stars}
             opacity={0.4}
@@ -317,7 +317,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
           <Circle
             key={`nebula-${i}`}
             cx={particle.x}
-            cy={particle.y}
+            cy={(particle.baseY + time * 4.8) % height}
             r={particle.size}
             color={colors.stars}
             opacity={particle.opacity}
@@ -329,7 +329,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
           <Circle
             key={i}
             cx={star.x}
-            cy={star.y}
+            cy={(star.baseY + time * 8) % height}
             r={1}
             color={colors.stars}
           />
@@ -341,8 +341,8 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
             key={`debris-${i}`}
             transform={[
               { translateX: debris.x },
-              { translateY: debris.y },
-              { rotate: debris.rotation * (Math.PI / 180) },
+              { translateY: (debris.baseY + time * 9.6) % height },
+              { rotate: ((debris.baseRotation + time * 0.5) % 360) * (Math.PI / 180) },
             ]}
           >
             <Circle
