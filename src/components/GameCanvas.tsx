@@ -4,6 +4,8 @@ import { Platform } from "react-native"
 import type { Asteroid, Enemy, Vec2, PowerUp, ActivePowerUp, ComboState, Boss, HomingMissile, EnemyType } from "../types/game"
 import type { ThemeColors } from "../theme/types"
 import { fromAngle } from "../utils/vectorMath"
+import { SHIP_SKINS } from "../types/game"
+import { useUpgradesStore } from "../state/progressStore"
 
 interface GameCanvasProps {
   width: number
@@ -87,6 +89,22 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
   showRadar = true,
   timeWarpActive = false,
 }) => {
+  // Get selected skin for player ship
+  const getSelectedSkin = useUpgradesStore((state) => state.getSelectedSkin)
+  const selectedSkinId = getSelectedSkin(player.shipType as any)
+  const selectedSkin = SHIP_SKINS[player.shipType as keyof typeof SHIP_SKINS]?.[selectedSkinId as keyof typeof SHIP_SKINS.fighter]
+
+  // Use skin colors for player ship (fallback to theme colors if skin not found)
+  const playerColors = selectedSkin ? {
+    fill: selectedSkin.colors.fill,
+    stroke: selectedSkin.colors.primary,
+    thruster: selectedSkin.colors.secondary,
+  } : {
+    fill: colors.playerShipFill,
+    stroke: colors.playerShip,
+    thruster: colors.thrusterFlame,
+  }
+
   // Background stars
   const stars = React.useMemo(() => {
     const starArray = []
@@ -530,22 +548,22 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
             )}
             <Path
               path={getPlayerShipPath(player.shipType)}
-              color={colors.playerShipFill}
+              color={playerColors.fill}
               style="fill"
             />
             <Path
               path={getPlayerShipPath(player.shipType)}
-              color={colors.playerShip}
+              color={playerColors.stroke}
               style="stroke"
               strokeWidth={2}
             />
-            <Circle cx={2} cy={0} r={3.5} color={colors.playerShip} style="stroke" strokeWidth={2} />
+            <Circle cx={2} cy={0} r={3.5} color={playerColors.stroke} style="stroke" strokeWidth={2} />
             {/* Thruster flame */}
             {thrusting && (
               <Line
                 p1={vec(-18, 0)}
                 p2={vec(-28 - (Math.sin(time * 20) * 4 + 4), 0)}
-                color={colors.thrusterFlame}
+                color={playerColors.thruster}
                 strokeWidth={2}
               />
             )}
@@ -663,7 +681,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
               cx={player.pos.x / radarScale}
               cy={player.pos.y / radarScale}
               r={3}
-              color={colors.playerShip}
+              color={playerColors.stroke}
             />
 
             {/* Enemy dots */}
@@ -738,12 +756,12 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
           >
             <Path
               path={getPlayerShipPath(player.shipType)}
-              color={colors.playerShipFill}
+              color={playerColors.fill}
               style="fill"
             />
             <Path
               path={getPlayerShipPath(player.shipType)}
-              color={colors.playerShip}
+              color={playerColors.stroke}
               style="stroke"
               strokeWidth={2}
             />
