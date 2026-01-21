@@ -36,16 +36,21 @@ const PERF_LOG_INTERVAL = 60 // Log every 60 frames (~1 second at 60fps)
 
 export const useGameEngine = () => {
   const boom = useCallback((pos: Vec2, color: string, count = 24, speed = 120) => {
-    const newParticles: Particle[] = []
-    for (let i = 0; i < count; i++) {
-      newParticles.push({
-        pos: { ...pos },
-        vel: fromAngle((i / count) * Math.PI * 2, rand(speed * 0.5, speed)),
-        life: rand(0.4, 0.9),
-        color,
-      })
+    const state = useGameStore.getState()
+    const particles = state.acquireParticles(count)
+
+    // Initialize acquired particles
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i]
+      p.pos.x = pos.x
+      p.pos.y = pos.y
+      const vel = fromAngle((i / count) * Math.PI * 2, rand(speed * 0.5, speed))
+      p.vel.x = vel.x
+      p.vel.y = vel.y
+      p.life = rand(0.4, 0.9)
+      p.color = color
+      p.active = true
     }
-    useGameStore.getState().addParticles(newParticles)
   }, [])
 
   const fireOnce = useCallback(() => {
@@ -247,26 +252,46 @@ export const useGameEngine = () => {
       updateHomingMissiles(state, effectiveDt, themeColors)
     }
 
-    // Update particles with off-screen culling
+    // Update particles using object pool
     const PARTICLE_CULL_MARGIN = 50 // Allow particles slightly off-screen before culling
-    const newParticles = state.particles
-      .map((p) => ({
-        ...p,
-        pos: add(p.pos, mul(p.vel, effectiveDt)),
-        vel: mul(p.vel, 0.98),
-        life: p.life - effectiveDt,
-      }))
-      .filter((p) => {
-        // Remove particles with expired life
-        if (p.life <= 0) return false
+    const pool = state.particlePool
+    const activeParticles: Particle[] = []
 
-        // Remove particles that are off-screen (with margin)
-        if (p.pos.x < -PARTICLE_CULL_MARGIN || p.pos.x > state.w + PARTICLE_CULL_MARGIN) return false
-        if (p.pos.y < -PARTICLE_CULL_MARGIN || p.pos.y > state.h + PARTICLE_CULL_MARGIN) return false
+    for (let i = 0; i < pool.length; i++) {
+      const p = pool[i]
+      if (!p.active) continue
 
-        return true
+      // Update position
+      p.pos.x += p.vel.x * effectiveDt
+      p.pos.y += p.vel.y * effectiveDt
+      // Apply friction
+      p.vel.x *= 0.98
+      p.vel.y *= 0.98
+      p.life -= effectiveDt
+
+      // Check if particle should be deactivated
+      if (p.life <= 0) {
+        p.active = false
+        continue
+      }
+
+      // Cull off-screen particles
+      if (p.pos.x < -PARTICLE_CULL_MARGIN || p.pos.x > state.w + PARTICLE_CULL_MARGIN ||
+          p.pos.y < -PARTICLE_CULL_MARGIN || p.pos.y > state.h + PARTICLE_CULL_MARGIN) {
+        p.active = false
+        continue
+      }
+
+      // Add to active particles for rendering
+      activeParticles.push({
+        pos: p.pos,
+        vel: p.vel,
+        life: p.life,
+        color: p.color,
       })
-    state.updateParticles(newParticles)
+    }
+
+    state.updateParticles(activeParticles)
 
     // Collisions - bullets vs asteroids
     const bulletsToRemove = new Set<number>()
@@ -878,17 +903,19 @@ function updateHomingMissiles(
     if (!hit) {
       updatedMissiles.push(newMissile)
     } else {
-      // Create explosion effect
-      const newParticles: Particle[] = []
-      for (let i = 0; i < 12; i++) {
-        newParticles.push({
-          pos: { ...newMissile.pos },
-          vel: fromAngle((i / 12) * Math.PI * 2, rand(80, 150)),
-          life: rand(0.3, 0.6),
-          color: colors.particleExplosion,
-        })
+      // Create explosion effect using particle pool
+      const particles = state.acquireParticles(12)
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i]
+        p.pos.x = newMissile.pos.x
+        p.pos.y = newMissile.pos.y
+        const vel = fromAngle((i / 12) * Math.PI * 2, rand(80, 150))
+        p.vel.x = vel.x
+        p.vel.y = vel.y
+        p.life = rand(0.3, 0.6)
+        p.color = colors.particleExplosion
+        p.active = true
       }
-      state.addParticles(newParticles)
     }
   }
 
