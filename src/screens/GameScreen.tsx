@@ -333,6 +333,16 @@ export default function GameScreen() {
     store.setPaused(false)
   }
 
+  const handleMainMenu = () => {
+    recordGameEndStats()
+    const store = useGameStore.getState()
+    store.resetGame()
+    store.spawnAsteroids(5)
+    store.spawnEnemy()
+    setShowInstructions(true)
+    store.setPaused(true)
+  }
+
   const handleStartGame = () => {
     setShowInstructions(false)
     useGameStore.getState().setPaused(false)
@@ -1010,11 +1020,26 @@ export default function GameScreen() {
                       borderRadius: 12,
                       paddingVertical: 14,
                       paddingHorizontal: 16,
+                      marginBottom: 12,
                     }}
                     onPress={handleRestart}
                   >
                     <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
-                      PLAY AGAIN
+                      QUICK RESTART
+                    </Text>
+                  </Pressable>
+
+                  <Pressable
+                    style={{
+                      backgroundColor: colors.buttonSecondary,
+                      borderRadius: 12,
+                      paddingVertical: 14,
+                      paddingHorizontal: 16,
+                    }}
+                    onPress={handleMainMenu}
+                  >
+                    <Text style={{ color: colors.textPrimary, textAlign: 'center', fontSize: 16, fontWeight: '600' }}>
+                      MAIN MENU
                     </Text>
                   </Pressable>
                 </>
