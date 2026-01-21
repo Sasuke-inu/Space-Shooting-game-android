@@ -546,6 +546,16 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
                 opacity={0.6 + Math.sin(time * 4) * 0.2}
               />
             )}
+            {/* Premium skin glow effect */}
+            {selectedSkin?.colors.glow && (
+              <Circle
+                cx={0}
+                cy={0}
+                r={32 + Math.sin(time * 6) * 4}
+                color={selectedSkin.colors.glow}
+                opacity={0.4 + Math.sin(time * 3) * 0.15}
+              />
+            )}
             <Path
               path={getPlayerShipPath(player.shipType)}
               color={playerColors.fill}
