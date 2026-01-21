@@ -359,18 +359,42 @@ export const useUpgradesStore = create<UpgradesState>()(
 //                         Theme Unlock Store
 // ------------------------------------------------------------------ //
 
+interface ThemeUnlockCondition {
+  type: 'default' | 'achievement' | 'purchase' | 'wave'
+  requirement?: string | number
+  cost?: number
+}
+
+const THEME_UNLOCK_CONDITIONS: Record<ThemeId, ThemeUnlockCondition> = {
+  // Default themes - unlocked from start
+  'neon-void': { type: 'default' },
+  'nomad': { type: 'default' },
+  'sakura': { type: 'default' },
+  'forest-matrix': { type: 'default' },
+  'inferno': { type: 'default' },
+  'arctic': { type: 'default' },
+
+  // New unlockable themes
+  'halloween': { type: 'achievement', requirement: 'boss_slayer' },
+  'synthwave': { type: 'purchase', cost: 750 },
+  'winter': { type: 'wave', requirement: 15 },
+}
+
 interface ThemeUnlockState {
   unlockedThemes: ThemeId[]
 
   // Actions
   unlockTheme: (themeId: ThemeId) => void
+  purchaseTheme: (themeId: ThemeId) => boolean
   isThemeUnlocked: (themeId: ThemeId) => boolean
+  getUnlockCondition: (themeId: ThemeId) => ThemeUnlockCondition
+  getUnlockDescription: (themeId: ThemeId) => string
 }
 
 export const useThemeUnlockStore = create<ThemeUnlockState>()(
   persist(
     (set, get) => ({
-      unlockedThemes: ['neon-void'],
+      unlockedThemes: ['neon-void', 'nomad', 'sakura', 'forest-matrix', 'inferno', 'arctic'],
 
       unlockTheme: (themeId) =>
         set((state) => {
@@ -380,7 +404,45 @@ export const useThemeUnlockStore = create<ThemeUnlockState>()(
           }
         }),
 
+      purchaseTheme: (themeId) => {
+        const condition = THEME_UNLOCK_CONDITIONS[themeId]
+        if (condition.type !== 'purchase' || !condition.cost) return false
+
+        const state = get()
+        if (state.unlockedThemes.includes(themeId)) return false
+
+        // Check if player has enough credits and spend them
+        const upgradesStore = useUpgradesStore.getState()
+        if (upgradesStore.spendCredits(condition.cost)) {
+          set({
+            unlockedThemes: [...state.unlockedThemes, themeId],
+          })
+          return true
+        }
+        return false
+      },
+
       isThemeUnlocked: (themeId) => get().unlockedThemes.includes(themeId),
+
+      getUnlockCondition: (themeId) => THEME_UNLOCK_CONDITIONS[themeId],
+
+      getUnlockDescription: (themeId) => {
+        const condition = THEME_UNLOCK_CONDITIONS[themeId]
+        switch (condition.type) {
+          case 'default':
+            return 'Unlocked'
+          case 'achievement':
+            const achievementId = condition.requirement as AchievementId
+            const achievement = ACHIEVEMENTS[achievementId]
+            return `Unlock: ${achievement?.name || 'Complete achievement'}`
+          case 'purchase':
+            return `Purchase for ${condition.cost} credits`
+          case 'wave':
+            return `Reach wave ${condition.requirement}`
+          default:
+            return 'Unknown'
+        }
+      },
     }),
     {
       name: 'space-shooter-theme-unlocks',
@@ -399,3 +461,39 @@ export const useUnlockedShips = () => useUpgradesStore((s) => s.unlockedShips)
 export const useUnlockedThemes = () => useThemeUnlockStore((s) => s.unlockedThemes)
 export const useStats = () => useStatisticsStore((s) => s.stats)
 export const useAchievements = () => useAchievementStore((s) => s.achievements)
+
+// ------------------------------------------------------------------ //
+//                         Theme Unlock Helpers
+// ------------------------------------------------------------------ //
+
+/**
+ * Check and unlock achievement-based themes when achievement is unlocked
+ * Call this after unlocking an achievement
+ */
+export const checkAchievementThemeUnlocks = (achievementId: AchievementId) => {
+  const themeStore = useThemeUnlockStore.getState()
+
+  // Check each theme's unlock condition
+  Object.entries(THEME_UNLOCK_CONDITIONS).forEach(([themeId, condition]) => {
+    if (condition.type === 'achievement' && condition.requirement === achievementId) {
+      themeStore.unlockTheme(themeId as ThemeId)
+    }
+  })
+}
+
+/**
+ * Check and unlock wave-based themes when reaching a wave milestone
+ * Call this after completing a wave
+ */
+export const checkWaveThemeUnlocks = (currentWave: number) => {
+  const themeStore = useThemeUnlockStore.getState()
+
+  // Check each theme's unlock condition
+  Object.entries(THEME_UNLOCK_CONDITIONS).forEach(([themeId, condition]) => {
+    if (condition.type === 'wave' && typeof condition.requirement === 'number') {
+      if (currentWave >= condition.requirement) {
+        themeStore.unlockTheme(themeId as ThemeId)
+      }
+    }
+  })
+}
