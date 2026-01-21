@@ -430,7 +430,7 @@ export const arcticTheme: GameTheme = {
 //                         Theme Registry
 // ------------------------------------------------------------------ //
 
-export const themes: Record<ThemeId, GameTheme> = {
+export const themes: Partial<Record<ThemeId, GameTheme>> = {
   'neon-void': neonVoidTheme,
   'nomad': nomadTheme,
   'sakura': sakuraTheme,
