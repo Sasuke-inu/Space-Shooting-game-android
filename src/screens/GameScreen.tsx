@@ -5,6 +5,7 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler"
 import { Audio } from "expo-av"
 import { GameCanvas } from "../components/GameCanvas"
 import { VirtualControls } from "../components/VirtualControls"
+import StatisticsScreen from "./StatisticsScreen"
 import { useGameStore, MAX_DT, JOY_DEADZONE } from "../state/gameStore"
 import { useHighScoresStore } from "../state/highScoresStore"
 import { useSettingsStore, useThemeColors } from "../theme/themeStore"
@@ -917,7 +918,7 @@ export default function GameScreen() {
       )}
 
       {/* Pause/Game Over modal */}
-      {paused && !showInstructions && !showNameInput && !showSettings && (
+      {paused && !showInstructions && !showNameInput && !showSettings && !showStats && (
         <Modal visible={true} transparent animationType="fade">
           <Pressable
             style={{
@@ -1032,6 +1033,20 @@ export default function GameScreen() {
                   </View>
                   <Pressable
                     style={{
+                      backgroundColor: colors.buttonSecondary,
+                      borderRadius: 12,
+                      paddingVertical: 14,
+                      paddingHorizontal: 16,
+                      marginBottom: 12,
+                    }}
+                    onPress={() => setShowStats(true)}
+                  >
+                    <Text style={{ color: colors.textPrimary, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
+                      📊 STATISTICS
+                    </Text>
+                  </Pressable>
+                  <Pressable
+                    style={{
                       backgroundColor: colors.buttonPrimary,
                       borderRadius: 12,
                       paddingVertical: 14,
@@ -1047,6 +1062,15 @@ export default function GameScreen() {
               )}
             </Pressable>
           </Pressable>
+        </Modal>
+      )}
+
+      {/* Statistics Modal */}
+      {showStats && (
+        <Modal visible={true} transparent animationType="slide">
+          <View style={{ flex: 1 }}>
+            <StatisticsScreen onBack={() => setShowStats(false)} />
+          </View>
         </Modal>
       )}
     </View>

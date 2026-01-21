@@ -1,0 +1,25 @@
+{
+  "active": true,
+  "spec": "030-statistics-dashboard",
+  "state": "building",
+  "subtasks": {
+    "completed": 2,
+    "total": 3,
+    "in_progress": 1,
+    "failed": 0
+  },
+  "phase": {
+    "current": "Phase 1",
+    "id": 1,
+    "total": 3
+  },
+  "workers": {
+    "active": 0,
+    "max": 1
+  },
+  "session": {
+    "number": 4,
+    "started_at": "2026-01-22T06:26:30.968676"
+  },
+  "last_update": "2026-01-22T06:36:03.550551"
+}

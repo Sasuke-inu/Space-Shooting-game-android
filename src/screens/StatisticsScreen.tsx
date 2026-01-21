@@ -109,7 +109,7 @@ export default function StatisticsScreen({ onBack }: { onBack?: () => void }) {
           >
             <Text
               className="text-sm font-semibold"
-              style={{ color: theme.colors.buttonSecondaryText }}
+              style={{ color: theme.colors.textPrimary }}
             >
               {t('general.back')}
             </Text>
@@ -124,17 +124,17 @@ export default function StatisticsScreen({ onBack }: { onBack?: () => void }) {
           <StatCard
             label={t('stats.gamesPlayed')}
             value={stats.totalGames}
-            color={theme.colors.accent}
+            color={theme.colors.hudAccent}
           />
           <StatCard
             label={t('stats.totalScore')}
             value={stats.totalScore.toLocaleString()}
-            color={theme.colors.accent}
+            color={theme.colors.hudAccent}
           />
           <StatCard
             label={t('stats.highScore')}
             value={stats.highestScore.toLocaleString()}
-            color={theme.colors.powerUps.magnet}
+            color={theme.colors.powerUpMagnet}
           />
           <StatCard
             label={t('stats.averageScore')}
@@ -148,7 +148,7 @@ export default function StatisticsScreen({ onBack }: { onBack?: () => void }) {
           <StatCard
             label={t('statistics.totalKills')}
             value={stats.totalKills}
-            color={theme.colors.enemy.bullet}
+            color={theme.colors.enemyBullet}
           />
           <StatCard
             label={t('statistics.totalDeaths')}
@@ -157,22 +157,22 @@ export default function StatisticsScreen({ onBack }: { onBack?: () => void }) {
           <StatCard
             label="K/D Ratio"
             value={calculateKDRatio()}
-            color={theme.colors.accent}
+            color={theme.colors.hudAccent}
           />
           <StatCard
             label={t('statistics.bossesDefeated')}
             value={stats.totalBossesDefeated}
-            color={theme.colors.powerUps.shield}
+            color={theme.colors.powerUpShield}
           />
           <StatCard
             label={t('statistics.accuracy')}
             value={calculateAccuracy()}
-            color={theme.colors.powerUps.rapid_fire}
+            color={theme.colors.powerUpRapidFire}
           />
           <StatCard
             label={t('statistics.highestCombo')}
             value={`${stats.highestCombo}x`}
-            color={theme.colors.combo.text}
+            color={theme.colors.comboText}
           />
         </View>
 
@@ -203,17 +203,17 @@ export default function StatisticsScreen({ onBack }: { onBack?: () => void }) {
           <StatCard
             label="Destroyer"
             value={stats.killsByBossType.destroyer}
-            color={theme.colors.enemy.ship}
+            color={theme.colors.enemyShip}
           />
           <StatCard
             label="Carrier"
             value={stats.killsByBossType.carrier}
-            color={theme.colors.enemy.ship}
+            color={theme.colors.enemyShip}
           />
           <StatCard
             label="Dreadnought"
             value={stats.killsByBossType.dreadnought}
-            color={theme.colors.enemy.ship}
+            color={theme.colors.enemyShip}
           />
         </View>
 
@@ -223,7 +223,7 @@ export default function StatisticsScreen({ onBack }: { onBack?: () => void }) {
           <StatCard
             label={t('stats.highestWave')}
             value={stats.highestWave}
-            color={theme.colors.powerUps.spread_shot}
+            color={theme.colors.powerUpSpreadShot}
           />
           <StatCard
             label={t('statistics.longestSurvivalTime')}
@@ -232,12 +232,12 @@ export default function StatisticsScreen({ onBack }: { onBack?: () => void }) {
           <StatCard
             label={t('statistics.totalPlayTime')}
             value={formatTime(stats.totalTimePlayed)}
-            color={theme.colors.accent}
+            color={theme.colors.hudAccent}
           />
           <StatCard
             label={t('statistics.powerUpsCollected')}
             value={stats.totalPowerUpsCollected}
-            color={theme.colors.powerUps.magnet}
+            color={theme.colors.powerUpMagnet}
           />
         </View>
 
@@ -247,12 +247,12 @@ export default function StatisticsScreen({ onBack }: { onBack?: () => void }) {
           <StatCard
             label="Unlocked"
             value={`${unlockedCount}/${totalAchievements}`}
-            color={theme.colors.powerUps.magnet}
+            color={theme.colors.powerUpMagnet}
           />
           <StatCard
             label="Completion"
             value={`${((unlockedCount / totalAchievements) * 100).toFixed(0)}%`}
-            color={theme.colors.accent}
+            color={theme.colors.hudAccent}
           />
         </View>
 
@@ -266,12 +266,12 @@ export default function StatisticsScreen({ onBack }: { onBack?: () => void }) {
           <StatCard
             label="Shots Hit"
             value={stats.totalShotsHit.toLocaleString()}
-            color={theme.colors.player.bullet}
+            color={theme.colors.playerBullet}
           />
           <StatCard
             label="Best Accuracy"
             value={`${stats.bestAccuracy.toFixed(1)}%`}
-            color={theme.colors.powerUps.rapid_fire}
+            color={theme.colors.powerUpRapidFire}
           />
           <StatCard
             label="Shots Missed"
@@ -285,12 +285,12 @@ export default function StatisticsScreen({ onBack }: { onBack?: () => void }) {
           <StatCard
             label="Favorite Ship"
             value={stats.favoriteShip.charAt(0).toUpperCase() + stats.favoriteShip.slice(1)}
-            color={theme.colors.player.ship}
+            color={theme.colors.playerShip}
           />
           <StatCard
             label="Favorite Theme"
             value={stats.favoriteTheme.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
-            color={theme.colors.accent}
+            color={theme.colors.hudAccent}
           />
         </View>
 
