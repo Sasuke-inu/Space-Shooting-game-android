@@ -16,6 +16,7 @@ import {
   POWERUP_DROP_ASTEROID,
   BOSS_WARNING_TIME,
 } from "../state/gameStore"
+import { useChallengesStore } from "../state/challengesStore"
 import {
   add,
   mul,
@@ -301,6 +302,7 @@ export const useGameEngine = () => {
               boom(e.pos, themeColors.particleExplosion, 28, 200)
               state.incrementCombo()
               state.recordKill()
+              useChallengesStore.getState().recordKill(1)
               state.addScore(ENEMY_STATS[e.type].points)
               state.addCredits(Math.floor(ENEMY_STATS[e.type].points / 10))
               state.triggerShake(8, 200)
@@ -335,6 +337,7 @@ export const useGameEngine = () => {
           if (updatedState.boss && updatedState.boss.hp <= 0) {
             boom(bossPos, themeColors.particleExplosion, 60, 300)
             state.defeatBoss()
+            useChallengesStore.getState().recordBossDefeat(1)
             state.triggerShake(20, 500)
             hapticHeavy()
           }
@@ -427,6 +430,7 @@ export const useGameEngine = () => {
     state.powerUps.forEach((p, pIdx) => {
       if (dist2(state.player.pos, p.pos) < 30 * 30) {
         state.collectPowerUp(pIdx)
+        useChallengesStore.getState().recordPowerUpCollected(1)
         boom(p.pos, getPowerUpColor(p.type, themeColors), 16, 100)
       }
     })
@@ -856,6 +860,7 @@ function updateHomingMissiles(
         deadIndices.add(idx)
         state.addScore(ENEMY_STATS[enemy.type].points)
         state.recordKill()
+        useChallengesStore.getState().recordKill(1)
         return { ...enemy, hp: newHp }
       }
       return { ...enemy, hp: newHp }

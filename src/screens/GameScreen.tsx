@@ -109,6 +109,13 @@ export default function GameScreen() {
   const recentChallengeCompletion = useChallengesStore((s) => s.recentCompletion)
   const clearRecentChallengeCompletion = useChallengesStore((s) => s.clearRecentCompletion)
   const checkAndRefreshChallenges = useChallengesStore((s) => s.checkAndRefreshChallenges)
+  const recordKillChallenge = useChallengesStore((s) => s.recordKill)
+  const recordComboChallenge = useChallengesStore((s) => s.recordCombo)
+  const recordBossDefeatChallenge = useChallengesStore((s) => s.recordBossDefeat)
+  const recordPowerUpCollectedChallenge = useChallengesStore((s) => s.recordPowerUpCollected)
+  const recordWaveChallenge = useChallengesStore((s) => s.recordWave)
+  const recordAccuracyChallenge = useChallengesStore((s) => s.recordAccuracy)
+  const recordNoDamageWaveChallenge = useChallengesStore((s) => s.recordNoDamageWave)
 
   // Handle special ability effects
   useEffect(() => {
@@ -170,6 +177,45 @@ export default function GameScreen() {
   useEffect(() => {
     checkAndRefreshChallenges()
   }, [])
+
+  // Track combo progress for challenges
+  useEffect(() => {
+    if (combo.count > 0) {
+      recordComboChallenge(combo.count)
+    }
+  }, [combo.count])
+
+  // Track wave progress for challenges
+  const prevWaveRef = useRef(0)
+  const prevHealthRef = useRef(player.hp)
+  const waveStartHealthRef = useRef(player.hp)
+
+  useEffect(() => {
+    if (wave > prevWaveRef.current) {
+      recordWaveChallenge(wave)
+
+      // Check if previous wave was completed without taking damage
+      if (prevWaveRef.current > 0 && waveStartHealthRef.current === prevHealthRef.current) {
+        recordNoDamageWaveChallenge(1)
+      }
+
+      // Reset for new wave
+      waveStartHealthRef.current = player.hp
+      prevWaveRef.current = wave
+    }
+    prevHealthRef.current = player.hp
+  }, [wave, player.hp])
+
+  // Track accuracy for challenges
+  const sessionShotsFired = useGameStore((s) => s.sessionShotsFired)
+  const sessionShotsHit = useGameStore((s) => s.sessionShotsHit)
+
+  useEffect(() => {
+    if (sessionShotsFired > 0) {
+      const accuracy = (sessionShotsHit / sessionShotsFired) * 100
+      recordAccuracyChallenge(accuracy)
+    }
+  }, [sessionShotsHit, sessionShotsFired])
 
   // Initialize game on mount
   useEffect(() => {
