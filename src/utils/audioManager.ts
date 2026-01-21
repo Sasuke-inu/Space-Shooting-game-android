@@ -21,6 +21,11 @@ interface SoundPool {
   [key: string]: Audio.Sound | null
 }
 
+// Track concurrent playback per sound
+interface PlaybackTracker {
+  [key: string]: number
+}
+
 // Map sound effect types to asset files
 const SOUND_FILES: Record<SoundEffect, any> = {
   shoot_player: require('../../assets/sounds/shoot_player.mp3'),
@@ -33,9 +38,15 @@ const SOUND_FILES: Record<SoundEffect, any> = {
   boss_warning: require('../../assets/sounds/boss_warning.mp3'),
 }
 
+// Maximum concurrent instances of same sound (prevents audio overflow)
+const MAX_CONCURRENT_SOUNDS = 3
+
 export class AudioManager {
   private sounds: SoundPool = {}
   private initialized = false
+  private cachedVolume = 1.0
+  private playbackCount: PlaybackTracker = {}
+  private volumeUnsubscribe: (() => void) | null = null
 
   async init() {
     if (this.initialized) return
@@ -47,9 +58,25 @@ export class AudioManager {
         shouldDuckAndroid: true,
       })
       await this.preloadSounds()
+      this.setupVolumeCache()
       this.initialized = true
     } catch (error) {
       console.warn('AudioManager init failed:', error)
+    }
+  }
+
+  private setupVolumeCache() {
+    // Cache initial volume
+    this.cachedVolume = useSettingsStore.getState().sfxVolume
+
+    // Subscribe to volume changes for real-time updates (if available)
+    // In test environments, subscribe may not be available
+    if (typeof useSettingsStore.subscribe === 'function') {
+      this.volumeUnsubscribe = useSettingsStore.subscribe(
+        (state) => {
+          this.cachedVolume = state.sfxVolume
+        }
+      )
     }
   }
 
@@ -61,17 +88,23 @@ export class AudioManager {
           shouldPlay: false,
         })
         this.sounds[effect] = sound
+        this.playbackCount[effect] = 0
       } catch (error) {
         console.warn(`Failed to load sound: ${effect}`, error)
         this.sounds[effect] = null
+        this.playbackCount[effect] = 0
       }
     }
   }
 
   async playSfx(effect: SoundEffect) {
-    const sfxVolume = useSettingsStore.getState().sfxVolume
+    // Use cached volume (updated via subscription)
+    if (this.cachedVolume <= 0) return
 
-    if (sfxVolume <= 0) return
+    // Limit concurrent playback to prevent audio overflow
+    if (this.playbackCount[effect] >= MAX_CONCURRENT_SOUNDS) {
+      return
+    }
 
     try {
       await this.init()
@@ -82,20 +115,37 @@ export class AudioManager {
         return
       }
 
+      // Increment playback counter
+      this.playbackCount[effect] = (this.playbackCount[effect] || 0) + 1
+
       // Set volume and replay the sound (fire-and-forget for performance)
       // Don't await to allow simultaneous sounds without blocking
-      sound.setVolumeAsync(sfxVolume).catch(() => {
+      sound.setVolumeAsync(this.cachedVolume).catch(() => {
         // Silently ignore volume errors
       })
-      sound.replayAsync().catch(() => {
-        // Silently ignore playback errors
+
+      sound.replayAsync().then(() => {
+        // Decrement counter when sound finishes
+        this.playbackCount[effect] = Math.max(0, (this.playbackCount[effect] || 0) - 1)
+      }).catch(() => {
+        // Decrement counter on error too
+        this.playbackCount[effect] = Math.max(0, (this.playbackCount[effect] || 0) - 1)
       })
     } catch (error) {
       // Silently fail - sound effects are non-critical
+      // Ensure counter is decremented on error
+      this.playbackCount[effect] = Math.max(0, (this.playbackCount[effect] || 0) - 1)
     }
   }
 
   async cleanup() {
+    // Unsubscribe from volume changes
+    if (this.volumeUnsubscribe) {
+      this.volumeUnsubscribe()
+      this.volumeUnsubscribe = null
+    }
+
+    // Unload all sounds
     for (const sound of Object.values(this.sounds)) {
       if (sound) {
         try {
@@ -106,6 +156,8 @@ export class AudioManager {
       }
     }
     this.sounds = {}
+    this.playbackCount = {}
+    this.initialized = false
   }
 }
 

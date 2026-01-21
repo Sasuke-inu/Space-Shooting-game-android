@@ -6,10 +6,16 @@
 import { Audio } from 'expo-av'
 
 // Mock themeStore before importing
+let mockSubscriber: ((state: any) => void) | null = null
+
 jest.mock('../theme/themeStore', () => ({
   useSettingsStore: {
     getState: jest.fn(() => ({ sfxVolume: 0.7 })),
     setState: jest.fn(),
+    subscribe: jest.fn((callback: (state: any) => void) => {
+      mockSubscriber = callback
+      return jest.fn() // Return unsubscribe function
+    }),
   },
 }))
 
@@ -264,21 +270,34 @@ describe('AudioManager', () => {
         jest.clearAllMocks()
         ;(useSettingsStore.getState as jest.Mock).mockReturnValue({ sfxVolume: volume })
 
+        // Trigger the subscription callback to update cached volume
+        if (mockSubscriber) {
+          mockSubscriber({ sfxVolume: volume })
+        }
+
         await audioManager.playSfx('shoot_player')
 
         expect(mockSound.setVolumeAsync).toHaveBeenCalledWith(volume)
       }
     })
 
-    test('reads volume from settings store each time', async () => {
+    test('reads volume from settings store via subscription', async () => {
       await audioManager.init()
 
       ;(useSettingsStore.getState as jest.Mock).mockReturnValue({ sfxVolume: 0.3 })
+      // Trigger subscription to update cached volume
+      if (mockSubscriber) {
+        mockSubscriber({ sfxVolume: 0.3 })
+      }
       await audioManager.playSfx('shoot_player')
       expect(mockSound.setVolumeAsync).toHaveBeenCalledWith(0.3)
 
       jest.clearAllMocks()
       ;(useSettingsStore.getState as jest.Mock).mockReturnValue({ sfxVolume: 0.8 })
+      // Trigger subscription to update cached volume
+      if (mockSubscriber) {
+        mockSubscriber({ sfxVolume: 0.8 })
+      }
       await audioManager.playSfx('shoot_player')
       expect(mockSound.setVolumeAsync).toHaveBeenCalledWith(0.8)
     })
