@@ -14,6 +14,7 @@ import { useAppSettingsStore, JoystickSize } from '../state/settingsStore';
 import { useSettingsStore, useTheme, themeList } from '../theme';
 import { useStatisticsStore, useAchievementStore, useUpgradesStore } from '../state/progressStore';
 import { ThemeId } from '../theme/types';
+import { playSfx } from '../utils/audioManager';
 
 type TabType = 'general' | 'controls' | 'account';
 
@@ -142,7 +143,10 @@ export default function SettingsScreen() {
               borderBottomWidth: activeTab === tab ? 2 : 0,
               borderBottomColor: theme.colors.buttonPrimary,
             }}
-            onPress={() => setActiveTab(tab)}
+            onPress={() => {
+              playSfx('button_click');
+              setActiveTab(tab);
+            }}
           >
             <Text
               className="text-center text-base font-semibold capitalize"
@@ -177,7 +181,10 @@ export default function SettingsScreen() {
                   backgroundColor: theme.colors.panelBg,
                   borderColor: theme.colors.panelBorder,
                 }}
-                onPress={() => setLanguageModalVisible(true)}
+                onPress={() => {
+                  playSfx('button_click');
+                  setLanguageModalVisible(true);
+                }}
               >
                 <Text style={{ color: theme.colors.textPrimary }}>
                   {SUPPORTED_LANGUAGES.find((l) => l.code === currentLanguage)?.flag}{' '}
@@ -200,7 +207,10 @@ export default function SettingsScreen() {
                   backgroundColor: theme.colors.panelBg,
                   borderColor: theme.colors.panelBorder,
                 }}
-                onPress={() => setThemeModalVisible(true)}
+                onPress={() => {
+                  playSfx('button_click');
+                  setThemeModalVisible(true);
+                }}
               >
                 <Text style={{ color: theme.colors.textPrimary }}>
                   {themeList.find((th) => th.id === themeId)?.icon}{' '}
@@ -275,7 +285,10 @@ export default function SettingsScreen() {
                 </Text>
                 <Switch
                   value={hapticsEnabled}
-                  onValueChange={setHapticsEnabled}
+                  onValueChange={(value) => {
+                    playSfx(value ? 'toggle_on' : 'toggle_off');
+                    setHapticsEnabled(value);
+                  }}
                   trackColor={{
                     false: theme.colors.panelBorder,
                     true: theme.colors.buttonPrimary,
@@ -329,7 +342,10 @@ export default function SettingsScreen() {
                   backgroundColor: theme.colors.panelBg,
                   borderColor: theme.colors.panelBorder,
                 }}
-                onPress={() => setSizeModalVisible(true)}
+                onPress={() => {
+                  playSfx('button_click');
+                  setSizeModalVisible(true);
+                }}
               >
                 <Text style={{ color: theme.colors.textPrimary }} className="capitalize">
                   {t(`settings.${joystickSize}`)}
@@ -353,7 +369,10 @@ export default function SettingsScreen() {
                 </Text>
                 <Switch
                   value={autoFire}
-                  onValueChange={setAutoFire}
+                  onValueChange={(value) => {
+                    playSfx(value ? 'toggle_on' : 'toggle_off');
+                    setAutoFire(value);
+                  }}
                   trackColor={{
                     false: theme.colors.panelBorder,
                     true: theme.colors.buttonPrimary,
@@ -379,7 +398,10 @@ export default function SettingsScreen() {
                 </Text>
                 <Switch
                   value={invertY}
-                  onValueChange={setInvertY}
+                  onValueChange={(value) => {
+                    playSfx(value ? 'toggle_on' : 'toggle_off');
+                    setInvertY(value);
+                  }}
                   trackColor={{
                     false: theme.colors.panelBorder,
                     true: theme.colors.buttonPrimary,
@@ -450,7 +472,10 @@ export default function SettingsScreen() {
                   backgroundColor: theme.colors.panelBg,
                   borderColor: theme.colors.panelBorder,
                 }}
-                onPress={handleResetSettings}
+                onPress={() => {
+                  playSfx('button_click');
+                  handleResetSettings();
+                }}
               >
                 <Text
                   className="text-center font-semibold"
@@ -466,7 +491,10 @@ export default function SettingsScreen() {
                   backgroundColor: theme.colors.panelBg,
                   borderColor: '#ff4444',
                 }}
-                onPress={handleResetProgress}
+                onPress={() => {
+                  playSfx('button_click');
+                  handleResetProgress();
+                }}
               >
                 <Text
                   className="text-center font-semibold"
@@ -523,6 +551,7 @@ export default function SettingsScreen() {
                       : theme.colors.panelBorder,
                 }}
                 onPress={() => {
+                  playSfx('button_click');
                   setLanguage(lang.code);
                   setLanguageModalVisible(false);
                 }}
@@ -579,6 +608,7 @@ export default function SettingsScreen() {
                       : theme.colors.panelBorder,
                 }}
                 onPress={() => {
+                  playSfx('button_click');
                   setTheme(th.id as ThemeId);
                   setThemeModalVisible(false);
                 }}
@@ -641,6 +671,7 @@ export default function SettingsScreen() {
                       : theme.colors.panelBorder,
                 }}
                 onPress={() => {
+                  playSfx('button_click');
                   setJoystickSize(size);
                   setSizeModalVisible(false);
                 }}
