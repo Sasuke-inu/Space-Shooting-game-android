@@ -382,6 +382,7 @@ const THEME_UNLOCK_CONDITIONS: Record<ThemeId, ThemeUnlockCondition> = {
 
 interface ThemeUnlockState {
   unlockedThemes: ThemeId[]
+  recentThemeUnlock: ThemeId | null
 
   // Actions
   unlockTheme: (themeId: ThemeId) => void
@@ -389,18 +390,21 @@ interface ThemeUnlockState {
   isThemeUnlocked: (themeId: ThemeId) => boolean
   getUnlockCondition: (themeId: ThemeId) => ThemeUnlockCondition
   getUnlockDescription: (themeId: ThemeId) => string
+  clearRecentThemeUnlock: () => void
 }
 
 export const useThemeUnlockStore = create<ThemeUnlockState>()(
   persist(
     (set, get) => ({
       unlockedThemes: ['neon-void', 'nomad', 'sakura', 'forest-matrix', 'inferno', 'arctic'],
+      recentThemeUnlock: null,
 
       unlockTheme: (themeId) =>
         set((state) => {
           if (state.unlockedThemes.includes(themeId)) return state
           return {
             unlockedThemes: [...state.unlockedThemes, themeId],
+            recentThemeUnlock: themeId,
           }
         }),
 
@@ -416,6 +420,7 @@ export const useThemeUnlockStore = create<ThemeUnlockState>()(
         if (upgradesStore.spendCredits(condition.cost)) {
           set({
             unlockedThemes: [...state.unlockedThemes, themeId],
+            recentThemeUnlock: themeId,
           })
           return true
         }
@@ -443,6 +448,8 @@ export const useThemeUnlockStore = create<ThemeUnlockState>()(
             return 'Unknown'
         }
       },
+
+      clearRecentThemeUnlock: () => set({ recentThemeUnlock: null }),
     }),
     {
       name: 'space-shooter-theme-unlocks',
