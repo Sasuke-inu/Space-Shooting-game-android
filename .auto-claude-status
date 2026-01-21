@@ -3,7 +3,7 @@
   "spec": "021-sound-effects-system",
   "state": "building",
   "subtasks": {
-    "completed": 2,
+    "completed": 3,
     "total": 12,
     "in_progress": 1,
     "failed": 0
@@ -18,8 +18,8 @@
     "max": 1
   },
   "session": {
-    "number": 4,
+    "number": 5,
     "started_at": "2026-01-22T09:44:54.986438"
   },
-  "last_update": "2026-01-22T09:54:20.190997"
+  "last_update": "2026-01-22T09:56:57.136495"
 }
