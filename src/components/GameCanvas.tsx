@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useMemo } from "react"
 import { Canvas, Group, Path, Circle, Line, Text, Skia, vec, matchFont, Rect } from "@shopify/react-native-skia"
 import { Platform } from "react-native"
 import type { Asteroid, Enemy, Vec2, PowerUp, ActivePowerUp, ComboState, Boss, HomingMissile, EnemyType } from "../types/game"
@@ -61,7 +61,7 @@ const POWERUP_ICONS: Record<string, string> = {
   magnet: '🧲',
 }
 
-export const GameCanvas: React.FC<GameCanvasProps> = ({
+const GameCanvasComponent: React.FC<GameCanvasProps> = ({
   width,
   height,
   player,
@@ -111,7 +111,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
   })
 
   // Background stars
-  const stars = React.useMemo(() => {
+  const stars = useMemo(() => {
     const starArray = []
     for (let i = 0; i < 40; i++) {
       starArray.push({
@@ -122,8 +122,8 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
     return starArray
   }, [width, height, time])
 
-  // Draw ship function
-  const createShipPath = () => {
+  // Memoized ship path
+  const shipPath = useMemo(() => {
     const path = Skia.Path.Make()
     path.moveTo(18, 0)
     path.lineTo(-14, 10)
@@ -133,10 +133,10 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
     path.lineTo(-14, -10)
     path.close()
     return path
-  }
+  }, [])
 
-  // Draw tank enemy (larger, bulkier)
-  const createTankPath = () => {
+  // Memoized tank path
+  const tankPath = useMemo(() => {
     const path = Skia.Path.Make()
     path.moveTo(20, 0)
     path.lineTo(-8, 14)
@@ -146,10 +146,10 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
     path.lineTo(-8, -14)
     path.close()
     return path
-  }
+  }, [])
 
-  // Draw sniper enemy (thin, elongated)
-  const createSniperPath = () => {
+  // Memoized sniper path
+  const sniperPath = useMemo(() => {
     const path = Skia.Path.Make()
     path.moveTo(24, 0)
     path.lineTo(-12, 6)
@@ -157,10 +157,10 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
     path.lineTo(-12, -6)
     path.close()
     return path
-  }
+  }, [])
 
-  // Draw bomber enemy (round with wings)
-  const createBomberPath = () => {
+  // Memoized bomber path
+  const bomberPath = useMemo(() => {
     const path = Skia.Path.Make()
     path.moveTo(14, 0)
     path.lineTo(4, 12)
@@ -170,49 +170,54 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
     path.lineTo(4, -12)
     path.close()
     return path
-  }
+  }, [])
 
-  // Draw boss path
-  const createBossPath = (type: string) => {
-    const path = Skia.Path.Make()
-    switch (type) {
-      case 'destroyer':
-        path.moveTo(0, -50)
-        path.lineTo(40, -20)
-        path.lineTo(50, 30)
-        path.lineTo(20, 50)
-        path.lineTo(-20, 50)
-        path.lineTo(-50, 30)
-        path.lineTo(-40, -20)
-        path.close()
-        break
-      case 'carrier':
-        path.moveTo(0, -45)
-        path.lineTo(60, -15)
-        path.lineTo(55, 40)
-        path.lineTo(0, 55)
-        path.lineTo(-55, 40)
-        path.lineTo(-60, -15)
-        path.close()
-        break
-      case 'dreadnought':
-        path.moveTo(0, -60)
-        path.lineTo(50, -30)
-        path.lineTo(70, 10)
-        path.lineTo(45, 55)
-        path.lineTo(0, 65)
-        path.lineTo(-45, 55)
-        path.lineTo(-70, 10)
-        path.lineTo(-50, -30)
-        path.close()
-        break
-      default:
-        path.addCircle(0, 0, 40)
-    }
-    return path
-  }
+  // Memoized boss paths
+  const bossPaths = useMemo(() => ({
+    destroyer: (() => {
+      const path = Skia.Path.Make()
+      path.moveTo(0, -50)
+      path.lineTo(40, -20)
+      path.lineTo(50, 30)
+      path.lineTo(20, 50)
+      path.lineTo(-20, 50)
+      path.lineTo(-50, 30)
+      path.lineTo(-40, -20)
+      path.close()
+      return path
+    })(),
+    carrier: (() => {
+      const path = Skia.Path.Make()
+      path.moveTo(0, -45)
+      path.lineTo(60, -15)
+      path.lineTo(55, 40)
+      path.lineTo(0, 55)
+      path.lineTo(-55, 40)
+      path.lineTo(-60, -15)
+      path.close()
+      return path
+    })(),
+    dreadnought: (() => {
+      const path = Skia.Path.Make()
+      path.moveTo(0, -60)
+      path.lineTo(50, -30)
+      path.lineTo(70, 10)
+      path.lineTo(45, 55)
+      path.lineTo(0, 65)
+      path.lineTo(-45, 55)
+      path.lineTo(-70, 10)
+      path.lineTo(-50, -30)
+      path.close()
+      return path
+    })(),
+    default: (() => {
+      const path = Skia.Path.Make()
+      path.addCircle(0, 0, 40)
+      return path
+    })(),
+  }), [])
 
-  // Draw asteroid
+  // Draw asteroid (still needs to be dynamic per asteroid)
   const createAsteroidPath = (a: Asteroid) => {
     const path = Skia.Path.Make()
     const r = a.radius
@@ -232,41 +237,47 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
 
   const getEnemyPath = (type: EnemyType) => {
     switch (type) {
-      case 'tank': return createTankPath()
-      case 'sniper': return createSniperPath()
-      case 'bomber': return createBomberPath()
-      default: return createShipPath()
+      case 'tank': return tankPath
+      case 'sniper': return sniperPath
+      case 'bomber': return bomberPath
+      default: return shipPath
     }
+  }
+
+  const getBossPath = (type: string) => {
+    return bossPaths[type as keyof typeof bossPaths] || bossPaths.default
   }
 
   const blink = player.inv > 0 && Math.floor(time * 10) % 2 === 0
 
-  // Create fonts for HUD text
-  const hudFont = matchFont({
+  // Memoized fonts for HUD text
+  const hudFont = useMemo(() => matchFont({
     fontFamily: Platform.select({ ios: "Courier", android: "monospace", default: "monospace" }),
     fontSize: 14,
-  })
+  }), [])
 
-  const comboFont = matchFont({
+  const comboFont = useMemo(() => matchFont({
     fontFamily: Platform.select({ ios: "Courier", android: "monospace", default: "monospace" }),
     fontSize: 20,
-  })
+  }), [])
 
-  const smallFont = matchFont({
+  const smallFont = useMemo(() => matchFont({
     fontFamily: Platform.select({ ios: "Courier", android: "monospace", default: "monospace" }),
     fontSize: 10,
-  })
+  }), [])
 
-  const bossFont = matchFont({
+  const bossFont = useMemo(() => matchFont({
     fontFamily: Platform.select({ ios: "Courier", android: "monospace", default: "monospace" }),
     fontSize: 16,
-  })
+  }), [])
 
-  // Radar dimensions
-  const radarSize = 80
-  const radarX = width - radarSize - 12
-  const radarY = height - radarSize - 60
-  const radarScale = Math.min(width, height) / radarSize
+  // Memoized radar dimensions
+  const radarDimensions = useMemo(() => ({
+    size: 80,
+    x: width - 80 - 12,
+    y: height - 80 - 60,
+    scale: Math.min(width, height) / 80,
+  }), [width, height])
 
   return (
     <Canvas style={{ width, height, backgroundColor: colors.background }}>
@@ -413,12 +424,12 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
 
             {/* Boss body */}
             <Path
-              path={createBossPath(boss.type)}
+              path={getBossPath(boss.type)}
               color={colors.enemyShipFill}
               style="fill"
             />
             <Path
-              path={createBossPath(boss.type)}
+              path={getBossPath(boss.type)}
               color={colors.enemyShip}
               style="stroke"
               strokeWidth={3}
@@ -500,12 +511,12 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
               />
             )}
             <Path
-              path={createShipPath()}
+              path={shipPath}
               color={colors.playerShipFill}
               style="fill"
             />
             <Path
-              path={createShipPath()}
+              path={shipPath}
               color={colors.playerShip}
               style="stroke"
               strokeWidth={2}
@@ -627,15 +638,15 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
 
         {/* Mini-map / Radar */}
         {showRadar && (
-          <Group transform={[{ translateX: radarX }, { translateY: radarY }]}>
+          <Group transform={[{ translateX: radarDimensions.x }, { translateY: radarDimensions.y }]}>
             {/* Radar background */}
-            <Rect x={0} y={0} width={radarSize} height={radarSize} color={colors.panelBg} opacity={0.7} />
-            <Rect x={0} y={0} width={radarSize} height={radarSize} color={colors.panelBorder} style="stroke" strokeWidth={1} />
+            <Rect x={0} y={0} width={radarDimensions.size} height={radarDimensions.size} color={colors.panelBg} opacity={0.7} />
+            <Rect x={0} y={0} width={radarDimensions.size} height={radarDimensions.size} color={colors.panelBorder} style="stroke" strokeWidth={1} />
 
             {/* Player dot (center) */}
             <Circle
-              cx={player.pos.x / radarScale}
-              cy={player.pos.y / radarScale}
+              cx={player.pos.x / radarDimensions.scale}
+              cy={player.pos.y / radarDimensions.scale}
               r={3}
               color={colors.playerShip}
             />
@@ -644,8 +655,8 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
             {enemies.map((e, i) => (
               <Circle
                 key={`radar-enemy-${i}`}
-                cx={e.pos.x / radarScale}
-                cy={e.pos.y / radarScale}
+                cx={e.pos.x / radarDimensions.scale}
+                cy={e.pos.y / radarDimensions.scale}
                 r={2}
                 color={getEnemyColor(e.type, colors)}
               />
@@ -654,8 +665,8 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
             {/* Boss dot */}
             {boss && (
               <Circle
-                cx={boss.pos.x / radarScale}
-                cy={boss.pos.y / radarScale}
+                cx={boss.pos.x / radarDimensions.scale}
+                cy={boss.pos.y / radarDimensions.scale}
                 r={4}
                 color="#ff0000"
               />
@@ -665,8 +676,8 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
             {asteroids.map((a, i) => (
               <Circle
                 key={`radar-asteroid-${i}`}
-                cx={a.pos.x / radarScale}
-                cy={a.pos.y / radarScale}
+                cx={a.pos.x / radarDimensions.scale}
+                cy={a.pos.y / radarDimensions.scale}
                 r={1}
                 color={colors.asteroid}
                 opacity={0.6}
@@ -677,8 +688,8 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
             {powerUps.map((p, i) => (
               <Circle
                 key={`radar-powerup-${i}`}
-                cx={p.pos.x / radarScale}
-                cy={p.pos.y / radarScale}
+                cx={p.pos.x / radarDimensions.scale}
+                cy={p.pos.y / radarDimensions.scale}
                 r={2}
                 color={getPowerUpColor(p.type, colors)}
               />
@@ -711,12 +722,12 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
             ]}
           >
             <Path
-              path={createShipPath()}
+              path={shipPath}
               color={colors.playerShipFill}
               style="fill"
             />
             <Path
-              path={createShipPath()}
+              path={shipPath}
               color={colors.playerShip}
               style="stroke"
               strokeWidth={2}
@@ -727,3 +738,6 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
     </Canvas>
   )
 }
+
+// Memoize component to prevent unnecessary re-renders
+export const GameCanvas = React.memo(GameCanvasComponent)
