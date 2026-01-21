@@ -1,0 +1,25 @@
+{
+  "active": true,
+  "spec": "023-touch-control-refinement",
+  "state": "planning",
+  "subtasks": {
+    "completed": 0,
+    "total": 0,
+    "in_progress": 1,
+    "failed": 0
+  },
+  "phase": {
+    "current": "Touch Control Refinement",
+    "id": null,
+    "total": 9
+  },
+  "workers": {
+    "active": 0,
+    "max": 1
+  },
+  "session": {
+    "number": 2,
+    "started_at": "2026-01-22T09:45:03.301419"
+  },
+  "last_update": "2026-01-22T09:49:48.894570"
+}

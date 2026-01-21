@@ -8,6 +8,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import type { ThemeId, GameTheme, ThemeColors } from './types'
 import { themes, defaultThemeId, getTheme } from './themes'
 
+export type JoystickSize = 'small' | 'medium' | 'large'
+
 interface SettingsState {
   // Theme
   themeId: ThemeId
@@ -18,6 +20,8 @@ interface SettingsState {
 
   // Controls
   joystickSensitivity: number
+  joystickSize: JoystickSize
+  invertY: boolean
   autoFire: boolean
   hapticsEnabled: boolean
 }
@@ -34,6 +38,8 @@ interface SettingsActions {
 
   // Controls
   setJoystickSensitivity: (sensitivity: number) => void
+  setJoystickSize: (size: JoystickSize) => void
+  setInvertY: (enabled: boolean) => void
   setAutoFire: (enabled: boolean) => void
   setHapticsEnabled: (enabled: boolean) => void
 
@@ -48,6 +54,8 @@ const defaultSettings: SettingsState = {
   musicVolume: 0.5,
   sfxVolume: 0.7,
   joystickSensitivity: 1.0,
+  joystickSize: 'medium',
+  invertY: false,
   autoFire: false,
   hapticsEnabled: true,
 }
@@ -72,6 +80,10 @@ export const useSettingsStore = create<SettingsStore>()(
       // Control actions
       setJoystickSensitivity: (sensitivity: number) =>
         set({ joystickSensitivity: Math.max(0.5, Math.min(2, sensitivity)) }),
+
+      setJoystickSize: (size: JoystickSize) => set({ joystickSize: size }),
+
+      setInvertY: (enabled: boolean) => set({ invertY: enabled }),
 
       setAutoFire: (enabled: boolean) => set({ autoFire: enabled }),
 
