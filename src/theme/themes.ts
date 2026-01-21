@@ -496,6 +496,75 @@ export const halloweenTheme: GameTheme = {
 }
 
 // ------------------------------------------------------------------ //
+//                         8. Synthwave
+// ------------------------------------------------------------------ //
+export const synthwaveTheme: GameTheme = {
+  id: 'synthwave',
+  name: 'Synthwave',
+  description: 'Retro 80s neon dreams',
+  icon: '🌆',
+
+  colors: {
+    // Canvas
+    background: '#0a0a1a',
+    backgroundRgba: 'rgba(10, 10, 26, 1)',
+    stars: 'rgba(168, 85, 247, 0.4)',
+
+    // Player
+    playerShip: '#00f0ff',
+    playerShipFill: 'rgba(0, 240, 255, 0.15)',
+    playerBullet: '#00ffff',
+    thrusterFlame: '#ff006e',
+
+    // Enemies
+    enemyShip: '#ff006e',
+    enemyShipFill: 'rgba(255, 0, 110, 0.15)',
+    enemyBullet: '#ff1493',
+
+    // Objects
+    asteroid: '#a855f7',
+    particle: '#00f0ff',
+    particleHit: '#d946ef',
+    particleExplosion: '#ff006e',
+    particleDamage: '#ff69b4',
+    particleCollision: '#00ffff',
+
+    // HUD
+    hudText: '#00f0ff',
+    hudAccent: '#ff006e',
+    hullBar: '#00f0ff',
+    hullBarBg: '#a855f7',
+
+    // UI
+    panelBg: '#100a1f',
+    panelBorder: '#5a2d7e',
+    buttonPrimary: '#ff006e',
+    buttonSecondary: '#1a0f2e',
+    buttonText: '#ffffff',
+    modalOverlay: 'rgba(0, 0, 0, 0.85)',
+    textPrimary: '#ff006e',
+    textSecondary: '#00f0ff',
+    textMuted: '#c084fc',
+
+    // Controls
+    joystickPad: 'rgba(26, 15, 46, 0.6)',
+    joystickStick: '#ff006e',
+    joystickBorder: '#5a2d7e',
+    joystickGlow: 'rgba(255, 0, 110, 0.6)',
+
+    // Power-ups
+    powerUpShield: '#00f0ff',
+    powerUpRapidFire: '#ff006e',
+    powerUpSpreadShot: '#ffd700',
+    powerUpMagnet: '#a855f7',
+
+    // Combo
+    comboText: '#ffd700',
+    comboGlow: 'rgba(255, 215, 0, 0.6)',
+  },
+}
+
+// ------------------------------------------------------------------ //
 //                         Theme Registry
 // ------------------------------------------------------------------ //
 
@@ -507,6 +576,7 @@ export const themes: Partial<Record<ThemeId, GameTheme>> = {
   'inferno': infernoTheme,
   'arctic': arcticTheme,
   'halloween': halloweenTheme,
+  'synthwave': synthwaveTheme,
 }
 
 export const themeList: GameTheme[] = Object.values(themes)
