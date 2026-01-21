@@ -5,7 +5,7 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler"
 import { Audio } from "expo-av"
 import { GameCanvas } from "../components/GameCanvas"
 import { VirtualControls } from "../components/VirtualControls"
-import { useGameStore, MAX_DT, JOY_DEADZONE } from "../state/gameStore"
+import { useGameStore, MAX_DT } from "../state/gameStore"
 import { useHighScoresStore } from "../state/highScoresStore"
 import { useSettingsStore, useThemeColors } from "../theme/themeStore"
 import { useStatisticsStore, useAchievementStore, useUpgradesStore } from "../state/progressStore"
@@ -29,6 +29,8 @@ export default function GameScreen() {
   const joystickSensitivity = useSettingsStore((s) => s.joystickSensitivity)
   const setJoystickSensitivity = useSettingsStore((s) => s.setJoystickSensitivity)
   const joystickSize = useSettingsStore((s) => s.joystickSize)
+  const joystickPosition = useSettingsStore((s) => s.joystickPosition)
+  const invertY = useSettingsStore((s) => s.invertY)
   const autoFire = useSettingsStore((s) => s.autoFire)
   const setAutoFire = useSettingsStore((s) => s.setAutoFire)
   const hapticsEnabled = useSettingsStore((s) => s.hapticsEnabled)
@@ -291,7 +293,7 @@ export default function GameScreen() {
       let thrusting = false
       let desiredAng = playerAng
 
-      if (joyMag > JOY_DEADZONE) {
+      if (joyMag > 0) {
         desiredAng = angleOf(joystickValue)
         thrusting = true
 
@@ -302,7 +304,7 @@ export default function GameScreen() {
       }
 
       // Auto-fire support
-      const shouldFire = autoFire && joyMag > JOY_DEADZONE
+      const shouldFire = autoFire && joyMag > 0
 
       updateGame(dt, joystickValue, shouldFire, thrusting, colors)
 
@@ -373,7 +375,7 @@ export default function GameScreen() {
   }
 
   const joyMag = len(joystickValue)
-  const thrusting = joyMag > JOY_DEADZONE
+  const thrusting = joyMag > 0
 
   // Theme selector component
   const ThemeSelector = () => (
@@ -673,6 +675,8 @@ export default function GameScreen() {
         colors={colors}
         sensitivity={joystickSensitivity}
         size={joystickSize}
+        position={joystickPosition}
+        invertY={invertY}
       />
 
       {/* Settings Modal */}
