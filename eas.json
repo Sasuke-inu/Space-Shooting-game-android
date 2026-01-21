@@ -1,0 +1,49 @@
+{
+  "cli": {
+    "version": ">= 13.0.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "bundleIdentifier": "com.spaceshooter.app"
+      },
+      "android": {
+        "packageName": "com.spaceshooter.app",
+        "buildType": "apk"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "ios": {
+        "bundleIdentifier": "com.spaceshooter.app"
+      },
+      "android": {
+        "packageName": "com.spaceshooter.app",
+        "buildType": "apk"
+      }
+    },
+    "production": {
+      "ios": {
+        "bundleIdentifier": "com.spaceshooter.app"
+      },
+      "android": {
+        "packageName": "com.spaceshooter.app"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "appleId": "developer@example.com",
+        "ascAppId": "placeholder",
+        "appleTeamId": "placeholder"
+      },
+      "android": {
+        "serviceAccountKeyPath": "./google-play-service-account.json",
+        "track": "internal"
+      }
+    }
+  }
+}
