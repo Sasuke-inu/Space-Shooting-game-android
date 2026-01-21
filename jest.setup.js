@@ -28,13 +28,14 @@ jest.mock("expo-av", () => ({
     Sound: {
       createAsync: jest.fn().mockResolvedValue({
         sound: {
-          playAsync: jest.fn(),
-          unloadAsync: jest.fn(),
-          setVolumeAsync: jest.fn()
+          playAsync: jest.fn().mockResolvedValue(undefined),
+          replayAsync: jest.fn().mockResolvedValue(undefined),
+          unloadAsync: jest.fn().mockResolvedValue(undefined),
+          setVolumeAsync: jest.fn().mockResolvedValue(undefined)
         }
       })
     },
-    setAudioModeAsync: jest.fn()
+    setAudioModeAsync: jest.fn().mockResolvedValue(undefined)
   }
 }));
 
@@ -46,4 +47,5 @@ jest.mock("react-native-reanimated", () => {
 });
 
 // Silence the warning: Animated: `useNativeDriver` is not supported
-jest.mock("react-native/Libraries/Animated/NativeAnimatedHelper");
+// Note: Commenting out as this module path doesn't exist in current React Native version
+// jest.mock("react-native/Libraries/Animated/NativeAnimatedHelper");
