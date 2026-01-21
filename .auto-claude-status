@@ -3,8 +3,8 @@
   "spec": "033-ship-visual-customization",
   "state": "building",
   "subtasks": {
-    "completed": 0,
-    "total": 0,
+    "completed": 7,
+    "total": 12,
     "in_progress": 1,
     "failed": 0
   },
@@ -18,8 +18,8 @@
     "max": 1
   },
   "session": {
-    "number": 2,
+    "number": 3,
     "started_at": "2026-01-22T05:37:58.217413"
   },
-  "last_update": "2026-01-22T05:40:23.586043"
+  "last_update": "2026-01-22T05:43:40.436998"
 }

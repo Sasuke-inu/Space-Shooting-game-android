@@ -3,6 +3,7 @@ import { View, Text, Pressable, Modal, useWindowDimensions, TextInput, Keyboard,
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Gesture, GestureDetector } from "react-native-gesture-handler"
 import { Audio } from "expo-av"
+import { Canvas, Group, Path, Skia } from "@shopify/react-native-skia"
 import { GameCanvas } from "../components/GameCanvas"
 import { VirtualControls } from "../components/VirtualControls"
 import { useGameStore, MAX_DT, JOY_DEADZONE } from "../state/gameStore"
@@ -407,6 +408,94 @@ export default function GameScreen() {
     </View>
   )
 
+  // Ship path creation functions (matching GameCanvas.tsx patterns)
+  const createShipPath = () => {
+    const path = Skia.Path.Make()
+    path.moveTo(18, 0)
+    path.lineTo(-14, 10)
+    path.lineTo(-10, 4)
+    path.lineTo(-18, 0)
+    path.lineTo(-10, -4)
+    path.lineTo(-14, -10)
+    path.close()
+    return path
+  }
+
+  const createScoutShipPath = () => {
+    const path = Skia.Path.Make()
+    path.moveTo(20, 0)
+    path.lineTo(-10, 7)
+    path.lineTo(-14, 3)
+    path.lineTo(-16, 0)
+    path.lineTo(-14, -3)
+    path.lineTo(-10, -7)
+    path.close()
+    return path
+  }
+
+  const createTankShipPath = () => {
+    const path = Skia.Path.Make()
+    path.moveTo(16, 0)
+    path.lineTo(-12, 12)
+    path.lineTo(-8, 6)
+    path.lineTo(-18, 4)
+    path.lineTo(-20, 0)
+    path.lineTo(-18, -4)
+    path.lineTo(-8, -6)
+    path.lineTo(-12, -12)
+    path.close()
+    return path
+  }
+
+  const createInterceptorShipPath = () => {
+    const path = Skia.Path.Make()
+    path.moveTo(22, 0)
+    path.lineTo(8, 10)
+    path.lineTo(-12, 8)
+    path.lineTo(-16, 0)
+    path.lineTo(-12, -8)
+    path.lineTo(8, -10)
+    path.close()
+    return path
+  }
+
+  const getShipPath = (shipType: ShipType) => {
+    switch (shipType) {
+      case 'scout': return createScoutShipPath()
+      case 'tank': return createTankShipPath()
+      case 'interceptor': return createInterceptorShipPath()
+      case 'fighter':
+      default: return createShipPath()
+    }
+  }
+
+  // Ship preview component with live rendering
+  const ShipPreview = ({ shipType, skinId }: { shipType: ShipType; skinId: SkinId }) => {
+    const skin = SHIP_SKINS[shipType][skinId]
+    const shipPath = getShipPath(shipType)
+
+    return (
+      <View style={{
+        width: 100,
+        height: 100,
+        backgroundColor: colors.background,
+        borderRadius: 12,
+        borderWidth: 2,
+        borderColor: colors.panelBorder,
+        overflow: 'hidden',
+      }}>
+        <Canvas style={{ flex: 1 }}>
+          <Group transform={[{ translateX: 50 }, { translateY: 50 }, { rotate: Math.PI / 2 }]}>
+            {/* Ship fill */}
+            <Path path={shipPath} color={skin.colors.fill} />
+            {/* Ship outline */}
+            <Path path={shipPath} color={skin.colors.primary} style="stroke" strokeWidth={2} />
+          </Group>
+        </Canvas>
+      </View>
+    )
+  }
+
   // Ship selector component
   const ShipSelector = () => (
     <View style={{ gap: 12 }}>
@@ -460,9 +549,13 @@ export default function GameScreen() {
             {/* Skin Selection Grid */}
             {isUnlocked && (
               <View style={{ paddingLeft: 8 }}>
-                <Text style={{ color: colors.textSecondary, fontSize: 12, marginBottom: 6, fontWeight: '600' }}>
-                  Skins:
-                </Text>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <Text style={{ color: colors.textSecondary, fontSize: 12, fontWeight: '600' }}>
+                    Skins:
+                  </Text>
+                  {/* Live Ship Preview */}
+                  <ShipPreview shipType={ship} skinId={selectedSkinId} />
+                </View>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                   {(['default', 'stealth', 'neon', 'gold', 'veteran'] as SkinId[]).map((skinId) => {
                     const skin = SHIP_SKINS[ship][skinId]
