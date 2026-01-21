@@ -1,8 +1,10 @@
 /*
 IMPORTANT NOTICE: DO NOT REMOVE
-This is a custom audio transcription service that uses a custom API endpoint maintained by Vibecode.
-You can use this function to transcribe audio files, and it will return the text of the audio file.
+This is a custom audio transcription service that proxies requests through the backend.
+This prevents API keys from being exposed in the client-side bundle.
 */
+
+import { API_ENDPOINTS } from '../config/api';
 
 /**
  * Transcribe an audio file
@@ -18,20 +20,10 @@ export const transcribeAudio = async (localAudioUri: string) => {
       type: "audio/m4a",
       name: "recording.m4a",
     } as any);
-    formData.append("model", "gpt-4o-transcribe");
-    formData.append("language", "en");
 
-    const OPENAI_API_KEY = process.env.EXPO_PUBLIC_VIBECODE_OPENAI_API_KEY;
-    if (!OPENAI_API_KEY) {
-      throw new Error("OPENAI_API_KEY is not set");
-    }
-
-    // API call to OpenAI's gpt-4o-transcribe
-    const response = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+    // API call to backend proxy
+    const response = await fetch(API_ENDPOINTS.openai.transcribe, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-      },
       body: formData,
     });
 
