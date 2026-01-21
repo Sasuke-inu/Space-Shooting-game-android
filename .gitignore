@@ -42,3 +42,8 @@ expo.log
 
 # Auto Claude data directory
 .auto-claude/
+
+# Environment variables (never commit these!)
+.env
+.env.local
+.env.*.local
