@@ -99,7 +99,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
     return starArray
   }, [width, height, time])
 
-  // Draw ship function
+  // Draw ship function (Fighter - default balanced ship)
   const createShipPath = () => {
     const path = Skia.Path.Make()
     path.moveTo(18, 0)
@@ -110,6 +110,58 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
     path.lineTo(-14, -10)
     path.close()
     return path
+  }
+
+  // Scout ship (sleek, fast, aerodynamic)
+  const createScoutShipPath = () => {
+    const path = Skia.Path.Make()
+    path.moveTo(20, 0)
+    path.lineTo(-10, 7)
+    path.lineTo(-14, 3)
+    path.lineTo(-16, 0)
+    path.lineTo(-14, -3)
+    path.lineTo(-10, -7)
+    path.close()
+    return path
+  }
+
+  // Tank ship (large, bulky, armored)
+  const createTankShipPath = () => {
+    const path = Skia.Path.Make()
+    path.moveTo(16, 0)
+    path.lineTo(-12, 12)
+    path.lineTo(-8, 6)
+    path.lineTo(-18, 4)
+    path.lineTo(-20, 0)
+    path.lineTo(-18, -4)
+    path.lineTo(-8, -6)
+    path.lineTo(-12, -12)
+    path.close()
+    return path
+  }
+
+  // Interceptor ship (sharp, angular, aggressive)
+  const createInterceptorShipPath = () => {
+    const path = Skia.Path.Make()
+    path.moveTo(22, 0)
+    path.lineTo(8, 10)
+    path.lineTo(-12, 8)
+    path.lineTo(-16, 0)
+    path.lineTo(-12, -8)
+    path.lineTo(8, -10)
+    path.close()
+    return path
+  }
+
+  // Get player ship path based on ship type
+  const getPlayerShipPath = (shipType: string) => {
+    switch (shipType) {
+      case 'scout': return createScoutShipPath()
+      case 'tank': return createTankShipPath()
+      case 'interceptor': return createInterceptorShipPath()
+      case 'fighter':
+      default: return createShipPath()
+    }
   }
 
   // Draw tank enemy (larger, bulkier)
@@ -477,12 +529,12 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
               />
             )}
             <Path
-              path={createShipPath()}
+              path={getPlayerShipPath(player.shipType)}
               color={colors.playerShipFill}
               style="fill"
             />
             <Path
-              path={createShipPath()}
+              path={getPlayerShipPath(player.shipType)}
               color={colors.playerShip}
               style="stroke"
               strokeWidth={2}
@@ -685,12 +737,12 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
             ]}
           >
             <Path
-              path={createShipPath()}
+              path={getPlayerShipPath(player.shipType)}
               color={colors.playerShipFill}
               style="fill"
             />
             <Path
-              path={createShipPath()}
+              path={getPlayerShipPath(player.shipType)}
               color={colors.playerShip}
               style="stroke"
               strokeWidth={2}
