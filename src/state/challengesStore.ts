@@ -22,6 +22,15 @@ interface ChallengesState {
   generateChallenges: () => void
   isCompleted: (id: string) => boolean
   getProgress: (id: string) => number
+
+  // Progress tracking hooks (called from game events)
+  recordKill: (count?: number) => void
+  recordCombo: (comboCount: number) => void
+  recordBossDefeat: (count?: number) => void
+  recordPowerUpCollected: (count?: number) => void
+  recordWave: (wave: number) => void
+  recordAccuracy: (accuracy: number) => void
+  recordNoDamageWave: (count?: number) => void
 }
 
 // Helper function to generate a random challenge
@@ -208,6 +217,86 @@ export const useChallengesStore = create<ChallengesState>()(
       getProgress: (id) => {
         const challenge = get().challenges.find((c) => c.id === id)
         return challenge?.progress ?? 0
+      },
+
+      // ------------------------------------------------------------------ //
+      //                    Progress Tracking Methods
+      // ------------------------------------------------------------------ //
+
+      recordKill: (count = 1) => {
+        const state = get()
+        const killChallenges = state.challenges.filter((c) => c.type === 'kill_count' && !c.completed)
+
+        killChallenges.forEach((challenge) => {
+          const newProgress = challenge.progress + count
+          get().updateProgress(challenge.id, newProgress)
+        })
+      },
+
+      recordCombo: (comboCount) => {
+        const state = get()
+        const comboChallenges = state.challenges.filter((c) => c.type === 'combo' && !c.completed)
+
+        comboChallenges.forEach((challenge) => {
+          // Only update if this combo is higher than current progress
+          if (comboCount > challenge.progress) {
+            get().updateProgress(challenge.id, comboCount)
+          }
+        })
+      },
+
+      recordBossDefeat: (count = 1) => {
+        const state = get()
+        const bossChallenges = state.challenges.filter((c) => c.type === 'boss' && !c.completed)
+
+        bossChallenges.forEach((challenge) => {
+          const newProgress = challenge.progress + count
+          get().updateProgress(challenge.id, newProgress)
+        })
+      },
+
+      recordPowerUpCollected: (count = 1) => {
+        const state = get()
+        const powerUpChallenges = state.challenges.filter((c) => c.type === 'power_up' && !c.completed)
+
+        powerUpChallenges.forEach((challenge) => {
+          const newProgress = challenge.progress + count
+          get().updateProgress(challenge.id, newProgress)
+        })
+      },
+
+      recordWave: (wave) => {
+        const state = get()
+        const survivalChallenges = state.challenges.filter((c) => c.type === 'survival' && !c.completed)
+
+        survivalChallenges.forEach((challenge) => {
+          // Update progress to highest wave reached
+          if (wave > challenge.progress) {
+            get().updateProgress(challenge.id, wave)
+          }
+        })
+      },
+
+      recordAccuracy: (accuracy) => {
+        const state = get()
+        const accuracyChallenges = state.challenges.filter((c) => c.type === 'accuracy' && !c.completed)
+
+        accuracyChallenges.forEach((challenge) => {
+          // Only update if this accuracy is higher than current progress
+          if (accuracy > challenge.progress) {
+            get().updateProgress(challenge.id, Math.floor(accuracy))
+          }
+        })
+      },
+
+      recordNoDamageWave: (count = 1) => {
+        const state = get()
+        const noDamageChallenges = state.challenges.filter((c) => c.type === 'no_damage' && !c.completed)
+
+        noDamageChallenges.forEach((challenge) => {
+          const newProgress = challenge.progress + count
+          get().updateProgress(challenge.id, newProgress)
+        })
       },
     }),
     {
