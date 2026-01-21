@@ -274,6 +274,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       time: 0,
       paused: false,
       score: 0,
+      credits: 0,
       lives: 3,
       wave: 1,
       player: getInitialPlayer(state.w, state.h, state.player.shipType),
