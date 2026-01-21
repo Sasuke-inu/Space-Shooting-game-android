@@ -10,6 +10,7 @@ import Animated, {
 import type { Vec2 } from "../types/game"
 import type { ThemeColors } from "../theme/types"
 import type { JoystickSize, JoystickPosition } from "../theme/themeStore"
+import { hapticLight, hapticSelection } from "../utils/haptics"
 
 interface VirtualControlsProps {
   onJoystickMove: (value: Vec2) => void
@@ -41,6 +42,7 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
   const joystickX = useSharedValue(0)
   const joystickY = useSharedValue(0)
   const joystickScale = useSharedValue(1)
+  const lastHapticMagnitude = useSharedValue(0)
 
   // Get size configuration
   const sizeConfig = useMemo(() => SIZE_CONFIG[size], [size])
@@ -52,6 +54,18 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
 
   const handleSetActive = useCallback((active: boolean) => {
     setJoystickActive(active)
+  }, [])
+
+  const handleTouchHaptic = useCallback(() => {
+    hapticSelection()
+  }, [])
+
+  const handleMoveHaptic = useCallback(() => {
+    hapticLight()
+  }, [])
+
+  const handleReleaseHaptic = useCallback(() => {
+    hapticLight()
   }, [])
 
   const applySensitivityCurve = useCallback((magnitude: number, sens: number): number => {
@@ -76,6 +90,7 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
       'worklet'
       joystickScale.value = withSpring(1.15, { damping: 12 })
       runOnJS(handleSetActive)(true)
+      runOnJS(handleTouchHaptic)()
     })
     .onUpdate((event) => {
       'worklet'
@@ -94,6 +109,14 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
       const normalizedX = joystickX.value / JOY_MAX_RADIUS
       const normalizedY = joystickY.value / JOY_MAX_RADIUS
       const magnitude = Math.sqrt(normalizedX * normalizedX + normalizedY * normalizedY)
+
+      // Trigger haptic when crossing 0.5 magnitude threshold
+      const hapticThreshold = 0.5
+      if ((lastHapticMagnitude.value < hapticThreshold && magnitude >= hapticThreshold) ||
+          (lastHapticMagnitude.value >= hapticThreshold && magnitude < hapticThreshold)) {
+        runOnJS(handleMoveHaptic)()
+        lastHapticMagnitude.value = magnitude
+      }
 
       // Apply dead zone
       if (magnitude < JOY_DEADZONE) {
@@ -115,9 +138,11 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
       joystickX.value = withSpring(0, { damping: 15 })
       joystickY.value = withSpring(0, { damping: 15 })
       joystickScale.value = withSpring(1)
+      lastHapticMagnitude.value = 0
       runOnJS(handleSetActive)(false)
       runOnJS(handleJoystickMove)({ x: 0, y: 0 })
-    }), [handleJoystickMove, handleSetActive, joystickX, joystickY, joystickScale, sensitivity, applySensitivityCurve, invertY])
+      runOnJS(handleReleaseHaptic)()
+    }), [handleJoystickMove, handleSetActive, handleTouchHaptic, handleMoveHaptic, handleReleaseHaptic, joystickX, joystickY, joystickScale, lastHapticMagnitude, sensitivity, applySensitivityCurve, invertY])
 
   const stickStyle = useAnimatedStyle(() => ({
     transform: [
