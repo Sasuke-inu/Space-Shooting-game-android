@@ -12,7 +12,7 @@ import { useSettingsStore, useThemeColors } from "../theme/themeStore"
 import { useStatisticsStore, useAchievementStore, useUpgradesStore } from "../state/progressStore"
 import { themeList } from "../theme/themes"
 import type { ThemeId } from "../theme/types"
-import type { ShipType, SkinId } from "../types/game"
+import type { ShipType, SkinId, AchievementId } from "../types/game"
 import { SHIP_STATS, ACHIEVEMENTS, SHIP_SKINS, SKIN_COSTS } from "../types/game"
 import { useGameEngine } from "../utils/gameEngine"
 import { len, angleOf, nor, mul, v } from "../utils/vectorMath"
@@ -100,6 +100,7 @@ export default function GameScreen() {
   const [showAchievements, setShowAchievements] = useState(false)
   const [playerName, setPlayerName] = useState("")
   const [settingsTab, setSettingsTab] = useState<'general' | 'ship' | 'stats'>('general')
+  const [purchaseFeedback, setPurchaseFeedback] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
   const highScores = useHighScoresStore((s) => s.scores)
   const isTopFive = useHighScoresStore((s) => s.isTopFive)
@@ -150,6 +151,16 @@ export default function GameScreen() {
       return () => clearTimeout(timer)
     }
   }, [recentUnlock])
+
+  // Purchase feedback timeout
+  useEffect(() => {
+    if (purchaseFeedback) {
+      const timer = setTimeout(() => {
+        setPurchaseFeedback(null)
+      }, 2500)
+      return () => clearTimeout(timer)
+    }
+  }, [purchaseFeedback])
 
   // Initialize game on mount
   useEffect(() => {
@@ -376,6 +387,62 @@ export default function GameScreen() {
     }
   }
 
+  const handleSkinPurchase = (ship: ShipType, skinId: SkinId) => {
+    // If already unlocked, just select it
+    if (isSkinUnlocked(ship, skinId)) {
+      selectSkin(ship, skinId)
+      return
+    }
+
+    // Check if this skin requires an achievement
+    const skin = SHIP_SKINS[ship][skinId]
+    if (skin.achievementRequired) {
+      const achievementId = skin.achievementRequired as AchievementId
+      const achievementName = ACHIEVEMENTS[achievementId]?.name || 'required achievement'
+      setPurchaseFeedback({
+        message: `🏆 Unlock "${achievementName}" achievement to get this skin!`,
+        type: 'error',
+      })
+      return
+    }
+
+    // Get cost and check if user has enough credits
+    const cost = SKIN_COSTS[skinId]
+    if (cost === 0) {
+      // Free skin, just unlock it
+      unlockSkin(ship, skinId)
+      selectSkin(ship, skinId)
+      setPurchaseFeedback({
+        message: `✓ ${skin.name} skin unlocked!`,
+        type: 'success',
+      })
+      return
+    }
+
+    if (upgradesCredits < cost) {
+      setPurchaseFeedback({
+        message: `Not enough credits! Need ${cost}, have ${upgradesCredits}`,
+        type: 'error',
+      })
+      return
+    }
+
+    // Attempt to purchase
+    const success = unlockSkin(ship, skinId)
+    if (success) {
+      selectSkin(ship, skinId)
+      setPurchaseFeedback({
+        message: `✓ ${skin.name} skin purchased for ${cost} credits!`,
+        type: 'success',
+      })
+    } else {
+      setPurchaseFeedback({
+        message: 'Purchase failed. Please try again.',
+        type: 'error',
+      })
+    }
+  }
+
   const joyMag = len(joystickValue)
   const thrusting = joyMag > JOY_DEADZONE
 
@@ -566,11 +633,7 @@ export default function GameScreen() {
                     return (
                       <Pressable
                         key={skinId}
-                        onPress={() => {
-                          if (isUnlockedSkin) {
-                            selectSkin(ship, skinId)
-                          }
-                        }}
+                        onPress={() => handleSkinPurchase(ship, skinId)}
                         style={{
                           width: 58,
                           padding: 8,
@@ -754,6 +817,39 @@ export default function GameScreen() {
           <View>
             <Text style={{ color: colors.comboText, fontSize: 12, fontWeight: 'bold' }}>ACHIEVEMENT UNLOCKED</Text>
             <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: 'bold' }}>{ACHIEVEMENTS[recentUnlock].name}</Text>
+          </View>
+        </View>
+      )}
+
+      {/* Purchase feedback notification */}
+      {purchaseFeedback && (
+        <View style={{
+          position: 'absolute',
+          top: insets.top + 60,
+          left: 20,
+          right: 20,
+          backgroundColor: colors.panelBg,
+          borderWidth: 2,
+          borderColor: purchaseFeedback.type === 'success' ? colors.comboText : colors.enemyShip,
+          borderRadius: 12,
+          padding: 12,
+          zIndex: 100,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 12,
+        }}>
+          <Text style={{ fontSize: 24 }}>{purchaseFeedback.type === 'success' ? '✓' : '⚠️'}</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={{
+              color: purchaseFeedback.type === 'success' ? colors.comboText : colors.enemyShip,
+              fontSize: 12,
+              fontWeight: 'bold'
+            }}>
+              {purchaseFeedback.type === 'success' ? 'SUCCESS' : 'ERROR'}
+            </Text>
+            <Text style={{ color: colors.textPrimary, fontSize: 13 }}>
+              {purchaseFeedback.message}
+            </Text>
           </View>
         </View>
       )}
