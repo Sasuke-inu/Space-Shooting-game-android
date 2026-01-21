@@ -269,7 +269,9 @@ export const useGameEngine = () => {
             asteroidsToRemove.add(aIdx)
             bulletsToRemove.add(bIdx)
             state.incrementCombo()
-            state.addScore(20 * a.tier)
+            const asteroidPoints = 20 * a.tier
+            const asteroidScoreWithMultiplier = state.hasPowerUp('score_multiplier') ? asteroidPoints * 2 : asteroidPoints
+            state.addScore(asteroidScoreWithMultiplier)
             state.addCredits(a.tier)
             state.triggerShake(3, 100)
             hapticMedium()
@@ -301,7 +303,9 @@ export const useGameEngine = () => {
               boom(e.pos, themeColors.particleExplosion, 28, 200)
               state.incrementCombo()
               state.recordKill()
-              state.addScore(ENEMY_STATS[e.type].points)
+              const enemyPoints = ENEMY_STATS[e.type].points
+              const enemyScoreWithMultiplier = state.hasPowerUp('score_multiplier') ? enemyPoints * 2 : enemyPoints
+              state.addScore(enemyScoreWithMultiplier)
               state.addCredits(Math.floor(ENEMY_STATS[e.type].points / 10))
               state.triggerShake(8, 200)
               hapticHeavy()
@@ -854,7 +858,9 @@ function updateHomingMissiles(
       const newHp = enemy.hp - damage
       if (newHp <= 0) {
         deadIndices.add(idx)
-        state.addScore(ENEMY_STATS[enemy.type].points)
+        const missileEnemyPoints = ENEMY_STATS[enemy.type].points
+        const missileScoreWithMultiplier = state.hasPowerUp('score_multiplier') ? missileEnemyPoints * 2 : missileEnemyPoints
+        state.addScore(missileScoreWithMultiplier)
         state.recordKill()
         return { ...enemy, hp: newHp }
       }
