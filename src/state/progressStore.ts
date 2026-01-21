@@ -9,8 +9,9 @@ import type {
   ShipType,
   EnemyType,
   BossType,
+  SkinId,
 } from '../types/game'
-import { ACHIEVEMENTS, UPGRADE_COSTS } from '../types/game'
+import { ACHIEVEMENTS, UPGRADE_COSTS, SKIN_COSTS } from '../types/game'
 
 // ------------------------------------------------------------------ //
 //                         Achievement Store
@@ -251,6 +252,8 @@ interface UpgradesState {
   upgrades: WeaponUpgrades
   credits: number
   unlockedShips: ShipType[]
+  unlockedSkins: Record<ShipType, SkinId[]>
+  selectedSkins: Record<ShipType, SkinId>
 
   // Actions
   addCredits: (amount: number) => void
@@ -259,6 +262,10 @@ interface UpgradesState {
   unlockShip: (ship: ShipType) => void
   isShipUnlocked: (ship: ShipType) => boolean
   getUpgradeCost: (type: keyof WeaponUpgrades) => number | null
+  unlockSkin: (ship: ShipType, skinId: SkinId) => boolean
+  selectSkin: (ship: ShipType, skinId: SkinId) => boolean
+  isSkinUnlocked: (ship: ShipType, skinId: SkinId) => boolean
+  getSelectedSkin: (ship: ShipType) => SkinId
   resetUpgrades: () => void
 }
 
@@ -283,6 +290,18 @@ export const useUpgradesStore = create<UpgradesState>()(
       upgrades: { ...initialUpgrades },
       credits: 0,
       unlockedShips: ['fighter'],
+      unlockedSkins: {
+        fighter: ['default'],
+        scout: ['default'],
+        tank: ['default'],
+        interceptor: ['default'],
+      },
+      selectedSkins: {
+        fighter: 'default',
+        scout: 'default',
+        tank: 'default',
+        interceptor: 'default',
+      },
 
       addCredits: (amount) =>
         set((state) => ({ credits: state.credits + amount })),
@@ -341,10 +360,57 @@ export const useUpgradesStore = create<UpgradesState>()(
         return costs[currentLevel] ?? null
       },
 
+      unlockSkin: (ship, skinId) => {
+        const state = get()
+        if (state.unlockedSkins[ship]?.includes(skinId)) return true
+
+        const cost = SKIN_COSTS[skinId]
+        if (cost === undefined) return false
+        if (state.credits < cost) return false
+
+        set({
+          credits: state.credits - cost,
+          unlockedSkins: {
+            ...state.unlockedSkins,
+            [ship]: [...(state.unlockedSkins[ship] || []), skinId],
+          },
+        })
+        return true
+      },
+
+      selectSkin: (ship, skinId) => {
+        const state = get()
+        if (!state.unlockedSkins[ship]?.includes(skinId)) return false
+
+        set({
+          selectedSkins: {
+            ...state.selectedSkins,
+            [ship]: skinId,
+          },
+        })
+        return true
+      },
+
+      isSkinUnlocked: (ship, skinId) => get().unlockedSkins[ship]?.includes(skinId) ?? false,
+
+      getSelectedSkin: (ship) => get().selectedSkins[ship] || 'default',
+
       resetUpgrades: () =>
         set({
           upgrades: { ...initialUpgrades },
           unlockedShips: ['fighter'],
+          unlockedSkins: {
+            fighter: ['default'],
+            scout: ['default'],
+            tank: ['default'],
+            interceptor: ['default'],
+          },
+          selectedSkins: {
+            fighter: 'default',
+            scout: 'default',
+            tank: 'default',
+            interceptor: 'default',
+          },
         }),
     }),
     {
