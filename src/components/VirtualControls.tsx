@@ -17,6 +17,7 @@ interface VirtualControlsProps {
 }
 
 const JOY_MAX_RADIUS = 60
+const JOY_DEADZONE = 0.1
 
 export const VirtualControls: React.FC<VirtualControlsProps> = ({
   onJoystickMove,
@@ -58,7 +59,17 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
 
       const normalizedX = joystickX.value / JOY_MAX_RADIUS
       const normalizedY = joystickY.value / JOY_MAX_RADIUS
-      runOnJS(handleJoystickMove)({ x: normalizedX, y: normalizedY })
+      const magnitude = Math.sqrt(normalizedX * normalizedX + normalizedY * normalizedY)
+
+      // Apply dead zone
+      if (magnitude < JOY_DEADZONE) {
+        runOnJS(handleJoystickMove)({ x: 0, y: 0 })
+      } else {
+        // Remap from [deadzone, 1.0] to [0.0, 1.0]
+        const remappedMagnitude = (magnitude - JOY_DEADZONE) / (1 - JOY_DEADZONE)
+        const scale = remappedMagnitude / magnitude
+        runOnJS(handleJoystickMove)({ x: normalizedX * scale, y: normalizedY * scale })
+      }
     })
     .onEnd(() => {
       'worklet'
