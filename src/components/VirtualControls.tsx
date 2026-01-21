@@ -17,6 +17,7 @@ interface VirtualControlsProps {
   sensitivity?: number
   size?: JoystickSize
   position?: JoystickPosition
+  invertY?: boolean
 }
 
 const JOY_DEADZONE = 0.1
@@ -34,6 +35,7 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
   sensitivity = 1.0,
   size = 'medium',
   position = 'center',
+  invertY = false,
 }) => {
   const [joystickActive, setJoystickActive] = useState(false)
   const joystickX = useSharedValue(0)
@@ -104,7 +106,8 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
         const curvedMagnitude = applySensitivityCurve(remappedMagnitude, sensitivity)
 
         const scale = curvedMagnitude / magnitude
-        runOnJS(handleJoystickMove)({ x: normalizedX * scale, y: normalizedY * scale })
+        const finalY = normalizedY * scale * (invertY ? -1 : 1)
+        runOnJS(handleJoystickMove)({ x: normalizedX * scale, y: finalY })
       }
     })
     .onEnd(() => {
@@ -114,7 +117,7 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
       joystickScale.value = withSpring(1)
       runOnJS(handleSetActive)(false)
       runOnJS(handleJoystickMove)({ x: 0, y: 0 })
-    }), [handleJoystickMove, handleSetActive, joystickX, joystickY, joystickScale, sensitivity, applySensitivityCurve])
+    }), [handleJoystickMove, handleSetActive, joystickX, joystickY, joystickScale, sensitivity, applySensitivityCurve, invertY])
 
   const stickStyle = useAnimatedStyle(() => ({
     transform: [
