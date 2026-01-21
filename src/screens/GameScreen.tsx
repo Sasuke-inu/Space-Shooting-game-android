@@ -337,6 +337,15 @@ export default function GameScreen() {
     useGameStore.getState().setPaused(false)
   }
 
+  const recordGameEndStats = () => {
+    // Record game end statistics
+    const state = useGameStore.getState()
+    recordGameEnd(score, wave, time, 0, state.sessionShotsFired, state.sessionShotsHit)
+
+    // Add credits to upgrade store
+    addUpgradeCredits(credits)
+  }
+
   const handleSubmitScore = () => {
     const name = playerName.trim() || "Anonymous"
     addScore(score, wave, name)
