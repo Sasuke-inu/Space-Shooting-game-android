@@ -34,6 +34,72 @@ import { hapticLight, hapticMedium, hapticHeavy, hapticWarning } from "./haptics
 let frameCount = 0
 const PERF_LOG_INTERVAL = 60 // Log every 60 frames (~1 second at 60fps)
 
+// ------------------------------------------------------------------ //
+//                         Spatial Grid for Collision Detection
+// ------------------------------------------------------------------ //
+
+interface Entity {
+  pos: Vec2
+  radius?: number
+}
+
+class SpatialGrid {
+  private cellSize: number
+  private cols: number
+  private rows: number
+  private grid: Map<number, Entity[]>
+
+  constructor(width: number, height: number, cellSize = 100) {
+    this.cellSize = cellSize
+    this.cols = Math.ceil(width / cellSize)
+    this.rows = Math.ceil(height / cellSize)
+    this.grid = new Map()
+  }
+
+  clear() {
+    this.grid.clear()
+  }
+
+  private getCellKey(x: number, y: number): number {
+    const col = Math.floor(x / this.cellSize)
+    const row = Math.floor(y / this.cellSize)
+    return row * this.cols + col
+  }
+
+  insert(entity: Entity) {
+    const key = this.getCellKey(entity.pos.x, entity.pos.y)
+    if (!this.grid.has(key)) {
+      this.grid.set(key, [])
+    }
+    this.grid.get(key)!.push(entity)
+  }
+
+  queryNearby(pos: Vec2, radius: number): Entity[] {
+    const nearby: Entity[] = []
+
+    // Calculate cell range to check
+    const minCol = Math.max(0, Math.floor((pos.x - radius) / this.cellSize))
+    const maxCol = Math.min(this.cols - 1, Math.floor((pos.x + radius) / this.cellSize))
+    const minRow = Math.max(0, Math.floor((pos.y - radius) / this.cellSize))
+    const maxRow = Math.min(this.rows - 1, Math.floor((pos.y + radius) / this.cellSize))
+
+    // Collect entities from cells in range
+    for (let row = minRow; row <= maxRow; row++) {
+      for (let col = minCol; col <= maxCol; col++) {
+        const key = row * this.cols + col
+        const entities = this.grid.get(key)
+        if (entities) {
+          nearby.push(...entities)
+        }
+      }
+    }
+
+    return nearby
+  }
+}
+
+let spatialGrid: SpatialGrid | null = null
+
 export const useGameEngine = () => {
   const boom = useCallback((pos: Vec2, color: string, count = 24, speed = 120) => {
     const state = useGameStore.getState()
@@ -293,7 +359,29 @@ export const useGameEngine = () => {
 
     state.updateParticles(activeParticles)
 
-    // Collisions - bullets vs asteroids
+    // Initialize spatial grid for broad-phase collision detection
+    if (!spatialGrid || spatialGrid['cols'] !== Math.ceil(state.w / 100)) {
+      spatialGrid = new SpatialGrid(state.w, state.h, 100)
+    } else {
+      spatialGrid.clear()
+    }
+
+    // Insert asteroids into spatial grid
+    state.asteroids.forEach((a) => {
+      spatialGrid!.insert({ pos: a.pos, radius: a.radius })
+    })
+
+    // Insert enemies into spatial grid
+    state.enemies.forEach((e) => {
+      spatialGrid!.insert({ pos: e.pos, radius: 18 })
+    })
+
+    // Insert boss into spatial grid
+    if (state.boss) {
+      spatialGrid!.insert({ pos: state.boss.pos, radius: 50 })
+    }
+
+    // Collisions - bullets vs asteroids/enemies/boss (using spatial partitioning)
     const bulletsToRemove = new Set<number>()
     const asteroidsToRemove = new Set<number>()
     const enemiesToRemove = new Set<number>()
@@ -303,24 +391,31 @@ export const useGameEngine = () => {
     state.bullets.forEach((b, bIdx) => {
       if (!b.friendly) return // Skip enemy bullets for asteroid collision
 
+      // Query nearby entities using spatial grid
+      const nearby = spatialGrid!.queryNearby(b.pos, 60) // Max query radius for bullet collisions
+
+      // Bullets vs asteroids
       state.asteroids.forEach((a, aIdx) => {
         if (!bulletsToRemove.has(bIdx) && !asteroidsToRemove.has(aIdx)) {
-          if (dist2(b.pos, a.pos) < (a.radius + 2) * (a.radius + 2)) {
-            boom(b.pos, themeColors.particleHit, 12, 180)
-            state.splitAsteroid(a)
-            asteroidsToRemove.add(aIdx)
-            bulletsToRemove.add(bIdx)
-            state.incrementCombo()
-            state.addScore(20 * a.tier)
-            state.addCredits(a.tier)
-            state.triggerShake(3, 100)
-            hapticMedium()
+          // Check if asteroid is in nearby entities
+          if (nearby.some(e => e.pos === a.pos)) {
+            if (dist2(b.pos, a.pos) < (a.radius + 2) * (a.radius + 2)) {
+              boom(b.pos, themeColors.particleHit, 12, 180)
+              state.splitAsteroid(a)
+              asteroidsToRemove.add(aIdx)
+              bulletsToRemove.add(bIdx)
+              state.incrementCombo()
+              state.addScore(20 * a.tier)
+              state.addCredits(a.tier)
+              state.triggerShake(3, 100)
+              hapticMedium()
 
-            // Chance to drop power-up from large asteroids
-            if (a.tier === 3 && Math.random() < POWERUP_DROP_ASTEROID) {
-              state.spawnPowerUp(a.pos)
+              // Chance to drop power-up from large asteroids
+              if (a.tier === 3 && Math.random() < POWERUP_DROP_ASTEROID) {
+                state.spawnPowerUp(a.pos)
+              }
+              state.recordShot(true) // Record shot hit
             }
-            state.recordShot(true) // Record shot hit
           }
         }
       })
@@ -328,63 +423,71 @@ export const useGameEngine = () => {
       // Bullets vs enemies - collect damage to apply after iteration
       state.enemies.forEach((e, eIdx) => {
         if (b.friendly && !bulletsToRemove.has(bIdx) && !enemiesToRemove.has(eIdx)) {
-          if (dist2(b.pos, e.pos) < 18 * 18) {
-            const damage = 25
-            const newHp = e.hp - damage
+          // Check if enemy is in nearby entities
+          if (nearby.some(ent => ent.pos === e.pos)) {
+            if (dist2(b.pos, e.pos) < 18 * 18) {
+              const damage = 25
+              const newHp = e.hp - damage
 
-            if (newHp <= 0) {
-              // Enemy destroyed - mark for removal
-              enemiesToRemove.add(eIdx)
-              enemyDeathEffects.push({
-                pos: { ...e.pos },
-                type: e.type,
-                dropPowerUp: Math.random() < POWERUP_DROP_ENEMY,
-              })
-              boom(e.pos, themeColors.particleExplosion, 28, 200)
-              state.incrementCombo()
-              state.recordKill()
-              state.addScore(ENEMY_STATS[e.type].points)
-              state.addCredits(Math.floor(ENEMY_STATS[e.type].points / 10))
-              state.triggerShake(8, 200)
-              hapticHeavy()
-            } else {
-              // Enemy damaged - track damage to apply
-              enemyDamage.set(eIdx, (enemyDamage.get(eIdx) || 0) + damage)
-              boom(b.pos, themeColors.particleExplosion, 10, 160)
+              if (newHp <= 0) {
+                // Enemy destroyed - mark for removal
+                enemiesToRemove.add(eIdx)
+                enemyDeathEffects.push({
+                  pos: { ...e.pos },
+                  type: e.type,
+                  dropPowerUp: Math.random() < POWERUP_DROP_ENEMY,
+                })
+                boom(e.pos, themeColors.particleExplosion, 28, 200)
+                state.incrementCombo()
+                state.recordKill()
+                state.addScore(ENEMY_STATS[e.type].points)
+                state.addCredits(Math.floor(ENEMY_STATS[e.type].points / 10))
+                state.triggerShake(8, 200)
+                hapticHeavy()
+              } else {
+                // Enemy damaged - track damage to apply
+                enemyDamage.set(eIdx, (enemyDamage.get(eIdx) || 0) + damage)
+                boom(b.pos, themeColors.particleExplosion, 10, 160)
+              }
+
+              bulletsToRemove.add(bIdx)
+              state.recordShot(true) // Record shot hit
             }
-
-            bulletsToRemove.add(bIdx)
-            state.recordShot(true) // Record shot hit
           }
         }
       })
 
       // Bullets vs boss
       if (state.boss && b.friendly && !bulletsToRemove.has(bIdx)) {
-        const bossHitRadius = 50
-        if (dist2(b.pos, state.boss.pos) < bossHitRadius * bossHitRadius) {
-          // Store boss position before potentially defeating it
-          const bossPos = { ...state.boss.pos }
-          state.damageBoss(25)
-          bulletsToRemove.add(bIdx)
-          boom(b.pos, themeColors.particleExplosion, 8, 140)
-          state.triggerShake(5, 100)
+        // Check if boss is in nearby entities
+        if (nearby.some(ent => ent.pos === state.boss!.pos)) {
+          const bossHitRadius = 50
+          if (dist2(b.pos, state.boss.pos) < bossHitRadius * bossHitRadius) {
+            // Store boss position before potentially defeating it
+            const bossPos = { ...state.boss.pos }
+            state.damageBoss(25)
+            bulletsToRemove.add(bIdx)
+            boom(b.pos, themeColors.particleExplosion, 8, 140)
+            state.triggerShake(5, 100)
 
-          state.recordShot(true) // Record shot hit
+            state.recordShot(true) // Record shot hit
 
-          // Check boss death using fresh state
-          const updatedState = useGameStore.getState()
-          if (updatedState.boss && updatedState.boss.hp <= 0) {
-            boom(bossPos, themeColors.particleExplosion, 60, 300)
-            state.defeatBoss()
-            state.triggerShake(20, 500)
-            hapticHeavy()
+            // Check boss death using fresh state
+            const updatedState = useGameStore.getState()
+            if (updatedState.boss && updatedState.boss.hp <= 0) {
+              boom(bossPos, themeColors.particleExplosion, 60, 300)
+              state.defeatBoss()
+              state.triggerShake(20, 500)
+              hapticHeavy()
+            }
           }
         }
       }
     })
 
-    // Enemy bullets vs player
+    // Enemy bullets vs player - use spatial grid for player query
+    const playerNearby = spatialGrid.queryNearby(state.player.pos, 100)
+
     state.bullets.forEach((b, bIdx) => {
       if (!b.friendly && dist2(b.pos, state.player.pos) < 16 * 16) {
         if (state.player.inv <= 0 && !hasShield) {
@@ -426,46 +529,55 @@ export const useGameEngine = () => {
       }
     }
 
-    // Player collisions with asteroids
+    // Player collisions with asteroids (using spatial partitioning)
     state.asteroids.forEach((a) => {
-      if (dist2(state.player.pos, a.pos) < (a.radius + 12) * (a.radius + 12)) {
-        if (state.player.inv <= 0 && !hasShield) {
-          state.updatePlayer({ hp: state.player.hp - 28, inv: 1.0 })
-          state.recordDamage()
-          boom(state.player.pos, themeColors.particleCollision, 18, 200)
-          state.triggerShake(12, 200)
-          hapticWarning()
+      // Check if asteroid is near player using spatial grid
+      if (playerNearby.some(e => e.pos === a.pos)) {
+        if (dist2(state.player.pos, a.pos) < (a.radius + 12) * (a.radius + 12)) {
+          if (state.player.inv <= 0 && !hasShield) {
+            state.updatePlayer({ hp: state.player.hp - 28, inv: 1.0 })
+            state.recordDamage()
+            boom(state.player.pos, themeColors.particleCollision, 18, 200)
+            state.triggerShake(12, 200)
+            hapticWarning()
+          }
         }
       }
     })
 
-    // Player collisions with enemies
+    // Player collisions with enemies (using spatial partitioning)
     state.enemies.forEach((e) => {
-      if (dist2(state.player.pos, e.pos) < 22 * 22) {
-        if (state.player.inv <= 0 && !hasShield) {
-          state.updatePlayer({ hp: state.player.hp - 20, inv: 0.9 })
-          state.recordDamage()
-          boom(state.player.pos, themeColors.particleCollision, 18, 200)
-          state.triggerShake(12, 200)
-          hapticWarning()
+      // Check if enemy is near player using spatial grid
+      if (playerNearby.some(ent => ent.pos === e.pos)) {
+        if (dist2(state.player.pos, e.pos) < 22 * 22) {
+          if (state.player.inv <= 0 && !hasShield) {
+            state.updatePlayer({ hp: state.player.hp - 20, inv: 0.9 })
+            state.recordDamage()
+            boom(state.player.pos, themeColors.particleCollision, 18, 200)
+            state.triggerShake(12, 200)
+            hapticWarning()
+          }
         }
       }
     })
 
-    // Player collision with boss
+    // Player collision with boss (using spatial partitioning)
     if (state.boss) {
-      if (dist2(state.player.pos, state.boss.pos) < 60 * 60) {
-        if (state.player.inv <= 0 && !hasShield) {
-          state.updatePlayer({ hp: state.player.hp - 40, inv: 1.5 })
-          state.recordDamage()
-          boom(state.player.pos, themeColors.particleCollision, 24, 250)
-          state.triggerShake(15, 300)
-          hapticWarning()
+      // Check if boss is near player using spatial grid
+      if (playerNearby.some(ent => ent.pos === state.boss!.pos)) {
+        if (dist2(state.player.pos, state.boss.pos) < 60 * 60) {
+          if (state.player.inv <= 0 && !hasShield) {
+            state.updatePlayer({ hp: state.player.hp - 40, inv: 1.5 })
+            state.recordDamage()
+            boom(state.player.pos, themeColors.particleCollision, 24, 250)
+            state.triggerShake(15, 300)
+            hapticWarning()
+          }
         }
       }
     }
 
-    // Player collisions with power-ups
+    // Player collisions with power-ups (power-ups are sparse, no need for spatial grid)
     state.powerUps.forEach((p, pIdx) => {
       if (dist2(state.player.pos, p.pos) < 30 * 30) {
         state.collectPowerUp(pIdx)
