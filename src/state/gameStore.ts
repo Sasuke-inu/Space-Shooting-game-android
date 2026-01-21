@@ -21,6 +21,7 @@ import type {
 } from "../types/game"
 import { ENEMY_STATS, BOSS_STATS, SHIP_STATS, ABILITY_STATS } from "../types/game"
 import { v, add, fromAngle, rand } from "../utils/vectorMath"
+import { playSfx } from "../utils/audioManager"
 
 // ------------------------------------------------------------------ //
 //                Gameplay tuning (feel free to tweak)
@@ -232,6 +233,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set((state) => {
       const nextWave = state.wave + 1
       const isBossWave = nextWave % BOSS_WAVE_INTERVAL === 0
+
+      // Play boss warning sound when a boss wave is starting
+      if (isBossWave) {
+        playSfx('boss_warning')
+      }
+
       return {
         wave: nextWave,
         bossWarning: isBossWave,
@@ -549,10 +556,17 @@ export const useGameStore = create<GameStore>((set, get) => ({
         Math.floor(newCount / 3),
         COMBO_MULTIPLIERS.length - 1
       )
+      const newMultiplier = COMBO_MULTIPLIERS[multiplierIndex]
+
+      // Play sound when multiplier increases (every 3 kills)
+      if (newMultiplier > state.combo.multiplier) {
+        playSfx('combo_milestone')
+      }
+
       return {
         combo: {
           count: newCount,
-          multiplier: COMBO_MULTIPLIERS[multiplierIndex],
+          multiplier: newMultiplier,
           timer: COMBO_TIMEOUT,
         },
       }
