@@ -118,6 +118,168 @@ export interface Player {
 }
 
 // ------------------------------------------------------------------ //
+//                         Ship Skins
+// ------------------------------------------------------------------ //
+
+export type SkinId = 'default' | 'stealth' | 'neon' | 'gold' | 'veteran'
+
+export interface ShipSkin {
+  id: SkinId
+  name: string
+  description: string
+  colors: {
+    primary: string     // Main ship outline color
+    secondary: string   // Accent/detail color
+    fill: string        // Ship fill color
+    glow?: string       // Optional glow effect color
+  }
+  achievementRequired?: string  // Optional achievement ID required to unlock
+}
+
+export const SHIP_SKINS: Record<ShipType, Record<SkinId, ShipSkin>> = {
+  fighter: {
+    default: {
+      id: 'default',
+      name: 'Standard',
+      description: 'Classic fighter colors',
+      colors: { primary: '#00ffff', secondary: '#ffffff', fill: '#004444' },
+    },
+    stealth: {
+      id: 'stealth',
+      name: 'Stealth',
+      description: 'Dark ops paint scheme',
+      colors: { primary: '#333333', secondary: '#666666', fill: '#111111' },
+    },
+    neon: {
+      id: 'neon',
+      name: 'Neon',
+      description: 'Bright cyberpunk style',
+      colors: { primary: '#ff00ff', secondary: '#00ffff', fill: '#440044', glow: '#ff00ff' },
+    },
+    gold: {
+      id: 'gold',
+      name: 'Gold',
+      description: 'Premium golden finish',
+      colors: { primary: '#ffd700', secondary: '#ffed4e', fill: '#664400', glow: '#ffd700' },
+    },
+    veteran: {
+      id: 'veteran',
+      name: 'Veteran',
+      description: 'Elite pilot colors',
+      colors: { primary: '#ff4444', secondary: '#ffffff', fill: '#440000', glow: '#ff4444' },
+      achievementRequired: 'survivor_20',
+    },
+  },
+  scout: {
+    default: {
+      id: 'default',
+      name: 'Standard',
+      description: 'Standard scout colors',
+      colors: { primary: '#00ff00', secondary: '#ffffff', fill: '#004400' },
+    },
+    stealth: {
+      id: 'stealth',
+      name: 'Stealth',
+      description: 'Shadow runner scheme',
+      colors: { primary: '#222222', secondary: '#444444', fill: '#000000' },
+    },
+    neon: {
+      id: 'neon',
+      name: 'Neon',
+      description: 'High-speed racer style',
+      colors: { primary: '#00ffff', secondary: '#ff00ff', fill: '#004444', glow: '#00ffff' },
+    },
+    gold: {
+      id: 'gold',
+      name: 'Gold',
+      description: 'Champion runner finish',
+      colors: { primary: '#ffd700', secondary: '#fff700', fill: '#554400', glow: '#ffd700' },
+    },
+    veteran: {
+      id: 'veteran',
+      name: 'Veteran',
+      description: 'Speed demon colors',
+      colors: { primary: '#ffaa00', secondary: '#ffffff', fill: '#553300', glow: '#ffaa00' },
+      achievementRequired: 'speed_demon',
+    },
+  },
+  tank: {
+    default: {
+      id: 'default',
+      name: 'Standard',
+      description: 'Standard tank colors',
+      colors: { primary: '#ff8800', secondary: '#ffffff', fill: '#442200' },
+    },
+    stealth: {
+      id: 'stealth',
+      name: 'Stealth',
+      description: 'Heavy armor black',
+      colors: { primary: '#444444', secondary: '#666666', fill: '#222222' },
+    },
+    neon: {
+      id: 'neon',
+      name: 'Neon',
+      description: 'Enforcer glow scheme',
+      colors: { primary: '#ff0000', secondary: '#ff8800', fill: '#440000', glow: '#ff0000' },
+    },
+    gold: {
+      id: 'gold',
+      name: 'Gold',
+      description: 'Fortress gold plating',
+      colors: { primary: '#ffd700', secondary: '#ffaa00', fill: '#664400', glow: '#ffd700' },
+    },
+    veteran: {
+      id: 'veteran',
+      name: 'Veteran',
+      description: 'Battle-hardened colors',
+      colors: { primary: '#8800ff', secondary: '#ffffff', fill: '#220044', glow: '#8800ff' },
+      achievementRequired: 'untouchable',
+    },
+  },
+  interceptor: {
+    default: {
+      id: 'default',
+      name: 'Standard',
+      description: 'Standard interceptor colors',
+      colors: { primary: '#4488ff', secondary: '#ffffff', fill: '#002244' },
+    },
+    stealth: {
+      id: 'stealth',
+      name: 'Stealth',
+      description: 'Silent hunter scheme',
+      colors: { primary: '#333333', secondary: '#555555', fill: '#111111' },
+    },
+    neon: {
+      id: 'neon',
+      name: 'Neon',
+      description: 'Lightning strike style',
+      colors: { primary: '#ffff00', secondary: '#00ffff', fill: '#444400', glow: '#ffff00' },
+    },
+    gold: {
+      id: 'gold',
+      name: 'Gold',
+      description: 'Ace pilot finish',
+      colors: { primary: '#ffd700', secondary: '#ffffff', fill: '#664400', glow: '#ffd700' },
+    },
+    veteran: {
+      id: 'veteran',
+      name: 'Veteran',
+      description: 'EMP specialist colors',
+      colors: { primary: '#00ffff', secondary: '#ffffff', fill: '#004444', glow: '#00ffff' },
+      achievementRequired: 'boss_slayer',
+    },
+  },
+}
+
+export const SKIN_COSTS: Record<SkinId, number> = {
+  default: 0,        // Free (starting skin)
+  stealth: 500,      // Low tier
+  neon: 1000,        // Mid tier
+  gold: 2000,        // High tier
+  veteran: 0,        // Achievement-exclusive (free but locked)
+}
+
+// ------------------------------------------------------------------ //
 //                         Weapon Upgrades
 // ------------------------------------------------------------------ //
 
