@@ -749,38 +749,40 @@ export const useGameStore = create<GameStore>((set, get) => ({
   //                         Special Abilities
   // ------------------------------------------------------------------ //
 
-  activateSpecialAbility: () =>
-    set((state) => {
-      if (!state.player.specialReady) return state
+  activateSpecialAbility: () => {
+    const state = get()
+    if (!state.player.specialReady) return
 
-      const shipType = state.player.shipType
-      let abilityType: AbilityType
+    const shipType = state.player.shipType
+    let abilityType: AbilityType
 
-      switch (shipType) {
-        case 'fighter': abilityType = 'missile_barrage'; break
-        case 'scout': abilityType = 'time_warp'; break
-        case 'tank': abilityType = 'shield_burst'; break
-        case 'interceptor': abilityType = 'emp_blast'; break
-        default: abilityType = 'missile_barrage'
-      }
+    switch (shipType) {
+      case 'fighter': abilityType = 'missile_barrage'; break
+      case 'scout': abilityType = 'time_warp'; break
+      case 'tank': abilityType = 'shield_burst'; break
+      case 'interceptor': abilityType = 'emp_blast'; break
+      default: abilityType = 'missile_barrage'
+    }
 
-      const stats = ABILITY_STATS[abilityType]
+    const stats = ABILITY_STATS[abilityType]
 
-      return {
-        player: {
-          ...state.player,
-          specialReady: false,
-          specialCooldown: stats.cooldown,
-        },
-        specialAbility: {
-          type: abilityType,
-          cooldown: stats.cooldown,
-          maxCooldown: stats.cooldown,
-          duration: stats.duration,
-          isActive: true,
-        },
-      }
-    }),
+    set({
+      player: {
+        ...state.player,
+        specialReady: false,
+        specialCooldown: stats.cooldown,
+      },
+      specialAbility: {
+        type: abilityType,
+        cooldown: stats.cooldown,
+        maxCooldown: stats.cooldown,
+        duration: stats.duration,
+        isActive: true,
+      },
+    })
+
+    get().triggerAbilityFlash(abilityType)
+  },
 
   updateSpecialAbility: (dt) =>
     set((state) => {
