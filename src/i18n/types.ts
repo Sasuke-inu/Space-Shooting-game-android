@@ -141,6 +141,42 @@ export interface Translations {
     damageDealt: string;
     damageTaken: string;
     powerUpsCollected: string;
+    sectionOverview: string;
+    sectionCombat: string;
+    sectionEnemyKills: string;
+    sectionBossKills: string;
+    sectionProgress: string;
+    sectionAchievements: string;
+    sectionShooting: string;
+    sectionFavorites: string;
+    sectionRecentSession: string;
+    kdRatio: string;
+    unlocked: string;
+    completion: string;
+    shotsFired: string;
+    shotsHit: string;
+    bestAccuracy: string;
+    shotsMissed: string;
+    favoriteShip: string;
+    favoriteTheme: string;
+    unlockedOn: string;
+    sessionScore: string;
+    sessionWave: string;
+    sessionKills: string;
+    sessionAccuracy: string;
+    sessionTime: string;
+    noRecentSession: string;
+  };
+  enemyTypes: {
+    scout: string;
+    tank: string;
+    sniper: string;
+    bomber: string;
+  };
+  bossTypes: {
+    destroyer: string;
+    carrier: string;
+    dreadnought: string;
   };
   general: {
     confirm: string;
