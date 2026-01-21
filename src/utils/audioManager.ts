@@ -33,7 +33,7 @@ const SOUND_FILES: Record<SoundEffect, any> = {
   boss_warning: require('../../assets/sounds/boss_warning.mp3'),
 }
 
-class AudioManager {
+export class AudioManager {
   private sounds: SoundPool = {}
   private initialized = false
 
