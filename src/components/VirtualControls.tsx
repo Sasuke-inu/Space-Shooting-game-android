@@ -37,6 +37,23 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
     setJoystickActive(active)
   }, [])
 
+  const applySensitivityCurve = useCallback((magnitude: number, sens: number): number => {
+    'worklet'
+    if (sens < 1.0) {
+      // Exponential curve for lower sensitivities (more precise control)
+      // Using power > 1 dampens small movements
+      const exponent = 2.0
+      return Math.pow(magnitude, exponent)
+    } else if (sens > 1.0) {
+      // Quadratic curve for higher sensitivities (more aggressive response)
+      // Using square root amplifies small movements while keeping max at 1.0
+      return Math.sqrt(magnitude)
+    } else {
+      // Linear curve for 1.0x sensitivity
+      return magnitude
+    }
+  }, [])
+
   const panGesture = useMemo(() => Gesture.Pan()
     .onStart(() => {
       'worklet'
@@ -67,7 +84,11 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
       } else {
         // Remap from [deadzone, 1.0] to [0.0, 1.0]
         const remappedMagnitude = (magnitude - JOY_DEADZONE) / (1 - JOY_DEADZONE)
-        const scale = remappedMagnitude / magnitude
+
+        // Apply sensitivity curve
+        const curvedMagnitude = applySensitivityCurve(remappedMagnitude, sensitivity)
+
+        const scale = curvedMagnitude / magnitude
         runOnJS(handleJoystickMove)({ x: normalizedX * scale, y: normalizedY * scale })
       }
     })
@@ -78,7 +99,7 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
       joystickScale.value = withSpring(1)
       runOnJS(handleSetActive)(false)
       runOnJS(handleJoystickMove)({ x: 0, y: 0 })
-    }), [handleJoystickMove, handleSetActive, joystickX, joystickY, joystickScale, sensitivity])
+    }), [handleJoystickMove, handleSetActive, joystickX, joystickY, joystickScale, sensitivity, applySensitivityCurve])
 
   const stickStyle = useAnimatedStyle(() => ({
     transform: [
