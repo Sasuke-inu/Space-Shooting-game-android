@@ -11,6 +11,7 @@ import type {
   BossType,
 } from '../types/game'
 import { ACHIEVEMENTS, UPGRADE_COSTS } from '../types/game'
+import type { ThemeId } from '../theme/types'
 
 // ------------------------------------------------------------------ //
 //                         Achievement Store
@@ -355,11 +356,46 @@ export const useUpgradesStore = create<UpgradesState>()(
 )
 
 // ------------------------------------------------------------------ //
+//                         Theme Unlock Store
+// ------------------------------------------------------------------ //
+
+interface ThemeUnlockState {
+  unlockedThemes: ThemeId[]
+
+  // Actions
+  unlockTheme: (themeId: ThemeId) => void
+  isThemeUnlocked: (themeId: ThemeId) => boolean
+}
+
+export const useThemeUnlockStore = create<ThemeUnlockState>()(
+  persist(
+    (set, get) => ({
+      unlockedThemes: ['neon-void'],
+
+      unlockTheme: (themeId) =>
+        set((state) => {
+          if (state.unlockedThemes.includes(themeId)) return state
+          return {
+            unlockedThemes: [...state.unlockedThemes, themeId],
+          }
+        }),
+
+      isThemeUnlocked: (themeId) => get().unlockedThemes.includes(themeId),
+    }),
+    {
+      name: 'space-shooter-theme-unlocks',
+      storage: createJSONStorage(() => AsyncStorage),
+    }
+  )
+)
+
+// ------------------------------------------------------------------ //
 //                         Helper Hooks
 // ------------------------------------------------------------------ //
 
 export const useCredits = () => useUpgradesStore((s) => s.credits)
 export const useUpgrades = () => useUpgradesStore((s) => s.upgrades)
 export const useUnlockedShips = () => useUpgradesStore((s) => s.unlockedShips)
+export const useUnlockedThemes = () => useThemeUnlockStore((s) => s.unlockedThemes)
 export const useStats = () => useStatisticsStore((s) => s.stats)
 export const useAchievements = () => useAchievementStore((s) => s.achievements)
