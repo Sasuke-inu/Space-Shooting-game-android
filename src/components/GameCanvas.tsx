@@ -39,6 +39,7 @@ const getPowerUpColor = (type: string, colors: ThemeColors): string => {
     case 'rapid_fire': return colors.powerUpRapidFire
     case 'spread_shot': return colors.powerUpSpreadShot
     case 'magnet': return colors.powerUpMagnet
+    case 'score_multiplier': return colors.powerUpScoreMultiplier
     default: return colors.particle
   }
 }
