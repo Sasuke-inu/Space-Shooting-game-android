@@ -827,5 +827,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
         ...e,
         stunDuration: Math.max(e.stunDuration || 0, duration),
       })),
+      // Bosses get reduced stun duration (1.5 seconds)
+      boss: state.boss
+        ? {
+            ...state.boss,
+            stunDuration: Math.max(state.boss.stunDuration || 0, 1.5),
+          }
+        : null,
     })),
 }))
