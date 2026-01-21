@@ -15,6 +15,7 @@ describe('Enemy Spawning Logic', () => {
       tank: { hp: 150, speed: 60, damage: 25, fireRate: 2.0, points: 200 },
       sniper: { hp: 50, speed: 40, damage: 35, fireRate: 3.0, points: 150 },
       bomber: { hp: 80, speed: 100, damage: 15, fireRate: 1.5, points: 125 },
+      teleporter: { hp: 60, speed: 120, damage: 15, fireRate: 1.8, points: 150 },
     }
 
     test('scout is fastest but weakest', () => {
@@ -40,6 +41,13 @@ describe('Enemy Spawning Logic', () => {
       expect(ENEMY_STATS.tank.points).toBeGreaterThan(ENEMY_STATS.scout.points)
       expect(ENEMY_STATS.sniper.points).toBeGreaterThan(ENEMY_STATS.scout.points)
     })
+
+    test('teleporter has moderate speed and hp', () => {
+      expect(ENEMY_STATS.teleporter.speed).toBeGreaterThan(ENEMY_STATS.tank.speed)
+      expect(ENEMY_STATS.teleporter.speed).toBeLessThan(ENEMY_STATS.scout.speed)
+      expect(ENEMY_STATS.teleporter.hp).toBeGreaterThan(ENEMY_STATS.scout.hp)
+      expect(ENEMY_STATS.teleporter.hp).toBeLessThan(ENEMY_STATS.tank.hp)
+    })
   })
 
   // ------------------------------------------------------------------ //
@@ -51,6 +59,7 @@ describe('Enemy Spawning Logic', () => {
       tank: wave >= 3 ? 20 : 0,
       sniper: wave >= 5 ? 15 : 0,
       bomber: wave >= 7 ? 15 : 0,
+      teleporter: wave >= 9 ? 10 : 0,
     })
 
     test('only scouts spawn on wave 1', () => {
@@ -59,6 +68,7 @@ describe('Enemy Spawning Logic', () => {
       expect(weights.tank).toBe(0)
       expect(weights.sniper).toBe(0)
       expect(weights.bomber).toBe(0)
+      expect(weights.teleporter).toBe(0)
     })
 
     test('tanks unlock at wave 3', () => {
@@ -85,7 +95,15 @@ describe('Enemy Spawning Logic', () => {
       expect(wave7.bomber).toBe(15)
     })
 
-    test('all enemies available at wave 7+', () => {
+    test('teleporters unlock at wave 9', () => {
+      const wave8 = getEnemySpawnWeights(8)
+      const wave9 = getEnemySpawnWeights(9)
+
+      expect(wave8.teleporter).toBe(0)
+      expect(wave9.teleporter).toBe(10)
+    })
+
+    test('all enemies available at wave 9+', () => {
       const weights = getEnemySpawnWeights(10)
       expect(Object.values(weights).every((w) => w > 0)).toBe(true)
     })
@@ -94,10 +112,10 @@ describe('Enemy Spawning Logic', () => {
       const weights = getEnemySpawnWeights(10) // All types available
       const totalWeight = Object.values(weights).reduce((a, b) => a + b, 0)
 
-      expect(totalWeight).toBe(40 + 20 + 15 + 15) // 90
+      expect(totalWeight).toBe(40 + 20 + 15 + 15 + 10) // 100
 
       // Simulate 1000 spawns
-      const counts = { scout: 0, tank: 0, sniper: 0, bomber: 0 }
+      const counts = { scout: 0, tank: 0, sniper: 0, bomber: 0, teleporter: 0 }
 
       for (let i = 0; i < 1000; i++) {
         let random = Math.random() * totalWeight
@@ -110,13 +128,17 @@ describe('Enemy Spawning Logic', () => {
         }
       }
 
-      // Scouts should be ~44% (40/90)
-      expect(counts.scout / 1000).toBeGreaterThan(0.35)
-      expect(counts.scout / 1000).toBeLessThan(0.55)
+      // Scouts should be ~40% (40/100)
+      expect(counts.scout / 1000).toBeGreaterThan(0.32)
+      expect(counts.scout / 1000).toBeLessThan(0.48)
 
-      // Tanks should be ~22% (20/90)
-      expect(counts.tank / 1000).toBeGreaterThan(0.15)
-      expect(counts.tank / 1000).toBeLessThan(0.30)
+      // Tanks should be ~20% (20/100)
+      expect(counts.tank / 1000).toBeGreaterThan(0.13)
+      expect(counts.tank / 1000).toBeLessThan(0.27)
+
+      // Teleporters should be ~10% (10/100)
+      expect(counts.teleporter / 1000).toBeGreaterThan(0.05)
+      expect(counts.teleporter / 1000).toBeLessThan(0.15)
     })
   })
 
