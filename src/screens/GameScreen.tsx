@@ -3,6 +3,7 @@ import { View, Text, Pressable, Modal, useWindowDimensions, TextInput, Keyboard,
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Gesture, GestureDetector } from "react-native-gesture-handler"
 import { Audio } from "expo-av"
+import { shallow } from "zustand/shallow"
 import { GameCanvas } from "../components/GameCanvas"
 import { VirtualControls } from "../components/VirtualControls"
 import { useGameStore, MAX_DT, JOY_DEADZONE } from "../state/gameStore"
@@ -37,43 +38,53 @@ export default function GameScreen() {
   const sfxVolume = useSettingsStore((s) => s.sfxVolume)
   const setSfxVolume = useSettingsStore((s) => s.setSfxVolume)
 
-  // Game state
+  // Game state - primitives (use default equality)
   const paused = useGameStore((s) => s.paused)
   const score = useGameStore((s) => s.score)
   const credits = useGameStore((s) => s.credits)
   const lives = useGameStore((s) => s.lives)
   const wave = useGameStore((s) => s.wave)
-  const player = useGameStore((s) => s.player)
   const playerAng = useGameStore((s) => s.player.ang)
-  const bullets = useGameStore((s) => s.bullets)
-  const asteroids = useGameStore((s) => s.asteroids)
-  const enemies = useGameStore((s) => s.enemies)
-  const particles = useGameStore((s) => s.particles)
   const time = useGameStore((s) => s.time)
-  const powerUps = useGameStore((s) => s.powerUps)
-  const activePowerUps = useGameStore((s) => s.activePowerUps)
-  const combo = useGameStore((s) => s.combo)
+  const bossWarning = useGameStore((s) => s.bossWarning)
+  const timeWarpActive = useGameStore((s) => s.timeWarpActive)
+
+  // Game state - objects (use shallow equality)
+  const player = useGameStore((s) => s.player, shallow)
+  const combo = useGameStore((s) => s.combo, shallow)
+  const boss = useGameStore((s) => s.boss, shallow)
+  const specialAbility = useGameStore((s) => s.specialAbility, shallow)
+
+  // Game state - arrays (use shallow equality)
+  const bullets = useGameStore((s) => s.bullets, shallow)
+  const asteroids = useGameStore((s) => s.asteroids, shallow)
+  const enemies = useGameStore((s) => s.enemies, shallow)
+  const particles = useGameStore((s) => s.particles, shallow)
+  const powerUps = useGameStore((s) => s.powerUps, shallow)
+  const activePowerUps = useGameStore((s) => s.activePowerUps, shallow)
+  const homingMissiles = useGameStore((s) => s.homingMissiles, shallow)
+
+  // Game state - actions (stable function references)
   const getShakeOffset = useGameStore((s) => s.getShakeOffset)
   const hasPowerUp = useGameStore((s) => s.hasPowerUp)
-  const boss = useGameStore((s) => s.boss)
-  const bossWarning = useGameStore((s) => s.bossWarning)
-  const homingMissiles = useGameStore((s) => s.homingMissiles)
-  const timeWarpActive = useGameStore((s) => s.timeWarpActive)
   const activateSpecialAbility = useGameStore((s) => s.activateSpecialAbility)
   const setShipType = useGameStore((s) => s.setShipType)
   const spawnHomingMissiles = useGameStore((s) => s.spawnHomingMissiles)
   const setTimeWarp = useGameStore((s) => s.setTimeWarp)
-  const specialAbility = useGameStore((s) => s.specialAbility)
   const stunAllEnemies = useGameStore((s) => s.stunAllEnemies)
 
-  // Progress stores
-  const stats = useStatisticsStore((s) => s.stats)
-  const recordGameEnd = useStatisticsStore((s) => s.recordGameEnd)
-  const achievements = useAchievementStore((s) => s.achievements)
+  // Progress stores - objects and arrays (use shallow equality)
+  const stats = useStatisticsStore((s) => s.stats, shallow)
+  const achievements = useAchievementStore((s) => s.achievements, shallow)
+  const unlockedShips = useUpgradesStore((s) => s.unlockedShips, shallow)
+
+  // Progress stores - primitives
   const recentUnlock = useAchievementStore((s) => s.recentUnlock)
-  const clearRecentUnlock = useAchievementStore((s) => s.clearRecentUnlock)
-  const unlockedShips = useUpgradesStore((s) => s.unlockedShips)
   const upgradesCredits = useUpgradesStore((s) => s.credits)
+
+  // Progress stores - actions
+  const recordGameEnd = useStatisticsStore((s) => s.recordGameEnd)
+  const clearRecentUnlock = useAchievementStore((s) => s.clearRecentUnlock)
   const addUpgradeCredits = useUpgradesStore((s) => s.addCredits)
 
   const [joystickValue, setJoystickValue] = useState<Vec2>({ x: 0, y: 0 })
@@ -96,7 +107,10 @@ export default function GameScreen() {
   const [playerName, setPlayerName] = useState("")
   const [settingsTab, setSettingsTab] = useState<'general' | 'ship' | 'stats'>('general')
 
-  const highScores = useHighScoresStore((s) => s.scores)
+  // High scores - arrays (use shallow equality)
+  const highScores = useHighScoresStore((s) => s.scores, shallow)
+
+  // High scores - actions
   const isTopFive = useHighScoresStore((s) => s.isTopFive)
   const addScore = useHighScoresStore((s) => s.addScore)
 
