@@ -76,6 +76,7 @@ export interface Boss {
   specialCooldown: number
   aiTimer: number
   isActive: boolean
+  stunDuration?: number  // EMP stun duration remaining
 }
 
 export const BOSS_STATS: Record<BossType, { hp: number; phases: number; points: number }> = {
