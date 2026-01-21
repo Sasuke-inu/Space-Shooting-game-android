@@ -9,25 +9,38 @@ import Animated, {
 } from "react-native-reanimated"
 import type { Vec2 } from "../types/game"
 import type { ThemeColors } from "../theme/types"
+import type { JoystickSize } from "../state/settingsStore"
 
 interface VirtualControlsProps {
   onJoystickMove: (value: Vec2) => void
   colors: ThemeColors
   sensitivity?: number
+  size?: JoystickSize
 }
 
-const JOY_MAX_RADIUS = 60
 const JOY_DEADZONE = 0.1
+
+// Size configurations
+const SIZE_CONFIG = {
+  small: { pad: 100, stick: 31, maxRadius: 43 },
+  medium: { pad: 140, stick: 44, maxRadius: 60 },
+  large: { pad: 180, stick: 56, maxRadius: 77 },
+} as const
 
 export const VirtualControls: React.FC<VirtualControlsProps> = ({
   onJoystickMove,
   colors,
   sensitivity = 1.0,
+  size = 'medium',
 }) => {
   const [joystickActive, setJoystickActive] = useState(false)
   const joystickX = useSharedValue(0)
   const joystickY = useSharedValue(0)
   const joystickScale = useSharedValue(1)
+
+  // Get size configuration
+  const sizeConfig = useMemo(() => SIZE_CONFIG[size], [size])
+  const JOY_MAX_RADIUS = sizeConfig.maxRadius
 
   const handleJoystickMove = useCallback((value: Vec2) => {
     onJoystickMove(value)
@@ -111,14 +124,20 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
 
   const dynamicStyles = useMemo(() => ({
     joystickPad: {
+      width: sizeConfig.pad,
+      height: sizeConfig.pad,
+      borderRadius: sizeConfig.pad / 2,
       borderColor: colors.joystickBorder,
       backgroundColor: colors.joystickPad,
     },
     joystickStick: {
+      width: sizeConfig.stick,
+      height: sizeConfig.stick,
+      borderRadius: sizeConfig.stick / 2,
       backgroundColor: colors.joystickStick,
       shadowColor: colors.joystickGlow,
     },
-  }), [colors])
+  }), [colors, sizeConfig])
 
   return (
     <View style={styles.container}>
@@ -149,18 +168,12 @@ const styles = StyleSheet.create({
     pointerEvents: "box-only",
   },
   joystickPad: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
     borderWidth: 1,
     borderStyle: "dashed",
     justifyContent: "center",
     alignItems: "center",
   },
   joystickStick: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
     opacity: 0.85,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,

@@ -28,6 +28,7 @@ export default function GameScreen() {
   const setTheme = useSettingsStore((s) => s.setTheme)
   const joystickSensitivity = useSettingsStore((s) => s.joystickSensitivity)
   const setJoystickSensitivity = useSettingsStore((s) => s.setJoystickSensitivity)
+  const joystickSize = useSettingsStore((s) => s.joystickSize)
   const autoFire = useSettingsStore((s) => s.autoFire)
   const setAutoFire = useSettingsStore((s) => s.setAutoFire)
   const hapticsEnabled = useSettingsStore((s) => s.hapticsEnabled)
@@ -671,6 +672,7 @@ export default function GameScreen() {
         onJoystickMove={setJoystickValue}
         colors={colors}
         sensitivity={joystickSensitivity}
+        size={joystickSize}
       />
 
       {/* Settings Modal */}
