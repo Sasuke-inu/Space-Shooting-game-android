@@ -127,6 +127,21 @@ export interface Translations {
     averageScore: string;
     totalDeaths: string;
   };
+  statistics: {
+    title: string;
+    totalKills: string;
+    totalDeaths: string;
+    bossesDefeated: string;
+    asteroidsDestroyed: string;
+    accuracy: string;
+    highestCombo: string;
+    totalPlayTime: string;
+    averageWave: string;
+    longestSurvivalTime: string;
+    damageDealt: string;
+    damageTaken: string;
+    powerUpsCollected: string;
+  };
   general: {
     confirm: string;
     cancel: string;
