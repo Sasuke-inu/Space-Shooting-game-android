@@ -328,6 +328,7 @@ export default function GameScreen() {
   const handleRestart = () => {
     hapticSelection()
     recordGameEndStats()
+    setShowNameInput(false)
     const store = useGameStore.getState()
     store.resetGame()
     store.spawnAsteroids(5)
@@ -337,6 +338,7 @@ export default function GameScreen() {
 
   const handleMainMenu = () => {
     recordGameEndStats()
+    setShowNameInput(false)
     const store = useGameStore.getState()
     store.resetGame()
     store.spawnAsteroids(5)
