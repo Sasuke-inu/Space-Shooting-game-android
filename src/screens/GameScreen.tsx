@@ -29,8 +29,11 @@ export default function GameScreen() {
   const joystickSensitivity = useSettingsStore((s) => s.joystickSensitivity)
   const setJoystickSensitivity = useSettingsStore((s) => s.setJoystickSensitivity)
   const joystickSize = useSettingsStore((s) => s.joystickSize)
+  const setJoystickSize = useSettingsStore((s) => s.setJoystickSize)
   const joystickPosition = useSettingsStore((s) => s.joystickPosition)
+  const setJoystickPosition = useSettingsStore((s) => s.setJoystickPosition)
   const invertY = useSettingsStore((s) => s.invertY)
+  const setInvertY = useSettingsStore((s) => s.setInvertY)
   const autoFire = useSettingsStore((s) => s.autoFire)
   const setAutoFire = useSettingsStore((s) => s.setAutoFire)
   const hapticsEnabled = useSettingsStore((s) => s.hapticsEnabled)
@@ -551,6 +554,50 @@ export default function GameScreen() {
     </Pressable>
   )
 
+  // ButtonGroup component
+  const ButtonGroup = <T extends string>({
+    value,
+    onValueChange,
+    label,
+    options
+  }: {
+    value: T;
+    onValueChange: (v: T) => void;
+    label: string;
+    options: { value: T; label: string }[]
+  }) => (
+    <View style={{ marginBottom: 16 }}>
+      <Text style={{ color: colors.textSecondary, fontSize: 14, marginBottom: 8 }}>{label}</Text>
+      <View style={{ flexDirection: 'row', gap: 8 }}>
+        {options.map((option) => (
+          <Pressable
+            key={option.value}
+            onPress={() => onValueChange(option.value)}
+            style={{
+              flex: 1,
+              paddingVertical: 10,
+              paddingHorizontal: 12,
+              borderRadius: 8,
+              borderWidth: 2,
+              borderColor: value === option.value ? colors.buttonPrimary : colors.panelBorder,
+              backgroundColor: value === option.value ? colors.buttonSecondary : 'transparent',
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{
+              color: value === option.value ? colors.textPrimary : colors.textSecondary,
+              fontSize: 13,
+              fontWeight: value === option.value ? 'bold' : 'normal',
+              textTransform: 'capitalize',
+            }}>
+              {option.label}
+            </Text>
+          </Pressable>
+        ))}
+      </View>
+    </View>
+  )
+
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       {/* Achievement unlock notification */}
@@ -744,6 +791,27 @@ export default function GameScreen() {
                       🎮 Controls
                     </Text>
                     <Slider value={joystickSensitivity} onValueChange={setJoystickSensitivity} label="Joystick Sensitivity" />
+                    <ButtonGroup
+                      value={joystickSize}
+                      onValueChange={setJoystickSize}
+                      label="Joystick Size"
+                      options={[
+                        { value: 'small', label: 'Small' },
+                        { value: 'medium', label: 'Medium' },
+                        { value: 'large', label: 'Large' },
+                      ]}
+                    />
+                    <ButtonGroup
+                      value={joystickPosition}
+                      onValueChange={setJoystickPosition}
+                      label="Joystick Position"
+                      options={[
+                        { value: 'left', label: 'Left' },
+                        { value: 'center', label: 'Center' },
+                        { value: 'right', label: 'Right' },
+                      ]}
+                    />
+                    <Toggle value={invertY} onValueChange={setInvertY} label="Invert Y-Axis" />
                     <Toggle value={autoFire} onValueChange={setAutoFire} label="Auto-Fire" />
                     <Toggle value={hapticsEnabled} onValueChange={setHapticsEnabled} label="Haptic Feedback" />
                   </>
