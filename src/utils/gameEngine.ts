@@ -356,6 +356,7 @@ export const useGameEngine = () => {
           state.recordDamage()
           state.triggerShake(10, 150)
           hapticWarning()
+          playSfx('player_damage')
         }
         bulletsToRemove.add(bIdx)
         boom(b.pos, themeColors.particleDamage, 8, 140)
@@ -399,6 +400,7 @@ export const useGameEngine = () => {
           boom(state.player.pos, themeColors.particleCollision, 18, 200)
           state.triggerShake(12, 200)
           hapticWarning()
+          playSfx('player_damage')
         }
       }
     })
@@ -412,6 +414,7 @@ export const useGameEngine = () => {
           boom(state.player.pos, themeColors.particleCollision, 18, 200)
           state.triggerShake(12, 200)
           hapticWarning()
+          playSfx('player_damage')
         }
       }
     })
@@ -425,6 +428,7 @@ export const useGameEngine = () => {
           boom(state.player.pos, themeColors.particleCollision, 24, 250)
           state.triggerShake(15, 300)
           hapticWarning()
+          playSfx('player_damage')
         }
       }
     }
