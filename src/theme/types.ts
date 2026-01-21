@@ -55,6 +55,7 @@ export interface ThemeColors {
   powerUpRapidFire: string
   powerUpSpreadShot: string
   powerUpMagnet: string
+  powerUpScoreMultiplier: string
 
   // Combo
   comboText: string

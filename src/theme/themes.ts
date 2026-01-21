@@ -74,6 +74,7 @@ export const neonVoidTheme: GameTheme = {
     powerUpRapidFire: '#ff4d4d',
     powerUpSpreadShot: '#ffdd4d',
     powerUpMagnet: '#d94dff',
+    powerUpScoreMultiplier: '#ff9933',
 
     // Combo
     comboText: '#ffdd4d',
@@ -143,6 +144,7 @@ export const nomadTheme: GameTheme = {
     powerUpRapidFire: '#ff6347',
     powerUpSpreadShot: '#ffd700',
     powerUpMagnet: '#dda0dd',
+    powerUpScoreMultiplier: '#ff8c42',
 
     // Combo
     comboText: '#ffd700',
@@ -212,6 +214,7 @@ export const sakuraTheme: GameTheme = {
     powerUpRapidFire: '#ff6b9d',
     powerUpSpreadShot: '#fff44f',
     powerUpMagnet: '#da70d6',
+    powerUpScoreMultiplier: '#ffb347',
 
     // Combo
     comboText: '#fff44f',
@@ -281,6 +284,7 @@ export const forestMatrixTheme: GameTheme = {
     powerUpRapidFire: '#ff4500',
     powerUpSpreadShot: '#ffd700',
     powerUpMagnet: '#9932cc',
+    powerUpScoreMultiplier: '#ff8800',
 
     // Combo
     comboText: '#ffd700',
@@ -350,6 +354,7 @@ export const infernoTheme: GameTheme = {
     powerUpRapidFire: '#ff0000',
     powerUpSpreadShot: '#ffd700',
     powerUpMagnet: '#9400d3',
+    powerUpScoreMultiplier: '#ffaa00',
 
     // Combo
     comboText: '#ffd700',
@@ -419,6 +424,7 @@ export const arcticTheme: GameTheme = {
     powerUpRapidFire: '#ff6347',
     powerUpSpreadShot: '#ffd700',
     powerUpMagnet: '#da70d6',
+    powerUpScoreMultiplier: '#ff9f4a',
 
     // Combo
     comboText: '#ffd700',
