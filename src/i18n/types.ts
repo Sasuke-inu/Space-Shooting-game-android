@@ -135,6 +135,45 @@ export interface Translations {
     on: string;
     off: string;
   };
+  challenges: {
+    title: string;
+    daily: string;
+    progress: string;
+    reward: string;
+    complete: string;
+    completed: string;
+    refresh: string;
+    refreshIn: string;
+    noActiveChallenges: string;
+    killCount: {
+      name: string;
+      description: string;
+    };
+    combo: {
+      name: string;
+      description: string;
+    };
+    survival: {
+      name: string;
+      description: string;
+    };
+    boss: {
+      name: string;
+      description: string;
+    };
+    accuracy: {
+      name: string;
+      description: string;
+    };
+    powerUp: {
+      name: string;
+      description: string;
+    };
+    noDamage: {
+      name: string;
+      description: string;
+    };
+  };
 }
 
 export const SUPPORTED_LANGUAGES: LanguageOption[] = [
