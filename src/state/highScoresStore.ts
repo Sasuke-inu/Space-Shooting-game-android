@@ -8,6 +8,7 @@ export interface HighScore {
   score: number
   wave: number
   date: number
+  survivalTime?: number // Time survived in seconds (endless mode only)
 }
 
 interface HighScoresState {
@@ -15,7 +16,7 @@ interface HighScoresState {
     classic: HighScore[]
     endless: HighScore[]
   }
-  addScore: (score: number, wave: number, name: string, mode: GameMode) => void
+  addScore: (score: number, wave: number, name: string, mode: GameMode, survivalTime?: number) => void
   isTopFive: (score: number, mode: GameMode) => boolean
   getScores: (mode: GameMode) => HighScore[]
 }
@@ -28,13 +29,14 @@ export const useHighScoresStore = create<HighScoresState>()(
         endless: [],
       },
 
-      addScore: (score: number, wave: number, name: string, mode: GameMode) => {
+      addScore: (score: number, wave: number, name: string, mode: GameMode, survivalTime?: number) => {
         set((state) => {
           const newScore: HighScore = {
             name,
             score,
             wave,
             date: Date.now(),
+            survivalTime,
           }
           const newScores = [...state.scores[mode], newScore]
             .sort((a, b) => b.score - a.score)
