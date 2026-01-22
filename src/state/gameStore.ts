@@ -67,6 +67,9 @@ export const COMBO_MULTIPLIERS = [1, 1.5, 2, 2.5, 3]
 export const BOSS_WAVE_INTERVAL = 5       // Boss every 5 waves
 export const BOSS_WARNING_TIME = 3        // Warning duration before boss spawns (visual telegraph)
 
+// Enemy spawn constants
+export const SAFE_SPAWN_DISTANCE = 150    // Minimum distance from player when spawning enemies
+
 // Enemy spawn weights by wave
 export const getEnemySpawnWeights = (wave: number): Record<EnemyType, number> => ({
   scout: 40,
@@ -361,7 +364,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
       }
 
       const stats = ENEMY_STATS[enemyType]
-      const SAFE_SPAWN_DISTANCE = 150 // Minimum distance from player
 
       // Generate position that's away from the player
       let pos = v(rand(0, state.w), rand(0, state.h))
@@ -423,7 +425,30 @@ export const useGameStore = create<GameStore>((set, get) => ({
         }
 
         const stats = ENEMY_STATS[enemyType]
-        const pos = v(rand(0, state.w), rand(0, state.h))
+
+        // Generate position that's away from the player
+        let pos = v(rand(0, state.w), rand(0, state.h))
+        let attempts = 0
+        const maxAttempts = 10
+
+        while (attempts < maxAttempts) {
+          const dx = pos.x - state.player.pos.x
+          const dy = pos.y - state.player.pos.y
+          const distSq = dx * dx + dy * dy
+
+          if (distSq >= SAFE_SPAWN_DISTANCE * SAFE_SPAWN_DISTANCE) {
+            break // Found safe position
+          }
+
+          // Try spawning from screen edges instead
+          const side = Math.floor(Math.random() * 4)
+          pos = v(
+            side === 0 ? rand(0, 50) : side === 2 ? state.w - rand(0, 50) : rand(0, state.w),
+            side === 1 ? rand(0, 50) : side === 3 ? state.h - rand(0, 50) : rand(0, state.h)
+          )
+          attempts++
+        }
+
         const vel = fromAngle(rand(0, Math.PI * 2), rand(10, 40))
 
         newEnemies.push({
