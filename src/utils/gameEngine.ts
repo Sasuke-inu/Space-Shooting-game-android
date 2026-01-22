@@ -431,15 +431,61 @@ export const useGameEngine = () => {
       }
     })
 
-    // Wave progression
-    if (state.asteroids.length === 0 && !state.boss && !state.bossWarning) {
-      state.nextWave()
-      // state.wave is now incremented, so use it directly (4 + wave = 5 asteroids on wave 1)
-      state.spawnAsteroids(4 + state.wave)
+    // Spawning logic - different for classic vs endless mode
+    if (state.gameMode === 'endless') {
+      // Endless mode: continuous time-based spawning with increasing difficulty
 
-      // Spawn enemies on even waves
-      if (state.wave % 2 === 0) {
-        state.spawnEnemyWave()
+      // Calculate spawn intervals based on difficulty (decreases over time)
+      const asteroidInterval = Math.max(1.0, 3.0 - (difficultyProgress * 2.0)) // 3s → 1s
+      const enemyInterval = Math.max(1.5, 4.0 - (difficultyProgress * 2.5)) // 4s → 1.5s
+      const bossInterval = 60 // Boss every 60 seconds
+
+      // Check if enough time has passed to spawn asteroids
+      // Use floor division to detect when we cross a spawn threshold
+      const lastAsteroidSpawn = Math.floor((state.time - dt) / asteroidInterval)
+      const currentAsteroidSpawn = Math.floor(state.time / asteroidInterval)
+      if (currentAsteroidSpawn > lastAsteroidSpawn) {
+        // Spawn 2-4 asteroids based on difficulty
+        const asteroidCount = Math.floor(2 + difficultyProgress * 2)
+        state.spawnAsteroids(asteroidCount)
+      }
+
+      // Check if enough time has passed to spawn enemies
+      const lastEnemySpawn = Math.floor((state.time - dt) / enemyInterval)
+      const currentEnemySpawn = Math.floor(state.time / enemyInterval)
+      if (currentEnemySpawn > lastEnemySpawn) {
+        // Spawn 1-3 enemies based on difficulty
+        const enemyCount = Math.floor(1 + difficultyProgress * 2)
+        for (let i = 0; i < enemyCount; i++) {
+          state.spawnEnemy()
+        }
+      }
+
+      // Check for boss spawn at time milestones (60s, 120s, 180s, etc.)
+      if (!state.boss && !state.bossWarning) {
+        const lastBossCheck = Math.floor((state.time - dt) / bossInterval)
+        const currentBossCheck = Math.floor(state.time / bossInterval)
+        if (currentBossCheck > lastBossCheck && state.time >= bossInterval) {
+          // Trigger boss warning by directly updating state
+          // We need to set both bossWarning and bossWarningStartTime together
+          useGameStore.setState({
+            bossWarning: true,
+            bossWarningStartTime: state.time,
+          })
+          hapticWarning()
+        }
+      }
+    } else {
+      // Classic mode: wave-based spawning
+      if (state.asteroids.length === 0 && !state.boss && !state.bossWarning) {
+        state.nextWave()
+        // state.wave is now incremented, so use it directly (4 + wave = 5 asteroids on wave 1)
+        state.spawnAsteroids(4 + state.wave)
+
+        // Spawn enemies on even waves
+        if (state.wave % 2 === 0) {
+          state.spawnEnemyWave()
+        }
       }
     }
 
