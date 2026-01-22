@@ -5,6 +5,7 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler"
 import { Audio } from "expo-av"
 import { GameCanvas } from "../components/GameCanvas"
 import { VirtualControls } from "../components/VirtualControls"
+import { Slider, Toggle, StatRow, ThemeSelector, ShipSelector, StatsDisplay, InstructionsModal } from "../components/game-ui"
 import { useGameStore, MAX_DT, JOY_DEADZONE } from "../state/gameStore"
 import { useHighScoresStore } from "../state/highScoresStore"
 import { useSettingsStore, useThemeColors } from "../theme/themeStore"
@@ -374,180 +375,6 @@ export default function GameScreen() {
   const joyMag = len(joystickValue)
   const thrusting = joyMag > JOY_DEADZONE
 
-  // Theme selector component
-  const ThemeSelector = () => (
-    <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 8 }}>
-      {themeList.map((theme) => (
-        <Pressable
-          key={theme.id}
-          onPress={() => setTheme(theme.id as ThemeId)}
-          style={{
-            width: 90,
-            padding: 8,
-            borderRadius: 12,
-            borderWidth: 2,
-            borderColor: themeId === theme.id ? colors.buttonPrimary : colors.panelBorder,
-            backgroundColor: themeId === theme.id ? colors.buttonSecondary : 'transparent',
-            alignItems: 'center',
-          }}
-        >
-          <Text style={{ fontSize: 24 }}>{theme.icon}</Text>
-          <Text style={{ color: colors.textSecondary, fontSize: 11, marginTop: 4, textAlign: 'center' }}>
-            {theme.name}
-          </Text>
-          {themeId === theme.id && (
-            <Text style={{ color: colors.buttonPrimary, fontSize: 10, marginTop: 2 }}>✓</Text>
-          )}
-        </Pressable>
-      ))}
-    </View>
-  )
-
-  // Ship selector component
-  const ShipSelector = () => (
-    <View style={{ gap: 12 }}>
-      {(['fighter', 'scout', 'tank', 'interceptor'] as ShipType[]).map((ship) => {
-        const shipStats = SHIP_STATS[ship]
-        const isUnlocked = unlockedShips.includes(ship)
-        const isSelected = player.shipType === ship
-
-        return (
-          <Pressable
-            key={ship}
-            onPress={() => handleShipSelect(ship)}
-            style={{
-              padding: 12,
-              borderRadius: 12,
-              borderWidth: 2,
-              borderColor: isSelected ? colors.buttonPrimary : colors.panelBorder,
-              backgroundColor: isSelected ? colors.buttonSecondary : 'transparent',
-              opacity: isUnlocked ? 1 : 0.5,
-            }}
-          >
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: 'bold', textTransform: 'capitalize' }}>
-                {ship} {isSelected && '✓'}
-              </Text>
-              {!isUnlocked && (
-                <Text style={{ color: colors.textMuted, fontSize: 12 }}>🔒 Locked</Text>
-              )}
-            </View>
-            <View style={{ marginTop: 8, gap: 4 }}>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Speed</Text>
-                <Text style={{ color: colors.textPrimary, fontSize: 12 }}>{(shipStats.speed * 100).toFixed(0)}%</Text>
-              </View>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Fire Rate</Text>
-                <Text style={{ color: colors.textPrimary, fontSize: 12 }}>{(shipStats.fireRate * 100).toFixed(0)}%</Text>
-              </View>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Hull</Text>
-                <Text style={{ color: colors.textPrimary, fontSize: 12 }}>{shipStats.hull}</Text>
-              </View>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Special</Text>
-                <Text style={{ color: colors.comboText, fontSize: 12 }}>{shipStats.special}</Text>
-              </View>
-            </View>
-          </Pressable>
-        )
-      })}
-    </View>
-  )
-
-  // Stats display component
-  const StatsDisplay = () => (
-    <ScrollView style={{ maxHeight: 300 }}>
-      <View style={{ gap: 8 }}>
-        <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: 'bold' }}>Lifetime Stats</Text>
-        <View style={{ backgroundColor: colors.buttonSecondary, borderRadius: 8, padding: 12, gap: 4 }}>
-          <StatRow label="Total Games" value={stats.totalGames.toString()} />
-          <StatRow label="Total Score" value={stats.totalScore.toLocaleString()} />
-          <StatRow label="Total Kills" value={stats.totalKills.toString()} />
-          <StatRow label="Time Played" value={`${Math.floor(stats.totalTimePlayed / 60)}m`} />
-          <StatRow label="Bosses Defeated" value={stats.totalBossesDefeated.toString()} />
-        </View>
-
-        <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: 'bold', marginTop: 8 }}>Best Records</Text>
-        <View style={{ backgroundColor: colors.buttonSecondary, borderRadius: 8, padding: 12, gap: 4 }}>
-          <StatRow label="Highest Score" value={stats.highestScore.toLocaleString()} />
-          <StatRow label="Highest Wave" value={stats.highestWave.toString()} />
-          <StatRow label="Highest Combo" value={`${stats.highestCombo}x`} />
-          <StatRow label="Best Accuracy" value={`${stats.bestAccuracy.toFixed(1)}%`} />
-        </View>
-
-        <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: 'bold', marginTop: 8 }}>Kill Breakdown</Text>
-        <View style={{ backgroundColor: colors.buttonSecondary, borderRadius: 8, padding: 12, gap: 4 }}>
-          <StatRow label="Scouts" value={stats.killsByEnemyType.scout.toString()} />
-          <StatRow label="Tanks" value={stats.killsByEnemyType.tank.toString()} />
-          <StatRow label="Snipers" value={stats.killsByEnemyType.sniper.toString()} />
-          <StatRow label="Bombers" value={stats.killsByEnemyType.bomber.toString()} />
-        </View>
-      </View>
-    </ScrollView>
-  )
-
-  const StatRow = ({ label, value }: { label: string; value: string }) => (
-    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-      <Text style={{ color: colors.textSecondary, fontSize: 12 }}>{label}</Text>
-      <Text style={{ color: colors.textPrimary, fontSize: 12, fontWeight: '600' }}>{value}</Text>
-    </View>
-  )
-
-  // Slider component
-  const Slider = ({ value, onValueChange, label }: { value: number; onValueChange: (v: number) => void; label: string }) => (
-    <View style={{ marginBottom: 16 }}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 }}>
-        <Text style={{ color: colors.textSecondary, fontSize: 14 }}>{label}</Text>
-        <Text style={{ color: colors.textPrimary, fontSize: 14 }}>{Math.round(value * 100)}%</Text>
-      </View>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-        <Pressable
-          onPress={() => onValueChange(Math.max(0, value - 0.1))}
-          style={{ backgroundColor: colors.buttonSecondary, padding: 8, borderRadius: 8 }}
-        >
-          <Text style={{ color: colors.textPrimary, fontSize: 16 }}>−</Text>
-        </Pressable>
-        <View style={{ flex: 1, height: 8, backgroundColor: colors.panelBorder, borderRadius: 4 }}>
-          <View style={{ width: `${value * 100}%`, height: '100%', backgroundColor: colors.buttonPrimary, borderRadius: 4 }} />
-        </View>
-        <Pressable
-          onPress={() => onValueChange(Math.min(1, value + 0.1))}
-          style={{ backgroundColor: colors.buttonSecondary, padding: 8, borderRadius: 8 }}
-        >
-          <Text style={{ color: colors.textPrimary, fontSize: 16 }}>+</Text>
-        </Pressable>
-      </View>
-    </View>
-  )
-
-  // Toggle component
-  const Toggle = ({ value, onValueChange, label }: { value: boolean; onValueChange: (v: boolean) => void; label: string }) => (
-    <Pressable
-      onPress={() => onValueChange(!value)}
-      style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}
-    >
-      <Text style={{ color: colors.textSecondary, fontSize: 14 }}>{label}</Text>
-      <View style={{
-        width: 50,
-        height: 28,
-        borderRadius: 14,
-        backgroundColor: value ? colors.buttonPrimary : colors.panelBorder,
-        justifyContent: 'center',
-        paddingHorizontal: 2,
-      }}>
-        <View style={{
-          width: 24,
-          height: 24,
-          borderRadius: 12,
-          backgroundColor: colors.textPrimary,
-          alignSelf: value ? 'flex-end' : 'flex-start',
-        }} />
-      </View>
-    </Pressable>
-  )
-
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       {/* Achievement unlock notification */}
@@ -724,22 +551,22 @@ export default function GameScreen() {
                     <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginBottom: 12 }}>
                       🎨 Theme
                     </Text>
-                    <ThemeSelector />
+                    <ThemeSelector themeList={themeList} currentThemeId={themeId} onThemeSelect={setTheme} colors={colors} />
 
                     {/* Audio Section */}
                     <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginTop: 20, marginBottom: 12 }}>
                       🔊 Audio
                     </Text>
-                    <Slider value={musicVolume} onValueChange={setMusicVolume} label="Music Volume" />
-                    <Slider value={sfxVolume} onValueChange={setSfxVolume} label="SFX Volume" />
+                    <Slider value={musicVolume} onValueChange={setMusicVolume} label="Music Volume" colors={colors} />
+                    <Slider value={sfxVolume} onValueChange={setSfxVolume} label="SFX Volume" colors={colors} />
 
                     {/* Controls Section */}
                     <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginTop: 8, marginBottom: 12 }}>
                       🎮 Controls
                     </Text>
-                    <Slider value={joystickSensitivity} onValueChange={setJoystickSensitivity} label="Joystick Sensitivity" />
-                    <Toggle value={autoFire} onValueChange={setAutoFire} label="Auto-Fire" />
-                    <Toggle value={hapticsEnabled} onValueChange={setHapticsEnabled} label="Haptic Feedback" />
+                    <Slider value={joystickSensitivity} onValueChange={setJoystickSensitivity} label="Joystick Sensitivity" colors={colors} />
+                    <Toggle value={autoFire} onValueChange={setAutoFire} label="Auto-Fire" colors={colors} />
+                    <Toggle value={hapticsEnabled} onValueChange={setHapticsEnabled} label="Haptic Feedback" colors={colors} />
                   </>
                 )}
 
@@ -748,7 +575,7 @@ export default function GameScreen() {
                     <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginBottom: 12 }}>
                       🚀 Select Ship
                     </Text>
-                    <ShipSelector />
+                    <ShipSelector currentShip={player.shipType} unlockedShips={unlockedShips} onShipSelect={handleShipSelect} colors={colors} />
                   </>
                 )}
 
@@ -760,7 +587,7 @@ export default function GameScreen() {
                     <Text style={{ color: colors.comboText, fontSize: 14, marginBottom: 12 }}>
                       Total Credits: {upgradesCredits}
                     </Text>
-                    <StatsDisplay />
+                    <StatsDisplay stats={stats} colors={colors} />
                   </>
                 )}
               </ScrollView>
@@ -785,73 +612,7 @@ export default function GameScreen() {
       )}
 
       {/* Welcome Instructions Modal */}
-      {showInstructions && (
-        <Modal visible={true} transparent animationType="fade">
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.modalOverlay }}>
-            <View style={{
-              backgroundColor: colors.panelBg,
-              borderWidth: 2,
-              borderColor: colors.buttonPrimary,
-              borderRadius: 16,
-              padding: 24,
-              marginHorizontal: 24,
-              width: 340,
-            }}>
-              <Text style={{ color: colors.textPrimary, fontSize: 28, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
-                NEON VOID
-              </Text>
-              <Text style={{ color: colors.textSecondary, fontSize: 18, fontWeight: '600', marginBottom: 20, textAlign: 'center' }}>
-                Welcome, Space Pilot!
-              </Text>
-
-              <Text style={{ color: colors.textMuted, fontSize: 16, marginBottom: 12, fontWeight: 'bold' }}>HOW TO PLAY:</Text>
-
-              <View style={{ marginBottom: 20, gap: 12 }}>
-                <View style={{ backgroundColor: colors.buttonSecondary, borderRadius: 12, padding: 12 }}>
-                  <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: 'bold', marginBottom: 4 }}>
-                    🕹️ MOVE YOUR SHIP
-                  </Text>
-                  <Text style={{ color: colors.textMuted, fontSize: 14, lineHeight: 20 }}>
-                    Use the joystick at the bottom center to move and steer your spaceship.
-                  </Text>
-                </View>
-
-                <View style={{ backgroundColor: colors.buttonSecondary, borderRadius: 12, padding: 12 }}>
-                  <Text style={{ color: colors.textSecondary, fontSize: 14, fontWeight: 'bold', marginBottom: 4 }}>
-                    💥 SHOOT ENEMIES
-                  </Text>
-                  <Text style={{ color: colors.textMuted, fontSize: 14, lineHeight: 20 }}>
-                    Tap to fire. Double-tap to activate your special ability!
-                  </Text>
-                </View>
-
-                <View style={{ backgroundColor: colors.buttonSecondary, borderRadius: 12, padding: 12 }}>
-                  <Text style={{ color: colors.comboText, fontSize: 14, fontWeight: 'bold', marginBottom: 4 }}>
-                    ⚡ SURVIVE & SCORE
-                  </Text>
-                  <Text style={{ color: colors.textMuted, fontSize: 14, lineHeight: 20 }}>
-                    Dodge enemy fire, defeat bosses every 5 waves, and collect power-ups!
-                  </Text>
-                </View>
-              </View>
-
-              <Pressable
-                style={{
-                  backgroundColor: colors.buttonPrimary,
-                  borderRadius: 12,
-                  paddingVertical: 16,
-                  paddingHorizontal: 16,
-                }}
-                onPress={handleStartGame}
-              >
-                <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 18, fontWeight: 'bold' }}>
-                  START MISSION
-                </Text>
-              </Pressable>
-            </View>
-          </View>
-        </Modal>
-      )}
+      <InstructionsModal visible={showInstructions} onStartGame={handleStartGame} colors={colors} />
 
       {/* Name Input Modal for Top 5 */}
       {showNameInput && (
