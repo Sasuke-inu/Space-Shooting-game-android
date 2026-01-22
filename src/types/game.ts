@@ -30,6 +30,17 @@ export interface Asteroid {
 }
 
 // ------------------------------------------------------------------ //
+//                         Game Mode Types
+// ------------------------------------------------------------------ //
+
+export type GameMode = 'classic' | 'endless'
+
+export const GAME_MODE_CONFIG: Record<GameMode, { name: string; description: string; hasLives: boolean }> = {
+  classic: { name: 'Classic', description: 'Wave-based gameplay with lives', hasLives: true },
+  endless: { name: 'Endless Survival', description: 'Survive as long as possible', hasLives: false },
+}
+
+// ------------------------------------------------------------------ //
 //                         Enemy Types
 // ------------------------------------------------------------------ //
 
