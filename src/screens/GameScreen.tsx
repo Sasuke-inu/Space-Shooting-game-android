@@ -11,7 +11,7 @@ import { useSettingsStore, useThemeColors } from "../theme/themeStore"
 import { useStatisticsStore, useAchievementStore, useUpgradesStore } from "../state/progressStore"
 import { themeList } from "../theme/themes"
 import type { ThemeId } from "../theme/types"
-import type { ShipType } from "../types/game"
+import type { ShipType, GameMode } from "../types/game"
 import { SHIP_STATS, ACHIEVEMENTS } from "../types/game"
 import { useGameEngine } from "../utils/gameEngine"
 import { len, angleOf, nor, mul, v } from "../utils/vectorMath"
@@ -40,6 +40,7 @@ export default function GameScreen() {
   // Game state
   const paused = useGameStore((s) => s.paused)
   const gameMode = useGameStore((s) => s.gameMode)
+  const setGameMode = useGameStore((s) => s.setGameMode)
   const score = useGameStore((s) => s.score)
   const credits = useGameStore((s) => s.credits)
   const lives = useGameStore((s) => s.lives)
@@ -88,7 +89,8 @@ export default function GameScreen() {
   const soundRef = useRef<Audio.Sound | null>(null)
   const swipeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lastAbilityActivationRef = useRef<string | null>(null) // Track last activated ability
-  const [showInstructions, setShowInstructions] = useState(true)
+  const [showModeSelect, setShowModeSelect] = useState(true)
+  const [showInstructions, setShowInstructions] = useState(false)
   const [showNameInput, setShowNameInput] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [showShipSelect, setShowShipSelect] = useState(false)
@@ -332,6 +334,12 @@ export default function GameScreen() {
     store.spawnAsteroids(5)
     store.spawnEnemy()
     store.setPaused(false)
+  }
+
+  const handleModeSelect = (mode: GameMode) => {
+    setGameMode(mode)
+    setShowModeSelect(false)
+    setShowInstructions(true)
   }
 
   const handleStartGame = () => {
@@ -781,6 +789,68 @@ export default function GameScreen() {
                   DONE
                 </Text>
               </Pressable>
+            </View>
+          </View>
+        </Modal>
+      )}
+
+      {/* Game Mode Selection Modal */}
+      {showModeSelect && (
+        <Modal visible={true} transparent animationType="fade">
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.modalOverlay }}>
+            <View style={{
+              backgroundColor: colors.panelBg,
+              borderWidth: 2,
+              borderColor: colors.buttonPrimary,
+              borderRadius: 16,
+              padding: 24,
+              marginHorizontal: 24,
+              width: 340,
+            }}>
+              <Text style={{ color: colors.textPrimary, fontSize: 28, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
+                SELECT GAME MODE
+              </Text>
+              <Text style={{ color: colors.textSecondary, fontSize: 16, marginBottom: 24, textAlign: 'center' }}>
+                Choose your challenge
+              </Text>
+
+              <View style={{ gap: 12 }}>
+                <Pressable
+                  style={{
+                    backgroundColor: colors.buttonSecondary,
+                    borderWidth: 2,
+                    borderColor: colors.buttonPrimary,
+                    borderRadius: 12,
+                    padding: 16,
+                  }}
+                  onPress={() => handleModeSelect('classic')}
+                >
+                  <Text style={{ color: colors.textPrimary, fontSize: 18, fontWeight: 'bold', marginBottom: 4 }}>
+                    🎯 STANDARD
+                  </Text>
+                  <Text style={{ color: colors.textMuted, fontSize: 14, lineHeight: 20 }}>
+                    Classic space shooter with 3 lives. Beat your high score and reach the top of the leaderboard!
+                  </Text>
+                </Pressable>
+
+                <Pressable
+                  style={{
+                    backgroundColor: colors.buttonSecondary,
+                    borderWidth: 2,
+                    borderColor: colors.comboText,
+                    borderRadius: 12,
+                    padding: 16,
+                  }}
+                  onPress={() => handleModeSelect('endless')}
+                >
+                  <Text style={{ color: colors.comboText, fontSize: 18, fontWeight: 'bold', marginBottom: 4 }}>
+                    ♾️ ENDLESS
+                  </Text>
+                  <Text style={{ color: colors.textMuted, fontSize: 14, lineHeight: 20 }}>
+                    Survival mode! One life, infinite waves. How long can you last?
+                  </Text>
+                </Pressable>
+              </View>
             </View>
           </View>
         </Modal>

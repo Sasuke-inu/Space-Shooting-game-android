@@ -3,23 +3,23 @@
   "spec": "028-endless-survival-mode",
   "state": "building",
   "subtasks": {
-    "completed": 5,
+    "completed": 7,
     "total": 13,
     "in_progress": 1,
     "failed": 0
   },
   "phase": {
-    "current": "Separate High Score Tracking",
+    "current": "UI & Mode Selection",
     "id": null,
-    "total": 2
+    "total": 3
   },
   "workers": {
     "active": 0,
     "max": 1
   },
   "session": {
-    "number": 7,
+    "number": 9,
     "started_at": "2026-01-23T05:42:47.314987"
   },
-  "last_update": "2026-01-23T05:59:56.731778"
+  "last_update": "2026-01-23T06:06:24.224584"
 }
