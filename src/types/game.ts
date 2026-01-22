@@ -76,6 +76,8 @@ export interface Boss {
   specialCooldown: number
   aiTimer: number
   isActive: boolean
+  chargingSpecial: boolean  // Visual telegraph for special attacks
+  specialChargeTime: number // Time spent charging special attack
 }
 
 export const BOSS_STATS: Record<BossType, { hp: number; phases: number; points: number }> = {

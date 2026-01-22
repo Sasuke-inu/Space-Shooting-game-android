@@ -699,6 +699,10 @@ function updateEnemyBehavior(
 //                         Boss Behavior Update
 // ------------------------------------------------------------------ //
 
+// Boss balance constants
+const BOSS_SPECIAL_CHARGE_TIME = 1.0 // Wind-up time before special attacks (visual tell)
+const BOSS_FIRST_ENCOUNTER_NERF = 0.7 // Reduce difficulty on first boss
+
 function updateBossBehavior(
   boss: Boss,
   state: ReturnType<typeof useGameStore.getState>,
@@ -708,18 +712,22 @@ function updateBossBehavior(
   const stats = BOSS_STATS[boss.type]
   const toP = sub(state.player.pos, boss.pos)
 
-  // Movement pattern based on phase
-  const moveSpeed = 60 + boss.phase * 20
+  // Check if this is first boss encounter (wave 5)
+  const isFirstBoss = state.wave === 5
+  const difficultyMultiplier = isFirstBoss ? BOSS_FIRST_ENCOUNTER_NERF : 1.0
 
-  // Sway movement
-  const swayX = Math.sin(state.time * 0.5) * 100
+  // Movement pattern based on phase (slower and more predictable)
+  const moveSpeed = (50 + boss.phase * 15) * difficultyMultiplier
+
+  // Sway movement (predictable pattern)
+  const swayX = Math.sin(state.time * 0.4) * 120
   const targetX = state.w / 2 + swayX
-  const targetY = 100 + Math.sin(state.time * 0.3) * 30
+  const targetY = 100 + Math.sin(state.time * 0.25) * 40
 
   // Create new velocity object instead of mutating existing one
   const newVel = {
-    x: (targetX - boss.pos.x) * 0.02,
-    y: (targetY - boss.pos.y) * 0.02,
+    x: (targetX - boss.pos.x) * 0.015,
+    y: (targetY - boss.pos.y) * 0.015,
   }
 
   const newPos = add(boss.pos, mul(newVel, dt * moveSpeed))
@@ -727,79 +735,53 @@ function updateBossBehavior(
   // Update cooldowns
   let newCooldown = boss.cooldown - dt
   let newSpecialCooldown = boss.specialCooldown - dt
+  let newChargeTime = boss.specialChargeTime
+  let isCharging = boss.chargingSpecial
 
-  // Regular attack pattern
-  if (newCooldown <= 0) {
-    const attackCount = boss.phase + 2
-    const spreadAngle = Math.PI / 6
+  // Regular attack pattern (more generous timing)
+  if (newCooldown <= 0 && !isCharging) {
+    // Reduce bullet count for first boss
+    const baseAttackCount = boss.phase + 2
+    const attackCount = isFirstBoss ? Math.max(2, baseAttackCount - 1) : baseAttackCount
+    const spreadAngle = Math.PI / 5 // Wider spread = more gaps
 
     for (let i = 0; i < attackCount; i++) {
       const angle = Math.PI / 2 + (i - (attackCount - 1) / 2) * spreadAngle
       state.addBullet({
         pos: add(boss.pos, fromAngle(angle, 40)),
-        vel: fromAngle(angle, BULLET_SPEED_ENEMY * 0.8),
-        life: BULLET_LIFE_ENEMY * 1.5,
+        vel: fromAngle(angle, BULLET_SPEED_ENEMY * 0.7 * difficultyMultiplier),
+        life: BULLET_LIFE_ENEMY * 1.3,
         friendly: false,
       })
     }
 
-    newCooldown = 2 - boss.phase * 0.3
+    // Longer cooldowns for first boss
+    const baseCooldown = 2.2 - boss.phase * 0.25
+    newCooldown = isFirstBoss ? baseCooldown * 1.3 : baseCooldown
   }
 
-  // Special attacks based on boss type and phase
+  // Special attack charging system
   if (newSpecialCooldown <= 0) {
-    switch (boss.type) {
-      case 'destroyer':
-        // Laser sweep (line of bullets)
-        for (let i = 0; i < 12; i++) {
-          const angle = Math.PI / 2 + (i - 5.5) * 0.15
-          state.addBullet({
-            pos: add(boss.pos, fromAngle(angle, 50)),
-            vel: fromAngle(angle, BULLET_SPEED_ENEMY),
-            life: BULLET_LIFE_ENEMY * 2,
-            friendly: false,
-          })
-        }
-        break
+    if (!isCharging) {
+      // Start charging special attack (visual tell)
+      isCharging = true
+      newChargeTime = 0
+    } else {
+      // Continue charging
+      newChargeTime += dt
 
-      case 'carrier':
-        // Spawn mini-enemies (limit total enemies to prevent overwhelming player)
-        const MAX_CARRIER_SPAWNED_ENEMIES = 12
-        if (state.enemies.length < MAX_CARRIER_SPAWNED_ENEMIES) {
-          const enemiesToSpawn = Math.min(2, MAX_CARRIER_SPAWNED_ENEMIES - state.enemies.length)
-          for (let i = 0; i < enemiesToSpawn; i++) {
-            state.spawnEnemy('scout')
-          }
-        }
-        break
+      // Fire special attack after charge completes
+      if (newChargeTime >= BOSS_SPECIAL_CHARGE_TIME) {
+        executeSpecialAttack(boss, state, colors, isFirstBoss, difficultyMultiplier)
 
-      case 'dreadnought':
-        // Circular bullet hell
-        for (let i = 0; i < 16; i++) {
-          const angle = (i / 16) * Math.PI * 2
-          state.addBullet({
-            pos: add(boss.pos, fromAngle(angle, 45)),
-            vel: fromAngle(angle, BULLET_SPEED_ENEMY * 0.7),
-            life: BULLET_LIFE_ENEMY * 1.8,
-            friendly: false,
-          })
-        }
-        // In phase 3, fire second ring immediately with offset angle (no setTimeout)
-        if (boss.phase >= 3) {
-          for (let i = 0; i < 16; i++) {
-            const angle = (i / 16) * Math.PI * 2 + Math.PI / 16
-            state.addBullet({
-              pos: add(boss.pos, fromAngle(angle, 45)),
-              vel: fromAngle(angle, BULLET_SPEED_ENEMY * 0.6),
-              life: BULLET_LIFE_ENEMY * 1.8,
-              friendly: false,
-            })
-          }
-        }
-        break
+        // Reset special attack state
+        isCharging = false
+        newChargeTime = 0
+        // Longer cooldowns between special attacks
+        const baseSpecialCooldown = 6 - boss.phase * 0.4
+        newSpecialCooldown = isFirstBoss ? baseSpecialCooldown * 1.4 : baseSpecialCooldown
+      }
     }
-
-    newSpecialCooldown = 5 - boss.phase * 0.5
   }
 
   state.updateBoss({
@@ -808,8 +790,80 @@ function updateBossBehavior(
     ang: Math.PI / 2,
     cooldown: newCooldown,
     specialCooldown: newSpecialCooldown,
+    chargingSpecial: isCharging,
+    specialChargeTime: newChargeTime,
     aiTimer: boss.aiTimer + dt,
   })
+}
+
+// Execute boss special attacks with balanced patterns
+function executeSpecialAttack(
+  boss: Boss,
+  state: ReturnType<typeof useGameStore.getState>,
+  colors: ThemeColors,
+  isFirstBoss: boolean,
+  difficultyMultiplier: number
+) {
+  switch (boss.type) {
+    case 'destroyer':
+      // Laser sweep with safe zones (dodgeable gaps)
+      const laserCount = isFirstBoss ? 8 : 10 + boss.phase
+      const laserSpread = Math.PI / 3 // 60 degree spread with gaps
+
+      for (let i = 0; i < laserCount; i++) {
+        const angle = Math.PI / 2 + (i - (laserCount - 1) / 2) * (laserSpread / laserCount)
+        state.addBullet({
+          pos: add(boss.pos, fromAngle(angle, 50)),
+          vel: fromAngle(angle, BULLET_SPEED_ENEMY * 0.8 * difficultyMultiplier),
+          life: BULLET_LIFE_ENEMY * 1.8,
+          friendly: false,
+        })
+      }
+      break
+
+    case 'carrier':
+      // Spawn mini-enemies (limited to avoid overwhelming)
+      const MAX_CARRIER_ENEMIES = isFirstBoss ? 8 : 10
+      if (state.enemies.length < MAX_CARRIER_ENEMIES) {
+        const spawnCount = isFirstBoss ? 1 : Math.min(2, MAX_CARRIER_ENEMIES - state.enemies.length)
+        for (let i = 0; i < spawnCount; i++) {
+          state.spawnEnemy('scout')
+        }
+      }
+      break
+
+    case 'dreadnought':
+      // Circular pattern with clear gaps (learnable)
+      const ringBullets = isFirstBoss ? 12 : 14 + boss.phase * 2
+      const ringSpeed = BULLET_SPEED_ENEMY * 0.65 * difficultyMultiplier
+
+      for (let i = 0; i < ringBullets; i++) {
+        const angle = (i / ringBullets) * Math.PI * 2
+        state.addBullet({
+          pos: add(boss.pos, fromAngle(angle, 45)),
+          vel: fromAngle(angle, ringSpeed),
+          life: BULLET_LIFE_ENEMY * 1.6,
+          friendly: false,
+        })
+      }
+
+      // Phase 2+: Add offset ring with gap (still dodgeable)
+      if (boss.phase >= 2 && !isFirstBoss) {
+        const secondRingBullets = 12
+        const angleOffset = Math.PI / secondRingBullets // Offset for pattern
+
+        for (let i = 0; i < secondRingBullets; i++) {
+          const angle = (i / secondRingBullets) * Math.PI * 2 + angleOffset
+          state.addBullet({
+            pos: add(boss.pos, fromAngle(angle, 45)),
+            vel: fromAngle(angle, ringSpeed * 0.85),
+            life: BULLET_LIFE_ENEMY * 1.6,
+            friendly: false,
+          })
+        }
+      }
+      break
+  }
 }
 
 // ------------------------------------------------------------------ //

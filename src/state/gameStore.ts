@@ -65,7 +65,7 @@ export const COMBO_MULTIPLIERS = [1, 1.5, 2, 2.5, 3]
 
 // Boss constants
 export const BOSS_WAVE_INTERVAL = 5       // Boss every 5 waves
-export const BOSS_WARNING_TIME = 3        // Warning duration before boss spawns
+export const BOSS_WARNING_TIME = 3        // Warning duration before boss spawns (visual telegraph)
 
 // Enemy spawn weights by wave
 export const getEnemySpawnWeights = (wave: number): Record<EnemyType, number> => ({
@@ -637,6 +637,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
         specialCooldown: 5,
         aiTimer: 0,
         isActive: true,
+        chargingSpecial: false,
+        specialChargeTime: 0,
       }
 
       return { boss, bossWarning: false, bossWarningStartTime: undefined }
