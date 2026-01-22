@@ -36,6 +36,47 @@ const BULLET_SIZE = 6
 const TARGET_SIZE = 40
 const TARGET_HIT_RADIUS = 25 // Collision detection radius
 
+const POWERUP_SIZE = 32
+
+interface PowerUpInfo {
+  type: 'shield' | 'rapid_fire' | 'spread_shot' | 'magnet'
+  name: string
+  description: string
+  colorKey: keyof ThemeColors
+  effect: string
+}
+
+const POWER_UP_INFO: PowerUpInfo[] = [
+  {
+    type: 'shield',
+    name: 'Shield',
+    description: 'Temporary invincibility',
+    colorKey: 'powerUpShield',
+    effect: 'Protects you from all damage for a short time',
+  },
+  {
+    type: 'rapid_fire',
+    name: 'Rapid Fire',
+    description: '2x fire rate',
+    colorKey: 'powerUpRapidFire',
+    effect: 'Doubles your shooting speed temporarily',
+  },
+  {
+    type: 'spread_shot',
+    name: 'Spread Shot',
+    description: 'Fire 3 bullets in spread pattern',
+    colorKey: 'powerUpSpreadShot',
+    effect: 'Fires three bullets at once for better coverage',
+  },
+  {
+    type: 'magnet',
+    name: 'Magnet',
+    description: 'Attract nearby power-ups',
+    colorKey: 'powerUpMagnet',
+    effect: 'Automatically pulls power-ups towards your ship',
+  },
+]
+
 interface Target {
   id: number
   x: number
@@ -47,6 +88,122 @@ interface Bullet {
   id: number
   x: number
   y: number
+}
+
+// Power-ups Explanation Step Component
+function PowerUpsExplanationStep({ colors }: { colors: ThemeColors }) {
+  const [selectedPowerUp, setSelectedPowerUp] = useState<PowerUpInfo | null>(null)
+  const [collectedPowerUps, setCollectedPowerUps] = useState<Set<string>>(new Set())
+
+  const handleCollectPowerUp = useCallback((powerUp: PowerUpInfo) => {
+    setSelectedPowerUp(powerUp)
+    setCollectedPowerUps((prev) => new Set(prev).add(powerUp.type))
+  }, [])
+
+  const allCollected = collectedPowerUps.size === POWER_UP_INFO.length
+
+  const dynamicStyles = useMemo(() => ({
+    powerUpCard: (powerUp: PowerUpInfo, isSelected: boolean) => ({
+      borderColor: isSelected ? colors.hudAccent : colors.panelBorder,
+      backgroundColor: colors.panelBg + '80',
+      opacity: collectedPowerUps.has(powerUp.type) ? 1 : 0.7,
+    }),
+    powerUpIcon: (colorKey: keyof ThemeColors) => ({
+      backgroundColor: colors[colorKey],
+      shadowColor: colors[colorKey],
+    }),
+  }), [colors, collectedPowerUps])
+
+  return (
+    <View style={tutorialStyles.stepContainer}>
+      <Text style={[tutorialStyles.stepTitle, { color: colors.textPrimary }]}>
+        Power-Ups
+      </Text>
+
+      <Text style={[tutorialStyles.stepDescription, { color: colors.textSecondary }]}>
+        Collect these power-ups during gameplay to gain temporary advantages!
+      </Text>
+
+      {/* Visual indicator */}
+      <View style={tutorialStyles.indicatorContainer}>
+        {allCollected ? (
+          <>
+            <View style={[tutorialStyles.checkmark, { borderColor: colors.hudAccent }]}>
+              <Text style={{ color: colors.hudAccent, fontSize: 24, fontWeight: 'bold' }}>✓</Text>
+            </View>
+            <Text style={[tutorialStyles.completionText, { color: colors.hudAccent }]}>
+              You've learned about all power-ups!
+            </Text>
+          </>
+        ) : (
+          <Text style={[tutorialStyles.instructionText, { color: colors.textSecondary }]}>
+            Tap each power-up to learn more ({collectedPowerUps.size}/{POWER_UP_INFO.length})
+          </Text>
+        )}
+      </View>
+
+      {/* Power-ups showcase */}
+      <ScrollView
+        style={{ maxHeight: 360 }}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 20 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={{ gap: 12 }}>
+          {POWER_UP_INFO.map((powerUp) => {
+            const isSelected = selectedPowerUp?.type === powerUp.type
+            const isCollected = collectedPowerUps.has(powerUp.type)
+
+            return (
+              <Pressable
+                key={powerUp.type}
+                onPress={() => handleCollectPowerUp(powerUp)}
+                style={[
+                  tutorialStyles.powerUpCard,
+                  dynamicStyles.powerUpCard(powerUp, isSelected),
+                ]}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                  {/* Power-up icon */}
+                  <View
+                    style={[
+                      tutorialStyles.powerUpIcon,
+                      dynamicStyles.powerUpIcon(powerUp.colorKey),
+                    ]}
+                  >
+                    {isCollected && (
+                      <Text style={{ color: '#fff', fontSize: 18, fontWeight: 'bold' }}>✓</Text>
+                    )}
+                  </View>
+
+                  {/* Power-up info */}
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: 'bold', marginBottom: 4 }}>
+                      {powerUp.name}
+                    </Text>
+                    <Text style={{ color: colors.textSecondary, fontSize: 13, marginBottom: 6 }}>
+                      {powerUp.description}
+                    </Text>
+                    {isSelected && (
+                      <Text style={{ color: colors.hudAccent, fontSize: 12, fontStyle: 'italic' }}>
+                        {powerUp.effect}
+                      </Text>
+                    )}
+                  </View>
+                </View>
+              </Pressable>
+            )
+          })}
+        </View>
+      </ScrollView>
+
+      {/* Hints */}
+      <View style={tutorialStyles.hintsContainer}>
+        <Text style={[tutorialStyles.hintText, { color: colors.textSecondary + '80' }]}>
+          Power-ups drop from enemies and asteroids during gameplay
+        </Text>
+      </View>
+    </View>
+  )
 }
 
 // Shooting Practice Step Component
@@ -416,19 +573,7 @@ export function TutorialModal({ visible, onClose }: TutorialModalProps) {
         return <ShootingPracticeStep colors={colors} />
 
       case 'powerups':
-        return (
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-            <Text style={{ color: colors.textPrimary, fontSize: 24, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' }}>
-              Power-Ups
-            </Text>
-            <Text style={{ color: colors.textSecondary, fontSize: 16, textAlign: 'center', marginBottom: 20 }}>
-              Collect power-ups to gain temporary abilities like shields, rapid fire, and more!
-            </Text>
-            <Text style={{ color: colors.textSecondary, fontSize: 14, textAlign: 'center', fontStyle: 'italic' }}>
-              (Visual showcase will be added in the next step)
-            </Text>
-          </View>
-        )
+        return <PowerUpsExplanationStep colors={colors} />
 
       case 'combo':
         return (
@@ -711,5 +856,21 @@ const tutorialStyles = StyleSheet.create({
     width: BULLET_SIZE,
     height: BULLET_SIZE,
     borderRadius: BULLET_SIZE / 2,
+  },
+  powerUpCard: {
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 2,
+    marginVertical: 4,
+  },
+  powerUpIcon: {
+    width: POWERUP_SIZE,
+    height: POWERUP_SIZE,
+    borderRadius: POWERUP_SIZE / 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 12,
   },
 })
