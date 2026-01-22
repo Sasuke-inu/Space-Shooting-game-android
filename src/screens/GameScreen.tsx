@@ -98,9 +98,12 @@ export default function GameScreen() {
   const [showAchievements, setShowAchievements] = useState(false)
   const [playerName, setPlayerName] = useState("")
   const [settingsTab, setSettingsTab] = useState<'general' | 'ship' | 'stats'>('general')
+  const [highScoreTab, setHighScoreTab] = useState<GameMode>('classic')
 
   const getScores = useHighScoresStore((s) => s.getScores)
   const highScores = getScores(gameMode)
+  const standardScores = getScores('classic')
+  const endlessScores = getScores('endless')
   const isTopFive = useHighScoresStore((s) => s.isTopFive)
   const addScore = useHighScoresStore((s) => s.addScore)
 
@@ -366,6 +369,9 @@ export default function GameScreen() {
   // Check for game over and show name input if top 5
   useEffect(() => {
     if (paused && lives <= 0 && !showInstructions && !showNameInput) {
+      // Set high score tab to current game mode
+      setHighScoreTab(gameMode)
+
       if (isTopFive(score, gameMode)) {
         const timer = setTimeout(() => {
           setShowNameInput(true)
@@ -1034,7 +1040,7 @@ export default function GameScreen() {
                   </Text>
 
                   {/* High Scores Leaderboard */}
-                  {highScores.length > 0 && (
+                  {(standardScores.length > 0 || endlessScores.length > 0) && (
                     <View style={{
                       backgroundColor: colors.buttonSecondary,
                       borderRadius: 12,
@@ -1044,31 +1050,123 @@ export default function GameScreen() {
                       <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: 'bold', marginBottom: 12, textAlign: 'center' }}>
                         🏆 TOP 5 HIGH SCORES
                       </Text>
-                      {highScores.map((hs, index) => (
-                        <View
-                          key={index}
+
+                      {/* Tab buttons */}
+                      <View style={{ flexDirection: 'row', marginBottom: 12, gap: 8 }}>
+                        <Pressable
+                          onPress={() => setHighScoreTab('classic')}
                           style={{
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            paddingVertical: 8,
-                            borderBottomWidth: index < highScores.length - 1 ? 1 : 0,
-                            borderBottomColor: colors.panelBorder,
+                            flex: 1,
+                            padding: 8,
+                            borderRadius: 8,
+                            backgroundColor: highScoreTab === 'classic' ? colors.buttonPrimary : 'transparent',
+                            borderWidth: 1,
+                            borderColor: colors.panelBorder,
                           }}
                         >
-                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                            <Text style={{ color: colors.textSecondary, fontSize: 14, fontWeight: 'bold', width: 24 }}>
-                              {index + 1}.
-                            </Text>
-                            <Text style={{ color: colors.textMuted, fontSize: 14 }}>
-                              {hs.name}
-                            </Text>
-                          </View>
-                          <Text style={{ color: colors.comboText, fontSize: 14, fontWeight: '600' }}>
-                            {hs.score}
+                          <Text style={{
+                            color: highScoreTab === 'classic' ? colors.buttonText : colors.textSecondary,
+                            textAlign: 'center',
+                            fontSize: 12,
+                            fontWeight: 'bold',
+                          }}>
+                            🎯 STANDARD
                           </Text>
+                        </Pressable>
+                        <Pressable
+                          onPress={() => setHighScoreTab('endless')}
+                          style={{
+                            flex: 1,
+                            padding: 8,
+                            borderRadius: 8,
+                            backgroundColor: highScoreTab === 'endless' ? colors.comboText : 'transparent',
+                            borderWidth: 1,
+                            borderColor: colors.panelBorder,
+                          }}
+                        >
+                          <Text style={{
+                            color: highScoreTab === 'endless' ? colors.buttonText : colors.textSecondary,
+                            textAlign: 'center',
+                            fontSize: 12,
+                            fontWeight: 'bold',
+                          }}>
+                            ♾️ ENDLESS
+                          </Text>
+                        </Pressable>
+                      </View>
+
+                      {/* Display scores based on selected tab */}
+                      {highScoreTab === 'classic' && standardScores.length > 0 && (
+                        <View>
+                          {standardScores.map((hs, index) => (
+                            <View
+                              key={index}
+                              style={{
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                paddingVertical: 8,
+                                borderBottomWidth: index < standardScores.length - 1 ? 1 : 0,
+                                borderBottomColor: colors.panelBorder,
+                              }}
+                            >
+                              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                                <Text style={{ color: colors.textSecondary, fontSize: 14, fontWeight: 'bold', width: 24 }}>
+                                  {index + 1}.
+                                </Text>
+                                <Text style={{ color: colors.textMuted, fontSize: 14 }}>
+                                  {hs.name}
+                                </Text>
+                              </View>
+                              <Text style={{ color: colors.comboText, fontSize: 14, fontWeight: '600' }}>
+                                {hs.score}
+                              </Text>
+                            </View>
+                          ))}
                         </View>
-                      ))}
+                      )}
+
+                      {highScoreTab === 'classic' && standardScores.length === 0 && (
+                        <Text style={{ color: colors.textMuted, fontSize: 12, textAlign: 'center', paddingVertical: 8 }}>
+                          No scores yet. Be the first!
+                        </Text>
+                      )}
+
+                      {highScoreTab === 'endless' && endlessScores.length > 0 && (
+                        <View>
+                          {endlessScores.map((hs, index) => (
+                            <View
+                              key={index}
+                              style={{
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                paddingVertical: 8,
+                                borderBottomWidth: index < endlessScores.length - 1 ? 1 : 0,
+                                borderBottomColor: colors.panelBorder,
+                              }}
+                            >
+                              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                                <Text style={{ color: colors.textSecondary, fontSize: 14, fontWeight: 'bold', width: 24 }}>
+                                  {index + 1}.
+                                </Text>
+                                <Text style={{ color: colors.textMuted, fontSize: 14 }}>
+                                  {hs.name}
+                                </Text>
+                              </View>
+                              <Text style={{ color: colors.comboText, fontSize: 14, fontWeight: '600' }}>
+                                {hs.score}
+                              </Text>
+                            </View>
+                          ))}
+                        </View>
+                      )}
+
+                      {highScoreTab === 'endless' && endlessScores.length === 0 && (
+                        <Text style={{ color: colors.textMuted, fontSize: 12, textAlign: 'center', paddingVertical: 8 }}>
+                          No scores yet. Be the first!
+                        </Text>
+                      )}
                     </View>
                   )}
 
