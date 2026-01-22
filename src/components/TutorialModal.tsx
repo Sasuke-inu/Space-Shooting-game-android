@@ -384,6 +384,193 @@ function ComboPracticeStep({ colors }: { colors: ThemeColors }) {
   )
 }
 
+// Special Abilities Practice Step Component
+function SpecialAbilitiesPracticeStep({ colors }: { colors: ThemeColors }) {
+  const [abilityActivated, setAbilityActivated] = useState(false)
+  const [completed, setCompleted] = useState(false)
+  const [tapCount, setTapCount] = useState(0)
+  const abilityScale = useSharedValue(1)
+  const abilityOpacity = useSharedValue(0)
+
+  const handleDoubleTap = useCallback(() => {
+    setAbilityActivated(true)
+    setTapCount((prev) => prev + 1)
+
+    // Trigger animation
+    abilityOpacity.value = 1
+    abilityScale.value = 0.5
+
+    abilityOpacity.value = withSpring(0, { damping: 10 })
+    abilityScale.value = withSpring(2, { damping: 8 })
+
+    // Mark as completed after a short delay
+    setTimeout(() => {
+      setCompleted(true)
+    }, 500)
+  }, [abilityOpacity, abilityScale])
+
+  const doubleTapGesture = useMemo(
+    () =>
+      Gesture.Tap()
+        .numberOfTaps(2)
+        .onEnd(() => {
+          'worklet'
+          runOnJS(handleDoubleTap)()
+        }),
+    [handleDoubleTap]
+  )
+
+  const abilityAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: abilityScale.value }],
+    opacity: abilityOpacity.value,
+  }))
+
+  const dynamicStyles = useMemo(
+    () => ({
+      practiceArea: {
+        borderColor: completed ? colors.hudAccent : colors.panelBorder,
+        backgroundColor: colors.background + '40',
+      },
+      abilityRing: {
+        borderColor: colors.hudAccent,
+      },
+      abilityIcon: {
+        backgroundColor: colors.buttonPrimary,
+        shadowColor: colors.hudAccent,
+      },
+    }),
+    [colors, completed]
+  )
+
+  return (
+    <View style={tutorialStyles.stepContainer}>
+      <Text style={[tutorialStyles.stepTitle, { color: colors.textPrimary }]}>
+        Special Abilities
+      </Text>
+
+      <Text style={[tutorialStyles.stepDescription, { color: colors.textSecondary }]}>
+        Each ship has a unique special ability. Double-tap to activate it!
+      </Text>
+
+      {/* Visual indicator */}
+      <View style={tutorialStyles.indicatorContainer}>
+        {completed ? (
+          <>
+            <View style={[tutorialStyles.checkmark, { borderColor: colors.hudAccent }]}>
+              <Text style={{ color: colors.hudAccent, fontSize: 24, fontWeight: 'bold' }}>✓</Text>
+            </View>
+            <Text style={[tutorialStyles.completionText, { color: colors.hudAccent }]}>
+              Perfect! You've learned to use special abilities!
+            </Text>
+          </>
+        ) : (
+          <Text style={[tutorialStyles.instructionText, { color: colors.textSecondary }]}>
+            Double-tap the practice area to activate
+          </Text>
+        )}
+      </View>
+
+      {/* Practice Area */}
+      <GestureDetector gesture={doubleTapGesture}>
+        <View style={[tutorialStyles.practiceArea, dynamicStyles.practiceArea]}>
+          {/* Ability icon in center */}
+          <View
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: [{ translateX: -30 }, { translateY: -30 }],
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <View
+              style={[
+                {
+                  width: 60,
+                  height: 60,
+                  borderRadius: 30,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  shadowOffset: { width: 0, height: 0 },
+                  shadowOpacity: 0.8,
+                  shadowRadius: 16,
+                },
+                dynamicStyles.abilityIcon,
+              ]}
+            >
+              <Text style={{ color: colors.buttonText, fontSize: 28, fontWeight: 'bold' }}>⚡</Text>
+            </View>
+
+            {/* Animated ring effect */}
+            {abilityActivated && (
+              <Animated.View
+                style={[
+                  {
+                    position: 'absolute',
+                    width: 60,
+                    height: 60,
+                    borderRadius: 30,
+                    borderWidth: 4,
+                  },
+                  dynamicStyles.abilityRing,
+                  abilityAnimatedStyle,
+                ]}
+              />
+            )}
+          </View>
+
+          {/* Tap indicators */}
+          <View
+            style={{
+              position: 'absolute',
+              bottom: 20,
+              left: 0,
+              right: 0,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{ color: colors.textSecondary, fontSize: 14, fontStyle: 'italic' }}>
+              {abilityActivated ? 'Ability Activated!' : 'Tap twice quickly'}
+            </Text>
+          </View>
+        </View>
+      </GestureDetector>
+
+      {/* Ship Abilities Info */}
+      <View
+        style={{
+          marginTop: 20,
+          padding: 16,
+          backgroundColor: colors.panelBg + '60',
+          borderRadius: 12,
+          borderWidth: 1,
+          borderColor: colors.panelBorder,
+          width: '100%',
+          maxWidth: PRACTICE_AREA_WIDTH,
+        }}
+      >
+        <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: 'bold', marginBottom: 8 }}>
+          Ship Abilities:
+        </Text>
+        <Text style={{ color: colors.textSecondary, fontSize: 12, lineHeight: 18 }}>
+          • Fighter: Missile Barrage{'\n'}
+          • Scout: Time Warp{'\n'}
+          • Tank: Shield Burst{'\n'}
+          • Interceptor: EMP Blast
+        </Text>
+      </View>
+
+      {/* Hints */}
+      <View style={tutorialStyles.hintsContainer}>
+        <Text style={[tutorialStyles.hintText, { color: colors.textSecondary + '80' }]}>
+          Double-tap anywhere in the game to use your ability
+        </Text>
+      </View>
+    </View>
+  )
+}
+
 // Power-ups Explanation Step Component
 function PowerUpsExplanationStep({ colors }: { colors: ThemeColors }) {
   const [selectedPowerUp, setSelectedPowerUp] = useState<PowerUpInfo | null>(null)
@@ -873,19 +1060,7 @@ export function TutorialModal({ visible, onClose }: TutorialModalProps) {
         return <ComboPracticeStep colors={colors} />
 
       case 'special-abilities':
-        return (
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-            <Text style={{ color: colors.textPrimary, fontSize: 24, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' }}>
-              Special Abilities
-            </Text>
-            <Text style={{ color: colors.textSecondary, fontSize: 16, textAlign: 'center', marginBottom: 20 }}>
-              Double-tap anywhere to activate your ship's special ability!
-            </Text>
-            <Text style={{ color: colors.textSecondary, fontSize: 14, textAlign: 'center', fontStyle: 'italic' }}>
-              (Ability tutorial will be added in the next step)
-            </Text>
-          </View>
-        )
+        return <SpecialAbilitiesPracticeStep colors={colors} />
 
       default:
         return null
