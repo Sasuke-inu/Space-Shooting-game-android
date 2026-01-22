@@ -5,6 +5,7 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler"
 import { Audio } from "expo-av"
 import { GameCanvas } from "../components/GameCanvas"
 import { VirtualControls } from "../components/VirtualControls"
+import { TutorialModal } from "../components/TutorialModal"
 import { useGameStore, MAX_DT, JOY_DEADZONE } from "../state/gameStore"
 import { useHighScoresStore } from "../state/highScoresStore"
 import { useSettingsStore, useThemeColors } from "../theme/themeStore"
@@ -81,6 +82,7 @@ export default function GameScreen() {
   const firstLaunch = useTutorialStore((s) => s.firstLaunch)
   const tutorialCompleted = useTutorialStore((s) => s.tutorialCompleted)
   const startTutorial = useTutorialStore((s) => s.startTutorial)
+  const resetTutorial = useTutorialStore((s) => s.resetTutorial)
   const markFirstLaunchComplete = useTutorialStore((s) => s.markFirstLaunchComplete)
 
   const [joystickValue, setJoystickValue] = useState<Vec2>({ x: 0, y: 0 })
@@ -766,6 +768,7 @@ export default function GameScreen() {
                     </Text>
                     <Pressable
                       onPress={() => {
+                        resetTutorial()
                         setShowSettings(false)
                         setShowTutorial(true)
                         startTutorial()
@@ -1095,6 +1098,12 @@ export default function GameScreen() {
           </Pressable>
         </Modal>
       )}
+
+      {/* Tutorial Modal */}
+      <TutorialModal
+        visible={showTutorial}
+        onClose={() => setShowTutorial(false)}
+      />
     </View>
   )
 }
