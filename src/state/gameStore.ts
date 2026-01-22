@@ -664,6 +664,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         isActive: true,
         chargingSpecial: false,
         specialChargeTime: 0,
+        spawnedEnemiesCount: 0,
       }
 
       return { boss, bossWarning: false, bossWarningStartTime: undefined }

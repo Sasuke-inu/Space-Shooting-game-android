@@ -78,6 +78,7 @@ export interface Boss {
   isActive: boolean
   chargingSpecial: boolean  // Visual telegraph for special attacks
   specialChargeTime: number // Time spent charging special attack
+  spawnedEnemiesCount: number // Total enemies spawned by carrier (lifetime counter)
 }
 
 export const BOSS_STATS: Record<BossType, { hp: number; phases: number; points: number }> = {

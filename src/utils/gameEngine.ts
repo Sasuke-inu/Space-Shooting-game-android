@@ -702,6 +702,7 @@ function updateEnemyBehavior(
 // Boss balance constants
 const BOSS_SPECIAL_CHARGE_TIME = 1.0 // Wind-up time before special attacks (visual tell)
 const BOSS_FIRST_ENCOUNTER_NERF = 0.7 // Reduce difficulty on first boss
+const MAX_CARRIER_SPAWNED_ENEMIES = 12 // Lifetime limit of enemies spawned by carrier
 
 function updateBossBehavior(
   boss: Boss,
@@ -823,11 +824,18 @@ function executeSpecialAttack(
 
     case 'carrier':
       // Spawn mini-enemies (limited to avoid overwhelming)
-      const MAX_CARRIER_ENEMIES = isFirstBoss ? 8 : 10
-      if (state.enemies.length < MAX_CARRIER_ENEMIES) {
-        const spawnCount = isFirstBoss ? 1 : Math.min(2, MAX_CARRIER_ENEMIES - state.enemies.length)
-        for (let i = 0; i < spawnCount; i++) {
-          state.spawnEnemy('scout')
+      // Check lifetime spawn limit to prevent unlimited spawns
+      if (boss.spawnedEnemiesCount < MAX_CARRIER_SPAWNED_ENEMIES) {
+        const MAX_CARRIER_ENEMIES = isFirstBoss ? 8 : 10
+        const remainingLifetimeSpawns = MAX_CARRIER_SPAWNED_ENEMIES - boss.spawnedEnemiesCount
+        const spawnCount = isFirstBoss ? 1 : Math.min(2, MAX_CARRIER_ENEMIES - state.enemies.length, remainingLifetimeSpawns)
+
+        if (state.enemies.length < MAX_CARRIER_ENEMIES && spawnCount > 0) {
+          for (let i = 0; i < spawnCount; i++) {
+            state.spawnEnemy('scout')
+          }
+          // Update boss spawned enemies counter
+          state.updateBoss({ spawnedEnemiesCount: boss.spawnedEnemiesCount + spawnCount })
         }
       }
       break
