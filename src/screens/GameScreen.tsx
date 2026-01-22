@@ -9,6 +9,7 @@ import { useGameStore, MAX_DT, JOY_DEADZONE } from "../state/gameStore"
 import { useHighScoresStore } from "../state/highScoresStore"
 import { useSettingsStore, useThemeColors } from "../theme/themeStore"
 import { useStatisticsStore, useAchievementStore, useUpgradesStore } from "../state/progressStore"
+import { useTutorialStore } from "../state/tutorialStore"
 import { themeList } from "../theme/themes"
 import type { ThemeId } from "../theme/types"
 import type { ShipType } from "../types/game"
@@ -76,6 +77,12 @@ export default function GameScreen() {
   const upgradesCredits = useUpgradesStore((s) => s.credits)
   const addUpgradeCredits = useUpgradesStore((s) => s.addCredits)
 
+  // Tutorial store
+  const firstLaunch = useTutorialStore((s) => s.firstLaunch)
+  const tutorialCompleted = useTutorialStore((s) => s.tutorialCompleted)
+  const startTutorial = useTutorialStore((s) => s.startTutorial)
+  const markFirstLaunchComplete = useTutorialStore((s) => s.markFirstLaunchComplete)
+
   const [joystickValue, setJoystickValue] = useState<Vec2>({ x: 0, y: 0 })
   const [swipeImpulse, setSwipeImpulse] = useState<Vec2>({ x: 0, y: 0 })
   const [shakeOffset, setShakeOffset] = useState<Vec2>({ x: 0, y: 0 })
@@ -93,6 +100,7 @@ export default function GameScreen() {
   const [showShipSelect, setShowShipSelect] = useState(false)
   const [showStats, setShowStats] = useState(false)
   const [showAchievements, setShowAchievements] = useState(false)
+  const [showTutorial, setShowTutorial] = useState(false)
   const [playerName, setPlayerName] = useState("")
   const [settingsTab, setSettingsTab] = useState<'general' | 'ship' | 'stats'>('general')
 
@@ -145,6 +153,17 @@ export default function GameScreen() {
       return () => clearTimeout(timer)
     }
   }, [recentUnlock])
+
+  // Tutorial first launch detection
+  useEffect(() => {
+    if (firstLaunch && !tutorialCompleted) {
+      // Trigger tutorial on first launch
+      setShowInstructions(false) // Hide instructions modal when showing tutorial
+      setShowTutorial(true)
+      startTutorial()
+      markFirstLaunchComplete()
+    }
+  }, [firstLaunch, tutorialCompleted, startTutorial, markFirstLaunchComplete])
 
   // Initialize game on mount
   useEffect(() => {
