@@ -352,7 +352,7 @@ export default function GameScreen() {
 
   const handleSubmitScore = () => {
     const name = playerName.trim() || "Anonymous"
-    addScore(score, wave, name, gameMode)
+    addScore(score, wave, name, gameMode, gameMode === 'endless' ? time : undefined)
 
     // Record game end statistics
     const state = useGameStore.getState()
@@ -1150,9 +1150,16 @@ export default function GameScreen() {
                                 <Text style={{ color: colors.textSecondary, fontSize: 14, fontWeight: 'bold', width: 24 }}>
                                   {index + 1}.
                                 </Text>
-                                <Text style={{ color: colors.textMuted, fontSize: 14 }}>
-                                  {hs.name}
-                                </Text>
+                                <View>
+                                  <Text style={{ color: colors.textMuted, fontSize: 14 }}>
+                                    {hs.name}
+                                  </Text>
+                                  {hs.survivalTime !== undefined && (
+                                    <Text style={{ color: colors.textSecondary, fontSize: 11 }}>
+                                      {Math.floor(hs.survivalTime / 60)}:{String(Math.floor(hs.survivalTime % 60)).padStart(2, '0')}
+                                    </Text>
+                                  )}
+                                </View>
                               </View>
                               <Text style={{ color: colors.comboText, fontSize: 14, fontWeight: '600' }}>
                                 {hs.score}
