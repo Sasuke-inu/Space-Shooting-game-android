@@ -108,8 +108,12 @@ export const useGameEngine = () => {
       (state.specialAbility?.type === 'shield_burst' && state.specialAbility.isActive)
     const hasMagnet = state.hasPowerUp('magnet')
 
-    // Progressive difficulty scaling (0-100% over 4 minutes)
-    const difficultyProgress = Math.min(state.time / 240, 1.0)
+    // Progressive difficulty scaling
+    // Classic mode: Linear scaling (0-100% over 4 minutes)
+    // Endless mode: Asymptotic scaling (continues to increase smoothly without capping)
+    const difficultyProgress = state.gameMode === 'endless'
+      ? Math.tanh(state.time / 180) // Approaches 1.0 asymptotically (76% at 3min, 91% at 5min, 99% at 10min)
+      : Math.min(state.time / 240, 1.0) // Linear cap at 100% after 4 minutes
 
     // Animation speed multiplier (increases from 1x to 2.5x)
     const animSpeedMultiplier = 1.0 + (difficultyProgress * 1.5)
