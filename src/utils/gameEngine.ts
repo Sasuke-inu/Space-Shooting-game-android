@@ -146,17 +146,30 @@ export const useGameEngine = () => {
     // Progressive difficulty scaling (0-100% over 4 minutes)
     const difficultyProgress = Math.min(state.time / 240, 1.0)
 
+    // Smooth easing function for gentle difficulty curves (ease-in-out cubic)
+    const easeInOutCubic = (t: number): number => {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+    }
+
+    // Smooth easing for gradual acceleration (ease-out quadratic)
+    const easeOutQuad = (t: number): number => {
+      return 1 - (1 - t) * (1 - t)
+    }
+
     // Animation speed multiplier (increases from 1x to 2.5x)
-    const animSpeedMultiplier = 1.0 + (difficultyProgress * 1.5)
+    // Uses ease-out curve for gradual acceleration, reduces late-game spike
+    const animSpeedMultiplier = 1.0 + (easeOutQuad(difficultyProgress) * 1.5)
 
     // Enemy aim accuracy (starts poor, becomes deadly)
-    // Quadratic scaling for smoother early game: starts at 0.7, ends at 0.1
-    // At 60s (25% progress): ~0.625 (still quite inaccurate)
-    const aimInaccuracy = 0.7 - (Math.pow(difficultyProgress, 1.5) * 0.6)
+    // Cubic scaling for very smooth early game: starts at 0.7, ends at 0.1
+    // At 60s (25% progress): ~0.66 (still quite inaccurate)
+    // At 120s (50% progress): ~0.48 (moderate)
+    const aimInaccuracy = 0.7 - (Math.pow(difficultyProgress, 1.8) * 0.6)
 
     // Early game fire rate penalty (enemies shoot less frequently early on)
-    // At 0s: 1.8x slower, gradually removes penalty by 96s (40% progress)
-    const earlyGameFireRateMultiplier = 1.0 + (Math.max(0, 1 - difficultyProgress * 2.5) * 0.8)
+    // Exponential decay for smooth transition: starts at 1.8x slower, gradually reduces
+    // At 60s (25%): ~1.42x slower, At 120s (50%): ~1.13x slower, At 180s (75%): ~1.03x slower
+    const earlyGameFireRateMultiplier = 1.0 + (0.8 * Math.exp(-difficultyProgress * 3))
 
     // Player movement
     let newVel = state.player.vel
@@ -594,7 +607,8 @@ function updateEnemyBehavior(
       // Charged precision shots
       newEnemy.chargeTime = (e.chargeTime || 0) + dt
       if (newEnemy.chargeTime >= 2 && d < 600) {
-        const leadFactor = 0.5 + difficulty * 0.3
+        // Smooth lead factor scaling using square root for gradual improvement
+        const leadFactor = 0.5 + (Math.sqrt(difficulty) * 0.25)
         const lead = add(state.player.pos, mul(state.player.vel, leadFactor))
         const aim = angleOf(sub(lead, e.pos))
         state.addBullet({
@@ -643,14 +657,16 @@ function updateEnemyBehavior(
             friendly: false,
           })
         }
-        newEnemy.bombCooldown = (4 - difficulty) * earlyGameFireRate
+        // Smooth bomb cooldown: 4.5s -> 2.5s using square root for gradual reduction
+        newEnemy.bombCooldown = (4.5 - Math.sqrt(difficulty) * 2) * earlyGameFireRate
       }
       break
 
     default:
       // Default behavior (legacy)
       const desired = add(dir, fromAngle(state.time * 0.7, 0.4 * (1 - difficulty * 0.5)))
-      const accelMultiplier = 1.0 + (difficulty * 0.8)
+      // Smooth acceleration scaling using square root for gradual increase
+      const accelMultiplier = 1.0 + (Math.sqrt(difficulty) * 0.8)
       let eVel = add(e.vel, mul(nor(desired), 90 * dt * accelMultiplier))
       eVel = mul(eVel, 0.993)
       newEnemy.vel = eVel
@@ -659,7 +675,8 @@ function updateEnemyBehavior(
 
       newEnemy.cooldown = e.cooldown - dt
       if (d < 520 && newEnemy.cooldown <= 0) {
-        const leadFactor = 0.35 + (difficulty * 0.4)
+        // Smooth lead factor using square root for gradual improvement
+        const leadFactor = 0.35 + (Math.sqrt(difficulty) * 0.35)
         const lead = add(state.player.pos, mul(state.player.vel, leadFactor))
         const aim = angleOf(sub(lead, e.pos)) + rand(-aimInaccuracy, aimInaccuracy)
         state.addBullet({
@@ -668,7 +685,8 @@ function updateEnemyBehavior(
           life: BULLET_LIFE_ENEMY,
           friendly: false,
         })
-        const cooldownBase = 1.4 - (difficulty * 0.6)
+        // Smooth cooldown reduction using power curve for gradual decrease
+        const cooldownBase = 1.4 - (Math.pow(difficulty, 0.7) * 0.6)
         newEnemy.cooldown = rand(0.5, cooldownBase) * earlyGameFireRate
       }
   }
