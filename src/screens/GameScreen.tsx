@@ -148,7 +148,17 @@ export default function GameScreen() {
         setTimeWarp(false)
       }
     }
-  }, [specialAbility?.isActive, specialAbility?.type, specialAbility?.maxCooldown])
+
+    // Cleanup function to prevent memory leaks
+    return () => {
+      // Deactivate time warp if component unmounts
+      if (specialAbility?.type === 'time_warp' && specialAbility?.isActive) {
+        setTimeWarp(false)
+      }
+      // Reset tracking ref
+      lastAbilityActivationRef.current = null
+    }
+  }, [specialAbility?.isActive, specialAbility?.type, specialAbility?.maxCooldown, setTimeWarp, spawnHomingMissiles, stunAllEnemies])
 
   // Achievement notification timeout
   useEffect(() => {
@@ -212,7 +222,9 @@ export default function GameScreen() {
   // Update music volume when changed
   useEffect(() => {
     if (soundRef.current) {
-      soundRef.current.setVolumeAsync(musicVolume)
+      soundRef.current.setVolumeAsync(musicVolume).catch((error) => {
+        console.warn("Failed to update music volume:", error)
+      })
     }
   }, [musicVolume])
 
