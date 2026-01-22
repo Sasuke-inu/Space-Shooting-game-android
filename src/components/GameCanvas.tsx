@@ -339,6 +339,72 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
               key={`enemy-${i}`}
               transform={[{ translateX: e.pos.x }, { translateY: e.pos.y }, { rotate: e.ang }]}
             >
+              {/* Sniper charge indicator - grows and intensifies as it charges */}
+              {e.type === 'sniper' && e.chargeTime && e.chargeTime > 0 && (
+                <>
+                  {/* Outer charging glow that grows */}
+                  <Circle
+                    cx={0}
+                    cy={0}
+                    r={30 + (e.chargeTime / 2) * 20}
+                    color="#9966ff"
+                    opacity={0.15 + (e.chargeTime / 2) * 0.15}
+                  />
+                  {/* Pulsing inner glow */}
+                  <Circle
+                    cx={0}
+                    cy={0}
+                    r={25}
+                    color="#9966ff"
+                    opacity={0.3 + Math.sin(time * 8) * 0.2}
+                  />
+                  {/* Charge ring that grows and intensifies */}
+                  <Circle
+                    cx={0}
+                    cy={0}
+                    r={35}
+                    color="#ff66ff"
+                    style="stroke"
+                    strokeWidth={2 + (e.chargeTime / 2) * 2}
+                    opacity={0.6 + (e.chargeTime / 2) * 0.4}
+                  />
+                </>
+              )}
+
+              {/* Bomber bomb warning - activates when bomb is about to drop */}
+              {e.type === 'bomber' && e.bombCooldown !== undefined && e.bombCooldown < 1 && e.bombCooldown > 0 && (
+                <>
+                  {/* Pulsing danger zone */}
+                  <Circle
+                    cx={0}
+                    cy={0}
+                    r={60 + Math.sin(time * 10) * 10}
+                    color="#ff3333"
+                    opacity={0.2 + Math.sin(time * 10) * 0.1}
+                  />
+                  {/* Warning ring */}
+                  <Circle
+                    cx={0}
+                    cy={0}
+                    r={50}
+                    color="#ff6600"
+                    style="stroke"
+                    strokeWidth={3}
+                    opacity={0.7 + Math.sin(time * 12) * 0.3}
+                  />
+                  {/* Inner warning pulse */}
+                  <Circle
+                    cx={0}
+                    cy={0}
+                    r={40}
+                    color="#ff0000"
+                    style="stroke"
+                    strokeWidth={2}
+                    opacity={0.5 + Math.sin(time * 15) * 0.5}
+                  />
+                </>
+              )}
+
               {/* Enemy ship */}
               <Path
                 path={getEnemyPath(e.type)}
@@ -351,19 +417,6 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
                 style="stroke"
                 strokeWidth={2}
               />
-
-              {/* Sniper charge indicator */}
-              {e.type === 'sniper' && e.chargeTime && e.chargeTime > 0 && (
-                <Circle
-                  cx={0}
-                  cy={0}
-                  r={10 + e.chargeTime * 5}
-                  color="#9966ff"
-                  style="stroke"
-                  strokeWidth={1}
-                  opacity={0.5}
-                />
-              )}
 
               {/* Health bar for tanks and damaged enemies */}
               {(e.type === 'tank' || hpPercent < 1) && (
@@ -379,6 +432,40 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
         {/* Boss */}
         {boss && (
           <Group transform={[{ translateX: boss.pos.x }, { translateY: boss.pos.y }]}>
+            {/* Boss special attack charging indicator */}
+            {boss.chargingSpecial && (
+              <>
+                {/* Expanding warning zone */}
+                <Circle
+                  cx={0}
+                  cy={0}
+                  r={90 + Math.sin(time * 6) * 15}
+                  color="#ff0000"
+                  opacity={0.25 + Math.sin(time * 6) * 0.15}
+                />
+                {/* Pulsing danger ring */}
+                <Circle
+                  cx={0}
+                  cy={0}
+                  r={80 + Math.sin(time * 8) * 10}
+                  color="#ff3300"
+                  style="stroke"
+                  strokeWidth={4}
+                  opacity={0.8 + Math.sin(time * 10) * 0.2}
+                />
+                {/* Inner warning ring */}
+                <Circle
+                  cx={0}
+                  cy={0}
+                  r={70}
+                  color="#ffaa00"
+                  style="stroke"
+                  strokeWidth={3}
+                  opacity={0.6 + Math.sin(time * 12) * 0.4}
+                />
+              </>
+            )}
+
             {/* Boss glow based on phase */}
             <Circle
               cx={0}
@@ -401,13 +488,13 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
               strokeWidth={3}
             />
 
-            {/* Boss core */}
+            {/* Boss core - intensifies when charging special */}
             <Circle
               cx={0}
               cy={10}
-              r={15 + Math.sin(time * 5) * 2}
-              color={boss.phase === 3 ? '#ff0000' : boss.phase === 2 ? '#ff6600' : colors.enemyShip}
-              opacity={0.8}
+              r={15 + Math.sin(time * (boss.chargingSpecial ? 10 : 5)) * (boss.chargingSpecial ? 4 : 2)}
+              color={boss.chargingSpecial ? '#ff0000' : (boss.phase === 3 ? '#ff0000' : boss.phase === 2 ? '#ff6600' : colors.enemyShip)}
+              opacity={boss.chargingSpecial ? 1.0 : 0.8}
             />
 
             {/* Boss health bar */}
