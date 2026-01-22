@@ -6,6 +6,7 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
+  withTiming,
   runOnJS,
 } from 'react-native-reanimated'
 import { useThemeColors } from '../theme/themeStore'
@@ -1017,24 +1018,54 @@ export function TutorialModal({ visible, onClose }: TutorialModalProps) {
   const isFirstStep = currentStep === 0
   const isLastStep = currentStep === totalSteps - 1
 
+  // Animation values for smooth transitions
+  const contentOpacity = useSharedValue(1)
+  const contentTranslateX = useSharedValue(0)
+
+  // Reset animation when modal opens
+  useEffect(() => {
+    if (visible) {
+      contentOpacity.value = 1
+      contentTranslateX.value = 0
+    }
+  }, [visible])
+
   const handleNext = () => {
     if (isLastStep) {
       // Complete the tutorial
       completeTutorial()
       onClose()
     } else {
-      // Move to next step
-      const currentStepType = TUTORIAL_STEPS[currentStep]
-      nextStep(currentStepType)
+      // Animate out
+      contentOpacity.value = withTiming(0, { duration: 200 }, () => {
+        runOnJS(() => {
+          // Move to next step
+          const currentStepType = TUTORIAL_STEPS[currentStep]
+          nextStep(currentStepType)
+          // Animate in from right
+          contentTranslateX.value = 50
+          contentOpacity.value = withTiming(1, { duration: 300 })
+          contentTranslateX.value = withSpring(0, { damping: 20, stiffness: 90 })
+        })()
+      })
     }
   }
 
   const handleBack = () => {
     if (!isFirstStep) {
-      const store = useTutorialStore.getState()
-      store.startTutorial()
-      // Set the current step back by one
-      useTutorialStore.setState({ currentStep: currentStep - 1 })
+      // Animate out
+      contentOpacity.value = withTiming(0, { duration: 200 }, () => {
+        runOnJS(() => {
+          const store = useTutorialStore.getState()
+          store.startTutorial()
+          // Set the current step back by one
+          useTutorialStore.setState({ currentStep: currentStep - 1 })
+          // Animate in from left
+          contentTranslateX.value = -50
+          contentOpacity.value = withTiming(1, { duration: 300 })
+          contentTranslateX.value = withSpring(0, { damping: 20, stiffness: 90 })
+        })()
+      })
     }
   }
 
@@ -1069,25 +1100,38 @@ export function TutorialModal({ visible, onClose }: TutorialModalProps) {
 
   const renderProgressIndicator = () => {
     return (
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 20 }}>
-        {TUTORIAL_STEPS.map((_, index) => (
-          <View
-            key={index}
-            style={{
-              width: index === currentStep ? 32 : 8,
-              height: 8,
-              borderRadius: 4,
-              backgroundColor: index === currentStep
-                ? colors.hudAccent
-                : index < currentStep
-                ? colors.hudAccent + '60'
-                : colors.panelBorder + '40',
-            }}
-          />
-        ))}
+      <View style={{ alignItems: 'center', marginBottom: 20 }}>
+        {/* Step text indicator */}
+        <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginBottom: 12 }}>
+          Step {currentStep + 1} of {totalSteps}
+        </Text>
+
+        {/* Visual dot progress */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+          {TUTORIAL_STEPS.map((_, index) => (
+            <View
+              key={index}
+              style={{
+                width: index === currentStep ? 32 : 8,
+                height: 8,
+                borderRadius: 4,
+                backgroundColor: index === currentStep
+                  ? colors.hudAccent
+                  : index < currentStep
+                  ? colors.hudAccent + '60'
+                  : colors.panelBorder + '40',
+              }}
+            />
+          ))}
+        </View>
       </View>
     )
   }
+
+  const contentAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: contentOpacity.value,
+    transform: [{ translateX: contentTranslateX.value }],
+  }))
 
   return (
     <Modal
@@ -1136,7 +1180,7 @@ export function TutorialModal({ visible, onClose }: TutorialModalProps) {
         {renderProgressIndicator()}
 
         {/* Step content */}
-        <View style={{ flex: 1 }}>
+        <Animated.View style={[{ flex: 1 }, contentAnimatedStyle]}>
           <ScrollView
             contentContainerStyle={{
               flexGrow: 1,
@@ -1144,7 +1188,7 @@ export function TutorialModal({ visible, onClose }: TutorialModalProps) {
           >
             {renderStepContent()}
           </ScrollView>
-        </View>
+        </Animated.View>
 
         {/* Navigation buttons */}
         <View
@@ -1182,11 +1226,6 @@ export function TutorialModal({ visible, onClose }: TutorialModalProps) {
               Back
             </Text>
           </Pressable>
-
-          {/* Step indicator text */}
-          <Text style={{ color: colors.textSecondary, fontSize: 14 }}>
-            {currentStep + 1} of {totalSteps}
-          </Text>
 
           {/* Next/Finish button */}
           <Pressable
