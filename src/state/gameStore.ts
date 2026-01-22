@@ -65,7 +65,8 @@ export const COMBO_TIMEOUT = 2.0          // Seconds before combo resets
 export const COMBO_MULTIPLIERS = [1, 1.5, 2, 2.5, 3]
 
 // Boss constants
-export const BOSS_WAVE_INTERVAL = 5       // Boss every 5 waves
+export const BOSS_WAVE_INTERVAL = 5       // Boss every 5 waves (classic mode)
+export const BOSS_TIME_INTERVAL = 60      // Boss every 60 seconds (endless mode)
 export const BOSS_WARNING_TIME = 3        // Warning duration before boss spawns
 
 // Enemy spawn weights by wave

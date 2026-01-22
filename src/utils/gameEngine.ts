@@ -15,6 +15,7 @@ import {
   POWERUP_DROP_ENEMY,
   POWERUP_DROP_ASTEROID,
   BOSS_WARNING_TIME,
+  BOSS_TIME_INTERVAL,
 } from "../state/gameStore"
 import {
   add,
@@ -438,7 +439,7 @@ export const useGameEngine = () => {
       // Calculate spawn intervals based on difficulty (decreases over time)
       const asteroidInterval = Math.max(1.0, 3.0 - (difficultyProgress * 2.0)) // 3s → 1s
       const enemyInterval = Math.max(1.5, 4.0 - (difficultyProgress * 2.5)) // 4s → 1.5s
-      const bossInterval = 60 // Boss every 60 seconds
+      const bossInterval = BOSS_TIME_INTERVAL // Boss every 60 seconds
 
       // Check if enough time has passed to spawn asteroids
       // Use floor division to detect when we cross a spawn threshold
