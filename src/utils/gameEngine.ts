@@ -30,6 +30,42 @@ import {
 } from "./vectorMath"
 import { hapticLight, hapticMedium, hapticHeavy, hapticWarning } from "./haptics"
 
+// ------------------------------------------------------------------ //
+//                    Bullet Density Tracking
+// ------------------------------------------------------------------ //
+
+/**
+ * Calculates bullet density and screen coverage percentage
+ * Used for balancing to prevent bullet hell scenarios
+ */
+export const calculateBulletDensity = (
+  bulletCount: number,
+  screenWidth: number,
+  screenHeight: number
+): { bulletCount: number; coveragePercent: number; bulletDensity: number } => {
+  // Approximate bullet visual radius (in pixels)
+  const BULLET_RADIUS = 4
+
+  // Calculate total area covered by bullets
+  const bulletArea = Math.PI * BULLET_RADIUS * BULLET_RADIUS
+  const totalBulletArea = bulletCount * bulletArea
+
+  // Calculate screen area
+  const screenArea = screenWidth * screenHeight
+
+  // Calculate coverage percentage
+  const coveragePercent = screenArea > 0 ? (totalBulletArea / screenArea) * 100 : 0
+
+  // Calculate bullet density (bullets per 10,000 square pixels)
+  const bulletDensity = screenArea > 0 ? (bulletCount / screenArea) * 10000 : 0
+
+  return {
+    bulletCount,
+    coveragePercent,
+    bulletDensity,
+  }
+}
+
 export const useGameEngine = () => {
   const boom = useCallback((pos: Vec2, color: string, count = 24, speed = 120) => {
     const newParticles: Particle[] = []
@@ -176,6 +212,13 @@ export const useGameEngine = () => {
       }))
       .filter((b) => b.life > 0)
     state.updateBullets(newBullets)
+
+    // Track bullet density and screen coverage (for difficulty balancing)
+    const bulletDensity = calculateBulletDensity(
+      state.bullets.length,
+      state.w,
+      state.h
+    )
 
     // Update asteroids (with increasing animation speed)
     const newAsteroids = state.asteroids.map((a) => ({
