@@ -1,6 +1,7 @@
 import { create } from "zustand"
 import type {
   GameState,
+  GameMode,
   Asteroid,
   Enemy,
   EnemyType,
@@ -78,6 +79,7 @@ export const getEnemySpawnWeights = (wave: number): Record<EnemyType, number> =>
 interface GameStore extends GameState {
   // Actions
   setPaused: (paused: boolean) => void
+  setGameMode: (mode: GameMode) => void
   setDimensions: (w: number, h: number) => void
   updateTime: (dt: number) => void
   addScore: (points: number) => void
@@ -170,6 +172,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   h: 600,
   time: 0,
   paused: false,
+  gameMode: 'classic',
   score: 0,
   credits: 0,
   lives: 3,
@@ -210,6 +213,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
   sessionLastShotTime: 0,
 
   setPaused: (paused) => set({ paused }),
+
+  setGameMode: (mode) => set({ gameMode: mode }),
 
   setDimensions: (w, h) => set({ w, h }),
 

@@ -292,6 +292,7 @@ export interface GameState {
   h: number
   time: number
   paused: boolean
+  gameMode: GameMode
   score: number
   credits: number  // Currency for upgrades
   lives: number
