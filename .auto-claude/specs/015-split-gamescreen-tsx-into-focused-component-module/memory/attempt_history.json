@@ -181,11 +181,30 @@
         }
       ],
       "status": "completed"
+    },
+    "subtask-5-3": {
+      "attempts": [
+        {
+          "session": 1,
+          "timestamp": "2026-01-23T05:45:25.526295",
+          "approach": "Session ended without progress",
+          "success": false,
+          "error": "Subtask status is pending"
+        },
+        {
+          "session": 2,
+          "timestamp": "2026-01-23T05:49:02.814748",
+          "approach": "Session ended without progress",
+          "success": false,
+          "error": "Subtask status is pending"
+        }
+      ],
+      "status": "failed"
     }
   },
   "stuck_subtasks": [],
   "metadata": {
     "created_at": "2026-01-22T02:33:20.506091",
-    "last_updated": "2026-01-22T06:03:28.770363"
+    "last_updated": "2026-01-23T05:49:02.814767"
   }
 }
