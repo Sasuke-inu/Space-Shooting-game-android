@@ -672,6 +672,7 @@ export default function GameScreen() {
             homingMissiles={homingMissiles}
             showRadar={true}
             timeWarpActive={timeWarpActive}
+            gameMode={gameMode}
           />
         </View>
       </GestureDetector>

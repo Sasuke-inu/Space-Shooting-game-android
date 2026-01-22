@@ -1,7 +1,7 @@
 import React from "react"
 import { Canvas, Group, Path, Circle, Line, Text, Skia, vec, matchFont, Rect } from "@shopify/react-native-skia"
 import { Platform } from "react-native"
-import type { Asteroid, Enemy, Vec2, PowerUp, ActivePowerUp, ComboState, Boss, HomingMissile, EnemyType } from "../types/game"
+import type { Asteroid, Enemy, Vec2, PowerUp, ActivePowerUp, ComboState, Boss, HomingMissile, EnemyType, GameMode } from "../types/game"
 import type { ThemeColors } from "../theme/types"
 import { fromAngle } from "../utils/vectorMath"
 
@@ -30,6 +30,7 @@ interface GameCanvasProps {
   homingMissiles?: HomingMissile[]
   showRadar?: boolean
   timeWarpActive?: boolean
+  gameMode?: GameMode
 }
 
 // Helper to get power-up color from theme
@@ -86,6 +87,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
   homingMissiles = [],
   showRadar = true,
   timeWarpActive = false,
+  gameMode = 'classic',
 }) => {
   // Background stars
   const stars = React.useMemo(() => {
@@ -519,7 +521,16 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
 
         {/* HUD - Score and Credits */}
         <Text x={16} y={24} text={`Score: ${score}`} color={colors.hudText} font={hudFont} />
-        <Text x={16} y={44} text={`Wave: ${wave}`} color={colors.hudText} font={hudFont} />
+        <Text
+          x={16}
+          y={44}
+          text={gameMode === 'endless'
+            ? `Time: ${Math.floor(time / 60)}:${String(Math.floor(time % 60)).padStart(2, '0')}`
+            : `Wave: ${wave}`
+          }
+          color={colors.hudText}
+          font={hudFont}
+        />
         <Text x={16} y={64} text={`Credits: ${credits}`} color={colors.comboText} font={hudFont} />
 
         {/* HUD - Combo counter */}
