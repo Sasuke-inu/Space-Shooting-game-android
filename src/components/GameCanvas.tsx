@@ -87,29 +87,6 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
   showRadar = true,
   timeWarpActive = false,
 }) => {
-  // FPS tracking
-  const [fps, setFps] = React.useState(60)
-  const lastFrameTimeRef = React.useRef(performance.now())
-  const frameTimesRef = React.useRef<number[]>([])
-
-  // Update FPS calculation every frame
-  React.useEffect(() => {
-    const currentTime = performance.now()
-    const deltaTime = currentTime - lastFrameTimeRef.current
-    lastFrameTimeRef.current = currentTime
-
-    // Keep a rolling average of the last 30 frames for smoother FPS display
-    frameTimesRef.current.push(deltaTime)
-    if (frameTimesRef.current.length > 30) {
-      frameTimesRef.current.shift()
-    }
-
-    // Calculate average FPS from frame times
-    const avgDelta = frameTimesRef.current.reduce((a, b) => a + b, 0) / frameTimesRef.current.length
-    const newFps = Math.round(1000 / avgDelta)
-    setFps(newFps)
-  })
-
   // Background stars
   const stars = useMemo(() => {
     const starArray = []
@@ -604,9 +581,6 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
         <Text x={16} y={24} text={`Score: ${score}`} color={colors.hudText} font={hudFont} />
         <Text x={16} y={44} text={`Wave: ${wave}`} color={colors.hudText} font={hudFont} />
         <Text x={16} y={64} text={`Credits: ${credits}`} color={colors.comboText} font={hudFont} />
-
-        {/* FPS Counter */}
-        <Text x={width - 80} y={24} text={`FPS: ${fps}`} color={colors.hudAccent} font={hudFont} />
 
         {/* HUD - Combo counter */}
         {combo.count > 0 && (

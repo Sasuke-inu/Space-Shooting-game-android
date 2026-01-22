@@ -38,10 +38,6 @@ import {
 } from "./vectorMath"
 import { hapticLight, hapticMedium, hapticHeavy, hapticWarning } from "./haptics"
 
-// Performance tracking
-let frameCount = 0
-const PERF_LOG_INTERVAL = 60 // Log every 60 frames (~1 second at 60fps)
-
 // ------------------------------------------------------------------ //
 //                         Spatial Grid for Collision Detection
 // ------------------------------------------------------------------ //
@@ -166,9 +162,6 @@ export const useGameEngine = () => {
     thrusting: boolean,
     themeColors: ThemeColors
   ) => {
-    // Performance tracking - start
-    const perfStart = performance.now()
-
     const state = useGameStore.getState()
 
     // Apply time warp effect
@@ -1018,39 +1011,6 @@ export const useGameEngine = () => {
 
     // Apply all updates at once
     useGameStore.setState(stateUpdates)
-
-    // Performance tracking - end
-    const perfEnd = performance.now()
-    const frameTime = perfEnd - perfStart
-
-    frameCount++
-    if (frameCount % PERF_LOG_INTERVAL === 0) {
-      const totalEntities =
-        updatedBullets.length +
-        updatedAsteroids.length +
-        updatedEnemies.length +
-        activeParticles.length +
-        finalPowerUps.length +
-        updatedHomingMissiles.length +
-        (updatedBoss ? 1 : 0)
-
-      // eslint-disable-next-line no-console
-      console.log('[GameEngine Performance]', {
-        frameTime: `${frameTime.toFixed(2)}ms`,
-        entities: {
-          total: totalEntities,
-          bullets: updatedBullets.length,
-          asteroids: updatedAsteroids.length,
-          enemies: updatedEnemies.length,
-          particles: activeParticles.length,
-          powerUps: finalPowerUps.length,
-          homingMissiles: updatedHomingMissiles.length,
-          boss: updatedBoss ? 1 : 0,
-        },
-        wave,
-        score,
-      })
-    }
   }, [boom])
 
   return {
