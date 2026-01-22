@@ -39,6 +39,7 @@ export default function GameScreen() {
 
   // Game state
   const paused = useGameStore((s) => s.paused)
+  const gameMode = useGameStore((s) => s.gameMode)
   const score = useGameStore((s) => s.score)
   const credits = useGameStore((s) => s.credits)
   const lives = useGameStore((s) => s.lives)
@@ -96,7 +97,8 @@ export default function GameScreen() {
   const [playerName, setPlayerName] = useState("")
   const [settingsTab, setSettingsTab] = useState<'general' | 'ship' | 'stats'>('general')
 
-  const highScores = useHighScoresStore((s) => s.scores)
+  const getScores = useHighScoresStore((s) => s.getScores)
+  const highScores = getScores(gameMode)
   const isTopFive = useHighScoresStore((s) => s.isTopFive)
   const addScore = useHighScoresStore((s) => s.addScore)
 
@@ -339,7 +341,7 @@ export default function GameScreen() {
 
   const handleSubmitScore = () => {
     const name = playerName.trim() || "Anonymous"
-    addScore(score, wave, name)
+    addScore(score, wave, name, gameMode)
 
     // Record game end statistics
     const state = useGameStore.getState()
@@ -356,14 +358,14 @@ export default function GameScreen() {
   // Check for game over and show name input if top 5
   useEffect(() => {
     if (paused && lives <= 0 && !showInstructions && !showNameInput) {
-      if (isTopFive(score)) {
+      if (isTopFive(score, gameMode)) {
         const timer = setTimeout(() => {
           setShowNameInput(true)
         }, 500)
         return () => clearTimeout(timer)
       }
     }
-  }, [paused, lives, score, showInstructions, showNameInput, isTopFive])
+  }, [paused, lives, score, showInstructions, showNameInput, isTopFive, gameMode])
 
   const handleShipSelect = (ship: ShipType) => {
     if (unlockedShips.includes(ship)) {

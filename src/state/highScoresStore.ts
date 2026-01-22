@@ -1,6 +1,7 @@
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { GameMode } from "../types/game"
 
 export interface HighScore {
   name: string
@@ -10,18 +11,24 @@ export interface HighScore {
 }
 
 interface HighScoresState {
-  scores: HighScore[]
-  addScore: (score: number, wave: number, name: string) => void
-  isTopFive: (score: number) => boolean
-  getScores: () => HighScore[]
+  scores: {
+    classic: HighScore[]
+    endless: HighScore[]
+  }
+  addScore: (score: number, wave: number, name: string, mode: GameMode) => void
+  isTopFive: (score: number, mode: GameMode) => boolean
+  getScores: (mode: GameMode) => HighScore[]
 }
 
 export const useHighScoresStore = create<HighScoresState>()(
   persist(
     (set, get) => ({
-      scores: [],
+      scores: {
+        classic: [],
+        endless: [],
+      },
 
-      addScore: (score: number, wave: number, name: string) => {
+      addScore: (score: number, wave: number, name: string, mode: GameMode) => {
         set((state) => {
           const newScore: HighScore = {
             name,
@@ -29,20 +36,25 @@ export const useHighScoresStore = create<HighScoresState>()(
             wave,
             date: Date.now(),
           }
-          const newScores = [...state.scores, newScore]
+          const newScores = [...state.scores[mode], newScore]
             .sort((a, b) => b.score - a.score)
             .slice(0, 5)
-          return { scores: newScores }
+          return {
+            scores: {
+              ...state.scores,
+              [mode]: newScores,
+            },
+          }
         })
       },
 
-      isTopFive: (score: number) => {
-        const scores = get().scores
+      isTopFive: (score: number, mode: GameMode) => {
+        const scores = get().scores[mode]
         if (scores.length < 5) return true
         return score > scores[scores.length - 1].score
       },
 
-      getScores: () => get().scores,
+      getScores: (mode: GameMode) => get().scores[mode],
     }),
     {
       name: "high-scores-storage",
