@@ -1,8 +1,17 @@
-import React from 'react'
-import { View, Text, Pressable, Modal, ScrollView } from 'react-native'
+import React, { useState, useCallback, useMemo } from 'react'
+import { View, Text, Pressable, Modal, ScrollView, StyleSheet } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { Gesture, GestureDetector } from 'react-native-gesture-handler'
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  runOnJS,
+} from 'react-native-reanimated'
 import { useThemeColors } from '../theme/themeStore'
 import { useTutorialStore, TutorialStep } from '../state/tutorialStore'
+import type { Vec2 } from '../types/game'
+import type { ThemeColors } from '../theme/types'
 
 interface TutorialModalProps {
   visible: boolean
@@ -16,6 +25,137 @@ const TUTORIAL_STEPS: TutorialStep[] = [
   'combo',
   'special-abilities',
 ]
+
+const JOY_MAX_RADIUS = 60
+const MOVEMENT_THRESHOLD = 0.3 // Minimum joystick movement to count
+
+// Movement Practice Step Component
+function MovementPracticeStep({ colors }: { colors: ThemeColors }) {
+  const [movementDetected, setMovementDetected] = useState(false)
+  const [totalMovement, setTotalMovement] = useState(0)
+
+  const joystickX = useSharedValue(0)
+  const joystickY = useSharedValue(0)
+  const joystickScale = useSharedValue(1)
+
+  const handleJoystickMove = useCallback((value: Vec2) => {
+    const magnitude = Math.sqrt(value.x * value.x + value.y * value.y)
+
+    if (magnitude > MOVEMENT_THRESHOLD) {
+      setTotalMovement((prev) => {
+        const newTotal = prev + magnitude
+        if (newTotal > 2 && !movementDetected) {
+          setMovementDetected(true)
+        }
+        return newTotal
+      })
+    }
+  }, [movementDetected])
+
+  const handleSetActive = useCallback((active: boolean) => {
+    // Optional: add visual feedback when joystick is active
+  }, [])
+
+  const panGesture = useMemo(() => Gesture.Pan()
+    .onStart(() => {
+      'worklet'
+      joystickScale.value = withSpring(1.15, { damping: 12 })
+      runOnJS(handleSetActive)(true)
+    })
+    .onUpdate((event) => {
+      'worklet'
+      const dx = event.translationX
+      const dy = event.translationY
+      const dist = Math.sqrt(dx * dx + dy * dy)
+
+      if (dist > JOY_MAX_RADIUS) {
+        joystickX.value = (dx / dist) * JOY_MAX_RADIUS
+        joystickY.value = (dy / dist) * JOY_MAX_RADIUS
+      } else {
+        joystickX.value = dx
+        joystickY.value = dy
+      }
+
+      const normalizedX = joystickX.value / JOY_MAX_RADIUS
+      const normalizedY = joystickY.value / JOY_MAX_RADIUS
+      runOnJS(handleJoystickMove)({ x: normalizedX, y: normalizedY })
+    })
+    .onEnd(() => {
+      'worklet'
+      joystickX.value = withSpring(0, { damping: 15 })
+      joystickY.value = withSpring(0, { damping: 15 })
+      joystickScale.value = withSpring(1)
+      runOnJS(handleSetActive)(false)
+      runOnJS(handleJoystickMove)({ x: 0, y: 0 })
+    }), [handleJoystickMove, handleSetActive, joystickX, joystickY, joystickScale])
+
+  const stickStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: joystickX.value },
+      { translateY: joystickY.value },
+      { scale: joystickScale.value },
+    ],
+  }))
+
+  const dynamicStyles = useMemo(() => ({
+    joystickPad: {
+      borderColor: movementDetected ? colors.hudAccent : colors.joystickBorder,
+      backgroundColor: colors.joystickPad,
+    },
+    joystickStick: {
+      backgroundColor: colors.joystickStick,
+      shadowColor: colors.joystickGlow,
+    },
+  }), [colors, movementDetected])
+
+  return (
+    <View style={tutorialStyles.stepContainer}>
+      <Text style={[tutorialStyles.stepTitle, { color: colors.textPrimary }]}>
+        Movement Controls
+      </Text>
+
+      <Text style={[tutorialStyles.stepDescription, { color: colors.textSecondary }]}>
+        Use the joystick below to move your ship around.
+      </Text>
+
+      {/* Visual indicator */}
+      <View style={tutorialStyles.indicatorContainer}>
+        {movementDetected ? (
+          <>
+            <View style={[tutorialStyles.checkmark, { borderColor: colors.hudAccent }]}>
+              <Text style={{ color: colors.hudAccent, fontSize: 24, fontWeight: 'bold' }}>✓</Text>
+            </View>
+            <Text style={[tutorialStyles.completionText, { color: colors.hudAccent }]}>
+              Great! You've mastered the movement controls!
+            </Text>
+          </>
+        ) : (
+          <Text style={[tutorialStyles.instructionText, { color: colors.textSecondary }]}>
+            Move the joystick in any direction
+          </Text>
+        )}
+      </View>
+
+      {/* Practice Joystick */}
+      <View style={tutorialStyles.joystickArea}>
+        <GestureDetector gesture={panGesture}>
+          <View style={tutorialStyles.joystickContainer}>
+            <View style={[tutorialStyles.joystickPad, dynamicStyles.joystickPad]}>
+              <Animated.View style={[tutorialStyles.joystickStick, dynamicStyles.joystickStick, stickStyle]} />
+            </View>
+          </View>
+        </GestureDetector>
+      </View>
+
+      {/* Directional hints */}
+      <View style={tutorialStyles.hintsContainer}>
+        <Text style={[tutorialStyles.hintText, { color: colors.textSecondary + '80' }]}>
+          ← Drag in any direction →
+        </Text>
+      </View>
+    </View>
+  )
+}
 
 export function TutorialModal({ visible, onClose }: TutorialModalProps) {
   const insets = useSafeAreaInsets()
@@ -61,19 +201,7 @@ export function TutorialModal({ visible, onClose }: TutorialModalProps) {
 
     switch (stepType) {
       case 'movement':
-        return (
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-            <Text style={{ color: colors.textPrimary, fontSize: 24, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' }}>
-              Movement Controls
-            </Text>
-            <Text style={{ color: colors.textSecondary, fontSize: 16, textAlign: 'center', marginBottom: 20 }}>
-              Use the joystick to move your ship around the screen.
-            </Text>
-            <Text style={{ color: colors.textSecondary, fontSize: 14, textAlign: 'center', fontStyle: 'italic' }}>
-              (Interactive practice will be added in the next step)
-            </Text>
-          </View>
-        )
+        return <MovementPracticeStep colors={colors} />
 
       case 'shooting':
         return (
@@ -289,3 +417,81 @@ export function TutorialModal({ visible, onClose }: TutorialModalProps) {
     </Modal>
   )
 }
+
+const tutorialStyles = StyleSheet.create({
+  stepContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  stepTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  stepDescription: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 32,
+    paddingHorizontal: 20,
+  },
+  indicatorContainer: {
+    alignItems: 'center',
+    marginBottom: 32,
+    minHeight: 80,
+  },
+  checkmark: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    borderWidth: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  completionText: {
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  instructionText: {
+    fontSize: 14,
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
+  joystickArea: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 32,
+  },
+  joystickContainer: {
+    pointerEvents: 'box-only',
+  },
+  joystickPad: {
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  joystickStick: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    opacity: 0.85,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius: 18,
+  },
+  hintsContainer: {
+    marginTop: 20,
+  },
+  hintText: {
+    fontSize: 14,
+    textAlign: 'center',
+  },
+})
