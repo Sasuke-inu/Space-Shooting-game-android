@@ -37,3 +37,8 @@ export type { NameInputModalProps } from './modals/NameInputModal'
 
 export { PauseGameOverModal } from './modals/PauseGameOverModal'
 export type { PauseGameOverModalProps } from './modals/PauseGameOverModal'
+
+// Custom Hooks
+export { useBackgroundMusic } from './hooks/useBackgroundMusic'
+export { useGameGestures } from './hooks/useGameGestures'
+export { useGameLoop } from './hooks/useGameLoop'
