@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { View, Text, Pressable, Modal, ScrollView, StyleSheet } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
@@ -28,6 +28,215 @@ const TUTORIAL_STEPS: TutorialStep[] = [
 
 const JOY_MAX_RADIUS = 60
 const MOVEMENT_THRESHOLD = 0.3 // Minimum joystick movement to count
+
+const PRACTICE_AREA_WIDTH = 280
+const PRACTICE_AREA_HEIGHT = 320
+const BULLET_SPEED = 5
+const BULLET_SIZE = 6
+const TARGET_SIZE = 40
+const TARGET_HIT_RADIUS = 25 // Collision detection radius
+
+interface Target {
+  id: number
+  x: number
+  y: number
+  hit: boolean
+}
+
+interface Bullet {
+  id: number
+  x: number
+  y: number
+}
+
+// Shooting Practice Step Component
+function ShootingPracticeStep({ colors }: { colors: ThemeColors }) {
+  const [targets, setTargets] = useState<Target[]>([
+    { id: 1, x: 70, y: 80, hit: false },
+    { id: 2, x: 140, y: 120, hit: false },
+    { id: 3, x: 210, y: 90, hit: false },
+  ])
+  const [bullets, setBullets] = useState<Bullet[]>([])
+  const [completed, setCompleted] = useState(false)
+  const bulletIdRef = useRef(0)
+  const animationFrameRef = useRef<number | undefined>(undefined)
+
+  // Update bullets position and check collisions
+  useEffect(() => {
+    const updateGame = (_timestamp: number) => {
+      setBullets((prevBullets) => {
+        // Filter out bullets that are off-screen
+        const activeBullets = prevBullets.filter((b) => b.y > 0)
+
+        // Move bullets upward
+        return activeBullets.map((b) => ({
+          ...b,
+          y: b.y - BULLET_SPEED,
+        }))
+      })
+
+      setTargets((prevTargets) => {
+        return prevTargets.map((target) => {
+          if (target.hit) return target
+
+          // Check collision with any bullet
+          const hitByBullet = bullets.some((bullet) => {
+            const dx = bullet.x - target.x
+            const dy = bullet.y - target.y
+            const distSquared = dx * dx + dy * dy
+            return distSquared < TARGET_HIT_RADIUS * TARGET_HIT_RADIUS
+          })
+
+          if (hitByBullet) {
+            // Remove the hitting bullet
+            setBullets((prevBullets) =>
+              prevBullets.filter((bullet) => {
+                const dx = bullet.x - target.x
+                const dy = bullet.y - target.y
+                const distSquared = dx * dx + dy * dy
+                return distSquared >= TARGET_HIT_RADIUS * TARGET_HIT_RADIUS
+              })
+            )
+            return { ...target, hit: true }
+          }
+
+          return target
+        })
+      })
+
+      animationFrameRef.current = requestAnimationFrame(updateGame)
+    }
+
+    animationFrameRef.current = requestAnimationFrame(updateGame)
+
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
+    }
+  }, [bullets])
+
+  // Check if all targets are destroyed
+  useEffect(() => {
+    const allDestroyed = targets.every((t) => t.hit)
+    if (allDestroyed && !completed) {
+      setCompleted(true)
+    }
+  }, [targets, completed])
+
+  const handleTap = useCallback((event: any) => {
+    const { locationX, locationY } = event.nativeEvent
+
+    // Spawn bullet at tap location
+    const newBullet: Bullet = {
+      id: bulletIdRef.current++,
+      x: locationX,
+      y: locationY,
+    }
+
+    setBullets((prev) => [...prev, newBullet])
+  }, [])
+
+  const tapGesture = useMemo(() => Gesture.Tap().onEnd((event) => {
+    'worklet'
+    runOnJS(handleTap)(event)
+  }), [handleTap])
+
+  const dynamicStyles = useMemo(() => ({
+    practiceArea: {
+      borderColor: completed ? colors.hudAccent : colors.panelBorder,
+      backgroundColor: colors.background + '40',
+    },
+    target: {
+      backgroundColor: colors.asteroid,
+      borderColor: colors.asteroid + '80',
+    },
+    targetHit: {
+      backgroundColor: colors.particle + '20',
+      borderColor: colors.particle + '40',
+    },
+    bullet: {
+      backgroundColor: colors.playerBullet,
+    },
+  }), [colors, completed])
+
+  return (
+    <View style={tutorialStyles.stepContainer}>
+      <Text style={[tutorialStyles.stepTitle, { color: colors.textPrimary }]}>
+        Shooting Practice
+      </Text>
+
+      <Text style={[tutorialStyles.stepDescription, { color: colors.textSecondary }]}>
+        Tap anywhere in the practice area to shoot. Destroy all targets!
+      </Text>
+
+      {/* Visual indicator */}
+      <View style={tutorialStyles.indicatorContainer}>
+        {completed ? (
+          <>
+            <View style={[tutorialStyles.checkmark, { borderColor: colors.hudAccent }]}>
+              <Text style={{ color: colors.hudAccent, fontSize: 24, fontWeight: 'bold' }}>✓</Text>
+            </View>
+            <Text style={[tutorialStyles.completionText, { color: colors.hudAccent }]}>
+              Excellent! All targets destroyed!
+            </Text>
+          </>
+        ) : (
+          <Text style={[tutorialStyles.instructionText, { color: colors.textSecondary }]}>
+            Targets remaining: {targets.filter((t) => !t.hit).length}
+          </Text>
+        )}
+      </View>
+
+      {/* Practice Area */}
+      <GestureDetector gesture={tapGesture}>
+        <View
+          style={[
+            tutorialStyles.practiceArea,
+            dynamicStyles.practiceArea,
+          ]}
+        >
+          {/* Render targets */}
+          {targets.map((target) => (
+            <View
+              key={target.id}
+              style={[
+                tutorialStyles.target,
+                target.hit ? dynamicStyles.targetHit : dynamicStyles.target,
+                {
+                  left: target.x - TARGET_SIZE / 2,
+                  top: target.y - TARGET_SIZE / 2,
+                },
+              ]}
+            />
+          ))}
+
+          {/* Render bullets */}
+          {bullets.map((bullet) => (
+            <View
+              key={bullet.id}
+              style={[
+                tutorialStyles.bullet,
+                dynamicStyles.bullet,
+                {
+                  left: bullet.x - BULLET_SIZE / 2,
+                  top: bullet.y - BULLET_SIZE / 2,
+                },
+              ]}
+            />
+          ))}
+        </View>
+      </GestureDetector>
+
+      {/* Hints */}
+      <View style={tutorialStyles.hintsContainer}>
+        <Text style={[tutorialStyles.hintText, { color: colors.textSecondary + '80' }]}>
+          Tap to shoot • Destroy all 3 targets
+        </Text>
+      </View>
+    </View>
+  )
+}
 
 // Movement Practice Step Component
 function MovementPracticeStep({ colors }: { colors: ThemeColors }) {
@@ -204,19 +413,7 @@ export function TutorialModal({ visible, onClose }: TutorialModalProps) {
         return <MovementPracticeStep colors={colors} />
 
       case 'shooting':
-        return (
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-            <Text style={{ color: colors.textPrimary, fontSize: 24, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' }}>
-              Shooting Practice
-            </Text>
-            <Text style={{ color: colors.textSecondary, fontSize: 16, textAlign: 'center', marginBottom: 20 }}>
-              Tap anywhere on the screen to shoot enemies and asteroids.
-            </Text>
-            <Text style={{ color: colors.textSecondary, fontSize: 14, textAlign: 'center', fontStyle: 'italic' }}>
-              (Target practice will be added in the next step)
-            </Text>
-          </View>
-        )
+        return <ShootingPracticeStep colors={colors} />
 
       case 'powerups':
         return (
@@ -493,5 +690,26 @@ const tutorialStyles = StyleSheet.create({
   hintText: {
     fontSize: 14,
     textAlign: 'center',
+  },
+  practiceArea: {
+    width: PRACTICE_AREA_WIDTH,
+    height: PRACTICE_AREA_HEIGHT,
+    borderWidth: 2,
+    borderRadius: 12,
+    position: 'relative',
+    marginVertical: 20,
+  },
+  target: {
+    position: 'absolute',
+    width: TARGET_SIZE,
+    height: TARGET_SIZE,
+    borderRadius: TARGET_SIZE / 2,
+    borderWidth: 2,
+  },
+  bullet: {
+    position: 'absolute',
+    width: BULLET_SIZE,
+    height: BULLET_SIZE,
+    borderRadius: BULLET_SIZE / 2,
   },
 })
