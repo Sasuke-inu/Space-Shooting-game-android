@@ -86,6 +86,7 @@ export const getEnemySpawnWeights = (wave: number): Record<EnemyType, number> =>
 interface GameStore extends GameState {
   // Particle pool
   particlePool: PooledParticle[]
+  particlePoolIndex: number  // Circular buffer index for next particle allocation
   // Actions
   setPaused: (paused: boolean) => void
   setDimensions: (w: number, h: number) => void
@@ -241,6 +242,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   // Particle pool
   particlePool: createParticlePool(),
+  particlePoolIndex: 0,
 
   setPaused: (paused) => set({ paused }),
 
@@ -338,6 +340,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         sessionShotsFired: 0,
         sessionShotsHit: 0,
         sessionLastShotTime: 0,
+        particlePoolIndex: 0,
       }
     }),
 
@@ -874,20 +877,23 @@ export const useGameStore = create<GameStore>((set, get) => ({
   //                         Particle Pooling
   // ------------------------------------------------------------------ //
 
-  // Acquire particles from the pool
+  // Acquire particles from the pool using circular buffer
   acquireParticles: (count) => {
     const state = get()
+    const pool = state.particlePool
+    const maxCount = Math.min(count, PARTICLE_POOL_SIZE)
     const acquired: PooledParticle[] = []
-    let acquiredCount = 0
 
-    // Find inactive particles in the pool
-    for (let i = 0; i < state.particlePool.length && acquiredCount < count; i++) {
-      const particle = state.particlePool[i]
-      if (!particle.active) {
-        acquired.push(particle)
-        acquiredCount++
-      }
+    let currentIndex = state.particlePoolIndex
+
+    // Allocate particles from circular buffer, automatically recycling oldest ones
+    for (let i = 0; i < maxCount; i++) {
+      acquired.push(pool[currentIndex])
+      currentIndex = (currentIndex + 1) % PARTICLE_POOL_SIZE
     }
+
+    // Update the pool index for next allocation
+    set({ particlePoolIndex: currentIndex })
 
     return acquired
   },
