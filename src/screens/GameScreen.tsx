@@ -759,6 +759,33 @@ export default function GameScreen() {
                     <Slider value={joystickSensitivity} onValueChange={setJoystickSensitivity} label="Joystick Sensitivity" />
                     <Toggle value={autoFire} onValueChange={setAutoFire} label="Auto-Fire" />
                     <Toggle value={hapticsEnabled} onValueChange={setHapticsEnabled} label="Haptic Feedback" />
+
+                    {/* Tutorial Section */}
+                    <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginTop: 20, marginBottom: 12 }}>
+                      📚 Tutorial
+                    </Text>
+                    <Pressable
+                      onPress={() => {
+                        setShowSettings(false)
+                        setShowTutorial(true)
+                        startTutorial()
+                      }}
+                      style={{
+                        backgroundColor: colors.buttonSecondary,
+                        borderWidth: 1,
+                        borderColor: colors.panelBorder,
+                        borderRadius: 12,
+                        padding: 12,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: '600' }}>
+                        Replay Tutorial
+                      </Text>
+                      <Text style={{ color: colors.textSecondary, fontSize: 14 }}>▶</Text>
+                    </Pressable>
                   </>
                 )}
 
