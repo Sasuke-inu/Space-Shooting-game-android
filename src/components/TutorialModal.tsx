@@ -90,6 +90,300 @@ interface Bullet {
   y: number
 }
 
+interface ComboEnemy {
+  id: number
+  x: number
+  y: number
+  hit: boolean
+}
+
+const COMBO_TIMEOUT = 2.0 // Seconds before combo resets
+const COMBO_MULTIPLIERS = [1, 1.5, 2, 2.5, 3]
+const ENEMY_SIZE = 36
+const COMBO_GOAL = 9 // Need 9 kills to reach 3x multiplier
+
+// Combo Practice Step Component
+function ComboPracticeStep({ colors }: { colors: ThemeColors }) {
+  const [enemies, setEnemies] = useState<ComboEnemy[]>([])
+  const [bullets, setBullets] = useState<Bullet[]>([])
+  const [comboCount, setComboCount] = useState(0)
+  const [lastKillTime, setLastKillTime] = useState<number | null>(null)
+  const [comboTimer, setComboTimer] = useState(0)
+  const [completed, setCompleted] = useState(false)
+  const bulletIdRef = useRef(0)
+  const enemyIdRef = useRef(0)
+  const animationFrameRef = useRef<number | undefined>(undefined)
+  const lastTimeRef = useRef<number>(Date.now())
+
+  // Spawn initial enemies
+  useEffect(() => {
+    spawnEnemyWave()
+  }, [])
+
+  const spawnEnemyWave = useCallback(() => {
+    const newEnemies: ComboEnemy[] = []
+    for (let i = 0; i < 3; i++) {
+      newEnemies.push({
+        id: enemyIdRef.current++,
+        x: 50 + i * 90,
+        y: 60 + Math.random() * 80,
+        hit: false,
+      })
+    }
+    setEnemies((prev) => [...prev, ...newEnemies])
+  }, [])
+
+  const getComboMultiplier = useCallback(() => {
+    if (comboCount === 0) return COMBO_MULTIPLIERS[0]
+    if (comboCount < 3) return COMBO_MULTIPLIERS[1]
+    if (comboCount < 6) return COMBO_MULTIPLIERS[2]
+    if (comboCount < 9) return COMBO_MULTIPLIERS[3]
+    return COMBO_MULTIPLIERS[4]
+  }, [comboCount])
+
+  // Update bullets, check collisions, and update combo timer
+  useEffect(() => {
+    const updateGame = (_timestamp: number) => {
+      const now = Date.now()
+      const dt = (now - lastTimeRef.current) / 1000
+      lastTimeRef.current = now
+
+      // Update combo timer
+      if (lastKillTime !== null && comboCount > 0) {
+        const timeSinceKill = (now - lastKillTime) / 1000
+        const newTimer = Math.max(0, COMBO_TIMEOUT - timeSinceKill)
+        setComboTimer(newTimer)
+
+        // Reset combo if timer expires
+        if (newTimer <= 0) {
+          setComboCount(0)
+          setLastKillTime(null)
+        }
+      }
+
+      // Update bullets
+      setBullets((prevBullets) => {
+        const activeBullets = prevBullets.filter((b) => b.y > 0)
+        return activeBullets.map((b) => ({
+          ...b,
+          y: b.y - BULLET_SPEED,
+        }))
+      })
+
+      // Check collisions
+      setEnemies((prevEnemies) => {
+        let killedInFrame = false
+        const newEnemies = prevEnemies.map((enemy) => {
+          if (enemy.hit) return enemy
+
+          const hitByBullet = bullets.some((bullet) => {
+            const dx = bullet.x - enemy.x
+            const dy = bullet.y - enemy.y
+            const distSquared = dx * dx + dy * dy
+            return distSquared < (ENEMY_SIZE / 2) * (ENEMY_SIZE / 2)
+          })
+
+          if (hitByBullet) {
+            killedInFrame = true
+            // Remove hitting bullet
+            setBullets((prevBullets) =>
+              prevBullets.filter((bullet) => {
+                const dx = bullet.x - enemy.x
+                const dy = bullet.y - enemy.y
+                const distSquared = dx * dx + dy * dy
+                return distSquared >= (ENEMY_SIZE / 2) * (ENEMY_SIZE / 2)
+              })
+            )
+
+            // Update combo
+            const now = Date.now()
+            if (lastKillTime === null || (now - lastKillTime) / 1000 <= COMBO_TIMEOUT) {
+              setComboCount((prev) => prev + 1)
+            } else {
+              // Combo broke, restart
+              setComboCount(1)
+            }
+            setLastKillTime(now)
+            setComboTimer(COMBO_TIMEOUT)
+
+            return { ...enemy, hit: true }
+          }
+
+          return enemy
+        })
+
+        // Spawn new wave if all destroyed
+        if (newEnemies.every((e) => e.hit) && !completed) {
+          setTimeout(spawnEnemyWave, 300)
+        }
+
+        return newEnemies
+      })
+
+      animationFrameRef.current = requestAnimationFrame(updateGame)
+    }
+
+    lastTimeRef.current = Date.now()
+    animationFrameRef.current = requestAnimationFrame(updateGame)
+
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
+    }
+  }, [bullets, comboCount, lastKillTime, completed, spawnEnemyWave])
+
+  // Check for completion
+  useEffect(() => {
+    if (comboCount >= COMBO_GOAL && !completed) {
+      setCompleted(true)
+    }
+  }, [comboCount, completed])
+
+  const handleTap = useCallback((event: any) => {
+    const { locationX, locationY } = event.nativeEvent
+
+    const newBullet: Bullet = {
+      id: bulletIdRef.current++,
+      x: locationX,
+      y: locationY,
+    }
+
+    setBullets((prev) => [...prev, newBullet])
+  }, [])
+
+  const tapGesture = useMemo(() => Gesture.Tap().onEnd((event) => {
+    'worklet'
+    runOnJS(handleTap)(event)
+  }), [handleTap])
+
+  const multiplier = getComboMultiplier()
+  const timerPercent = comboCount > 0 ? (comboTimer / COMBO_TIMEOUT) * 100 : 0
+
+  const dynamicStyles = useMemo(() => ({
+    practiceArea: {
+      borderColor: completed ? colors.hudAccent : colors.panelBorder,
+      backgroundColor: colors.background + '40',
+    },
+    enemy: {
+      backgroundColor: colors.enemyShip,
+      borderColor: colors.enemyShipFill + '80',
+    },
+    enemyHit: {
+      backgroundColor: colors.particle + '20',
+      borderColor: colors.particle + '40',
+    },
+    bullet: {
+      backgroundColor: colors.playerBullet,
+    },
+    comboDisplay: {
+      backgroundColor: colors.panelBg + '90',
+      borderColor: colors.hudAccent,
+    },
+    timerBar: {
+      backgroundColor: timerPercent > 30 ? colors.hudAccent : colors.particle,
+    },
+  }), [colors, completed, timerPercent])
+
+  return (
+    <View style={tutorialStyles.stepContainer}>
+      <Text style={[tutorialStyles.stepTitle, { color: colors.textPrimary }]}>
+        Combo System
+      </Text>
+
+      <Text style={[tutorialStyles.stepDescription, { color: colors.textSecondary }]}>
+        Chain kills within {COMBO_TIMEOUT} seconds to build combos and multiply your score!
+      </Text>
+
+      {/* Visual indicator */}
+      <View style={tutorialStyles.indicatorContainer}>
+        {completed ? (
+          <>
+            <View style={[tutorialStyles.checkmark, { borderColor: colors.hudAccent }]}>
+              <Text style={{ color: colors.hudAccent, fontSize: 24, fontWeight: 'bold' }}>✓</Text>
+            </View>
+            <Text style={[tutorialStyles.completionText, { color: colors.hudAccent }]}>
+              Amazing! You've mastered the combo system!
+            </Text>
+          </>
+        ) : (
+          <Text style={[tutorialStyles.instructionText, { color: colors.textSecondary }]}>
+            Build a {multiplier}x combo ({comboCount}/{COMBO_GOAL} kills)
+          </Text>
+        )}
+      </View>
+
+      {/* Combo Display */}
+      {comboCount > 0 && (
+        <View style={[styles.comboDisplay, dynamicStyles.comboDisplay]}>
+          <Text style={{ color: colors.hudAccent, fontSize: 28, fontWeight: 'bold' }}>
+            {comboCount} COMBO
+          </Text>
+          <Text style={{ color: colors.textPrimary, fontSize: 20, fontWeight: '600' }}>
+            {multiplier}x Multiplier
+          </Text>
+          {/* Timer bar */}
+          <View style={{ width: '100%', height: 6, backgroundColor: colors.panelBorder + '40', borderRadius: 3, marginTop: 8 }}>
+            <View
+              style={[
+                { height: '100%', borderRadius: 3, width: `${timerPercent}%` },
+                dynamicStyles.timerBar,
+              ]}
+            />
+          </View>
+        </View>
+      )}
+
+      {/* Practice Area */}
+      <GestureDetector gesture={tapGesture}>
+        <View
+          style={[
+            tutorialStyles.practiceArea,
+            dynamicStyles.practiceArea,
+          ]}
+        >
+          {/* Render enemies */}
+          {enemies.map((enemy) => (
+            <View
+              key={enemy.id}
+              style={[
+                tutorialStyles.enemy,
+                enemy.hit ? dynamicStyles.enemyHit : dynamicStyles.enemy,
+                {
+                  left: enemy.x - ENEMY_SIZE / 2,
+                  top: enemy.y - ENEMY_SIZE / 2,
+                },
+              ]}
+            />
+          ))}
+
+          {/* Render bullets */}
+          {bullets.map((bullet) => (
+            <View
+              key={bullet.id}
+              style={[
+                tutorialStyles.bullet,
+                dynamicStyles.bullet,
+                {
+                  left: bullet.x - BULLET_SIZE / 2,
+                  top: bullet.y - BULLET_SIZE / 2,
+                },
+              ]}
+            />
+          ))}
+        </View>
+      </GestureDetector>
+
+      {/* Hints */}
+      <View style={tutorialStyles.hintsContainer}>
+        <Text style={[tutorialStyles.hintText, { color: colors.textSecondary + '80' }]}>
+          Tap to shoot • Chain {COMBO_GOAL} kills to reach {COMBO_MULTIPLIERS[4]}x
+        </Text>
+      </View>
+    </View>
+  )
+}
+
 // Power-ups Explanation Step Component
 function PowerUpsExplanationStep({ colors }: { colors: ThemeColors }) {
   const [selectedPowerUp, setSelectedPowerUp] = useState<PowerUpInfo | null>(null)
@@ -576,19 +870,7 @@ export function TutorialModal({ visible, onClose }: TutorialModalProps) {
         return <PowerUpsExplanationStep colors={colors} />
 
       case 'combo':
-        return (
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-            <Text style={{ color: colors.textPrimary, fontSize: 24, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' }}>
-              Combo System
-            </Text>
-            <Text style={{ color: colors.textSecondary, fontSize: 16, textAlign: 'center', marginBottom: 20 }}>
-              Destroy enemies quickly to build combos and multiply your score!
-            </Text>
-            <Text style={{ color: colors.textSecondary, fontSize: 14, textAlign: 'center', fontStyle: 'italic' }}>
-              (Combo practice will be added in the next step)
-            </Text>
-          </View>
-        )
+        return <ComboPracticeStep colors={colors} />
 
       case 'special-abilities':
         return (
@@ -872,5 +1154,23 @@ const tutorialStyles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 12,
+  },
+  enemy: {
+    position: 'absolute',
+    width: ENEMY_SIZE,
+    height: ENEMY_SIZE,
+    borderRadius: ENEMY_SIZE / 2,
+    borderWidth: 2,
+  },
+})
+
+const styles = StyleSheet.create({
+  comboDisplay: {
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 2,
+    marginBottom: 20,
+    alignItems: 'center',
+    minWidth: 200,
   },
 })
