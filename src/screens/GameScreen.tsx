@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef, useCallback } from "react"
-import { View, Text, Pressable, Modal, useWindowDimensions, TextInput, Keyboard, ScrollView } from "react-native"
+import { View, Text, Pressable, useWindowDimensions, Keyboard } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Gesture, GestureDetector } from "react-native-gesture-handler"
 import { Audio } from "expo-av"
 import { GameCanvas } from "../components/GameCanvas"
 import { VirtualControls } from "../components/VirtualControls"
-import { Slider, Toggle, StatRow, ThemeSelector, ShipSelector, StatsDisplay, InstructionsModal } from "../components/game-ui"
+import { InstructionsModal, SettingsModal, NameInputModal, PauseGameOverModal, AchievementNotification, TopBar } from "../components/game-ui"
 import { useGameStore, MAX_DT, JOY_DEADZONE } from "../state/gameStore"
 import { useHighScoresStore } from "../state/highScoresStore"
 import { useSettingsStore, useThemeColors } from "../theme/themeStore"
@@ -378,88 +378,22 @@ export default function GameScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       {/* Achievement unlock notification */}
-      {recentUnlock && (
-        <View style={{
-          position: 'absolute',
-          top: insets.top + 60,
-          left: 20,
-          right: 20,
-          backgroundColor: colors.panelBg,
-          borderWidth: 2,
-          borderColor: colors.comboText,
-          borderRadius: 12,
-          padding: 12,
-          zIndex: 100,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 12,
-        }}>
-          <Text style={{ fontSize: 32 }}>{ACHIEVEMENTS[recentUnlock].icon}</Text>
-          <View>
-            <Text style={{ color: colors.comboText, fontSize: 12, fontWeight: 'bold' }}>ACHIEVEMENT UNLOCKED</Text>
-            <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: 'bold' }}>{ACHIEVEMENTS[recentUnlock].name}</Text>
-          </View>
-        </View>
-      )}
+      <AchievementNotification
+        achievement={recentUnlock ? ACHIEVEMENTS[recentUnlock] : null}
+        topInset={insets.top}
+        colors={colors}
+      />
 
       {/* Top bar */}
-      <View
-        style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          top: insets.top + 12,
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingHorizontal: 12,
-          gap: 8,
-          zIndex: 10,
-        }}
-      >
-        <Text style={{ color: colors.hudAccent, fontSize: 16, fontWeight: '600', letterSpacing: 0.5 }}>
-          {themeList.find((t) => t.id === themeId)?.name || 'Neon Void'}
-        </Text>
-        <View style={{ flex: 1 }} />
-        <Pressable
-          style={{
-            backgroundColor: colors.buttonSecondary,
-            borderWidth: 1,
-            borderColor: colors.panelBorder,
-            borderRadius: 8,
-            paddingHorizontal: 12,
-            paddingVertical: 8,
-          }}
-          onPress={() => setShowSettings(true)}
-        >
-          <Text style={{ color: colors.hudText, fontSize: 14 }}>⚙️</Text>
-        </Pressable>
-        <Pressable
-          style={{
-            backgroundColor: colors.buttonSecondary,
-            borderWidth: 1,
-            borderColor: colors.panelBorder,
-            borderRadius: 8,
-            paddingHorizontal: 12,
-            paddingVertical: 8,
-          }}
-          onPress={() => useGameStore.getState().setPaused(!paused)}
-        >
-          <Text style={{ color: colors.hudText, fontSize: 14 }}>{paused ? "Resume" : "Pause"}</Text>
-        </Pressable>
-        <Pressable
-          style={{
-            backgroundColor: colors.buttonSecondary,
-            borderWidth: 1,
-            borderColor: colors.panelBorder,
-            borderRadius: 8,
-            paddingHorizontal: 12,
-            paddingVertical: 8,
-          }}
-          onPress={handleRestart}
-        >
-          <Text style={{ color: colors.hudText, fontSize: 14 }}>Restart</Text>
-        </Pressable>
-      </View>
+      <TopBar
+        topInset={insets.top}
+        themeName={themeList.find((t) => t.id === themeId)?.name || 'Neon Void'}
+        paused={paused}
+        onSettingsPress={() => setShowSettings(true)}
+        onPausePress={() => useGameStore.getState().setPaused(!paused)}
+        onRestartPress={handleRestart}
+        colors={colors}
+      />
 
       {/* Game canvas with tap and swipe gestures */}
       <GestureDetector gesture={combinedGesture}>
@@ -501,315 +435,58 @@ export default function GameScreen() {
       />
 
       {/* Settings Modal */}
-      {showSettings && (
-        <Modal visible={true} transparent animationType="fade">
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.modalOverlay }}>
-            <View style={{
-              backgroundColor: colors.panelBg,
-              borderWidth: 2,
-              borderColor: colors.panelBorder,
-              borderRadius: 16,
-              padding: 20,
-              marginHorizontal: 24,
-              width: 340,
-              maxHeight: '85%',
-            }}>
-              <Text style={{ color: colors.textPrimary, fontSize: 24, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' }}>
-                ⚙️ Settings
-              </Text>
-
-              {/* Tab buttons */}
-              <View style={{ flexDirection: 'row', marginBottom: 16, gap: 8 }}>
-                {(['general', 'ship', 'stats'] as const).map((tab) => (
-                  <Pressable
-                    key={tab}
-                    onPress={() => setSettingsTab(tab)}
-                    style={{
-                      flex: 1,
-                      padding: 8,
-                      borderRadius: 8,
-                      backgroundColor: settingsTab === tab ? colors.buttonPrimary : colors.buttonSecondary,
-                    }}
-                  >
-                    <Text style={{
-                      color: settingsTab === tab ? colors.buttonText : colors.textSecondary,
-                      textAlign: 'center',
-                      fontSize: 12,
-                      fontWeight: 'bold',
-                      textTransform: 'capitalize',
-                    }}>
-                      {tab}
-                    </Text>
-                  </Pressable>
-                ))}
-              </View>
-
-              <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 400 }}>
-                {settingsTab === 'general' && (
-                  <>
-                    {/* Theme Section */}
-                    <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginBottom: 12 }}>
-                      🎨 Theme
-                    </Text>
-                    <ThemeSelector themeList={themeList} currentThemeId={themeId} onThemeSelect={setTheme} colors={colors} />
-
-                    {/* Audio Section */}
-                    <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginTop: 20, marginBottom: 12 }}>
-                      🔊 Audio
-                    </Text>
-                    <Slider value={musicVolume} onValueChange={setMusicVolume} label="Music Volume" colors={colors} />
-                    <Slider value={sfxVolume} onValueChange={setSfxVolume} label="SFX Volume" colors={colors} />
-
-                    {/* Controls Section */}
-                    <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginTop: 8, marginBottom: 12 }}>
-                      🎮 Controls
-                    </Text>
-                    <Slider value={joystickSensitivity} onValueChange={setJoystickSensitivity} label="Joystick Sensitivity" colors={colors} />
-                    <Toggle value={autoFire} onValueChange={setAutoFire} label="Auto-Fire" colors={colors} />
-                    <Toggle value={hapticsEnabled} onValueChange={setHapticsEnabled} label="Haptic Feedback" colors={colors} />
-                  </>
-                )}
-
-                {settingsTab === 'ship' && (
-                  <>
-                    <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginBottom: 12 }}>
-                      🚀 Select Ship
-                    </Text>
-                    <ShipSelector currentShip={player.shipType} unlockedShips={unlockedShips} onShipSelect={handleShipSelect} colors={colors} />
-                  </>
-                )}
-
-                {settingsTab === 'stats' && (
-                  <>
-                    <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginBottom: 12 }}>
-                      📊 Statistics
-                    </Text>
-                    <Text style={{ color: colors.comboText, fontSize: 14, marginBottom: 12 }}>
-                      Total Credits: {upgradesCredits}
-                    </Text>
-                    <StatsDisplay stats={stats} colors={colors} />
-                  </>
-                )}
-              </ScrollView>
-
-              <Pressable
-                style={{
-                  backgroundColor: colors.buttonPrimary,
-                  borderRadius: 12,
-                  paddingVertical: 14,
-                  paddingHorizontal: 16,
-                  marginTop: 16,
-                }}
-                onPress={() => setShowSettings(false)}
-              >
-                <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
-                  DONE
-                </Text>
-              </Pressable>
-            </View>
-          </View>
-        </Modal>
-      )}
+      <SettingsModal
+        visible={showSettings}
+        activeTab={settingsTab}
+        onTabChange={setSettingsTab}
+        onClose={() => setShowSettings(false)}
+        colors={colors}
+        themeList={themeList}
+        currentThemeId={themeId}
+        onThemeSelect={setTheme}
+        musicVolume={musicVolume}
+        setMusicVolume={setMusicVolume}
+        sfxVolume={sfxVolume}
+        setSfxVolume={setSfxVolume}
+        joystickSensitivity={joystickSensitivity}
+        setJoystickSensitivity={setJoystickSensitivity}
+        autoFire={autoFire}
+        setAutoFire={setAutoFire}
+        hapticsEnabled={hapticsEnabled}
+        setHapticsEnabled={setHapticsEnabled}
+        currentShip={player.shipType}
+        unlockedShips={unlockedShips}
+        onShipSelect={handleShipSelect}
+        stats={stats}
+        upgradesCredits={upgradesCredits}
+      />
 
       {/* Welcome Instructions Modal */}
       <InstructionsModal visible={showInstructions} onStartGame={handleStartGame} colors={colors} />
 
       {/* Name Input Modal for Top 5 */}
-      {showNameInput && (
-        <Modal visible={true} transparent animationType="fade">
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.modalOverlay }}>
-            <View style={{
-              backgroundColor: colors.panelBg,
-              borderWidth: 2,
-              borderColor: colors.buttonPrimary,
-              borderRadius: 16,
-              padding: 24,
-              marginHorizontal: 24,
-              width: 340,
-            }}>
-              <Text style={{ color: colors.textPrimary, fontSize: 24, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
-                🏆 TOP 5 SCORE!
-              </Text>
-              <Text style={{ color: colors.textSecondary, fontSize: 18, fontWeight: '600', marginBottom: 16, textAlign: 'center' }}>
-                Score: {score}
-              </Text>
-              <Text style={{ color: colors.comboText, fontSize: 14, marginBottom: 16, textAlign: 'center' }}>
-                +{credits} Credits Earned!
-              </Text>
-
-              <TextInput
-                style={{
-                  backgroundColor: colors.buttonSecondary,
-                  borderWidth: 1,
-                  borderColor: colors.buttonPrimary,
-                  borderRadius: 12,
-                  paddingHorizontal: 16,
-                  paddingVertical: 12,
-                  color: colors.textPrimary,
-                  fontSize: 16,
-                  marginBottom: 20,
-                }}
-                placeholder="Enter your name"
-                placeholderTextColor={colors.textMuted}
-                value={playerName}
-                onChangeText={setPlayerName}
-                maxLength={15}
-                autoFocus
-                returnKeyType="done"
-                onSubmitEditing={handleSubmitScore}
-              />
-
-              <Pressable
-                style={{
-                  backgroundColor: colors.buttonPrimary,
-                  borderRadius: 12,
-                  paddingVertical: 14,
-                  paddingHorizontal: 16,
-                }}
-                onPress={handleSubmitScore}
-              >
-                <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
-                  SUBMIT
-                </Text>
-              </Pressable>
-            </View>
-          </View>
-        </Modal>
-      )}
+      <NameInputModal
+        visible={showNameInput}
+        score={score}
+        credits={credits}
+        playerName={playerName}
+        onNameChange={setPlayerName}
+        onSubmit={handleSubmitScore}
+        colors={colors}
+      />
 
       {/* Pause/Game Over modal */}
-      {paused && !showInstructions && !showNameInput && !showSettings && (
-        <Modal visible={true} transparent animationType="fade">
-          <Pressable
-            style={{
-              flex: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: colors.modalOverlay,
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-            }}
-            onPress={lives > 0 ? () => useGameStore.getState().setPaused(false) : undefined}
-          >
-            <Pressable
-              style={{
-                backgroundColor: colors.panelBg,
-                borderWidth: 2,
-                borderColor: colors.panelBorder,
-                borderRadius: 16,
-                padding: 24,
-                marginHorizontal: 24,
-                width: 340,
-              }}
-              onPress={(e) => e.stopPropagation()}
-            >
-              {lives <= 0 ? (
-                <>
-                  <Text style={{ color: colors.enemyShip, fontSize: 28, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
-                    GAME OVER
-                  </Text>
-                  <Text style={{ color: colors.textSecondary, fontSize: 20, fontWeight: '600', marginBottom: 16, textAlign: 'center' }}>
-                    Final Score: {score}
-                  </Text>
-                  <Text style={{ color: colors.textMuted, fontSize: 16, marginBottom: 8, textAlign: 'center' }}>
-                    Wave {wave} reached
-                  </Text>
-                  <Text style={{ color: colors.comboText, fontSize: 14, marginBottom: 16, textAlign: 'center' }}>
-                    +{credits} Credits Earned!
-                  </Text>
-
-                  {/* High Scores Leaderboard */}
-                  {highScores.length > 0 && (
-                    <View style={{
-                      backgroundColor: colors.buttonSecondary,
-                      borderRadius: 12,
-                      padding: 16,
-                      marginBottom: 20,
-                    }}>
-                      <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: 'bold', marginBottom: 12, textAlign: 'center' }}>
-                        🏆 TOP 5 HIGH SCORES
-                      </Text>
-                      {highScores.map((hs, index) => (
-                        <View
-                          key={index}
-                          style={{
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            paddingVertical: 8,
-                            borderBottomWidth: index < highScores.length - 1 ? 1 : 0,
-                            borderBottomColor: colors.panelBorder,
-                          }}
-                        >
-                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                            <Text style={{ color: colors.textSecondary, fontSize: 14, fontWeight: 'bold', width: 24 }}>
-                              {index + 1}.
-                            </Text>
-                            <Text style={{ color: colors.textMuted, fontSize: 14 }}>
-                              {hs.name}
-                            </Text>
-                          </View>
-                          <Text style={{ color: colors.comboText, fontSize: 14, fontWeight: '600' }}>
-                            {hs.score}
-                          </Text>
-                        </View>
-                      ))}
-                    </View>
-                  )}
-
-                  <Pressable
-                    style={{
-                      backgroundColor: colors.buttonPrimary,
-                      borderRadius: 12,
-                      paddingVertical: 14,
-                      paddingHorizontal: 16,
-                    }}
-                    onPress={handleRestart}
-                  >
-                    <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
-                      PLAY AGAIN
-                    </Text>
-                  </Pressable>
-                </>
-              ) : (
-                <>
-                  <Text style={{ color: colors.textSecondary, fontSize: 24, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' }}>
-                    GAME PAUSED
-                  </Text>
-                  <Text style={{ color: colors.textMuted, fontSize: 16, marginBottom: 12, fontWeight: '600' }}>Controls:</Text>
-                  <View style={{ marginBottom: 20, gap: 8 }}>
-                    <Text style={{ color: colors.textMuted, fontSize: 14, lineHeight: 20 }}>
-                      • <Text style={{ fontWeight: 'bold', color: colors.textPrimary }}>Joystick:</Text> Move and steer
-                    </Text>
-                    <Text style={{ color: colors.textMuted, fontSize: 14, lineHeight: 20 }}>
-                      • <Text style={{ fontWeight: 'bold', color: colors.textSecondary }}>Tap:</Text> Fire weapons
-                    </Text>
-                    <Text style={{ color: colors.textMuted, fontSize: 14, lineHeight: 20 }}>
-                      • <Text style={{ fontWeight: 'bold', color: colors.comboText }}>Double-Tap:</Text> Special ability
-                    </Text>
-                  </View>
-                  <Pressable
-                    style={{
-                      backgroundColor: colors.buttonPrimary,
-                      borderRadius: 12,
-                      paddingVertical: 14,
-                      paddingHorizontal: 16,
-                    }}
-                    onPress={() => useGameStore.getState().setPaused(false)}
-                  >
-                    <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
-                      CONTINUE
-                    </Text>
-                  </Pressable>
-                </>
-              )}
-            </Pressable>
-          </Pressable>
-        </Modal>
-      )}
+      <PauseGameOverModal
+        visible={paused && !showInstructions && !showNameInput && !showSettings}
+        lives={lives}
+        score={score}
+        wave={wave}
+        credits={credits}
+        highScores={highScores}
+        onRestart={handleRestart}
+        onContinue={() => useGameStore.getState().setPaused(false)}
+        colors={colors}
+      />
     </View>
   )
 }
