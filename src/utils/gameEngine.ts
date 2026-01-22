@@ -150,7 +150,13 @@ export const useGameEngine = () => {
     const animSpeedMultiplier = 1.0 + (difficultyProgress * 1.5)
 
     // Enemy aim accuracy (starts poor, becomes deadly)
-    const aimInaccuracy = 0.5 - (difficultyProgress * 0.45)
+    // Quadratic scaling for smoother early game: starts at 0.7, ends at 0.1
+    // At 60s (25% progress): ~0.625 (still quite inaccurate)
+    const aimInaccuracy = 0.7 - (Math.pow(difficultyProgress, 1.5) * 0.6)
+
+    // Early game fire rate penalty (enemies shoot less frequently early on)
+    // At 0s: 1.8x slower, gradually removes penalty by 96s (40% progress)
+    const earlyGameFireRateMultiplier = 1.0 + (Math.max(0, 1 - difficultyProgress * 2.5) * 0.8)
 
     // Player movement
     let newVel = state.player.vel
@@ -238,9 +244,9 @@ export const useGameEngine = () => {
           return { ...e, stunDuration: newStunDuration }
         }
         // Stun expired, clear it and continue normal behavior
-        return updateEnemyBehavior({ ...e, stunDuration: undefined }, state, effectiveDt, difficultyProgress, aimInaccuracy, animSpeedMultiplier)
+        return updateEnemyBehavior({ ...e, stunDuration: undefined }, state, effectiveDt, difficultyProgress, aimInaccuracy, animSpeedMultiplier, earlyGameFireRateMultiplier)
       }
-      return updateEnemyBehavior(e, state, effectiveDt, difficultyProgress, aimInaccuracy, animSpeedMultiplier)
+      return updateEnemyBehavior(e, state, effectiveDt, difficultyProgress, aimInaccuracy, animSpeedMultiplier, earlyGameFireRateMultiplier)
     })
     state.updateEnemies(newEnemies)
 
@@ -509,7 +515,8 @@ function updateEnemyBehavior(
   dt: number,
   difficulty: number,
   aimInaccuracy: number,
-  animSpeed: number
+  animSpeed: number,
+  earlyGameFireRate: number = 1.0
 ): Enemy {
   const stats = ENEMY_STATS[e.type]
   const toP = sub(state.player.pos, e.pos)
@@ -538,7 +545,7 @@ function updateEnemyBehavior(
           life: BULLET_LIFE_ENEMY * 0.8,
           friendly: false,
         })
-        newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.3)
+        newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.3) * earlyGameFireRate
       }
       break
 
@@ -564,7 +571,7 @@ function updateEnemyBehavior(
             friendly: false,
           })
         }
-        newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.2)
+        newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.2) * earlyGameFireRate
       }
       break
 
@@ -621,7 +628,7 @@ function updateEnemyBehavior(
           life: BULLET_LIFE_ENEMY,
           friendly: false,
         })
-        newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.25)
+        newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.25) * earlyGameFireRate
       }
 
       // Bomb attack (spread of bullets)
@@ -636,7 +643,7 @@ function updateEnemyBehavior(
             friendly: false,
           })
         }
-        newEnemy.bombCooldown = 4 - difficulty
+        newEnemy.bombCooldown = (4 - difficulty) * earlyGameFireRate
       }
       break
 
@@ -662,7 +669,7 @@ function updateEnemyBehavior(
           friendly: false,
         })
         const cooldownBase = 1.4 - (difficulty * 0.6)
-        newEnemy.cooldown = rand(0.5, cooldownBase)
+        newEnemy.cooldown = rand(0.5, cooldownBase) * earlyGameFireRate
       }
   }
 
