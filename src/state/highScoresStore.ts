@@ -48,11 +48,11 @@ export const useHighScoresStore = create<HighScoresState>()(
       getScores: () => get().scores,
 
       backup: async () => {
-        return await backupStore('high-scores-storage')
+        return await backupStore('highScores')
       },
 
       restore: async () => {
-        return await restoreStore('high-scores-storage')
+        return await restoreStore('highScores')
       },
     }),
     {

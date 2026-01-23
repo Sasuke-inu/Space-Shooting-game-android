@@ -39,11 +39,11 @@ export const useAppSettingsStore = create<AppSettingsState>()(
       resetAppSettings: () => set(DEFAULT_APP_SETTINGS),
 
       backup: async () => {
-        return await backupStore('app-settings-storage')
+        return await backupStore('settings')
       },
 
       restore: async () => {
-        return await restoreStore('app-settings-storage')
+        return await restoreStore('settings')
       },
     }),
     {
