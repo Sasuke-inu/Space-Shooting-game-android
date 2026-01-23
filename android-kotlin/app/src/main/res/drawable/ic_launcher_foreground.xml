@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Spaceship body (triangle pointing up) -->
+    <path
+        android:fillColor="#88FFFF"
+        android:pathData="M54,24 L70,80 L54,72 L38,80 Z"/>
+
+    <!-- Thruster glow -->
+    <path
+        android:fillColor="#FFFF99"
+        android:pathData="M54,72 L60,84 L54,80 L48,84 Z"/>
+
+    <!-- Wing details -->
+    <path
+        android:fillColor="#4488FFFF"
+        android:pathData="M38,80 L30,70 L42,65 Z"/>
+    <path
+        android:fillColor="#4488FFFF"
+        android:pathData="M70,80 L78,70 L66,65 Z"/>
+
+    <!-- Cockpit -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,34 L58,48 L54,52 L50,48 Z"/>
+
+</vector>
