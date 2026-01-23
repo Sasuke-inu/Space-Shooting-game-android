@@ -19,6 +19,7 @@ import { useGameStore, JOY_DEADZONE } from "../state/gameStore"
 import { useHighScoresStore } from "../state/highScoresStore"
 import { useSettingsStore, useThemeColors } from "../theme/themeStore"
 import { useStatisticsStore, useAchievementStore, useUpgradesStore } from "../state/progressStore"
+import { useTutorialStore } from "../state/tutorialStore"
 import { themeList } from "../theme/themes"
 import type { ShipType } from "../types/game"
 import { ACHIEVEMENTS } from "../types/game"
@@ -104,6 +105,13 @@ export default function GameScreen() {
   const clearRecentUnlock = useAchievementStore((s) => s.clearRecentUnlock)
   const addUpgradeCredits = useUpgradesStore((s) => s.addCredits)
 
+  // Tutorial store
+  const firstLaunch = useTutorialStore((s) => s.firstLaunch)
+  const tutorialCompleted = useTutorialStore((s) => s.tutorialCompleted)
+  const startTutorial = useTutorialStore((s) => s.startTutorial)
+  const resetTutorial = useTutorialStore((s) => s.resetTutorial)
+  const markFirstLaunchComplete = useTutorialStore((s) => s.markFirstLaunchComplete)
+
   const [joystickValue, setJoystickValue] = useState<Vec2>({ x: 0, y: 0 })
   const [swipeImpulse, setSwipeImpulse] = useState<Vec2>({ x: 0, y: 0 })
   const initializedRef = useRef(false)
@@ -114,6 +122,7 @@ export default function GameScreen() {
   const [showShipSelect, setShowShipSelect] = useState(false)
   const [showStats, setShowStats] = useState(false)
   const [showAchievements, setShowAchievements] = useState(false)
+  const [showTutorial, setShowTutorial] = useState(false)
   const [playerName, setPlayerName] = useState("")
   const [settingsTab, setSettingsTab] = useState<'general' | 'ship' | 'stats'>('general')
 
