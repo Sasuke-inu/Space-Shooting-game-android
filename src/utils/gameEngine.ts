@@ -206,8 +206,8 @@ export const useGameEngine = () => {
       updateBossBehavior(state.boss, state, effectiveDt, themeColors)
     }
 
-    // Handle boss warning - spawn boss after warning time has elapsed
-    if (state.bossWarning && !state.boss && state.bossWarningStartTime !== undefined) {
+    // Handle boss warning - spawn boss after warning time has elapsed (not in endless mode)
+    if (state.gameMode !== 'endless' && state.bossWarning && !state.boss && state.bossWarningStartTime !== undefined) {
       const warningElapsed = state.time - state.bossWarningStartTime
       if (warningElapsed >= BOSS_WARNING_TIME) {
         state.spawnBoss()

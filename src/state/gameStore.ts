@@ -239,7 +239,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   nextWave: () =>
     set((state) => {
       const nextWave = state.wave + 1
-      const isBossWave = nextWave % BOSS_WAVE_INTERVAL === 0
+      const isBossWave = nextWave % BOSS_WAVE_INTERVAL === 0 && state.gameMode !== 'endless'
       return {
         wave: nextWave,
         bossWarning: isBossWave,
