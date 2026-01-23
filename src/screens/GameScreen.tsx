@@ -671,6 +671,8 @@ export default function GameScreen() {
         onJoystickMove={setJoystickValue}
         colors={colors}
         sensitivity={joystickSensitivity}
+        player={player}
+        onAbilityPress={activateSpecialAbility}
       />
 
       {/* Settings Modal */}
