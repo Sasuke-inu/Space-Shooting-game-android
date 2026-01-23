@@ -141,6 +141,7 @@ interface GameStore extends GameState {
   // Actions
   setGameMode: (mode: GameMode) => void
   setPaused: (paused: boolean) => void
+  setGameMode: (mode: GameMode) => void
   setDimensions: (w: number, h: number) => void
   updateTime: (dt: number) => void
   addScore: (points: number) => void
@@ -304,6 +305,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
   particlePoolIndex: 0,
 
   setPaused: (paused) => set({ paused }),
+
+  setGameMode: (mode) => set({ gameMode: mode }),
 
   setDimensions: (w, h) => set({ w, h }),
 

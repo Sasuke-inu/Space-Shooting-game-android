@@ -799,7 +799,16 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
 
         {/* HUD - Score and Credits */}
         <Text x={16} y={24} text={`Score: ${score}`} color={colors.hudText} font={hudFont} />
-        <Text x={16} y={44} text={`Wave: ${wave}`} color={colors.hudText} font={hudFont} />
+        <Text
+          x={16}
+          y={44}
+          text={gameMode === 'endless'
+            ? `Time: ${Math.floor(time / 60)}:${String(Math.floor(time % 60)).padStart(2, '0')}`
+            : `Wave: ${wave}`
+          }
+          color={colors.hudText}
+          font={hudFont}
+        />
         <Text x={16} y={64} text={`Credits: ${credits}`} color={colors.comboText} font={hudFont} />
 
         {/* HUD - Combo counter */}

@@ -68,6 +68,8 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
 
   // Game state - primitives (use default equality)
   const paused = useGameStore((s) => s.paused)
+  const gameMode = useGameStore((s) => s.gameMode)
+  const setGameMode = useGameStore((s) => s.setGameMode)
   const score = useGameStore((s) => s.score)
   const credits = useGameStore((s) => s.credits)
   const lives = useGameStore((s) => s.lives)
@@ -349,7 +351,7 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
 
   const handleSubmitScore = () => {
     const name = playerName.trim() || "Anonymous"
-    addScore(score, wave, name)
+    addScore(score, wave, name, gameMode, gameMode === 'endless' ? time : undefined)
 
     recordGameEndStats()
 
