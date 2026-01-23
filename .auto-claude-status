@@ -3,23 +3,23 @@
   "spec": "004-tutorial-and-onboarding",
   "state": "building",
   "subtasks": {
-    "completed": 1,
+    "completed": 6,
     "total": 10,
     "in_progress": 1,
     "failed": 0
   },
   "phase": {
-    "current": "Tutorial Translations",
+    "current": "GameScreen Integration",
     "id": null,
-    "total": 3
+    "total": 2
   },
   "workers": {
     "active": 0,
     "max": 1
   },
   "session": {
-    "number": 3,
+    "number": 8,
     "started_at": "2026-01-23T17:08:21.093680"
   },
-  "last_update": "2026-01-23T17:16:01.921747"
+  "last_update": "2026-01-23T17:29:53.544016"
 }

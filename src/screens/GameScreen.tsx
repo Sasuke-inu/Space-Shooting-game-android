@@ -5,10 +5,12 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler"
 import { Audio } from "expo-av"
 import { GameCanvas } from "../components/GameCanvas"
 import { VirtualControls } from "../components/VirtualControls"
+import { TutorialOverlay } from "../components/TutorialOverlay"
 import { useGameStore, MAX_DT, JOY_DEADZONE } from "../state/gameStore"
 import { useHighScoresStore } from "../state/highScoresStore"
 import { useSettingsStore, useThemeColors } from "../theme/themeStore"
 import { useStatisticsStore, useAchievementStore, useUpgradesStore } from "../state/progressStore"
+import { useTutorialStore } from "../state/tutorialStore"
 import { themeList } from "../theme/themes"
 import type { ThemeId } from "../theme/types"
 import type { ShipType } from "../types/game"
@@ -76,6 +78,13 @@ export default function GameScreen() {
   const upgradesCredits = useUpgradesStore((s) => s.credits)
   const addUpgradeCredits = useUpgradesStore((s) => s.addCredits)
 
+  // Tutorial store
+  const hasCompletedTutorial = useTutorialStore((s) => s.hasCompletedTutorial)
+  const tutorialStep = useTutorialStore((s) => s.currentStep)
+  const completeStep = useTutorialStore((s) => s.completeStep)
+  const skipTutorial = useTutorialStore((s) => s.skipTutorial)
+  const completeTutorial = useTutorialStore((s) => s.completeTutorial)
+
   const [joystickValue, setJoystickValue] = useState<Vec2>({ x: 0, y: 0 })
   const [swipeImpulse, setSwipeImpulse] = useState<Vec2>({ x: 0, y: 0 })
   const [shakeOffset, setShakeOffset] = useState<Vec2>({ x: 0, y: 0 })
@@ -88,6 +97,7 @@ export default function GameScreen() {
   const swipeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lastAbilityActivationRef = useRef<string | null>(null) // Track last activated ability
   const [showInstructions, setShowInstructions] = useState(true)
+  const [showTutorial, setShowTutorial] = useState(false)
   const [showNameInput, setShowNameInput] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [showShipSelect, setShowShipSelect] = useState(false)
@@ -158,6 +168,14 @@ export default function GameScreen() {
       store.setPaused(true)
     }
   }, [width, height])
+
+  // Check for first launch and show tutorial
+  useEffect(() => {
+    if (!hasCompletedTutorial) {
+      setShowTutorial(true)
+      setShowInstructions(false)
+    }
+  }, [hasCompletedTutorial])
 
   // Setup and play background music
   useEffect(() => {
@@ -335,6 +353,22 @@ export default function GameScreen() {
   const handleStartGame = () => {
     setShowInstructions(false)
     useGameStore.getState().setPaused(false)
+  }
+
+  const handleTutorialComplete = () => {
+    completeTutorial()
+    setShowTutorial(false)
+    useGameStore.getState().setPaused(false)
+  }
+
+  const handleTutorialSkip = () => {
+    skipTutorial()
+    setShowTutorial(false)
+    useGameStore.getState().setPaused(false)
+  }
+
+  const handleTutorialNextStep = () => {
+    completeStep()
   }
 
   const handleSubmitScore = () => {
@@ -671,6 +705,15 @@ export default function GameScreen() {
         onJoystickMove={setJoystickValue}
         colors={colors}
         sensitivity={joystickSensitivity}
+      />
+
+      {/* Tutorial Overlay */}
+      <TutorialOverlay
+        visible={showTutorial}
+        currentStep={tutorialStep}
+        onNextStep={handleTutorialNextStep}
+        onSkip={handleTutorialSkip}
+        onComplete={handleTutorialComplete}
       />
 
       {/* Settings Modal */}
