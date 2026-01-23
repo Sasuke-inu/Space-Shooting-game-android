@@ -180,7 +180,11 @@ export const useStatisticsStore = create<StatisticsState>()(
       recordGameEnd: (score, wave, time, kills, shotsFired, shotsHit, shipType) =>
         set((state) => {
           const accuracy = shotsFired > 0 ? (shotsHit / shotsFired) * 100 : 0
-          const currentShipStats = state.stats.perShipStats[shipType]
+          const currentShipStats = state.stats.perShipStats?.[shipType] || {
+            games: 0,
+            bestScore: 0,
+            bestWave: 0
+          }
           return {
             stats: {
               ...state.stats,
@@ -196,7 +200,7 @@ export const useStatisticsStore = create<StatisticsState>()(
               longestSurvival: Math.max(state.stats.longestSurvival, time),
               bestAccuracy: Math.max(state.stats.bestAccuracy, accuracy),
               perShipStats: {
-                ...state.stats.perShipStats,
+                ...state.stats.perShipStats || initializeShipStats(),
                 [shipType]: {
                   games: currentShipStats.games + 1,
                   bestScore: Math.max(currentShipStats.bestScore, score),

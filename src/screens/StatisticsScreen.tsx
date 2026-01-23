@@ -516,7 +516,11 @@ export default function StatisticsScreen() {
             ) : (
               <View className="space-y-4">
                 {(['fighter', 'scout', 'tank', 'interceptor'] as ShipType[]).map((shipType) => {
-                  const shipStats = stats.perShipStats[shipType];
+                  const shipStats = stats.perShipStats?.[shipType] || {
+                    games: 0,
+                    bestScore: 0,
+                    bestWave: 0
+                  };
                   const isFavorite = stats.favoriteShip === shipType;
 
                   return (
