@@ -126,11 +126,20 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   const resetTutorial = useTutorialStore((s) => s.resetTutorial)
   const markFirstLaunchComplete = useTutorialStore((s) => s.markFirstLaunchComplete)
 
+  // Tutorial store
+  const hasCompletedTutorial = useTutorialStore((s) => s.hasCompletedTutorial)
+  const tutorialStep = useTutorialStore((s) => s.currentStep)
+  const completeStep = useTutorialStore((s) => s.completeStep)
+  const skipTutorial = useTutorialStore((s) => s.skipTutorial)
+  const completeTutorial = useTutorialStore((s) => s.completeTutorial)
+  const resetTutorial = useTutorialStore((s) => s.resetTutorial)
+
   const [joystickValue, setJoystickValue] = useState<Vec2>({ x: 0, y: 0 })
   const [swipeImpulse, setSwipeImpulse] = useState<Vec2>({ x: 0, y: 0 })
   const initializedRef = useRef(false)
   const lastAbilityActivationRef = useRef<string | null>(null) // Track last activated ability
   const [showInstructions, setShowInstructions] = useState(true)
+  const [showTutorial, setShowTutorial] = useState(false)
   const [showNameInput, setShowNameInput] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [showShipSelect, setShowShipSelect] = useState(false)
@@ -547,6 +556,15 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
         size={joystickSize}
         position={joystickPosition}
         invertY={invertY}
+      />
+
+      {/* Tutorial Overlay */}
+      <TutorialOverlay
+        visible={showTutorial}
+        currentStep={tutorialStep}
+        onNextStep={handleTutorialNextStep}
+        onSkip={handleTutorialSkip}
+        onComplete={handleTutorialComplete}
       />
 
       {/* Settings Modal */}
