@@ -68,6 +68,14 @@ export const COMBO_MULTIPLIERS = [1, 1.5, 2, 2.5, 3]
 export const BOSS_WAVE_INTERVAL = 5       // Boss every 5 waves
 export const BOSS_WARNING_TIME = 3        // Warning duration before boss spawns
 
+// Particle pooling constants
+export const PARTICLE_POOL_SIZE = 500
+
+// Pooled particle with active flag
+interface PooledParticle extends Particle {
+  active: boolean
+}
+
 // Enemy spawn weights by wave
 export const getEnemySpawnWeights = (wave: number): Record<EnemyType, number> => ({
   scout: 40,
@@ -77,6 +85,9 @@ export const getEnemySpawnWeights = (wave: number): Record<EnemyType, number> =>
 })
 
 interface GameStore extends GameState {
+  // Particle pool
+  particlePool: PooledParticle[]
+  particlePoolIndex: number  // Circular buffer index for next particle allocation
   // Actions
   setPaused: (paused: boolean) => void
   setDimensions: (w: number, h: number) => void
@@ -146,6 +157,11 @@ interface GameStore extends GameState {
 
   // EMP blast
   stunAllEnemies: (duration: number) => void
+
+  // Particle pooling methods
+  acquireParticles: (count: number) => PooledParticle[]
+  releaseParticle: (particle: PooledParticle) => void
+  updatePooledParticles: (dt: number) => void
 }
 
 const initialCombo: ComboState = {
@@ -165,6 +181,21 @@ const getInitialPlayer = (w: number, h: number, shipType: ShipType = 'fighter') 
   specialCooldown: 0,
   specialReady: true,
 })
+
+// Initialize particle pool with pre-allocated objects
+const createParticlePool = (): PooledParticle[] => {
+  const pool: PooledParticle[] = []
+  for (let i = 0; i < PARTICLE_POOL_SIZE; i++) {
+    pool.push({
+      pos: { x: 0, y: 0 },
+      vel: { x: 0, y: 0 },
+      life: 0,
+      color: '',
+      active: false,
+    })
+  }
+  return pool
+}
 
 export const useGameStore = create<GameStore>((set, get) => ({
   w: 800,
@@ -209,6 +240,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
   sessionShotsFired: 0,
   sessionShotsHit: 0,
   sessionLastShotTime: 0,
+
+  // Particle pool
+  particlePool: createParticlePool(),
+  particlePoolIndex: 0,
 
   setPaused: (paused) => set({ paused }),
 
@@ -277,35 +312,44 @@ export const useGameStore = create<GameStore>((set, get) => ({
     }),
 
   resetGame: () =>
-    set((state) => ({
-      time: 0,
-      paused: false,
-      score: 0,
-      lives: 3,
-      wave: 1,
-      player: getInitialPlayer(state.w, state.h, state.player.shipType),
-      bullets: [],
-      particles: [],
-      asteroids: [],
-      enemies: [],
-      boss: null,
-      bossWarning: false,
-      bossWarningStartTime: undefined,
-      powerUps: [],
-      activePowerUps: [],
-      combo: { ...initialCombo },
-      screenShake: null,
-      timeWarpActive: false,
-      timeWarpMultiplier: 1,
-      specialAbility: null,
-      homingMissiles: [],
-      sessionDamageTaken: false,
-      sessionKillsRecent: 0,
-      sessionKillTimer: 0,
-      sessionShotsFired: 0,
-      sessionShotsHit: 0,
-      sessionLastShotTime: 0,
-    })),
+    set((state) => {
+      // Reset all particles in the pool to inactive
+      for (let i = 0; i < state.particlePool.length; i++) {
+        state.particlePool[i].active = false
+        state.particlePool[i].life = 0
+      }
+
+      return {
+        time: 0,
+        paused: false,
+        score: 0,
+        lives: 3,
+        wave: 1,
+        player: getInitialPlayer(state.w, state.h, state.player.shipType),
+        bullets: [],
+        particles: [],
+        asteroids: [],
+        enemies: [],
+        boss: null,
+        bossWarning: false,
+        bossWarningStartTime: undefined,
+        powerUps: [],
+        activePowerUps: [],
+        combo: { ...initialCombo },
+        screenShake: null,
+        timeWarpActive: false,
+        timeWarpMultiplier: 1,
+        specialAbility: null,
+        homingMissiles: [],
+        sessionDamageTaken: false,
+        sessionKillsRecent: 0,
+        sessionKillTimer: 0,
+        sessionShotsFired: 0,
+        sessionShotsHit: 0,
+        sessionLastShotTime: 0,
+        particlePoolIndex: 0,
+      }
+    }),
 
   spawnAsteroids: (count) =>
     set((state) => {
@@ -849,4 +893,67 @@ export const useGameStore = create<GameStore>((set, get) => ({
           }
         : null,
     })),
+
+  // ------------------------------------------------------------------ //
+  //                         Particle Pooling
+  // ------------------------------------------------------------------ //
+
+  // Acquire particles from the pool using circular buffer
+  acquireParticles: (count) => {
+    const state = get()
+    const pool = state.particlePool
+    const maxCount = Math.min(count, PARTICLE_POOL_SIZE)
+    const acquired: PooledParticle[] = []
+
+    let currentIndex = state.particlePoolIndex
+
+    // Allocate particles from circular buffer, automatically recycling oldest ones
+    for (let i = 0; i < maxCount; i++) {
+      acquired.push(pool[currentIndex])
+      currentIndex = (currentIndex + 1) % PARTICLE_POOL_SIZE
+    }
+
+    // Update the pool index for next allocation
+    set({ particlePoolIndex: currentIndex })
+
+    return acquired
+  },
+
+  // Release a particle back to the pool
+  releaseParticle: (particle) => {
+    particle.active = false
+    particle.life = 0
+  },
+
+  // Update all active pooled particles
+  updatePooledParticles: (dt) => {
+    const state = get()
+    const pool = state.particlePool
+    const activeParticles: Particle[] = []
+
+    for (let i = 0; i < pool.length; i++) {
+      const p = pool[i]
+      if (!p.active) continue
+
+      // Update position
+      p.pos.x += p.vel.x * dt
+      p.pos.y += p.vel.y * dt
+      p.life -= dt
+
+      // Check if particle is still alive
+      if (p.life <= 0) {
+        p.active = false
+      } else {
+        // Add to particles array for rendering (still used by GameCanvas)
+        activeParticles.push({
+          pos: p.pos,
+          vel: p.vel,
+          life: p.life,
+          color: p.color,
+        })
+      }
+    }
+
+    set({ particles: activeParticles })
+  },
 }))

@@ -55,43 +55,53 @@ export default function GameScreen() {
   const sfxVolume = useSettingsStore((s) => s.sfxVolume)
   const setSfxVolume = useSettingsStore((s) => s.setSfxVolume)
 
-  // Game state
+  // Game state - primitives (use default equality)
   const paused = useGameStore((s) => s.paused)
   const score = useGameStore((s) => s.score)
   const credits = useGameStore((s) => s.credits)
   const lives = useGameStore((s) => s.lives)
   const wave = useGameStore((s) => s.wave)
-  const player = useGameStore((s) => s.player)
   const playerAng = useGameStore((s) => s.player.ang)
-  const bullets = useGameStore((s) => s.bullets)
-  const asteroids = useGameStore((s) => s.asteroids)
-  const enemies = useGameStore((s) => s.enemies)
-  const particles = useGameStore((s) => s.particles)
   const time = useGameStore((s) => s.time)
-  const powerUps = useGameStore((s) => s.powerUps)
-  const activePowerUps = useGameStore((s) => s.activePowerUps)
-  const combo = useGameStore((s) => s.combo)
+  const bossWarning = useGameStore((s) => s.bossWarning)
+  const timeWarpActive = useGameStore((s) => s.timeWarpActive)
+
+  // Game state - objects (use shallow equality)
+  const player = useGameStore(useShallow((s) => s.player))
+  const combo = useGameStore(useShallow((s) => s.combo))
+  const boss = useGameStore(useShallow((s) => s.boss))
+  const specialAbility = useGameStore(useShallow((s) => s.specialAbility))
+
+  // Game state - arrays (use shallow equality)
+  const bullets = useGameStore(useShallow((s) => s.bullets))
+  const asteroids = useGameStore(useShallow((s) => s.asteroids))
+  const enemies = useGameStore(useShallow((s) => s.enemies))
+  const particles = useGameStore(useShallow((s) => s.particles))
+  const powerUps = useGameStore(useShallow((s) => s.powerUps))
+  const activePowerUps = useGameStore(useShallow((s) => s.activePowerUps))
+  const homingMissiles = useGameStore(useShallow((s) => s.homingMissiles))
+
+  // Game state - actions (stable function references)
   const getShakeOffset = useGameStore((s) => s.getShakeOffset)
   const hasPowerUp = useGameStore((s) => s.hasPowerUp)
-  const boss = useGameStore((s) => s.boss)
-  const bossWarning = useGameStore((s) => s.bossWarning)
-  const homingMissiles = useGameStore((s) => s.homingMissiles)
-  const timeWarpActive = useGameStore((s) => s.timeWarpActive)
   const activateSpecialAbility = useGameStore((s) => s.activateSpecialAbility)
   const setShipType = useGameStore((s) => s.setShipType)
   const spawnHomingMissiles = useGameStore((s) => s.spawnHomingMissiles)
   const setTimeWarp = useGameStore((s) => s.setTimeWarp)
-  const specialAbility = useGameStore((s) => s.specialAbility)
   const stunAllEnemies = useGameStore((s) => s.stunAllEnemies)
 
-  // Progress stores
-  const stats = useStatisticsStore((s) => s.stats)
-  const recordGameEnd = useStatisticsStore((s) => s.recordGameEnd)
-  const achievements = useAchievementStore((s) => s.achievements)
+  // Progress stores - objects and arrays (use shallow equality)
+  const stats = useStatisticsStore(useShallow((s) => s.stats))
+  const achievements = useAchievementStore(useShallow((s) => s.achievements))
+  const unlockedShips = useUpgradesStore(useShallow((s) => s.unlockedShips))
+
+  // Progress stores - primitives
   const recentUnlock = useAchievementStore((s) => s.recentUnlock)
-  const clearRecentUnlock = useAchievementStore((s) => s.clearRecentUnlock)
-  const unlockedShips = useUpgradesStore((s) => s.unlockedShips)
   const upgradesCredits = useUpgradesStore((s) => s.credits)
+
+  // Progress stores - actions
+  const recordGameEnd = useStatisticsStore((s) => s.recordGameEnd)
+  const clearRecentUnlock = useAchievementStore((s) => s.clearRecentUnlock)
   const addUpgradeCredits = useUpgradesStore((s) => s.addCredits)
 
   const [joystickValue, setJoystickValue] = useState<Vec2>({ x: 0, y: 0 })
@@ -107,7 +117,10 @@ export default function GameScreen() {
   const [playerName, setPlayerName] = useState("")
   const [settingsTab, setSettingsTab] = useState<'general' | 'ship' | 'stats'>('general')
 
-  const highScores = useHighScoresStore((s) => s.scores)
+  // High scores - arrays (use shallow equality)
+  const highScores = useHighScoresStore(useShallow((s) => s.scores))
+
+  // High scores - actions
   const isTopFive = useHighScoresStore((s) => s.isTopFive)
   const addScore = useHighScoresStore((s) => s.addScore)
 
@@ -168,7 +181,17 @@ export default function GameScreen() {
         setTimeWarp(false)
       }
     }
-  }, [specialAbility?.isActive, specialAbility?.type, specialAbility?.maxCooldown])
+
+    // Cleanup function to prevent memory leaks
+    return () => {
+      // Deactivate time warp if component unmounts
+      if (specialAbility?.type === 'time_warp' && specialAbility?.isActive) {
+        setTimeWarp(false)
+      }
+      // Reset tracking ref
+      lastAbilityActivationRef.current = null
+    }
+  }, [specialAbility?.isActive, specialAbility?.type, specialAbility?.maxCooldown, setTimeWarp, spawnHomingMissiles, stunAllEnemies])
 
   // Achievement notification timeout + Android notification
   useEffect(() => {
