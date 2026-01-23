@@ -48,6 +48,13 @@ export interface Translations {
     large: string;
   };
   ships: {
+    selectShip: string;
+    compareShips: string;
+    locked: string;
+    selected: string;
+    insufficientCredits: string;
+    specialAbility: string;
+    cooldown: string;
     fighter: {
       name: string;
       description: string;
@@ -126,6 +133,10 @@ export interface Translations {
     totalPlayTime: string;
     averageScore: string;
     totalDeaths: string;
+    speed: string;
+    fireRate: string;
+    damage: string;
+    hull: string;
   };
   general: {
     confirm: string;
@@ -134,6 +145,7 @@ export interface Translations {
     back: string;
     on: string;
     off: string;
+    credits: string;
   };
 }
 

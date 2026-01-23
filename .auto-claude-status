@@ -3,13 +3,13 @@
   "spec": "005-ship-selection-screen",
   "state": "building",
   "subtasks": {
-    "completed": 1,
+    "completed": 3,
     "total": 6,
     "in_progress": 1,
     "failed": 0
   },
   "phase": {
-    "current": "Core Components",
+    "current": "Ship Selection Screen",
     "id": null,
     "total": 2
   },
@@ -18,8 +18,8 @@
     "max": 1
   },
   "session": {
-    "number": 3,
+    "number": 5,
     "started_at": "2026-01-23T17:08:20.567046"
   },
-  "last_update": "2026-01-23T17:16:23.561095"
+  "last_update": "2026-01-23T17:22:24.774280"
 }
