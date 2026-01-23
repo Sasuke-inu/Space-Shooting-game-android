@@ -5,6 +5,7 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler"
 import { Audio } from "expo-av"
 import { GameCanvas } from "../components/GameCanvas"
 import { VirtualControls } from "../components/VirtualControls"
+import StatisticsScreen from "./StatisticsScreen"
 import { useGameStore, MAX_DT, JOY_DEADZONE } from "../state/gameStore"
 import { useHighScoresStore } from "../state/highScoresStore"
 import { useSettingsStore, useThemeColors } from "../theme/themeStore"
@@ -841,11 +842,28 @@ export default function GameScreen() {
                   borderRadius: 12,
                   paddingVertical: 16,
                   paddingHorizontal: 16,
+                  marginBottom: 12,
                 }}
                 onPress={handleStartGame}
               >
                 <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 18, fontWeight: 'bold' }}>
                   START MISSION
+                </Text>
+              </Pressable>
+
+              <Pressable
+                style={{
+                  backgroundColor: colors.buttonSecondary,
+                  borderWidth: 2,
+                  borderColor: colors.panelBorder,
+                  borderRadius: 12,
+                  paddingVertical: 14,
+                  paddingHorizontal: 16,
+                }}
+                onPress={() => setShowStats(true)}
+              >
+                <Text style={{ color: colors.textPrimary, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
+                  📊 STATISTICS
                 </Text>
               </Pressable>
             </View>
@@ -910,6 +928,34 @@ export default function GameScreen() {
                 <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
                   SUBMIT
                 </Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+      )}
+
+      {/* Statistics Modal */}
+      {showStats && (
+        <Modal visible={true} transparent animationType="fade">
+          <View style={{ flex: 1, backgroundColor: colors.modalOverlay }}>
+            <View style={{ flex: 1, marginTop: insets.top }}>
+              <StatisticsScreen />
+              <Pressable
+                style={{
+                  position: 'absolute',
+                  top: 12,
+                  right: 12,
+                  backgroundColor: colors.buttonSecondary,
+                  borderWidth: 1,
+                  borderColor: colors.panelBorder,
+                  borderRadius: 8,
+                  paddingHorizontal: 12,
+                  paddingVertical: 8,
+                  zIndex: 100,
+                }}
+                onPress={() => setShowStats(false)}
+              >
+                <Text style={{ color: colors.hudText, fontSize: 16 }}>✕</Text>
               </Pressable>
             </View>
           </View>
