@@ -128,4 +128,13 @@ export const ko: Translations = {
     on: '켜짐',
     off: '꺼짐',
   },
+  leaderboard: {
+    title: '리더보드',
+    rank: '순위',
+    name: '이름',
+    score: '점수',
+    wave: '웨이브',
+    noScores: '아직 점수가 없습니다. 게임을 플레이하여 첫 번째 기록을 세우세요!',
+    close: '닫기',
+  },
 };
