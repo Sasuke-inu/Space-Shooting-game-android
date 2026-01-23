@@ -76,6 +76,7 @@ export default function GameScreen() {
   const upgradesCredits = useUpgradesStore((s) => s.credits)
   const addUpgradeCredits = useUpgradesStore((s) => s.addCredits)
   const unlockShip = useUpgradesStore((s) => s.unlockShip)
+  const isShipUnlocked = useUpgradesStore((s) => s.isShipUnlocked)
 
   const [joystickValue, setJoystickValue] = useState<Vec2>({ x: 0, y: 0 })
   const [swipeImpulse, setSwipeImpulse] = useState<Vec2>({ x: 0, y: 0 })
@@ -376,11 +377,29 @@ export default function GameScreen() {
   }
 
   const handleConfirmPurchase = () => {
-    if (selectedShipForPurchase) {
-      unlockShip(selectedShipForPurchase)
+    if (!selectedShipForPurchase) return
+
+    // Defensive checks (UI should prevent these cases, but good to validate)
+    if (isShipUnlocked(selectedShipForPurchase)) {
+      // Ship already unlocked, close modal
       setShowPurchaseConfirm(false)
       setSelectedShipForPurchase(null)
+      return
     }
+
+    const cost = SHIP_COSTS[selectedShipForPurchase]
+    if (upgradesCredits < cost) {
+      // Insufficient credits (button should be disabled, but check anyway)
+      // Modal will stay open showing the insufficient credits warning
+      return
+    }
+
+    // Purchase the ship (unlockShip handles credit deduction and unlock)
+    unlockShip(selectedShipForPurchase)
+
+    // Close confirmation dialog
+    setShowPurchaseConfirm(false)
+    setSelectedShipForPurchase(null)
   }
 
   const handleCancelPurchase = () => {
