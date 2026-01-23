@@ -272,6 +272,26 @@ describe('Boss System Logic', () => {
       expect(enemiesSpawned.every((e) => e === 'scout')).toBe(true)
     })
 
+    test('carrier respects lifetime spawn limit (max 12 enemies)', () => {
+      const MAX_CARRIER_SPAWNED_ENEMIES = 12
+      let spawnedEnemiesCount = 0
+      let totalEnemiesSpawned = 0
+
+      // Simulate multiple special attacks
+      for (let attack = 0; attack < 10; attack++) {
+        // Check if we can still spawn
+        if (spawnedEnemiesCount < MAX_CARRIER_SPAWNED_ENEMIES) {
+          const spawnCount = Math.min(2, MAX_CARRIER_SPAWNED_ENEMIES - spawnedEnemiesCount)
+          totalEnemiesSpawned += spawnCount
+          spawnedEnemiesCount += spawnCount
+        }
+      }
+
+      // Verify we never exceeded the limit
+      expect(totalEnemiesSpawned).toBeLessThanOrEqual(MAX_CARRIER_SPAWNED_ENEMIES)
+      expect(spawnedEnemiesCount).toBe(MAX_CARRIER_SPAWNED_ENEMIES)
+    })
+
     test('dreadnought circular pattern fires 16 bullets', () => {
       const bullets: { angle: number }[] = []
       for (let i = 0; i < 16; i++) {

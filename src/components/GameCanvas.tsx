@@ -435,19 +435,6 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
                 strokeWidth={2}
               />
 
-              {/* Sniper charge indicator */}
-              {e.type === 'sniper' && e.chargeTime && e.chargeTime > 0 && (
-                <Circle
-                  cx={0}
-                  cy={0}
-                  r={10 + e.chargeTime * 5}
-                  color="#9966ff"
-                  style="stroke"
-                  strokeWidth={1}
-                  opacity={0.5}
-                />
-              )}
-
               {/* Health bar for tanks and damaged enemies */}
               {(e.type === 'tank' || hpPercent < 1) && (
                 <Group transform={[{ rotate: -e.ang }]}>
@@ -506,7 +493,7 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
               strokeWidth={3}
             />
 
-            {/* Boss core */}
+            {/* Boss core - intensifies when charging special */}
             <Circle
               cx={0}
               cy={10}

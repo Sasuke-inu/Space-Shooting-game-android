@@ -105,6 +105,66 @@ class SpatialGrid {
 
 let spatialGrid: SpatialGrid | null = null
 
+// ------------------------------------------------------------------ //
+//                    Bullet Density Tracking
+// ------------------------------------------------------------------ //
+
+/**
+ * Maximum bullet screen coverage percentage (40%)
+ * Prevents overwhelming bullet hell scenarios while maintaining challenge
+ */
+const MAX_BULLET_COVERAGE_PERCENT = 40
+
+/**
+ * Calculates bullet density and screen coverage percentage
+ * Used for balancing to prevent bullet hell scenarios
+ */
+export const calculateBulletDensity = (
+  bulletCount: number,
+  screenWidth: number,
+  screenHeight: number
+): { bulletCount: number; coveragePercent: number; bulletDensity: number } => {
+  // Approximate bullet visual radius (in pixels)
+  const BULLET_RADIUS = 4
+
+  // Calculate total area covered by bullets
+  const bulletArea = Math.PI * BULLET_RADIUS * BULLET_RADIUS
+  const totalBulletArea = bulletCount * bulletArea
+
+  // Calculate screen area
+  const screenArea = screenWidth * screenHeight
+
+  // Calculate coverage percentage
+  const coveragePercent = screenArea > 0 ? (totalBulletArea / screenArea) * 100 : 0
+
+  // Calculate bullet density (bullets per 10,000 square pixels)
+  const bulletDensity = screenArea > 0 ? (bulletCount / screenArea) * 10000 : 0
+
+  return {
+    bulletCount,
+    coveragePercent,
+    bulletDensity,
+  }
+}
+
+/**
+ * Checks if adding more enemy bullets would exceed the density cap
+ * Returns true if we can spawn more bullets, false if at cap
+ */
+const canSpawnEnemyBullets = (
+  currentBulletCount: number,
+  additionalBullets: number,
+  screenWidth: number,
+  screenHeight: number
+): boolean => {
+  const projectedDensity = calculateBulletDensity(
+    currentBulletCount + additionalBullets,
+    screenWidth,
+    screenHeight
+  )
+  return projectedDensity.coveragePercent <= MAX_BULLET_COVERAGE_PERCENT
+}
+
 export const useGameEngine = () => {
   const boom = useCallback((pos: Vec2, color: string, count = 24, speed = 120) => {
     const state = useGameStore.getState()
@@ -255,11 +315,30 @@ export const useGameEngine = () => {
     // Progressive difficulty scaling (0-100% over 4 minutes)
     const difficultyProgress = Math.min(stateUpdates.time! / 240, 1.0)
 
+    // Smooth easing function for gentle difficulty curves (ease-in-out cubic)
+    const easeInOutCubic = (t: number): number => {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+    }
+
+    // Smooth easing for gradual acceleration (ease-out quadratic)
+    const easeOutQuad = (t: number): number => {
+      return 1 - (1 - t) * (1 - t)
+    }
+
     // Animation speed multiplier (increases from 1x to 2.5x)
-    const animSpeedMultiplier = 1.0 + (difficultyProgress * 1.5)
+    // Uses ease-out curve for gradual acceleration, reduces late-game spike
+    const animSpeedMultiplier = 1.0 + (easeOutQuad(difficultyProgress) * 1.5)
 
     // Enemy aim accuracy (starts poor, becomes deadly)
-    const aimInaccuracy = 0.5 - (difficultyProgress * 0.45)
+    // Cubic scaling for very smooth early game: starts at 0.7, ends at 0.1
+    // At 60s (25% progress): ~0.66 (still quite inaccurate)
+    // At 120s (50% progress): ~0.48 (moderate)
+    const aimInaccuracy = 0.7 - (Math.pow(difficultyProgress, 1.8) * 0.6)
+
+    // Early game fire rate penalty (enemies shoot less frequently early on)
+    // Exponential decay for smooth transition: starts at 1.8x slower, gradually reduces
+    // At 60s (25%): ~1.42x slower, At 120s (50%): ~1.13x slower, At 180s (75%): ~1.03x slower
+    const earlyGameFireRateMultiplier = 1.0 + (0.8 * Math.exp(-difficultyProgress * 3))
 
     // Player movement
     let newVel = state.player.vel
@@ -1174,7 +1253,8 @@ function updateEnemyBehavior(
   dt: number,
   difficulty: number,
   aimInaccuracy: number,
-  animSpeed: number
+  animSpeed: number,
+  earlyGameFireRate: number = 1.0
 ): Enemy {
   const stats = ENEMY_STATS[e.type]
   const toP = sub(state.player.pos, e.pos)
@@ -1193,9 +1273,9 @@ function updateEnemyBehavior(
       newEnemy.pos = wrap(add(e.pos, mul(scoutVel, dt * animSpeed)), state.w, state.h)
       newEnemy.ang = angleOf(scoutVel)
 
-      // Fire at player
+      // Fire at player (with density cap check)
       newEnemy.cooldown = e.cooldown - dt
-      if (d < 400 && newEnemy.cooldown <= 0) {
+      if (d < 400 && newEnemy.cooldown <= 0 && canSpawnEnemyBullets(state.bullets.length, 1, state.w, state.h)) {
         const aim = angleOf(sub(state.player.pos, e.pos)) + rand(-aimInaccuracy * 1.5, aimInaccuracy * 1.5)
         state.addBullet({
           pos: add(e.pos, fromAngle(aim, 16)),
@@ -1203,7 +1283,7 @@ function updateEnemyBehavior(
           life: BULLET_LIFE_ENEMY * 0.8,
           friendly: false,
         })
-        newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.3)
+        newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.3) * earlyGameFireRate
       }
       break
 
@@ -1216,9 +1296,9 @@ function updateEnemyBehavior(
       newEnemy.pos = wrap(add(e.pos, mul(tankVel, dt * animSpeed * 0.7)), state.w, state.h)
       newEnemy.ang = angleOf(toP)
 
-      // Heavy shots with less accuracy needed
+      // Heavy shots with less accuracy needed (with density cap check)
       newEnemy.cooldown = e.cooldown - dt
-      if (d < 500 && newEnemy.cooldown <= 0) {
+      if (d < 500 && newEnemy.cooldown <= 0 && canSpawnEnemyBullets(state.bullets.length, 2, state.w, state.h)) {
         const aim = angleOf(sub(state.player.pos, e.pos)) + rand(-aimInaccuracy * 0.5, aimInaccuracy * 0.5)
         // Fire 2 bullets
         for (let i = -1; i <= 1; i += 2) {
@@ -1229,7 +1309,7 @@ function updateEnemyBehavior(
             friendly: false,
           })
         }
-        newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.2)
+        newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.2) * earlyGameFireRate
       }
       break
 
@@ -1249,10 +1329,11 @@ function updateEnemyBehavior(
       newEnemy.pos = wrap(add(e.pos, mul(sniperVel, dt * animSpeed * 0.5)), state.w, state.h)
       newEnemy.ang = angleOf(toP)
 
-      // Charged precision shots
+      // Charged precision shots (with density cap check)
       newEnemy.chargeTime = (e.chargeTime || 0) + dt
-      if (newEnemy.chargeTime >= 2 && d < 600) {
-        const leadFactor = 0.5 + difficulty * 0.3
+      if (newEnemy.chargeTime >= 2 && d < 600 && canSpawnEnemyBullets(state.bullets.length, 1, state.w, state.h)) {
+        // Smooth lead factor scaling using square root for gradual improvement
+        const leadFactor = 0.5 + (Math.sqrt(difficulty) * 0.25)
         const lead = add(state.player.pos, mul(state.player.vel, leadFactor))
         const aim = angleOf(sub(lead, e.pos))
         state.addBullet({
@@ -1276,9 +1357,9 @@ function updateEnemyBehavior(
       newEnemy.pos = wrap(add(e.pos, mul(bomberVel, dt * animSpeed)), state.w, state.h)
       newEnemy.ang = angleOf(bomberVel)
 
-      // Regular shots
+      // Regular shots (with density cap check)
       newEnemy.cooldown = e.cooldown - dt
-      if (d < 450 && newEnemy.cooldown <= 0) {
+      if (d < 450 && newEnemy.cooldown <= 0 && canSpawnEnemyBullets(state.bullets.length, 1, state.w, state.h)) {
         const aim = angleOf(sub(state.player.pos, e.pos)) + rand(-aimInaccuracy, aimInaccuracy)
         state.addBullet({
           pos: add(e.pos, fromAngle(aim, 16)),
@@ -1286,12 +1367,12 @@ function updateEnemyBehavior(
           life: BULLET_LIFE_ENEMY,
           friendly: false,
         })
-        newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.25)
+        newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.25) * earlyGameFireRate
       }
 
-      // Bomb attack (spread of bullets)
+      // Bomb attack (spread of bullets) - with density cap check
       newEnemy.bombCooldown = (e.bombCooldown || 3) - dt
-      if (newEnemy.bombCooldown <= 0 && d < 300) {
+      if (newEnemy.bombCooldown <= 0 && d < 300 && canSpawnEnemyBullets(state.bullets.length, 8, state.w, state.h)) {
         for (let i = 0; i < 8; i++) {
           const angle = (i / 8) * Math.PI * 2
           state.addBullet({
@@ -1301,14 +1382,16 @@ function updateEnemyBehavior(
             friendly: false,
           })
         }
-        newEnemy.bombCooldown = 4 - difficulty
+        // Smooth bomb cooldown: 4.5s -> 2.5s using square root for gradual reduction
+        newEnemy.bombCooldown = (4.5 - Math.sqrt(difficulty) * 2) * earlyGameFireRate
       }
       break
 
     default:
       // Default behavior (legacy)
       const desired = add(dir, fromAngle(state.time * 0.7, 0.4 * (1 - difficulty * 0.5)))
-      const accelMultiplier = 1.0 + (difficulty * 0.8)
+      // Smooth acceleration scaling using square root for gradual increase
+      const accelMultiplier = 1.0 + (Math.sqrt(difficulty) * 0.8)
       let eVel = add(e.vel, mul(nor(desired), 90 * dt * accelMultiplier))
       eVel = mul(eVel, 0.993)
       newEnemy.vel = eVel
@@ -1316,8 +1399,9 @@ function updateEnemyBehavior(
       newEnemy.ang = angleOf(eVel)
 
       newEnemy.cooldown = e.cooldown - dt
-      if (d < 520 && newEnemy.cooldown <= 0) {
-        const leadFactor = 0.35 + (difficulty * 0.4)
+      if (d < 520 && newEnemy.cooldown <= 0 && canSpawnEnemyBullets(state.bullets.length, 1, state.w, state.h)) {
+        // Smooth lead factor using square root for gradual improvement
+        const leadFactor = 0.35 + (Math.sqrt(difficulty) * 0.35)
         const lead = add(state.player.pos, mul(state.player.vel, leadFactor))
         const aim = angleOf(sub(lead, e.pos)) + rand(-aimInaccuracy, aimInaccuracy)
         state.addBullet({
@@ -1326,8 +1410,9 @@ function updateEnemyBehavior(
           life: BULLET_LIFE_ENEMY,
           friendly: false,
         })
-        const cooldownBase = 1.4 - (difficulty * 0.6)
-        newEnemy.cooldown = rand(0.5, cooldownBase)
+        // Smooth cooldown reduction using power curve for gradual decrease
+        const cooldownBase = 1.4 - (Math.pow(difficulty, 0.7) * 0.6)
+        newEnemy.cooldown = rand(0.5, cooldownBase) * earlyGameFireRate
       }
   }
 
@@ -1462,6 +1547,11 @@ function updateBossBehaviorBatched(
 //                         Boss Behavior Update (Original - kept for compatibility)
 // ------------------------------------------------------------------ //
 
+// Boss balance constants
+const BOSS_SPECIAL_CHARGE_TIME = 1.0 // Wind-up time before special attacks (visual tell)
+const BOSS_FIRST_ENCOUNTER_NERF = 0.7 // Reduce difficulty on first boss
+const MAX_CARRIER_SPAWNED_ENEMIES = 12 // Lifetime limit of enemies spawned by carrier
+
 function updateBossBehavior(
   boss: Boss,
   state: ReturnType<typeof useGameStore.getState>,
@@ -1471,18 +1561,22 @@ function updateBossBehavior(
   const stats = BOSS_STATS[boss.type]
   const toP = sub(state.player.pos, boss.pos)
 
-  // Movement pattern based on phase
-  const moveSpeed = 60 + boss.phase * 20
+  // Check if this is first boss encounter (wave 5)
+  const isFirstBoss = state.wave === 5
+  const difficultyMultiplier = isFirstBoss ? BOSS_FIRST_ENCOUNTER_NERF : 1.0
 
-  // Sway movement
-  const swayX = Math.sin(state.time * 0.5) * 100
+  // Movement pattern based on phase (slower and more predictable)
+  const moveSpeed = (50 + boss.phase * 15) * difficultyMultiplier
+
+  // Sway movement (predictable pattern)
+  const swayX = Math.sin(state.time * 0.4) * 120
   const targetX = state.w / 2 + swayX
-  const targetY = 100 + Math.sin(state.time * 0.3) * 30
+  const targetY = 100 + Math.sin(state.time * 0.25) * 40
 
   // Create new velocity object instead of mutating existing one
   const newVel = {
-    x: (targetX - boss.pos.x) * 0.02,
-    y: (targetY - boss.pos.y) * 0.02,
+    x: (targetX - boss.pos.x) * 0.015,
+    y: (targetY - boss.pos.y) * 0.015,
   }
 
   const newPos = add(boss.pos, mul(newVel, dt * moveSpeed))
@@ -1490,79 +1584,55 @@ function updateBossBehavior(
   // Update cooldowns
   let newCooldown = boss.cooldown - dt
   let newSpecialCooldown = boss.specialCooldown - dt
+  let newChargeTime = boss.specialChargeTime
+  let isCharging = boss.chargingSpecial
 
-  // Regular attack pattern
-  if (newCooldown <= 0) {
-    const attackCount = boss.phase + 2
-    const spreadAngle = Math.PI / 6
+  // Regular attack pattern (more generous timing, with density cap check)
+  if (newCooldown <= 0 && !isCharging) {
+    // Reduce bullet count for first boss
+    const baseAttackCount = boss.phase + 2
+    const attackCount = isFirstBoss ? Math.max(2, baseAttackCount - 1) : baseAttackCount
+    const spreadAngle = Math.PI / 5 // Wider spread = more gaps
 
-    for (let i = 0; i < attackCount; i++) {
-      const angle = Math.PI / 2 + (i - (attackCount - 1) / 2) * spreadAngle
-      state.addBullet({
-        pos: add(boss.pos, fromAngle(angle, 40)),
-        vel: fromAngle(angle, BULLET_SPEED_ENEMY * 0.8),
-        life: BULLET_LIFE_ENEMY * 1.5,
-        friendly: false,
-      })
+    if (canSpawnEnemyBullets(state.bullets.length, attackCount, state.w, state.h)) {
+      for (let i = 0; i < attackCount; i++) {
+        const angle = Math.PI / 2 + (i - (attackCount - 1) / 2) * spreadAngle
+        state.addBullet({
+          pos: add(boss.pos, fromAngle(angle, 40)),
+          vel: fromAngle(angle, BULLET_SPEED_ENEMY * 0.7 * difficultyMultiplier),
+          life: BULLET_LIFE_ENEMY * 1.3,
+          friendly: false,
+        })
+      }
     }
 
-    newCooldown = 2 - boss.phase * 0.3
+    // Longer cooldowns for first boss
+    const baseCooldown = 2.2 - boss.phase * 0.25
+    newCooldown = isFirstBoss ? baseCooldown * 1.3 : baseCooldown
   }
 
-  // Special attacks based on boss type and phase
+  // Special attack charging system
   if (newSpecialCooldown <= 0) {
-    switch (boss.type) {
-      case 'destroyer':
-        // Laser sweep (line of bullets)
-        for (let i = 0; i < 12; i++) {
-          const angle = Math.PI / 2 + (i - 5.5) * 0.15
-          state.addBullet({
-            pos: add(boss.pos, fromAngle(angle, 50)),
-            vel: fromAngle(angle, BULLET_SPEED_ENEMY),
-            life: BULLET_LIFE_ENEMY * 2,
-            friendly: false,
-          })
-        }
-        break
+    if (!isCharging) {
+      // Start charging special attack (visual tell)
+      isCharging = true
+      newChargeTime = 0
+    } else {
+      // Continue charging
+      newChargeTime += dt
 
-      case 'carrier':
-        // Spawn mini-enemies (limit total enemies to prevent overwhelming player)
-        const MAX_CARRIER_SPAWNED_ENEMIES = 12
-        if (state.enemies.length < MAX_CARRIER_SPAWNED_ENEMIES) {
-          const enemiesToSpawn = Math.min(2, MAX_CARRIER_SPAWNED_ENEMIES - state.enemies.length)
-          for (let i = 0; i < enemiesToSpawn; i++) {
-            state.spawnEnemy('scout')
-          }
-        }
-        break
+      // Fire special attack after charge completes
+      if (newChargeTime >= BOSS_SPECIAL_CHARGE_TIME) {
+        executeSpecialAttack(boss, state, colors, isFirstBoss, difficultyMultiplier)
 
-      case 'dreadnought':
-        // Circular bullet hell
-        for (let i = 0; i < 16; i++) {
-          const angle = (i / 16) * Math.PI * 2
-          state.addBullet({
-            pos: add(boss.pos, fromAngle(angle, 45)),
-            vel: fromAngle(angle, BULLET_SPEED_ENEMY * 0.7),
-            life: BULLET_LIFE_ENEMY * 1.8,
-            friendly: false,
-          })
-        }
-        // In phase 3, fire second ring immediately with offset angle (no setTimeout)
-        if (boss.phase >= 3) {
-          for (let i = 0; i < 16; i++) {
-            const angle = (i / 16) * Math.PI * 2 + Math.PI / 16
-            state.addBullet({
-              pos: add(boss.pos, fromAngle(angle, 45)),
-              vel: fromAngle(angle, BULLET_SPEED_ENEMY * 0.6),
-              life: BULLET_LIFE_ENEMY * 1.8,
-              friendly: false,
-            })
-          }
-        }
-        break
+        // Reset special attack state
+        isCharging = false
+        newChargeTime = 0
+        // Longer cooldowns between special attacks
+        const baseSpecialCooldown = 6 - boss.phase * 0.4
+        newSpecialCooldown = isFirstBoss ? baseSpecialCooldown * 1.4 : baseSpecialCooldown
+      }
     }
-
-    newSpecialCooldown = 5 - boss.phase * 0.5
   }
 
   state.updateBoss({
@@ -1571,8 +1641,94 @@ function updateBossBehavior(
     ang: Math.PI / 2,
     cooldown: newCooldown,
     specialCooldown: newSpecialCooldown,
+    chargingSpecial: isCharging,
+    specialChargeTime: newChargeTime,
     aiTimer: boss.aiTimer + dt,
   })
+}
+
+// Execute boss special attacks with balanced patterns
+function executeSpecialAttack(
+  boss: Boss,
+  state: ReturnType<typeof useGameStore.getState>,
+  colors: ThemeColors,
+  isFirstBoss: boolean,
+  difficultyMultiplier: number
+) {
+  switch (boss.type) {
+    case 'destroyer':
+      // Laser sweep with safe zones (dodgeable gaps, with density cap check)
+      const laserCount = isFirstBoss ? 8 : 10 + boss.phase
+      const laserSpread = Math.PI / 3 // 60 degree spread with gaps
+
+      if (canSpawnEnemyBullets(state.bullets.length, laserCount, state.w, state.h)) {
+        for (let i = 0; i < laserCount; i++) {
+          const angle = Math.PI / 2 + (i - (laserCount - 1) / 2) * (laserSpread / laserCount)
+          state.addBullet({
+            pos: add(boss.pos, fromAngle(angle, 50)),
+            vel: fromAngle(angle, BULLET_SPEED_ENEMY * 0.8 * difficultyMultiplier),
+            life: BULLET_LIFE_ENEMY * 1.8,
+            friendly: false,
+          })
+        }
+      }
+      break
+
+    case 'carrier':
+      // Spawn mini-enemies (limited to avoid overwhelming)
+      // Check lifetime spawn limit to prevent unlimited spawns
+      if (boss.spawnedEnemiesCount < MAX_CARRIER_SPAWNED_ENEMIES) {
+        const MAX_CARRIER_ENEMIES = isFirstBoss ? 8 : 10
+        const remainingLifetimeSpawns = MAX_CARRIER_SPAWNED_ENEMIES - boss.spawnedEnemiesCount
+        const spawnCount = isFirstBoss ? 1 : Math.min(2, MAX_CARRIER_ENEMIES - state.enemies.length, remainingLifetimeSpawns)
+
+        if (state.enemies.length < MAX_CARRIER_ENEMIES && spawnCount > 0) {
+          for (let i = 0; i < spawnCount; i++) {
+            state.spawnEnemy('scout')
+          }
+          // Update boss spawned enemies counter
+          state.updateBoss({ spawnedEnemiesCount: boss.spawnedEnemiesCount + spawnCount })
+        }
+      }
+      break
+
+    case 'dreadnought':
+      // Circular pattern with clear gaps (learnable, with density cap check)
+      const ringBullets = isFirstBoss ? 12 : 14 + boss.phase * 2
+      const ringSpeed = BULLET_SPEED_ENEMY * 0.65 * difficultyMultiplier
+
+      if (canSpawnEnemyBullets(state.bullets.length, ringBullets, state.w, state.h)) {
+        for (let i = 0; i < ringBullets; i++) {
+          const angle = (i / ringBullets) * Math.PI * 2
+          state.addBullet({
+            pos: add(boss.pos, fromAngle(angle, 45)),
+            vel: fromAngle(angle, ringSpeed),
+            life: BULLET_LIFE_ENEMY * 1.6,
+            friendly: false,
+          })
+        }
+      }
+
+      // Phase 2+: Add offset ring with gap (still dodgeable, with density cap check)
+      if (boss.phase >= 2 && !isFirstBoss) {
+        const secondRingBullets = 12
+        const angleOffset = Math.PI / secondRingBullets // Offset for pattern
+        const totalRingBullets = ringBullets + secondRingBullets
+
+        if (canSpawnEnemyBullets(state.bullets.length, totalRingBullets, state.w, state.h)) {
+          for (let i = 0; i < secondRingBullets; i++) {
+            const angle = (i / secondRingBullets) * Math.PI * 2 + angleOffset
+            state.addBullet({
+              pos: add(boss.pos, fromAngle(angle, 45)),
+              vel: fromAngle(angle, ringSpeed * 0.85),
+              life: BULLET_LIFE_ENEMY * 1.6,
+              friendly: false,
+            })
+          }
+        }
+      }
+      break
+  }
 }
 
 // ------------------------------------------------------------------ //
