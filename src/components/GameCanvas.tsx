@@ -333,12 +333,35 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
           const enemyColor = getEnemyColor(e.type, colors)
           const enemyFillColor = enemyColor + '20' // Add transparency
           const hpPercent = e.hp / e.maxHp
+          const isStunned = (e.stunDuration ?? 0) > 0
 
           return (
             <Group
               key={`enemy-${i}`}
               transform={[{ translateX: e.pos.x }, { translateY: e.pos.y }, { rotate: e.ang }]}
             >
+              {/* Stun effect */}
+              {isStunned && (
+                <>
+                  <Circle
+                    cx={0}
+                    cy={0}
+                    r={26 + Math.sin(time * 8) * 3}
+                    color="#00d4ff"
+                    style="stroke"
+                    strokeWidth={2}
+                    opacity={0.7 + Math.sin(time * 6) * 0.2}
+                  />
+                  <Circle
+                    cx={0}
+                    cy={0}
+                    r={30 + Math.sin(time * 8) * 3}
+                    color="#00d4ff"
+                    opacity={0.15}
+                  />
+                </>
+              )}
+
               {/* Enemy ship */}
               <Path
                 path={getEnemyPath(e.type)}
@@ -379,6 +402,28 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
         {/* Boss */}
         {boss && (
           <Group transform={[{ translateX: boss.pos.x }, { translateY: boss.pos.y }]}>
+            {/* Stun effect - shown when boss is stunned */}
+            {(boss.stunDuration ?? 0) > 0 && (
+              <>
+                <Circle
+                  cx={0}
+                  cy={0}
+                  r={80 + Math.sin(time * 8) * 4}
+                  color="#00d4ff"
+                  style="stroke"
+                  strokeWidth={3}
+                  opacity={0.7 + Math.sin(time * 6) * 0.2}
+                />
+                <Circle
+                  cx={0}
+                  cy={0}
+                  r={90 + Math.sin(time * 8) * 4}
+                  color="#00d4ff"
+                  opacity={0.15}
+                />
+              </>
+            )}
+
             {/* Boss glow based on phase */}
             <Circle
               cx={0}

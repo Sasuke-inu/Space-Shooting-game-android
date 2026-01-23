@@ -206,7 +206,20 @@ export const useGameEngine = () => {
 
     // Update boss
     if (state.boss) {
-      updateBossBehavior(state.boss, state, effectiveDt, themeColors)
+      // Handle stun duration
+      if (state.boss.stunDuration && state.boss.stunDuration > 0) {
+        const newStunDuration = state.boss.stunDuration - effectiveDt
+        // Stunned boss doesn't move or shoot
+        if (newStunDuration > 0) {
+          state.updateBoss({ stunDuration: newStunDuration })
+        } else {
+          // Stun expired, clear it and continue normal behavior
+          state.updateBoss({ stunDuration: undefined })
+          updateBossBehavior(state.boss, state, effectiveDt, themeColors)
+        }
+      } else {
+        updateBossBehavior(state.boss, state, effectiveDt, themeColors)
+      }
     }
 
     // Handle boss warning - spawn boss after warning time has elapsed

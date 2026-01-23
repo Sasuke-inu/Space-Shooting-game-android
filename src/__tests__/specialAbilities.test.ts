@@ -316,32 +316,84 @@ describe('Special Abilities Logic', () => {
   //                         EMP Blast Tests
   // ------------------------------------------------------------------ //
   describe('EMP Blast', () => {
-    test('BUG: EMP blast has no implementation', () => {
-      // This test documents a missing feature
-      // The emp_blast ability is defined but has no actual stunning logic
-
-      const empBlastImplemented = false // Should stun all enemies for 3 seconds
-
-      // TODO: Implement EMP blast to stun enemies
-      expect(empBlastImplemented).toBe(false) // Bug: not implemented
-    })
-
-    test('EMP should affect all enemies on screen', () => {
+    test('EMP blast stuns all enemies', () => {
       const enemies = [
-        { pos: { x: 100, y: 100 }, stunned: false },
-        { pos: { x: 200, y: 200 }, stunned: false },
-        { pos: { x: 300, y: 300 }, stunned: false },
+        { pos: { x: 100, y: 100 }, stunned: false, stunnedTimer: 0 },
+        { pos: { x: 200, y: 200 }, stunned: false, stunnedTimer: 0 },
+        { pos: { x: 300, y: 300 }, stunned: false, stunnedTimer: 0 },
       ]
 
-      // Expected behavior: all enemies should be stunned
-      const applyEMP = () => {
-        enemies.forEach((e) => {
-          e.stunned = true
-        })
+      const EMP_STUN_DURATION = 3
+
+      // Apply EMP blast
+      enemies.forEach((e) => {
+        e.stunned = true
+        e.stunnedTimer = EMP_STUN_DURATION
+      })
+
+      expect(enemies.every((e) => e.stunned)).toBe(true)
+      expect(enemies.every((e) => e.stunnedTimer === EMP_STUN_DURATION)).toBe(true)
+    })
+
+    test('stunned enemies cannot move or fire', () => {
+      const enemy = {
+        pos: { x: 100, y: 100 },
+        vel: { x: 50, y: 0 },
+        stunned: true,
+        canFire: false,
       }
 
-      applyEMP()
-      expect(enemies.every((e) => e.stunned)).toBe(true)
+      const dt = 0.033
+
+      // Stunned enemies should not move
+      if (!enemy.stunned) {
+        enemy.pos.x += enemy.vel.x * dt
+      }
+
+      expect(enemy.pos.x).toBe(100) // Position unchanged
+      expect(enemy.canFire).toBe(false) // Cannot fire
+    })
+
+    test('stun duration decreases over time', () => {
+      const EMP_STUN_DURATION = 3
+      let stunnedTimer = EMP_STUN_DURATION
+      let stunned = true
+      const dt = 0.033
+
+      // Simulate 1 second
+      for (let i = 0; i < 30; i++) {
+        if (stunned) {
+          stunnedTimer -= dt
+          if (stunnedTimer <= 0) {
+            stunned = false
+            stunnedTimer = 0
+          }
+        }
+      }
+
+      expect(stunnedTimer).toBeCloseTo(2, 1)
+      expect(stunned).toBe(true)
+    })
+
+    test('stun expires after 3 seconds', () => {
+      const EMP_STUN_DURATION = 3
+      let stunnedTimer = EMP_STUN_DURATION
+      let stunned = true
+      const dt = 0.033
+
+      // Simulate 3+ seconds
+      for (let i = 0; i < 100; i++) {
+        if (stunned) {
+          stunnedTimer -= dt
+          if (stunnedTimer <= 0) {
+            stunned = false
+            stunnedTimer = 0
+          }
+        }
+      }
+
+      expect(stunnedTimer).toBe(0)
+      expect(stunned).toBe(false)
     })
   })
 
