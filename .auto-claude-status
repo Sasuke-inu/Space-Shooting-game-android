@@ -3,7 +3,7 @@
   "spec": "009-statistics-and-progress-tracking-screen",
   "state": "building",
   "subtasks": {
-    "completed": 7,
+    "completed": 10,
     "total": 12,
     "in_progress": 1,
     "failed": 0
@@ -18,8 +18,8 @@
     "max": 1
   },
   "session": {
-    "number": 1,
+    "number": 4,
     "started_at": "2026-01-23T12:06:15.790783"
   },
-  "last_update": "2026-01-23T12:06:15.864169"
+  "last_update": "2026-01-23T12:15:21.641318"
 }
