@@ -268,6 +268,7 @@ export const useGameEngine = () => {
         if (!bulletsToRemove.has(bIdx) && !asteroidsToRemove.has(aIdx)) {
           if (dist2(b.pos, a.pos) < (a.radius + 2) * (a.radius + 2)) {
             boom(b.pos, themeColors.particleHit, 12, 180)
+            playSfx('explosion_small')
             state.splitAsteroid(a)
             asteroidsToRemove.add(aIdx)
             bulletsToRemove.add(bIdx)
@@ -302,6 +303,7 @@ export const useGameEngine = () => {
                 dropPowerUp: Math.random() < POWERUP_DROP_ENEMY,
               })
               boom(e.pos, themeColors.particleExplosion, 28, 200)
+              playSfx('explosion_large')
               state.incrementCombo()
               state.recordKill()
               state.addScore(ENEMY_STATS[e.type].points)
@@ -337,6 +339,7 @@ export const useGameEngine = () => {
           const updatedState = useGameStore.getState()
           if (updatedState.boss && updatedState.boss.hp <= 0) {
             boom(bossPos, themeColors.particleExplosion, 60, 300)
+            playSfx('explosion_large')
             state.defeatBoss()
             state.triggerShake(20, 500)
             hapticHeavy()
