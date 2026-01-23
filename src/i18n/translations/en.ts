@@ -313,4 +313,43 @@ export const en: Translations = {
     noScores: 'No scores yet. Play a game to set your first record!',
     close: 'Close',
   },
+  challenges: {
+    title: 'Daily Challenges',
+    daily: 'Daily',
+    progress: 'Progress',
+    reward: 'Reward',
+    complete: 'Complete',
+    completed: 'Completed',
+    refresh: 'Refresh',
+    refreshIn: 'Refreshes in',
+    noActiveChallenges: 'No active challenges',
+    killCount: {
+      name: 'Enemy Hunter',
+      description: 'Destroy enemies in battle',
+    },
+    combo: {
+      name: 'Combo Master',
+      description: 'Achieve a combo streak',
+    },
+    survival: {
+      name: 'Survivor',
+      description: 'Survive multiple waves',
+    },
+    boss: {
+      name: 'Boss Slayer',
+      description: 'Defeat powerful bosses',
+    },
+    accuracy: {
+      name: 'Sharpshooter',
+      description: 'Maintain high accuracy',
+    },
+    powerUp: {
+      name: 'Power Collector',
+      description: 'Collect power-ups',
+    },
+    noDamage: {
+      name: 'Untouchable',
+      description: 'Complete waves without taking damage',
+    },
+  },
 };

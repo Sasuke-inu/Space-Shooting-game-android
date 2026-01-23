@@ -180,6 +180,20 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
     colors.background
   )
 
+  // Challenges
+  const challenges = useChallengesStore((s) => s.challenges)
+  const activeChallengesCount = challenges.filter((c) => !c.completed).length
+  const recentChallengeCompletion = useChallengesStore((s) => s.recentCompletion)
+  const clearRecentChallengeCompletion = useChallengesStore((s) => s.clearRecentCompletion)
+  const checkAndRefreshChallenges = useChallengesStore((s) => s.checkAndRefreshChallenges)
+  const recordKillChallenge = useChallengesStore((s) => s.recordKill)
+  const recordComboChallenge = useChallengesStore((s) => s.recordCombo)
+  const recordBossDefeatChallenge = useChallengesStore((s) => s.recordBossDefeat)
+  const recordPowerUpCollectedChallenge = useChallengesStore((s) => s.recordPowerUpCollected)
+  const recordWaveChallenge = useChallengesStore((s) => s.recordWave)
+  const recordAccuracyChallenge = useChallengesStore((s) => s.recordAccuracy)
+  const recordNoDamageWaveChallenge = useChallengesStore((s) => s.recordNoDamageWave)
+
   // Handle special ability effects
   useEffect(() => {
     if (specialAbility?.isActive) {
@@ -530,6 +544,35 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
           </View>
         </View>
       )}
+
+      {/* Challenge completion notification */}
+      {recentChallengeCompletion && (() => {
+        const completedChallenge = challenges.find((c) => c.id === recentChallengeCompletion)
+        return completedChallenge ? (
+          <View style={{
+            position: 'absolute',
+            top: insets.top + 140,
+            left: 20,
+            right: 20,
+            backgroundColor: colors.panelBg,
+            borderWidth: 2,
+            borderColor: colors.buttonPrimary,
+            borderRadius: 12,
+            padding: 12,
+            zIndex: 100,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 12,
+          }}>
+            <Text style={{ fontSize: 32 }}>{completedChallenge.icon}</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={{ color: colors.buttonPrimary, fontSize: 12, fontWeight: 'bold' }}>CHALLENGE COMPLETE</Text>
+              <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: 'bold' }}>{completedChallenge.name}</Text>
+              <Text style={{ color: colors.comboText, fontSize: 12, marginTop: 2 }}>+{completedChallenge.reward} Credits</Text>
+            </View>
+          </View>
+        ) : null
+      })()}
 
       {/* Top bar */}
       <TopBar

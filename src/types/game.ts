@@ -531,3 +531,42 @@ export interface HomingMissile {
   life: number
   targetId: number | null  // Index of target enemy
 }
+
+// ------------------------------------------------------------------ //
+//                         Daily Challenge Types
+// ------------------------------------------------------------------ //
+
+export type ChallengeType = 'kill_count' | 'combo' | 'survival' | 'boss' | 'accuracy' | 'power_up' | 'no_damage'
+
+export interface Challenge {
+  id: string
+  type: ChallengeType
+  name: string
+  description: string
+  target: number           // Target value to complete (e.g., 50 enemies, 3x combo)
+  progress: number         // Current progress
+  completed: boolean
+  reward: number           // Credits awarded on completion
+  icon: string
+}
+
+export const CHALLENGE_CONFIGS: Record<ChallengeType, {
+  minTarget: number
+  maxTarget: number
+  baseReward: number
+  rewardMultiplier: number
+}> = {
+  kill_count: { minTarget: 30, maxTarget: 100, baseReward: 100, rewardMultiplier: 2 },
+  combo: { minTarget: 3, maxTarget: 15, baseReward: 150, rewardMultiplier: 10 },
+  survival: { minTarget: 5, maxTarget: 15, baseReward: 200, rewardMultiplier: 15 },
+  boss: { minTarget: 1, maxTarget: 3, baseReward: 300, rewardMultiplier: 100 },
+  accuracy: { minTarget: 60, maxTarget: 90, baseReward: 250, rewardMultiplier: 3 },
+  power_up: { minTarget: 10, maxTarget: 30, baseReward: 100, rewardMultiplier: 5 },
+  no_damage: { minTarget: 3, maxTarget: 10, baseReward: 200, rewardMultiplier: 20 },
+}
+
+export interface DailyChallengeState {
+  challenges: Challenge[]
+  lastRefresh: number      // Timestamp of last midnight refresh
+  completedToday: number   // Count of challenges completed today
+}

@@ -23,6 +23,7 @@ import {
   BOSS_WAVE_INTERVAL,
   getEnemySpawnWeights,
 } from "../state/gameStore"
+import { useChallengesStore } from "../state/challengesStore"
 import {
   add,
   mul,
@@ -737,6 +738,7 @@ export const useGameEngine = () => {
             boom(bossPos, themeColors.particleExplosion, 60, 300)
             playSfx('explosion_boss')
             state.defeatBoss()
+            useChallengesStore.getState().recordBossDefeat(1)
             state.triggerShake(20, 500)
             hapticHeavy()
           }
@@ -2068,6 +2070,7 @@ function updateHomingMissiles(
         const missileScoreWithMultiplier = state.hasPowerUp('score_multiplier') ? missileEnemyPoints * 2 : missileEnemyPoints
         state.addScore(missileScoreWithMultiplier)
         state.recordKill()
+        useChallengesStore.getState().recordKill(1)
         return { ...enemy, hp: newHp }
       }
       return { ...enemy, hp: newHp }
