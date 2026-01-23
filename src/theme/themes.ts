@@ -457,16 +457,226 @@ export const arcticTheme: GameTheme = {
 }
 
 // ------------------------------------------------------------------ //
+//                         7. Halloween
+// ------------------------------------------------------------------ //
+export const halloweenTheme: GameTheme = {
+  id: 'halloween',
+  name: 'Halloween',
+  description: 'Spooky orange and purple',
+  icon: '🎃',
+
+  colors: {
+    // Canvas
+    background: '#0f0a14',
+    backgroundRgba: 'rgba(15, 10, 20, 1)',
+    stars: 'rgba(138, 43, 226, 0.3)',
+
+    // Player
+    playerShip: '#ff8c00',
+    playerShipFill: 'rgba(255, 140, 0, 0.15)',
+    playerBullet: '#ffa500',
+    thrusterFlame: '#ff6347',
+
+    // Enemies
+    enemyShip: '#9370db',
+    enemyShipFill: 'rgba(147, 112, 219, 0.15)',
+    enemyBullet: '#8a2be2',
+
+    // Objects
+    asteroid: '#4b3a5a',
+    particle: '#ff8c00',
+    particleHit: '#ffa500',
+    particleExplosion: '#9370db',
+    particleDamage: '#dc143c',
+    particleCollision: '#ff4500',
+
+    // HUD
+    hudText: '#ff8c00',
+    hudAccent: '#ffa500',
+    hullBar: '#ff8c00',
+    hullBarBg: '#4b3a5a',
+
+    // UI
+    panelBg: '#14101a',
+    panelBorder: '#4b2d6e',
+    buttonPrimary: '#ff8c00',
+    buttonSecondary: '#1f1a28',
+    buttonText: '#0f0a14',
+    modalOverlay: 'rgba(0, 0, 0, 0.85)',
+    textPrimary: '#ff8c00',
+    textSecondary: '#ffa500',
+    textMuted: '#d4a574',
+
+    // Controls
+    joystickPad: 'rgba(31, 26, 40, 0.6)',
+    joystickStick: '#ff8c00',
+    joystickBorder: '#4b2d6e',
+    joystickGlow: 'rgba(255, 140, 0, 0.55)',
+
+    // Power-ups
+    powerUpShield: '#4169e1',
+    powerUpRapidFire: '#ff4500',
+    powerUpSpreadShot: '#ffd700',
+    powerUpMagnet: '#9370db',
+
+    // Combo
+    comboText: '#ffd700',
+    comboGlow: 'rgba(255, 215, 0, 0.6)',
+  },
+}
+
+// ------------------------------------------------------------------ //
+//                         8. Synthwave
+// ------------------------------------------------------------------ //
+export const synthwaveTheme: GameTheme = {
+  id: 'synthwave',
+  name: 'Synthwave',
+  description: 'Retro 80s neon dreams',
+  icon: '🌆',
+
+  colors: {
+    // Canvas
+    background: '#0a0a1a',
+    backgroundRgba: 'rgba(10, 10, 26, 1)',
+    stars: 'rgba(168, 85, 247, 0.4)',
+
+    // Player
+    playerShip: '#00f0ff',
+    playerShipFill: 'rgba(0, 240, 255, 0.15)',
+    playerBullet: '#00ffff',
+    thrusterFlame: '#ff006e',
+
+    // Enemies
+    enemyShip: '#ff006e',
+    enemyShipFill: 'rgba(255, 0, 110, 0.15)',
+    enemyBullet: '#ff1493',
+
+    // Objects
+    asteroid: '#a855f7',
+    particle: '#00f0ff',
+    particleHit: '#d946ef',
+    particleExplosion: '#ff006e',
+    particleDamage: '#ff69b4',
+    particleCollision: '#00ffff',
+
+    // HUD
+    hudText: '#00f0ff',
+    hudAccent: '#ff006e',
+    hullBar: '#00f0ff',
+    hullBarBg: '#a855f7',
+
+    // UI
+    panelBg: '#100a1f',
+    panelBorder: '#5a2d7e',
+    buttonPrimary: '#ff006e',
+    buttonSecondary: '#1a0f2e',
+    buttonText: '#ffffff',
+    modalOverlay: 'rgba(0, 0, 0, 0.85)',
+    textPrimary: '#ff006e',
+    textSecondary: '#00f0ff',
+    textMuted: '#c084fc',
+
+    // Controls
+    joystickPad: 'rgba(26, 15, 46, 0.6)',
+    joystickStick: '#ff006e',
+    joystickBorder: '#5a2d7e',
+    joystickGlow: 'rgba(255, 0, 110, 0.6)',
+
+    // Power-ups
+    powerUpShield: '#00f0ff',
+    powerUpRapidFire: '#ff006e',
+    powerUpSpreadShot: '#ffd700',
+    powerUpMagnet: '#a855f7',
+
+    // Combo
+    comboText: '#ffd700',
+    comboGlow: 'rgba(255, 215, 0, 0.6)',
+  },
+}
+
+// ------------------------------------------------------------------ //
+//                         9. Winter
+// ------------------------------------------------------------------ //
+export const winterTheme: GameTheme = {
+  id: 'winter',
+  name: 'Winter',
+  description: 'Icy crystalline frost',
+  icon: '❄️',
+
+  colors: {
+    // Canvas
+    background: '#0d0f1a',
+    backgroundRgba: 'rgba(13, 15, 26, 1)',
+    stars: 'rgba(200, 220, 240, 0.4)',
+
+    // Player
+    playerShip: '#c0d8e8',
+    playerShipFill: 'rgba(192, 216, 232, 0.15)',
+    playerBullet: '#f0f8ff',
+    thrusterFlame: '#a8d8ea',
+
+    // Enemies
+    enemyShip: '#5b8fb9',
+    enemyShipFill: 'rgba(91, 143, 185, 0.15)',
+    enemyBullet: '#6495ed',
+
+    // Objects
+    asteroid: '#8ba9c0',
+    particle: '#d0e5f0',
+    particleHit: '#b8d4e6',
+    particleExplosion: '#7fb3d5',
+    particleDamage: '#ff8fa3',
+    particleCollision: '#f0f8ff',
+
+    // HUD
+    hudText: '#c0d8e8',
+    hudAccent: '#a8d8ea',
+    hullBar: '#a8d8ea',
+    hullBarBg: '#5b8fb9',
+
+    // UI
+    panelBg: '#12151f',
+    panelBorder: '#3d5a73',
+    buttonPrimary: '#a8d8ea',
+    buttonSecondary: '#1a2030',
+    buttonText: '#0d0f1a',
+    modalOverlay: 'rgba(0, 0, 0, 0.85)',
+    textPrimary: '#a8d8ea',
+    textSecondary: '#c0d8e8',
+    textMuted: '#8ba9c0',
+
+    // Controls
+    joystickPad: 'rgba(26, 32, 48, 0.6)',
+    joystickStick: '#a8d8ea',
+    joystickBorder: '#3d5a73',
+    joystickGlow: 'rgba(168, 216, 234, 0.55)',
+
+    // Power-ups
+    powerUpShield: '#5dade2',
+    powerUpRapidFire: '#ff6b9d',
+    powerUpSpreadShot: '#f8f8ff',
+    powerUpMagnet: '#c39bd3',
+
+    // Combo
+    comboText: '#f0f8ff',
+    comboGlow: 'rgba(240, 248, 255, 0.7)',
+  },
+}
+
+// ------------------------------------------------------------------ //
 //                         Theme Registry
 // ------------------------------------------------------------------ //
 
-export const themes: Record<ThemeId, GameTheme> = {
+export const themes: Partial<Record<ThemeId, GameTheme>> = {
   'neon-void': neonVoidTheme,
   'nomad': nomadTheme,
   'sakura': sakuraTheme,
   'forest-matrix': forestMatrixTheme,
   'inferno': infernoTheme,
   'arctic': arcticTheme,
+  'halloween': halloweenTheme,
+  'synthwave': synthwaveTheme,
+  'winter': winterTheme,
 }
 
 export const themeList: GameTheme[] = Object.values(themes)

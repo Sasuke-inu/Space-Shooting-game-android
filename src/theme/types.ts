@@ -82,3 +82,6 @@ export type ThemeId =
   | 'forest-matrix'
   | 'inferno'
   | 'arctic'
+  | 'halloween'
+  | 'synthwave'
+  | 'winter'
