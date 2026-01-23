@@ -692,7 +692,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
       }
     }),
 
-  setBossWarning: (active) => set({ bossWarning: active }),
+  setBossWarning: (active) =>
+    set((state) => ({
+      bossWarning: state.gameMode !== 'endless' && active,
+    })),
 
   // ------------------------------------------------------------------ //
   //                         Ship Selection
