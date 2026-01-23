@@ -726,14 +726,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
   //                         Screen Shake Actions
   // ------------------------------------------------------------------ //
 
-  triggerShake: (intensity, duration) =>
+  triggerShake: (intensity, duration) => {
+    const { screenShakeEnabled } = useSettingsStore.getState()
+    if (!screenShakeEnabled) return
+
     set({
       screenShake: {
         intensity,
         duration,
         elapsed: 0,
       },
-    }),
+    })
+  },
 
   updateShake: (dt) =>
     set((state) => {

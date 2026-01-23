@@ -60,6 +60,11 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   const setMusicVolume = useSettingsStore((s) => s.setMusicVolume)
   const sfxVolume = useSettingsStore((s) => s.sfxVolume)
   const setSfxVolume = useSettingsStore((s) => s.setSfxVolume)
+  const screenShakeEnabled = useSettingsStore((s) => s.screenShakeEnabled)
+  const setScreenShakeEnabled = useSettingsStore((s) => s.setScreenShakeEnabled)
+  const difficulty = useSettingsStore((s) => s.difficulty)
+  const setDifficulty = useSettingsStore((s) => s.setDifficulty)
+  const resetSettings = useSettingsStore((s) => s.resetSettings)
 
   // Game state - primitives (use default equality)
   const paused = useGameStore((s) => s.paused)
