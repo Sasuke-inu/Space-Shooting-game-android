@@ -45,6 +45,8 @@ class AudioManager {
   private sounds: SoundPool = {}
   private initialized = false
   private poolSize = 3 // Number of instances per sound effect
+  private musicSound: Audio.Sound | null = null
+  private musicLoaded = false
 
   async init() {
     if (this.initialized) return
@@ -130,7 +132,91 @@ class AudioManager {
     }
   }
 
+  // Load and start playing background music
+  async loadMusic(musicAsset: any) {
+    try {
+      await this.init()
+
+      // Unload existing music if any
+      if (this.musicSound) {
+        await this.stopMusic()
+      }
+
+      const musicVolume = useSettingsStore.getState().musicVolume
+
+      const { sound } = await Audio.Sound.createAsync(musicAsset, {
+        isLooping: true,
+        volume: musicVolume,
+      })
+
+      this.musicSound = sound
+      this.musicLoaded = true
+
+      await sound.playAsync()
+    } catch (error) {
+      console.warn('Failed to load music:', error)
+    }
+  }
+
+  // Play or resume music
+  async playMusic() {
+    if (!this.musicSound || !this.musicLoaded) return
+
+    try {
+      const status = await this.musicSound.getStatusAsync()
+      if (status.isLoaded && !status.isPlaying) {
+        await this.musicSound.playAsync()
+      }
+    } catch (error) {
+      console.warn('Failed to play music:', error)
+    }
+  }
+
+  // Pause music
+  async pauseMusic() {
+    if (!this.musicSound || !this.musicLoaded) return
+
+    try {
+      const status = await this.musicSound.getStatusAsync()
+      if (status.isLoaded && status.isPlaying) {
+        await this.musicSound.pauseAsync()
+      }
+    } catch (error) {
+      console.warn('Failed to pause music:', error)
+    }
+  }
+
+  // Stop and unload music
+  async stopMusic() {
+    if (!this.musicSound) return
+
+    try {
+      await this.musicSound.stopAsync()
+      await this.musicSound.unloadAsync()
+    } catch (error) {
+      // Ignore cleanup errors
+    } finally {
+      this.musicSound = null
+      this.musicLoaded = false
+    }
+  }
+
+  // Update music volume
+  async setMusicVolume(volume: number) {
+    if (!this.musicSound || !this.musicLoaded) return
+
+    try {
+      await this.musicSound.setVolumeAsync(volume)
+    } catch (error) {
+      console.warn('Failed to set music volume:', error)
+    }
+  }
+
   async cleanup() {
+    // Cleanup music
+    await this.stopMusic()
+
+    // Cleanup sound effects
     for (const poolEntry of Object.values(this.sounds)) {
       for (const sound of poolEntry.instances) {
         try {
