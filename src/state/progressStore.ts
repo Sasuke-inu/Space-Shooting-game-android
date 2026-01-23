@@ -50,6 +50,10 @@ export const useAchievementStore = create<AchievementState>()(
       unlockAchievement: (id) =>
         set((state) => {
           if (state.achievements[id].unlocked) return state
+
+          // Play celebration sound for new achievement
+          playSfx('achievement_unlock')
+
           return {
             achievements: {
               ...state.achievements,
@@ -72,6 +76,9 @@ export const useAchievementStore = create<AchievementState>()(
           const newProgress = Math.min(progress, target)
 
           if (newProgress >= target) {
+            // Play celebration sound for new achievement
+            playSfx('achievement_unlock')
+
             return {
               achievements: {
                 ...state.achievements,
