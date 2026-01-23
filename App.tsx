@@ -15,6 +15,10 @@ export default function App() {
     setCurrentScreen("game");
   };
 
+  const handleBackToMenu = () => {
+    setCurrentScreen("menu");
+  };
+
   const handleShowSettings = () => {
     // TODO: Navigate to settings screen
   };
@@ -33,7 +37,7 @@ export default function App() {
             onShowHighScores={handleShowHighScores}
           />
         ) : (
-          <GameScreen />
+          <GameScreen onBackToMenu={handleBackToMenu} />
         )}
         <StatusBar style="light" />
       </SafeAreaProvider>

@@ -17,7 +17,11 @@ import { useGameEngine } from "../utils/gameEngine"
 import { len, angleOf, nor, mul, v } from "../utils/vectorMath"
 import type { Vec2 } from "../types/game"
 
-export default function GameScreen() {
+interface GameScreenProps {
+  onBackToMenu?: () => void;
+}
+
+export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   const { width, height } = useWindowDimensions()
   const insets = useSafeAreaInsets()
   const { updateGame, fireOnce } = useGameEngine()
@@ -332,6 +336,14 @@ export default function GameScreen() {
     store.spawnAsteroids(5)
     store.spawnEnemy()
     store.setPaused(false)
+  }
+
+  const handleBackToMenu = () => {
+    if (onBackToMenu) {
+      const store = useGameStore.getState()
+      store.setPaused(false)  // Unpause to avoid confusion on next game
+      onBackToMenu()
+    }
   }
 
   const handleStartGame = () => {
@@ -1001,17 +1013,34 @@ export default function GameScreen() {
                     </View>
                   )}
 
+                  {/* Play Again Button */}
                   <Pressable
                     style={{
                       backgroundColor: colors.buttonPrimary,
                       borderRadius: 12,
                       paddingVertical: 14,
                       paddingHorizontal: 16,
+                      marginBottom: 12,
                     }}
                     onPress={handleRestart}
                   >
                     <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
                       PLAY AGAIN
+                    </Text>
+                  </Pressable>
+
+                  {/* Back to Menu Button */}
+                  <Pressable
+                    style={{
+                      backgroundColor: colors.buttonSecondary,
+                      borderRadius: 12,
+                      paddingVertical: 14,
+                      paddingHorizontal: 16,
+                    }}
+                    onPress={handleBackToMenu}
+                  >
+                    <Text style={{ color: colors.textPrimary, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
+                      BACK TO MENU
                     </Text>
                   </Pressable>
                 </>
@@ -1038,11 +1067,27 @@ export default function GameScreen() {
                       borderRadius: 12,
                       paddingVertical: 14,
                       paddingHorizontal: 16,
+                      marginBottom: 12,
                     }}
                     onPress={() => useGameStore.getState().setPaused(false)}
                   >
                     <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
                       CONTINUE
+                    </Text>
+                  </Pressable>
+
+                  {/* Exit to Menu Button */}
+                  <Pressable
+                    style={{
+                      backgroundColor: colors.buttonSecondary,
+                      borderRadius: 12,
+                      paddingVertical: 14,
+                      paddingHorizontal: 16,
+                    }}
+                    onPress={handleBackToMenu}
+                  >
+                    <Text style={{ color: colors.textPrimary, textAlign: 'center', fontSize: 14 }}>
+                      EXIT TO MENU
                     </Text>
                   </Pressable>
                 </>
