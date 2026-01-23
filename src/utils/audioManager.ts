@@ -15,24 +15,19 @@ export type SoundEffect =
   | 'player_damage'
   | 'combo_milestone'
   | 'boss_warning'
+  | 'shoot_enemy'
+  | 'button_click'
+  | 'screen_transition'
+  | 'toggle_on'
+  | 'toggle_off'
+  | 'achievement_unlock'
 
 // Sound pool for reusable sounds
 interface SoundPool {
-  [key: string]: SoundPoolEntry
+  [key: string]: Audio.Sound | null
 }
 
-// Map sound effects to their asset files
-const SOUND_ASSETS: Record<SoundEffect, any> = {
-  shoot_player: require('../../assets/sounds/shoot_player.mp3'),
-  shoot_enemy: require('../../assets/sounds/shoot_enemy.mp3'),
-  explosion_small: require('../../assets/sounds/explosion_small.mp3'),
-  explosion_large: require('../../assets/sounds/explosion_large.mp3'),
-  powerup_pickup: require('../../assets/sounds/powerup_pickup.mp3'),
-  hit_damage: null, // Not used in current implementation
-  low_health: null, // Not used in current implementation
-  combo: require('../../assets/sounds/combo.mp3'),
-  boss_warning: require('../../assets/sounds/boss_warning.mp3'),
-}
+
 
 // Track concurrent playback per sound
 interface PlaybackTracker {
@@ -41,6 +36,7 @@ interface PlaybackTracker {
 
 // Map sound effect types to asset files
 const SOUND_FILES: Record<SoundEffect, any> = {
+  shoot_enemy: require('../../assets/sounds/shoot_enemy.mp3'),
   shoot_player: require('../../assets/sounds/shoot_player.mp3'),
   explosion_small: require('../../assets/sounds/explosion_small.mp3'),
   explosion_large: require('../../assets/sounds/explosion_large.mp3'),
@@ -49,6 +45,11 @@ const SOUND_FILES: Record<SoundEffect, any> = {
   player_damage: require('../../assets/sounds/player_damage.mp3'),
   combo_milestone: require('../../assets/sounds/combo_milestone.mp3'),
   boss_warning: require('../../assets/sounds/boss_warning.mp3'),
+  button_click: require('../../assets/sounds/button_click.mp3'),
+  screen_transition: require('../../assets/sounds/screen_transition.mp3'),
+  toggle_on: require('../../assets/sounds/toggle_on.mp3'),
+  toggle_off: require('../../assets/sounds/toggle_off.mp3'),
+  achievement_unlock: require('../../assets/sounds/achievement_unlock.mp3'),
 }
 
 // Maximum concurrent instances of same sound (prevents audio overflow)
@@ -73,7 +74,8 @@ export class AudioManager {
       await this.preloadSounds()
       this.setupVolumeCache()
       this.initialized = true
-      await this.loadSounds()
+      // Sound loading is handled by preloadSounds called above
+
     } catch (error) {
       console.warn('AudioManager init failed:', error)
     }

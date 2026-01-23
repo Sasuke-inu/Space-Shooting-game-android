@@ -24,6 +24,8 @@ import type {
 import { ENEMY_STATS, BOSS_STATS, SHIP_STATS, ABILITY_STATS } from "../types/game"
 import { v, add, fromAngle, rand } from "../utils/vectorMath"
 import { playSfx } from "../utils/audioManager"
+import { useChallengesStore } from "./challengesStore"
+import { useSettingsStore } from "../theme/themeStore"
 
 // ------------------------------------------------------------------ //
 //                Gameplay tuning (feel free to tweak)
@@ -141,7 +143,7 @@ interface GameStore extends GameState {
   // Actions
   setGameMode: (mode: GameMode) => void
   setPaused: (paused: boolean) => void
-  setGameMode: (mode: GameMode) => void
+
   setDimensions: (w: number, h: number) => void
   updateTime: (dt: number) => void
   addScore: (points: number) => void
@@ -1062,9 +1064,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
       // Bosses get reduced stun duration (1.5 seconds)
       boss: state.boss
         ? {
-            ...state.boss,
-            stunDuration: Math.max(state.boss.stunDuration || 0, 1.5),
-          }
+          ...state.boss,
+          stunDuration: Math.max(state.boss.stunDuration || 0, 1.5),
+        }
         : null,
     })),
 

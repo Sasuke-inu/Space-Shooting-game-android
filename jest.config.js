@@ -16,8 +16,12 @@ module.exports = {
       },
     }],
   },
+  transformIgnorePatterns: [
+    'node_modules/(?!(jest-)?react-native|@react-native|expo(?!-server-sdk)|@expo(?!-server-sdk)|@unimodules|unimodules|sentry-expo|native-base|react-native-svg|expo-secure-store|@shopify/react-native-skia|victory-native)',
+  ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    'expo-secure-store': '<rootDir>/__mocks__/expo-secure-store.js',
     '\\.(mp3|wav|png|jpg|jpeg|svg)$': '<rootDir>/__mocks__/fileMock.js',
   },
   collectCoverageFrom: [

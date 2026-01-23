@@ -5,7 +5,7 @@
 /** 2D vector type */
 export type Vec2 = { x: number; y: number }
 
-export type GameMode = 'campaign' | 'endless'
+
 
 export interface Bullet {
   pos: Vec2
@@ -35,10 +35,10 @@ export interface Asteroid {
 //                         Game Mode Types
 // ------------------------------------------------------------------ //
 
-export type GameMode = 'classic' | 'endless'
+export type GameMode = 'campaign' | 'endless'
 
 export const GAME_MODE_CONFIG: Record<GameMode, { name: string; description: string; hasLives: boolean }> = {
-  classic: { name: 'Classic', description: 'Wave-based gameplay with lives', hasLives: true },
+  campaign: { name: 'Campaign', description: 'Wave-based gameplay with lives', hasLives: true },
   endless: { name: 'Endless Survival', description: 'Survive as long as possible', hasLives: false },
 }
 
@@ -92,6 +92,9 @@ export interface Boss {
   aiTimer: number
   isActive: boolean
   stunDuration?: number  // EMP stun duration remaining
+  chargingSpecial?: boolean
+  specialChargeTime?: number
+  spawnedEnemiesCount?: number
 }
 
 export const BOSS_STATS: Record<BossType, { hp: number; phases: number; points: number }> = {

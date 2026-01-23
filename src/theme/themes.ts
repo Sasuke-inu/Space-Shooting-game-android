@@ -505,6 +505,9 @@ export const halloweenTheme: GameTheme = {
     enemyShip: '#9370db',
     enemyShipFill: 'rgba(147, 112, 219, 0.15)',
     enemyBullet: '#8a2be2',
+    enemyTank: '#d2691e',
+    enemySniper: '#800080',
+    enemyBomber: '#ff4500',
 
     // Objects
     asteroid: '#4b3a5a',
@@ -542,10 +545,16 @@ export const halloweenTheme: GameTheme = {
     powerUpRapidFire: '#ff4500',
     powerUpSpreadShot: '#ffd700',
     powerUpMagnet: '#9370db',
+    powerUpScoreMultiplier: '#ffd700',
 
     // Combo
     comboText: '#ffd700',
     comboGlow: 'rgba(255, 215, 0, 0.6)',
+
+    // Parallax
+    parallaxDistantStars: 'rgba(138, 43, 226, 0.15)',
+    parallaxNebula: 'rgba(255, 69, 0, 0.1)',
+    parallaxDebris: 'rgba(147, 112, 219, 0.2)',
   },
 }
 
@@ -574,6 +583,9 @@ export const synthwaveTheme: GameTheme = {
     enemyShip: '#ff006e',
     enemyShipFill: 'rgba(255, 0, 110, 0.15)',
     enemyBullet: '#ff1493',
+    enemyTank: '#ff006e',
+    enemySniper: '#bd00ff',
+    enemyBomber: '#ff9e00',
 
     // Objects
     asteroid: '#a855f7',
@@ -611,10 +623,16 @@ export const synthwaveTheme: GameTheme = {
     powerUpRapidFire: '#ff006e',
     powerUpSpreadShot: '#ffd700',
     powerUpMagnet: '#a855f7',
+    powerUpScoreMultiplier: '#00ff00',
 
     // Combo
     comboText: '#ffd700',
     comboGlow: 'rgba(255, 215, 0, 0.6)',
+
+    // Parallax
+    parallaxDistantStars: 'rgba(168, 85, 247, 0.2)',
+    parallaxNebula: 'rgba(0, 240, 255, 0.1)',
+    parallaxDebris: 'rgba(255, 0, 110, 0.2)',
   },
 }
 
@@ -643,6 +661,9 @@ export const winterTheme: GameTheme = {
     enemyShip: '#5b8fb9',
     enemyShipFill: 'rgba(91, 143, 185, 0.15)',
     enemyBullet: '#6495ed',
+    enemyTank: '#708090',
+    enemySniper: '#9370db',
+    enemyBomber: '#ffb6c1',
 
     // Objects
     asteroid: '#8ba9c0',
@@ -680,10 +701,18 @@ export const winterTheme: GameTheme = {
     powerUpRapidFire: '#ff6b9d',
     powerUpSpreadShot: '#f8f8ff',
     powerUpMagnet: '#c39bd3',
+    powerUpScoreMultiplier: '#e0ffff',
 
     // Combo
     comboText: '#f0f8ff',
     comboGlow: 'rgba(240, 248, 255, 0.7)',
+
+    // Parallax
+    parallaxDistantStars: 'rgba(200, 220, 240, 0.2)',
+    parallaxNebula: 'rgba(168, 216, 234, 0.12)',
+    parallaxDebris: 'rgba(224, 247, 255, 0.25)',
+
+
   },
 }
 

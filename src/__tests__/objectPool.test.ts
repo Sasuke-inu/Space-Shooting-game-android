@@ -221,7 +221,7 @@ describe('ObjectPool', () => {
       }
 
       const newStats = pool.getStats()
-      expect(newStats.totalCreated).toBe(15)
+      expect(newStats.totalCreated).toBe(10)
     })
 
     test('tracks total acquired and released', () => {

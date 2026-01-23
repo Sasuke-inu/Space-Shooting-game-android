@@ -5,7 +5,7 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import secureStorage from '../utils/secureStorage'
-import type { ThemeId, GameTheme, ThemeColors } from './types'
+import type { ThemeId, GameTheme, ThemeColors, JoystickSize, JoystickPosition } from './types'
 import { themes, defaultThemeId, getTheme } from './themes'
 
 // Haptic intensity levels for Android
@@ -31,6 +31,7 @@ interface SettingsState {
   hapticIntensity: HapticIntensity
   keepScreenAwake: boolean
   immersiveMode: boolean
+  screenShakeEnabled: boolean
 }
 
 interface SettingsActions {
@@ -55,6 +56,7 @@ interface SettingsActions {
   setHapticIntensity: (intensity: HapticIntensity) => void
   setKeepScreenAwake: (enabled: boolean) => void
   setImmersiveMode: (enabled: boolean) => void
+  setScreenShakeEnabled: (enabled: boolean) => void
 
   // Reset
   resetSettings: () => void
@@ -76,6 +78,7 @@ const defaultSettings: SettingsState = {
   hapticIntensity: 'medium',
   keepScreenAwake: true,
   immersiveMode: true,
+  screenShakeEnabled: true,
 }
 
 export const useSettingsStore = create<SettingsStore>()(
@@ -115,6 +118,8 @@ export const useSettingsStore = create<SettingsStore>()(
       setKeepScreenAwake: (enabled: boolean) => set({ keepScreenAwake: enabled }),
 
       setImmersiveMode: (enabled: boolean) => set({ immersiveMode: enabled }),
+
+      setScreenShakeEnabled: (enabled: boolean) => set({ screenShakeEnabled: enabled }),
 
       // Reset
       resetSettings: () => set(defaultSettings),

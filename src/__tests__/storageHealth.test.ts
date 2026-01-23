@@ -5,6 +5,7 @@
 
 // Mock AsyncStorage before imports
 jest.mock('@react-native-async-storage/async-storage', () => ({
+  __esModule: true,
   default: {
     getItem: jest.fn(() => Promise.resolve(null)),
     setItem: jest.fn(() => Promise.resolve()),
@@ -30,6 +31,12 @@ const mockAsyncStorage = AsyncStorage as jest.Mocked<typeof AsyncStorage>
 describe('storageHealth', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockAsyncStorage.getItem.mockImplementation(() => Promise.resolve(null))
+    mockAsyncStorage.setItem.mockImplementation(() => Promise.resolve())
+    mockAsyncStorage.removeItem.mockImplementation(() => Promise.resolve())
+    mockAsyncStorage.getAllKeys.mockImplementation(() => Promise.resolve([]))
+    mockAsyncStorage.multiGet.mockImplementation(() => Promise.resolve([]))
+    mockAsyncStorage.multiSet.mockImplementation(() => Promise.resolve())
   })
 
   // ------------------------------------------------------------------ //

@@ -53,8 +53,8 @@ describe('AudioManager', () => {
     // Create a new AudioManager instance for each test
     audioManager = new (AudioManager as any)()
 
-    // Reset settings store mock
-    ;(useSettingsStore.getState as jest.Mock).mockReturnValue({ sfxVolume: 0.7 })
+      // Reset settings store mock
+      ; (useSettingsStore.getState as jest.Mock).mockReturnValue({ sfxVolume: 0.7 })
 
     // Create mock sound object
     mockSound = {
@@ -63,10 +63,10 @@ describe('AudioManager', () => {
       unloadAsync: jest.fn().mockResolvedValue(undefined),
     }
 
-    // Mock Audio.Sound.createAsync to return our mock sound
-    ;(Audio.Sound.createAsync as jest.Mock).mockResolvedValue({
-      sound: mockSound,
-    })
+      // Mock Audio.Sound.createAsync to return our mock sound
+      ; (Audio.Sound.createAsync as jest.Mock).mockResolvedValue({
+        sound: mockSound,
+      })
   })
 
   // ------------------------------------------------------------------ //
@@ -78,64 +78,65 @@ describe('AudioManager', () => {
 
       expect(Audio.setAudioModeAsync).toHaveBeenCalledWith({
         playsInSilentModeIOS: true,
-        staysActiveInBackground: false,
+        staysActiveInBackground: true,
         shouldDuckAndroid: true,
       })
     })
+  })
 
-    test('preloads all sound effects', async () => {
-      await audioManager.init()
+  test('preloads all sound effects', async () => {
+    await audioManager.init()
 
-      // Should create sound for each effect
-      expect(Audio.Sound.createAsync).toHaveBeenCalledTimes(8)
-      expect(Audio.Sound.createAsync).toHaveBeenCalledWith(
-        expect.any(String),
-        { shouldPlay: false }
-      )
-    })
+    // Should create sound for each effect
+    expect(Audio.Sound.createAsync).toHaveBeenCalledTimes(14)
+    expect(Audio.Sound.createAsync).toHaveBeenCalledWith(
+      expect.any(String),
+      { shouldPlay: false }
+    )
+  })
 
-    test('only initializes once', async () => {
-      await audioManager.init()
-      await audioManager.init()
-      await audioManager.init()
+  test('only initializes once', async () => {
+    await audioManager.init()
+    await audioManager.init()
+    await audioManager.init()
 
-      // Should only call setAudioModeAsync once
-      expect(Audio.setAudioModeAsync).toHaveBeenCalledTimes(1)
-    })
+    // Should only call setAudioModeAsync once
+    expect(Audio.setAudioModeAsync).toHaveBeenCalledTimes(1)
+  })
 
-    test('handles initialization errors gracefully', async () => {
-      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
-      ;(Audio.setAudioModeAsync as jest.Mock).mockRejectedValueOnce(new Error('Init failed'))
+  test('handles initialization errors gracefully', async () => {
+    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
+      ; (Audio.setAudioModeAsync as jest.Mock).mockRejectedValueOnce(new Error('Init failed'))
 
-      await audioManager.init()
+    await audioManager.init()
 
-      expect(consoleWarnSpy).toHaveBeenCalledWith('AudioManager init failed:', expect.any(Error))
-      consoleWarnSpy.mockRestore()
-    })
+    expect(consoleWarnSpy).toHaveBeenCalledWith('AudioManager init failed:', expect.any(Error))
+    consoleWarnSpy.mockRestore()
+  })
 
-    test('handles sound loading errors gracefully', async () => {
-      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
-      ;(Audio.Sound.createAsync as jest.Mock)
+  test('handles sound loading errors gracefully', async () => {
+    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
+      ; (Audio.Sound.createAsync as jest.Mock)
         .mockResolvedValueOnce({ sound: mockSound })
         .mockRejectedValueOnce(new Error('Load failed'))
         .mockResolvedValue({ sound: mockSound })
 
-      await audioManager.init()
+    await audioManager.init()
 
-      expect(consoleWarnSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Failed to load sound:'),
-        expect.any(Error)
-      )
-      consoleWarnSpy.mockRestore()
-    })
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Failed to load sound:'),
+      expect.any(Error)
+    )
+    consoleWarnSpy.mockRestore()
   })
+
 
   // ------------------------------------------------------------------ //
   //                         Sound Playback
   // ------------------------------------------------------------------ //
   describe('sound playback', () => {
     test('plays sound effect with correct volume', async () => {
-      ;(useSettingsStore.getState as jest.Mock).mockReturnValue({ sfxVolume: 0.5 })
+      ; (useSettingsStore.getState as jest.Mock).mockReturnValue({ sfxVolume: 0.5 })
 
       await audioManager.init()
       await audioManager.playSfx('shoot_player')
@@ -145,7 +146,7 @@ describe('AudioManager', () => {
     })
 
     test('does not play sound if volume is 0', async () => {
-      ;(useSettingsStore.getState as jest.Mock).mockReturnValue({ sfxVolume: 0 })
+      ; (useSettingsStore.getState as jest.Mock).mockReturnValue({ sfxVolume: 0 })
 
       await audioManager.init()
       await audioManager.playSfx('shoot_player')
@@ -155,7 +156,7 @@ describe('AudioManager', () => {
     })
 
     test('does not play sound if volume is negative', async () => {
-      ;(useSettingsStore.getState as jest.Mock).mockReturnValue({ sfxVolume: -0.1 })
+      ; (useSettingsStore.getState as jest.Mock).mockReturnValue({ sfxVolume: -0.1 })
 
       await audioManager.init()
       await audioManager.playSfx('shoot_player')
@@ -219,14 +220,14 @@ describe('AudioManager', () => {
     test('handles missing sound gracefully', async () => {
       // Simulate a sound that failed to load
       const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
-      ;(Audio.Sound.createAsync as jest.Mock).mockResolvedValueOnce({
-        sound: null,
-      })
+        ; (Audio.Sound.createAsync as jest.Mock).mockResolvedValueOnce({
+          sound: null,
+        })
 
       await audioManager.init()
 
-      // Manually set a sound to null to simulate failed load
-      ;(audioManager as any).sounds['shoot_player'] = null
+        // Manually set a sound to null to simulate failed load
+        ; (audioManager as any).sounds['shoot_player'] = null
 
       await audioManager.playSfx('shoot_player')
 
@@ -268,7 +269,7 @@ describe('AudioManager', () => {
 
       for (const volume of volumes) {
         jest.clearAllMocks()
-        ;(useSettingsStore.getState as jest.Mock).mockReturnValue({ sfxVolume: volume })
+          ; (useSettingsStore.getState as jest.Mock).mockReturnValue({ sfxVolume: volume })
 
         // Trigger the subscription callback to update cached volume
         if (mockSubscriber) {
@@ -284,7 +285,7 @@ describe('AudioManager', () => {
     test('reads volume from settings store via subscription', async () => {
       await audioManager.init()
 
-      ;(useSettingsStore.getState as jest.Mock).mockReturnValue({ sfxVolume: 0.3 })
+        ; (useSettingsStore.getState as jest.Mock).mockReturnValue({ sfxVolume: 0.3 })
       // Trigger subscription to update cached volume
       if (mockSubscriber) {
         mockSubscriber({ sfxVolume: 0.3 })
@@ -293,7 +294,7 @@ describe('AudioManager', () => {
       expect(mockSound.setVolumeAsync).toHaveBeenCalledWith(0.3)
 
       jest.clearAllMocks()
-      ;(useSettingsStore.getState as jest.Mock).mockReturnValue({ sfxVolume: 0.8 })
+        ; (useSettingsStore.getState as jest.Mock).mockReturnValue({ sfxVolume: 0.8 })
       // Trigger subscription to update cached volume
       if (mockSubscriber) {
         mockSubscriber({ sfxVolume: 0.8 })
@@ -311,8 +312,8 @@ describe('AudioManager', () => {
       await audioManager.init()
       await audioManager.cleanup()
 
-      // Should unload each sound (8 total)
-      expect(mockSound.unloadAsync).toHaveBeenCalledTimes(8)
+      // Should unload each sound (9 total)
+      expect(mockSound.unloadAsync).toHaveBeenCalledTimes(14)
     })
 
     test('clears sound pool', async () => {
@@ -336,8 +337,8 @@ describe('AudioManager', () => {
     test('handles cleanup of null sounds', async () => {
       await audioManager.init()
 
-      // Set one sound to null
-      ;(audioManager as any).sounds['shoot_player'] = null
+        // Set one sound to null
+        ; (audioManager as any).sounds['shoot_player'] = null
 
       await audioManager.cleanup()
 
@@ -398,8 +399,8 @@ describe('AudioManager', () => {
       await audioManager.init()
       await audioManager.cleanup()
 
-      // Reset initialized flag for this test
-      ;(audioManager as any).initialized = false
+        // Reset initialized flag for this test
+        ; (audioManager as any).initialized = false
 
       await audioManager.init()
       await audioManager.playSfx('shoot_player')

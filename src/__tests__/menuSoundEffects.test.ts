@@ -9,30 +9,27 @@
  * the SFX volume setting from the settings store.
  */
 
+// Import after mocks to ensure they're applied
+// Mock AsyncStorage
+jest.mock('@react-native-async-storage/async-storage', () => ({
+  setItem: jest.fn(),
+  getItem: jest.fn(),
+  removeItem: jest.fn(),
+}))
+
+// Mock expo-av
+jest.mock('expo-av', () => ({
+  Audio: {
+    setAudioModeAsync: jest.fn().mockResolvedValue(undefined),
+  },
+}))
+
+import { audioManager } from '../utils/audioManager'
+import { useSettingsStore } from '../theme/themeStore'
+
 describe('Menu Sound Effects - Volume Respect Verification', () => {
-  // Import after mocks to ensure they're applied
-  let audioManager: any
-  let useSettingsStore: any
-
-  beforeAll(() => {
-    // Mock AsyncStorage
-    jest.mock('@react-native-async-storage/async-storage', () =>require('@react-native-async-storage/async-storage/jest/async-storage-mock'))
-
-    // Mock expo-av
-    jest.mock('expo-av', () => ({
-      Audio: {
-        setAudioModeAsync: jest.fn().mockResolvedValue(undefined),
-      },
-    }))
-  })
-
   beforeEach(() => {
-    // Clear module cache to get fresh imports
-    jest.resetModules()
-
-    // Import after mocks
-    audioManager = require('../utils/audioManager').audioManager
-    useSettingsStore = require('../theme/themeStore').useSettingsStore
+    jest.clearAllMocks()
   })
 
   describe('AudioManager Volume Control Implementation', () => {

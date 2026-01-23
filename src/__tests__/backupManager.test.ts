@@ -3,8 +3,8 @@
  * Tests backup, restore, and recovery functionality
  */
 
-// Mock AsyncStorage before imports
 jest.mock('@react-native-async-storage/async-storage', () => ({
+  __esModule: true,
   default: {
     getItem: jest.fn(() => Promise.resolve(null)),
     setItem: jest.fn(() => Promise.resolve()),
@@ -47,6 +47,12 @@ const mockGetCorruptedStores = getCorruptedStores as jest.MockedFunction<typeof 
 describe('backupManager', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockAsyncStorage.getItem.mockImplementation(() => Promise.resolve(null))
+    mockAsyncStorage.setItem.mockImplementation(() => Promise.resolve())
+    mockAsyncStorage.removeItem.mockImplementation(() => Promise.resolve())
+    mockAsyncStorage.getAllKeys.mockImplementation(() => Promise.resolve([]))
+    mockAsyncStorage.multiGet.mockImplementation(() => Promise.resolve([]))
+    mockAsyncStorage.multiSet.mockImplementation(() => Promise.resolve())
   })
 
   // ------------------------------------------------------------------ //
@@ -104,7 +110,7 @@ describe('backupManager', () => {
       })
 
       test('returns null when no stores have data', async () => {
-        mockAsyncStorage.getItem.mockResolvedValue(null)
+        mockAsyncStorage.getItem.mockResolvedValueOnce(null)
 
         const result = await backupAllStores()
 
@@ -112,7 +118,7 @@ describe('backupManager', () => {
       })
 
       test('saves backup metadata', async () => {
-        mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify({ data: 'test' }))
+        mockAsyncStorage.getItem.mockResolvedValueOnce(JSON.stringify({ data: 'test' }))
         mockAsyncStorage.setItem.mockResolvedValue()
 
         await backupAllStores()
@@ -127,7 +133,7 @@ describe('backupManager', () => {
       })
 
       test('returns null on error', async () => {
-        mockAsyncStorage.getItem.mockRejectedValue(new Error('Storage error'))
+        mockAsyncStorage.getItem.mockRejectedValueOnce(new Error('Storage error'))
 
         const result = await backupAllStores()
 
@@ -181,7 +187,7 @@ describe('backupManager', () => {
 
     describe('restoreAllStores', () => {
       test('restores all stores successfully', async () => {
-        mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify({ data: 'test' }))
+        mockAsyncStorage.getItem.mockImplementation(() => Promise.resolve(JSON.stringify({ data: 'test' })))
         mockAsyncStorage.setItem.mockResolvedValue()
 
         const result = await restoreAllStores()
@@ -209,7 +215,7 @@ describe('backupManager', () => {
       })
 
       test('returns empty array on error', async () => {
-        mockAsyncStorage.getItem.mockRejectedValue(new Error('Storage error'))
+        mockAsyncStorage.getItem.mockRejectedValueOnce(new Error('Storage error'))
 
         const result = await restoreAllStores()
 
@@ -282,7 +288,7 @@ describe('backupManager', () => {
 
     describe('hasAllBackups', () => {
       test('returns true when all backups exist', async () => {
-        mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify({ data: 'test' }))
+        mockAsyncStorage.getItem.mockImplementation(() => Promise.resolve(JSON.stringify({ data: 'test' })))
 
         const result = await hasAllBackups()
 
@@ -303,7 +309,7 @@ describe('backupManager', () => {
       })
 
       test('returns false on error', async () => {
-        mockAsyncStorage.getItem.mockRejectedValue(new Error('Storage error'))
+        mockAsyncStorage.getItem.mockRejectedValueOnce(new Error('Storage error'))
 
         const result = await hasAllBackups()
 
@@ -337,7 +343,7 @@ describe('backupManager', () => {
 
     describe('clearAllBackups', () => {
       test('clears all backups and metadata', async () => {
-        mockAsyncStorage.removeItem.mockResolvedValue()
+        mockAsyncStorage.removeItem.mockResolvedValueOnce()
 
         const result = await clearAllBackups()
 
@@ -347,7 +353,7 @@ describe('backupManager', () => {
       })
 
       test('returns false on error', async () => {
-        mockAsyncStorage.removeItem.mockRejectedValue(new Error('Storage error'))
+        mockAsyncStorage.removeItem.mockRejectedValueOnce(new Error('Storage error'))
 
         const result = await clearAllBackups()
 

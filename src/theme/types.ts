@@ -89,3 +89,6 @@ export type ThemeId =
   | 'halloween'
   | 'synthwave'
   | 'winter'
+
+export type JoystickSize = 'small' | 'medium' | 'large'
+export type JoystickPosition = 'left' | 'right' | 'center' | 'floating'

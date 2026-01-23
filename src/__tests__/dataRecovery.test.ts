@@ -3,8 +3,8 @@
  * Tests full backup/restore cycle across all stores
  */
 
-// Mock AsyncStorage before imports
 jest.mock('@react-native-async-storage/async-storage', () => ({
+  __esModule: true,
   default: {
     getItem: jest.fn(() => Promise.resolve(null)),
     setItem: jest.fn(() => Promise.resolve()),
@@ -42,6 +42,12 @@ const mockGetCorruptedStores = getCorruptedStores as jest.MockedFunction<typeof 
 describe('Data Recovery Integration Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockAsyncStorage.getItem.mockImplementation(() => Promise.resolve(null))
+    mockAsyncStorage.setItem.mockImplementation(() => Promise.resolve())
+    mockAsyncStorage.removeItem.mockImplementation(() => Promise.resolve())
+    mockAsyncStorage.getAllKeys.mockImplementation(() => Promise.resolve([]))
+    mockAsyncStorage.multiGet.mockImplementation(() => Promise.resolve([]))
+    mockAsyncStorage.multiSet.mockImplementation(() => Promise.resolve())
   })
 
   // ------------------------------------------------------------------ //
@@ -347,7 +353,10 @@ describe('Data Recovery Integration Tests', () => {
 
       const dataString = JSON.stringify(statsData)
 
-      mockAsyncStorage.getItem.mockResolvedValueOnce(dataString)
+      mockAsyncStorage.getItem.mockImplementation((key) => {
+        if (key === STORAGE_KEYS.statistics) return Promise.resolve(dataString)
+        return Promise.resolve(null)
+      })
       mockAsyncStorage.setItem.mockResolvedValue()
       await backupAllStores()
 
@@ -357,7 +366,10 @@ describe('Data Recovery Integration Tests', () => {
       const backedUpData = backupCall![1]
 
       jest.clearAllMocks()
-      mockAsyncStorage.getItem.mockResolvedValueOnce(backedUpData)
+      mockAsyncStorage.getItem.mockImplementation((key) => {
+        if (key === BACKUP_KEYS.statistics) return Promise.resolve(backedUpData)
+        return Promise.resolve(null)
+      })
       mockAsyncStorage.setItem.mockResolvedValue()
       await restoreAllStores()
 
@@ -381,7 +393,10 @@ describe('Data Recovery Integration Tests', () => {
 
       const dataString = JSON.stringify(upgradesData)
 
-      mockAsyncStorage.getItem.mockResolvedValueOnce(dataString)
+      mockAsyncStorage.getItem.mockImplementation((key) => {
+        if (key === STORAGE_KEYS.upgrades) return Promise.resolve(dataString)
+        return Promise.resolve(null)
+      })
       mockAsyncStorage.setItem.mockResolvedValue()
       await backupAllStores()
 
@@ -391,7 +406,10 @@ describe('Data Recovery Integration Tests', () => {
       const backedUpData = backupCall![1]
 
       jest.clearAllMocks()
-      mockAsyncStorage.getItem.mockResolvedValueOnce(backedUpData)
+      mockAsyncStorage.getItem.mockImplementation((key) => {
+        if (key === BACKUP_KEYS.upgrades) return Promise.resolve(backedUpData)
+        return Promise.resolve(null)
+      })
       mockAsyncStorage.setItem.mockResolvedValue()
       await restoreAllStores()
 
@@ -652,7 +670,7 @@ describe('Data Recovery Integration Tests', () => {
 
     test('handles very large data sets', async () => {
       const largeData = {
-        achievements: {},
+        achievements: {} as Record<string, any>,
         recentUnlock: null,
       }
 
