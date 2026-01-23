@@ -29,6 +29,7 @@ import {
   rand,
 } from "./vectorMath"
 import { hapticLight, hapticMedium, hapticHeavy, hapticWarning } from "./haptics"
+import { useSettingsStore } from "../theme/themeStore"
 
 export const useGameEngine = () => {
   const boom = useCallback((pos: Vec2, color: string, count = 24, speed = 120) => {
@@ -107,8 +108,11 @@ export const useGameEngine = () => {
       (state.specialAbility?.type === 'shield_burst' && state.specialAbility.isActive)
     const hasMagnet = state.hasPowerUp('magnet')
 
-    // Progressive difficulty scaling (0-100% over 4 minutes)
-    const difficultyProgress = Math.min(state.time / 240, 1.0)
+    // Progressive difficulty scaling (0-100% over 4 minutes) with difficulty multiplier
+    const difficulty = useSettingsStore.getState().difficulty
+    const baseDifficulty = Math.min(state.time / 240, 1.0)
+    const difficultyMultiplier = { easy: 0.7, medium: 1.0, hard: 1.4 }[difficulty]
+    const difficultyProgress = baseDifficulty * difficultyMultiplier
 
     // Animation speed multiplier (increases from 1x to 2.5x)
     const animSpeedMultiplier = 1.0 + (difficultyProgress * 1.5)
