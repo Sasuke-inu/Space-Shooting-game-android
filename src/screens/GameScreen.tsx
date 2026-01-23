@@ -5,6 +5,7 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler"
 import { Audio } from "expo-av"
 import { GameCanvas } from "../components/GameCanvas"
 import { VirtualControls } from "../components/VirtualControls"
+import ShipSelectionScreen from "./ShipSelectionScreen"
 import { useGameStore, MAX_DT, JOY_DEADZONE } from "../state/gameStore"
 import { useHighScoresStore } from "../state/highScoresStore"
 import { useSettingsStore, useThemeColors } from "../theme/themeStore"
@@ -748,7 +749,30 @@ export default function GameScreen() {
                     <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginBottom: 12 }}>
                       🚀 Select Ship
                     </Text>
-                    <ShipSelector />
+                    <View style={{ backgroundColor: colors.buttonSecondary, borderRadius: 12, padding: 16, marginBottom: 12 }}>
+                      <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: 'bold', marginBottom: 4 }}>
+                        Current Ship: {player.shipType.charAt(0).toUpperCase() + player.shipType.slice(1)}
+                      </Text>
+                      <Text style={{ color: colors.textSecondary, fontSize: 12, marginBottom: 12 }}>
+                        {SHIP_STATS[player.shipType].special}
+                      </Text>
+                      <Pressable
+                        style={{
+                          backgroundColor: colors.buttonPrimary,
+                          borderRadius: 8,
+                          paddingVertical: 12,
+                          paddingHorizontal: 16,
+                        }}
+                        onPress={() => setShowShipSelect(true)}
+                      >
+                        <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 14, fontWeight: 'bold' }}>
+                          CHANGE SHIP
+                        </Text>
+                      </Pressable>
+                    </View>
+                    <Text style={{ color: colors.textMuted, fontSize: 12, lineHeight: 18 }}>
+                      Choose from 4 unique ships with different stats and special abilities. Unlock new ships with credits earned from gameplay.
+                    </Text>
                   </>
                 )}
 
@@ -1047,6 +1071,13 @@ export default function GameScreen() {
               )}
             </Pressable>
           </Pressable>
+        </Modal>
+      )}
+
+      {/* Ship Selection Modal */}
+      {showShipSelect && (
+        <Modal visible={true} animationType="slide">
+          <ShipSelectionScreen onClose={() => setShowShipSelect(false)} />
         </Modal>
       )}
     </View>
