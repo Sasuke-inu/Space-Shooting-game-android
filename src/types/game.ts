@@ -206,6 +206,12 @@ export const ACHIEVEMENTS: Record<AchievementId, Omit<Achievement, 'unlocked' | 
 //                         Statistics Types
 // ------------------------------------------------------------------ //
 
+export interface ShipStatistics {
+  games: number       // Games played with this ship
+  bestScore: number   // Best score with this ship
+  bestWave: number    // Best wave reached with this ship
+}
+
 export interface GameStatistics {
   // Lifetime stats
   totalGames: number
@@ -228,6 +234,9 @@ export interface GameStatistics {
   // Enemy kills by type
   killsByEnemyType: Record<EnemyType, number>
   killsByBossType: Record<BossType, number>
+
+  // Per-ship statistics
+  perShipStats: Record<ShipType, ShipStatistics>
 
   // Misc
   favoriteShip: ShipType
