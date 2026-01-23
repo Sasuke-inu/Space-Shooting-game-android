@@ -84,6 +84,7 @@ export default function GameScreen() {
   const completeStep = useTutorialStore((s) => s.completeStep)
   const skipTutorial = useTutorialStore((s) => s.skipTutorial)
   const completeTutorial = useTutorialStore((s) => s.completeTutorial)
+  const resetTutorial = useTutorialStore((s) => s.resetTutorial)
 
   const [joystickValue, setJoystickValue] = useState<Vec2>({ x: 0, y: 0 })
   const [swipeImpulse, setSwipeImpulse] = useState<Vec2>({ x: 0, y: 0 })
@@ -369,6 +370,12 @@ export default function GameScreen() {
 
   const handleTutorialNextStep = () => {
     completeStep()
+  }
+
+  const handleReplayTutorial = () => {
+    resetTutorial()
+    setShowSettings(false)
+    setShowTutorial(true)
   }
 
   const handleSubmitScore = () => {
@@ -783,6 +790,26 @@ export default function GameScreen() {
                     <Slider value={joystickSensitivity} onValueChange={setJoystickSensitivity} label="Joystick Sensitivity" />
                     <Toggle value={autoFire} onValueChange={setAutoFire} label="Auto-Fire" />
                     <Toggle value={hapticsEnabled} onValueChange={setHapticsEnabled} label="Haptic Feedback" />
+
+                    {/* Tutorial Section */}
+                    <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginTop: 8, marginBottom: 12 }}>
+                      📚 Tutorial
+                    </Text>
+                    <Pressable
+                      onPress={handleReplayTutorial}
+                      style={{
+                        backgroundColor: colors.buttonSecondary,
+                        borderRadius: 12,
+                        paddingVertical: 12,
+                        paddingHorizontal: 16,
+                        borderWidth: 1,
+                        borderColor: colors.panelBorder,
+                      }}
+                    >
+                      <Text style={{ color: colors.textPrimary, textAlign: 'center', fontSize: 14, fontWeight: '600' }}>
+                        Replay Tutorial
+                      </Text>
+                    </Pressable>
                   </>
                 )}
 

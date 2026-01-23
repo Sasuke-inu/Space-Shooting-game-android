@@ -3,7 +3,7 @@
   "spec": "004-tutorial-and-onboarding",
   "state": "building",
   "subtasks": {
-    "completed": 6,
+    "completed": 7,
     "total": 10,
     "in_progress": 1,
     "failed": 0
@@ -18,8 +18,8 @@
     "max": 1
   },
   "session": {
-    "number": 8,
+    "number": 9,
     "started_at": "2026-01-23T17:08:21.093680"
   },
-  "last_update": "2026-01-23T17:29:53.544016"
+  "last_update": "2026-01-23T17:33:33.946048"
 }
