@@ -93,11 +93,52 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
     for (let i = 0; i < 40; i++) {
       starArray.push({
         x: (i * 97) % width,
-        y: ((i * 57 + time * 8) % height),
+        baseY: i * 57,
       })
     }
     return starArray
-  }, [width, height, time])
+  }, [width, height])
+
+  // Parallax Layer 1: Distant stars (slowest, 0.25x speed) - optimized
+  const distantStars = React.useMemo(() => {
+    const starArray = []
+    for (let i = 0; i < 50; i++) {
+      starArray.push({
+        x: (i * 127) % width,
+        baseY: i * 91,
+        size: 0.3 + (i % 3) * 0.25, // Tiny, subtle stars: 0.3-0.8
+      })
+    }
+    return starArray
+  }, [width, height])
+
+  // Parallax Layer 2: Nebula/dust particles (medium speed, 0.65x) - optimized
+  const nebulaParticles = React.useMemo(() => {
+    const particles = []
+    for (let i = 0; i < 25; i++) {
+      particles.push({
+        x: (i * 163) % width,
+        baseY: i * 107,
+        size: 4 + (i % 5) * 2.5, // Wispy nebula clouds: 4-14.5
+        opacity: 0.12 + (i % 5) * 0.04, // Very subtle, atmospheric: 0.12-0.28
+      })
+    }
+    return particles
+  }, [width, height])
+
+  // Parallax Layer 3: Close debris (fastest, 1.3x speed) - optimized
+  const closeDebris = React.useMemo(() => {
+    const debris = []
+    for (let i = 0; i < 15; i++) {
+      debris.push({
+        x: (i * 193) % width,
+        baseY: i * 149,
+        baseRotation: i * 41,
+        size: 2.5 + (i % 5) * 1.8, // Prominent foreground debris: 2.5-9.7
+      })
+    }
+    return debris
+  }, [width, height])
 
   // Memoized ship path
   const shipPath = useMemo(() => {
@@ -319,15 +360,59 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
           />
         )}
 
-        {/* Background stars */}
+        {/* Parallax Layer 1: Distant stars (furthest back, slowest 0.25x) */}
+        {distantStars.map((star, i) => (
+          <Circle
+            key={`distant-${i}`}
+            cx={star.x}
+            cy={(star.baseY + time * 2.0) % height}
+            r={star.size}
+            color={colors.parallaxDistantStars}
+            opacity={0.25}
+          />
+        ))}
+
+        {/* Parallax Layer 2: Nebula/dust particles (medium depth, 0.65x) */}
+        {nebulaParticles.map((particle, i) => (
+          <Circle
+            key={`nebula-${i}`}
+            cx={particle.x}
+            cy={(particle.baseY + time * 5.2) % height}
+            r={particle.size}
+            color={colors.parallaxNebula}
+            opacity={particle.opacity}
+          />
+        ))}
+
+        {/* Background stars (standard speed) */}
         {stars.map((star, i) => (
           <Circle
             key={i}
             cx={star.x}
-            cy={star.y}
+            cy={(star.baseY + time * 8) % height}
             r={1}
             color={colors.stars}
           />
+        ))}
+
+        {/* Parallax Layer 3: Close debris (closest to foreground, fastest 1.3x) */}
+        {closeDebris.map((debris, i) => (
+          <Group
+            key={`debris-${i}`}
+            transform={[
+              { translateX: debris.x },
+              { translateY: (debris.baseY + time * 10.4) % height },
+              { rotate: ((debris.baseRotation + time * 0.5) % 360) * (Math.PI / 180) },
+            ]}
+          >
+            <Circle
+              cx={0}
+              cy={0}
+              r={debris.size}
+              color={colors.parallaxDebris}
+              opacity={0.4}
+            />
+          </Group>
         ))}
 
         {/* Particles */}
