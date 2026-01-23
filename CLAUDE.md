@@ -1,4 +1,8 @@
-# Space Shooter
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Overview
 
 A React Native mobile space shooting game built with Expo and React Native Skia.
 
@@ -59,8 +63,17 @@ npm run lint
 
 # Testing
 npm test              # Run all tests
+npm test -- gameStore # Run single test file (by name pattern)
 npm run test:watch    # Watch mode
 npm run test:coverage # Coverage report
+```
+
+## Path Aliases
+
+The codebase uses `@/` as a path alias to `src/`:
+```typescript
+import { useGameStore } from '@/state/gameStore';
+import { normalize } from '@/utils/vectorMath';
 ```
 
 ## Game Features
@@ -233,7 +246,7 @@ Tests located in `src/__tests__/`:
 ## Notes
 
 - Uses React 19 with new architecture enabled
-- Has patched dependencies for react-native and expo-asset
+- Patched dependencies (via `patch-package`): `react-native@0.79.2`, `expo-asset@11.1.5`
 - Portrait orientation only
 - Haptic feedback on iOS/Android only
 - Theme, settings, and progress persist across app restarts

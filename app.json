@@ -47,7 +47,10 @@
             }
           }
         }
-      ]
+      ],
+      "expo-asset",
+      "expo-video",
+      "expo-web-browser"
     ]
   }
 }
