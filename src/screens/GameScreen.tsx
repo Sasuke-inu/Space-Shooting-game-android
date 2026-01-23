@@ -98,6 +98,7 @@ export default function GameScreen() {
   const [showShop, setShowShop] = useState(false)
   const [showPurchaseConfirm, setShowPurchaseConfirm] = useState(false)
   const [selectedShipForPurchase, setSelectedShipForPurchase] = useState<ShipType | null>(null)
+  const [recentShipPurchase, setRecentShipPurchase] = useState<ShipType | null>(null)
   const [playerName, setPlayerName] = useState("")
   const [settingsTab, setSettingsTab] = useState<'general' | 'ship' | 'stats'>('general')
 
@@ -150,6 +151,16 @@ export default function GameScreen() {
       return () => clearTimeout(timer)
     }
   }, [recentUnlock])
+
+  // Ship purchase notification timeout
+  useEffect(() => {
+    if (recentShipPurchase) {
+      const timer = setTimeout(() => {
+        setRecentShipPurchase(null)
+      }, 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [recentShipPurchase])
 
   // Initialize game on mount
   useEffect(() => {
@@ -397,6 +408,9 @@ export default function GameScreen() {
     // Purchase the ship (unlockShip handles credit deduction and unlock)
     unlockShip(selectedShipForPurchase)
 
+    // Show success notification
+    setRecentShipPurchase(selectedShipForPurchase)
+
     // Close confirmation dialog
     setShowPurchaseConfirm(false)
     setSelectedShipForPurchase(null)
@@ -615,6 +629,31 @@ export default function GameScreen() {
           <View>
             <Text style={{ color: colors.comboText, fontSize: 12, fontWeight: 'bold' }}>ACHIEVEMENT UNLOCKED</Text>
             <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: 'bold' }}>{ACHIEVEMENTS[recentUnlock].name}</Text>
+          </View>
+        </View>
+      )}
+
+      {/* Ship purchase notification */}
+      {recentShipPurchase && (
+        <View style={{
+          position: 'absolute',
+          top: insets.top + 60,
+          left: 20,
+          right: 20,
+          backgroundColor: colors.panelBg,
+          borderWidth: 2,
+          borderColor: colors.comboText,
+          borderRadius: 12,
+          padding: 12,
+          zIndex: 100,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 12,
+        }}>
+          <Text style={{ fontSize: 32 }}>🚀</Text>
+          <View>
+            <Text style={{ color: colors.comboText, fontSize: 12, fontWeight: 'bold' }}>SHIP PURCHASED</Text>
+            <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: 'bold' }}>{SHIP_STATS[recentShipPurchase].name}</Text>
           </View>
         </View>
       )}

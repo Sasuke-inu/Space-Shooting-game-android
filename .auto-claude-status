@@ -3,7 +3,7 @@
   "spec": "008-in-game-shop-for-ship-unlocks",
   "state": "building",
   "subtasks": {
-    "completed": 2,
+    "completed": 4,
     "total": 5,
     "in_progress": 1,
     "failed": 0
@@ -18,8 +18,8 @@
     "max": 1
   },
   "session": {
-    "number": 4,
+    "number": 6,
     "started_at": "2026-01-23T11:28:56.948153"
   },
-  "last_update": "2026-01-23T11:44:47.735770"
+  "last_update": "2026-01-23T11:52:56.969215"
 }
