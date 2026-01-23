@@ -1,6 +1,7 @@
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { backupStore, restoreStore } from '../utils/backupManager'
 
 export interface HighScore {
   name: string
@@ -14,6 +15,8 @@ interface HighScoresState {
   addScore: (score: number, wave: number, name: string) => void
   isTopFive: (score: number) => boolean
   getScores: () => HighScore[]
+  backup: () => Promise<boolean>
+  restore: () => Promise<boolean>
 }
 
 export const useHighScoresStore = create<HighScoresState>()(
@@ -43,6 +46,14 @@ export const useHighScoresStore = create<HighScoresState>()(
       },
 
       getScores: () => get().scores,
+
+      backup: async () => {
+        return await backupStore('high-scores-storage')
+      },
+
+      restore: async () => {
+        return await restoreStore('high-scores-storage')
+      },
     }),
     {
       name: "high-scores-storage",

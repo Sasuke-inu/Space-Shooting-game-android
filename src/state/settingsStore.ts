@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LanguageCode } from '../i18n/types';
+import { backupStore, restoreStore } from '../utils/backupManager';
 
 export type JoystickSize = 'small' | 'medium' | 'large';
 
@@ -16,6 +17,8 @@ interface AppSettingsState {
   setJoystickSize: (size: JoystickSize) => void;
   setInvertY: (enabled: boolean) => void;
   resetAppSettings: () => void;
+  backup: () => Promise<boolean>;
+  restore: () => Promise<boolean>;
 }
 
 const DEFAULT_APP_SETTINGS = {
@@ -34,6 +37,14 @@ export const useAppSettingsStore = create<AppSettingsState>()(
       setInvertY: (enabled) => set({ invertY: enabled }),
 
       resetAppSettings: () => set(DEFAULT_APP_SETTINGS),
+
+      backup: async () => {
+        return await backupStore('app-settings-storage')
+      },
+
+      restore: async () => {
+        return await restoreStore('app-settings-storage')
+      },
     }),
     {
       name: 'app-settings-storage',
