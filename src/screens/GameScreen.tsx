@@ -40,6 +40,12 @@ export default function GameScreen() {
   const setTheme = useSettingsStore((s) => s.setTheme)
   const joystickSensitivity = useSettingsStore((s) => s.joystickSensitivity)
   const setJoystickSensitivity = useSettingsStore((s) => s.setJoystickSensitivity)
+  const joystickSize = useSettingsStore((s) => s.joystickSize)
+  const setJoystickSize = useSettingsStore((s) => s.setJoystickSize)
+  const joystickPosition = useSettingsStore((s) => s.joystickPosition)
+  const setJoystickPosition = useSettingsStore((s) => s.setJoystickPosition)
+  const invertY = useSettingsStore((s) => s.invertY)
+  const setInvertY = useSettingsStore((s) => s.setInvertY)
   const autoFire = useSettingsStore((s) => s.autoFire)
   const setAutoFire = useSettingsStore((s) => s.setAutoFire)
   const hapticsEnabled = useSettingsStore((s) => s.hapticsEnabled)
@@ -296,7 +302,7 @@ export default function GameScreen() {
   }
 
   const joyMag = len(joystickValue)
-  const thrusting = joyMag > JOY_DEADZONE
+  const thrusting = joyMag > 0
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
@@ -355,6 +361,9 @@ export default function GameScreen() {
         onJoystickMove={setJoystickValue}
         colors={colors}
         sensitivity={joystickSensitivity}
+        size={joystickSize}
+        position={joystickPosition}
+        invertY={invertY}
       />
 
       {/* Settings Modal */}
