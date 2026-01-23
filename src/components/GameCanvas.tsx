@@ -50,9 +50,9 @@ const getPowerUpColor = (type: string, colors: ThemeColors): string => {
 const getEnemyColor = (type: EnemyType, colors: ThemeColors): string => {
   switch (type) {
     case 'scout': return colors.enemyShip
-    case 'tank': return '#ff6666'
-    case 'sniper': return '#9966ff'
-    case 'bomber': return '#ff9933'
+    case 'tank': return colors.enemyTank
+    case 'sniper': return colors.enemySniper
+    case 'bomber': return colors.enemyBomber
     default: return colors.enemyShip
   }
 }
