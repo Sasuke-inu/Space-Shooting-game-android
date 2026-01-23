@@ -11,6 +11,7 @@ import type {
   BossType,
 } from '../types/game'
 import { ACHIEVEMENTS, UPGRADE_COSTS } from '../types/game'
+import { backupStore, restoreStore } from '../utils/backupManager'
 
 // ------------------------------------------------------------------ //
 //                         Achievement Store
@@ -26,6 +27,8 @@ interface AchievementState {
   clearRecentUnlock: () => void
   isUnlocked: (id: AchievementId) => boolean
   getProgress: (id: AchievementId) => number
+  backup: () => Promise<boolean>
+  restore: () => Promise<boolean>
 }
 
 const initializeAchievements = (): Record<AchievementId, Achievement> => {
@@ -101,6 +104,14 @@ export const useAchievementStore = create<AchievementState>()(
       isUnlocked: (id) => get().achievements[id]?.unlocked ?? false,
 
       getProgress: (id) => get().achievements[id]?.progress ?? 0,
+
+      backup: async () => {
+        return await backupStore('achievements')
+      },
+
+      restore: async () => {
+        return await restoreStore('achievements')
+      },
     }),
     {
       name: 'space-shooter-achievements',
@@ -125,6 +136,8 @@ interface StatisticsState {
   setFavoriteShip: (ship: ShipType) => void
   setFavoriteTheme: (theme: string) => void
   resetStats: () => void
+  backup: () => Promise<boolean>
+  restore: () => Promise<boolean>
 }
 
 const initialStats: GameStatistics = {
@@ -235,6 +248,14 @@ export const useStatisticsStore = create<StatisticsState>()(
         })),
 
       resetStats: () => set({ stats: { ...initialStats } }),
+
+      backup: async () => {
+        return await backupStore('statistics')
+      },
+
+      restore: async () => {
+        return await restoreStore('statistics')
+      },
     }),
     {
       name: 'space-shooter-statistics',
@@ -260,6 +281,8 @@ interface UpgradesState {
   isShipUnlocked: (ship: ShipType) => boolean
   getUpgradeCost: (type: keyof WeaponUpgrades) => number | null
   resetUpgrades: () => void
+  backup: () => Promise<boolean>
+  restore: () => Promise<boolean>
 }
 
 const initialUpgrades: WeaponUpgrades = {
@@ -346,6 +369,14 @@ export const useUpgradesStore = create<UpgradesState>()(
           upgrades: { ...initialUpgrades },
           unlockedShips: ['fighter'],
         }),
+
+      backup: async () => {
+        return await backupStore('upgrades')
+      },
+
+      restore: async () => {
+        return await restoreStore('upgrades')
+      },
     }),
     {
       name: 'space-shooter-upgrades',
