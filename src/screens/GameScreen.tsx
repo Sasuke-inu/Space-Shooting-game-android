@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react"
-import { View, Text, Pressable, Modal, useWindowDimensions, TextInput, Keyboard, ScrollView } from "react-native"
+import { View, Text, Pressable, Modal, useWindowDimensions, TextInput, Keyboard, ScrollView, Alert } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Gesture, GestureDetector } from "react-native-gesture-handler"
 import { Audio } from "expo-av"
@@ -40,6 +40,7 @@ export default function GameScreen() {
   const setScreenShakeEnabled = useSettingsStore((s) => s.setScreenShakeEnabled)
   const difficulty = useSettingsStore((s) => s.difficulty)
   const setDifficulty = useSettingsStore((s) => s.setDifficulty)
+  const resetSettings = useSettingsStore((s) => s.resetSettings)
 
   // Game state
   const paused = useGameStore((s) => s.paused)
@@ -373,6 +374,26 @@ export default function GameScreen() {
     if (unlockedShips.includes(ship)) {
       setShipType(ship)
     }
+  }
+
+  const handleResetSettings = () => {
+    Alert.alert(
+      "Reset Settings",
+      "Are you sure you want to reset all settings to defaults?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Reset",
+          style: "destructive",
+          onPress: () => {
+            resetSettings()
+          },
+        },
+      ]
+    )
   }
 
   const joyMag = len(joystickValue)
@@ -823,11 +844,28 @@ export default function GameScreen() {
 
               <Pressable
                 style={{
+                  backgroundColor: colors.buttonSecondary,
+                  borderWidth: 1,
+                  borderColor: colors.panelBorder,
+                  borderRadius: 12,
+                  paddingVertical: 12,
+                  paddingHorizontal: 16,
+                  marginTop: 16,
+                }}
+                onPress={handleResetSettings}
+              >
+                <Text style={{ color: colors.textSecondary, textAlign: 'center', fontSize: 14, fontWeight: '600' }}>
+                  Reset to Defaults
+                </Text>
+              </Pressable>
+
+              <Pressable
+                style={{
                   backgroundColor: colors.buttonPrimary,
                   borderRadius: 12,
                   paddingVertical: 14,
                   paddingHorizontal: 16,
-                  marginTop: 16,
+                  marginTop: 8,
                 }}
                 onPress={() => setShowSettings(false)}
               >
