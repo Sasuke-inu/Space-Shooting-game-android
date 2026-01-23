@@ -57,11 +57,11 @@ export default function MainMenuScreen() {
   };
 
   const handleShips = () => {
-    // TODO: Navigate to Ships screen when implemented
+    navigation.navigate('ShipSelection');
   };
 
   const handleHighScores = () => {
-    // TODO: Navigate to HighScores screen when implemented
+    navigation.navigate('HighScores');
   };
 
   return (
