@@ -5,6 +5,7 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler"
 import { Audio } from "expo-av"
 import { GameCanvas } from "../components/GameCanvas"
 import { VirtualControls } from "../components/VirtualControls"
+import { LeaderboardModal } from "../components/LeaderboardModal"
 import { useGameStore, MAX_DT, JOY_DEADZONE } from "../state/gameStore"
 import { useHighScoresStore } from "../state/highScoresStore"
 import { useSettingsStore, useThemeColors } from "../theme/themeStore"
@@ -93,11 +94,12 @@ export default function GameScreen() {
   const [showShipSelect, setShowShipSelect] = useState(false)
   const [showStats, setShowStats] = useState(false)
   const [showAchievements, setShowAchievements] = useState(false)
+  const [showLeaderboard, setShowLeaderboard] = useState(false)
   const [playerName, setPlayerName] = useState("")
   const [settingsTab, setSettingsTab] = useState<'general' | 'ship' | 'stats'>('general')
 
   const highScores = useHighScoresStore((s) => s.scores)
-  const isTopFive = useHighScoresStore((s) => s.isTopFive)
+  const isTopTen = useHighScoresStore((s) => s.isTopTen)
   const addScore = useHighScoresStore((s) => s.addScore)
 
   // Handle special ability effects
@@ -339,7 +341,7 @@ export default function GameScreen() {
 
   const handleSubmitScore = () => {
     const name = playerName.trim() || "Anonymous"
-    addScore(score, wave, name)
+    addScore(score, wave, name, player.shipType)
 
     // Record game end statistics
     const state = useGameStore.getState()
@@ -350,20 +352,21 @@ export default function GameScreen() {
 
     setShowNameInput(false)
     setPlayerName("")
+    setShowLeaderboard(true)
     Keyboard.dismiss()
   }
 
-  // Check for game over and show name input if top 5
+  // Check for game over and show name input if top 10
   useEffect(() => {
     if (paused && lives <= 0 && !showInstructions && !showNameInput) {
-      if (isTopFive(score)) {
+      if (isTopTen(score)) {
         const timer = setTimeout(() => {
           setShowNameInput(true)
         }, 500)
         return () => clearTimeout(timer)
       }
     }
-  }, [paused, lives, score, showInstructions, showNameInput, isTopFive])
+  }, [paused, lives, score, showInstructions, showNameInput, isTopTen])
 
   const handleShipSelect = (ship: ShipType) => {
     if (unlockedShips.includes(ship)) {
@@ -867,7 +870,7 @@ export default function GameScreen() {
               width: 340,
             }}>
               <Text style={{ color: colors.textPrimary, fontSize: 24, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
-                🏆 TOP 5 SCORE!
+                🏆 TOP 10 SCORE!
               </Text>
               <Text style={{ color: colors.textSecondary, fontSize: 18, fontWeight: '600', marginBottom: 16, textAlign: 'center' }}>
                 Score: {score}
@@ -917,7 +920,7 @@ export default function GameScreen() {
       )}
 
       {/* Pause/Game Over modal */}
-      {paused && !showInstructions && !showNameInput && !showSettings && (
+      {paused && !showInstructions && !showNameInput && !showSettings && !showLeaderboard && (
         <Modal visible={true} transparent animationType="fade">
           <Pressable
             style={{
@@ -971,7 +974,7 @@ export default function GameScreen() {
                       <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: 'bold', marginBottom: 12, textAlign: 'center' }}>
                         🏆 TOP 5 HIGH SCORES
                       </Text>
-                      {highScores.map((hs, index) => (
+                      {highScores.slice(0, 5).map((hs, index) => (
                         <View
                           key={index}
                           style={{
@@ -979,7 +982,7 @@ export default function GameScreen() {
                             justifyContent: 'space-between',
                             alignItems: 'center',
                             paddingVertical: 8,
-                            borderBottomWidth: index < highScores.length - 1 ? 1 : 0,
+                            borderBottomWidth: index < Math.min(highScores.length, 5) - 1 ? 1 : 0,
                             borderBottomColor: colors.panelBorder,
                           }}
                         >
@@ -1005,11 +1008,26 @@ export default function GameScreen() {
                       borderRadius: 12,
                       paddingVertical: 14,
                       paddingHorizontal: 16,
+                      marginBottom: 12,
                     }}
                     onPress={handleRestart}
                   >
                     <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
                       PLAY AGAIN
+                    </Text>
+                  </Pressable>
+
+                  <Pressable
+                    style={{
+                      backgroundColor: colors.buttonSecondary,
+                      borderRadius: 12,
+                      paddingVertical: 14,
+                      paddingHorizontal: 16,
+                    }}
+                    onPress={() => setShowLeaderboard(true)}
+                  >
+                    <Text style={{ color: colors.textPrimary, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
+                      🏆 VIEW LEADERBOARD
                     </Text>
                   </Pressable>
                 </>
@@ -1036,11 +1054,26 @@ export default function GameScreen() {
                       borderRadius: 12,
                       paddingVertical: 14,
                       paddingHorizontal: 16,
+                      marginBottom: 12,
                     }}
                     onPress={() => useGameStore.getState().setPaused(false)}
                   >
                     <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
                       CONTINUE
+                    </Text>
+                  </Pressable>
+
+                  <Pressable
+                    style={{
+                      backgroundColor: colors.buttonSecondary,
+                      borderRadius: 12,
+                      paddingVertical: 14,
+                      paddingHorizontal: 16,
+                    }}
+                    onPress={() => setShowLeaderboard(true)}
+                  >
+                    <Text style={{ color: colors.textPrimary, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
+                      🏆 VIEW LEADERBOARD
                     </Text>
                   </Pressable>
                 </>
@@ -1049,6 +1082,12 @@ export default function GameScreen() {
           </Pressable>
         </Modal>
       )}
+
+      {/* Leaderboard Modal */}
+      <LeaderboardModal
+        visible={showLeaderboard}
+        onClose={() => setShowLeaderboard(false)}
+      />
     </View>
   )
 }
