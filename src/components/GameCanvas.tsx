@@ -61,7 +61,7 @@ const POWERUP_ICONS: Record<string, string> = {
   magnet: '🧲',
 }
 
-export const GameCanvas: React.FC<GameCanvasProps> = ({
+export const GameCanvas = React.memo<GameCanvasProps>(({
   width,
   height,
   player,
@@ -700,4 +700,4 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
       </Group>
     </Canvas>
   )
-}
+})
