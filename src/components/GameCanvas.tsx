@@ -99,8 +99,8 @@ export const GameCanvas = React.memo<GameCanvasProps>(({
     return starArray
   }, [width, height, time])
 
-  // Draw ship function
-  const createShipPath = () => {
+  // Cached ship paths - these never change so we compute them once
+  const shipPath = React.useMemo(() => {
     const path = Skia.Path.Make()
     path.moveTo(18, 0)
     path.lineTo(-14, 10)
@@ -110,10 +110,9 @@ export const GameCanvas = React.memo<GameCanvasProps>(({
     path.lineTo(-14, -10)
     path.close()
     return path
-  }
+  }, [])
 
-  // Draw tank enemy (larger, bulkier)
-  const createTankPath = () => {
+  const tankPath = React.useMemo(() => {
     const path = Skia.Path.Make()
     path.moveTo(20, 0)
     path.lineTo(-8, 14)
@@ -123,10 +122,9 @@ export const GameCanvas = React.memo<GameCanvasProps>(({
     path.lineTo(-8, -14)
     path.close()
     return path
-  }
+  }, [])
 
-  // Draw sniper enemy (thin, elongated)
-  const createSniperPath = () => {
+  const sniperPath = React.useMemo(() => {
     const path = Skia.Path.Make()
     path.moveTo(24, 0)
     path.lineTo(-12, 6)
@@ -134,10 +132,9 @@ export const GameCanvas = React.memo<GameCanvasProps>(({
     path.lineTo(-12, -6)
     path.close()
     return path
-  }
+  }, [])
 
-  // Draw bomber enemy (round with wings)
-  const createBomberPath = () => {
+  const bomberPath = React.useMemo(() => {
     const path = Skia.Path.Make()
     path.moveTo(14, 0)
     path.lineTo(4, 12)
@@ -147,73 +144,98 @@ export const GameCanvas = React.memo<GameCanvasProps>(({
     path.lineTo(4, -12)
     path.close()
     return path
-  }
+  }, [])
 
-  // Draw boss path
-  const createBossPath = (type: string) => {
-    const path = Skia.Path.Make()
-    switch (type) {
-      case 'destroyer':
-        path.moveTo(0, -50)
-        path.lineTo(40, -20)
-        path.lineTo(50, 30)
-        path.lineTo(20, 50)
-        path.lineTo(-20, 50)
-        path.lineTo(-50, 30)
-        path.lineTo(-40, -20)
-        path.close()
-        break
-      case 'carrier':
-        path.moveTo(0, -45)
-        path.lineTo(60, -15)
-        path.lineTo(55, 40)
-        path.lineTo(0, 55)
-        path.lineTo(-55, 40)
-        path.lineTo(-60, -15)
-        path.close()
-        break
-      case 'dreadnought':
-        path.moveTo(0, -60)
-        path.lineTo(50, -30)
-        path.lineTo(70, 10)
-        path.lineTo(45, 55)
-        path.lineTo(0, 65)
-        path.lineTo(-45, 55)
-        path.lineTo(-70, 10)
-        path.lineTo(-50, -30)
-        path.close()
-        break
-      default:
-        path.addCircle(0, 0, 40)
-    }
-    return path
-  }
+  // Cached boss paths by type
+  const bossPaths = React.useMemo(() => {
+    const paths: Record<string, any> = {}
 
-  // Draw asteroid
-  const createAsteroidPath = (a: Asteroid) => {
-    const path = Skia.Path.Make()
-    const r = a.radius
-    for (let i = 0; i < 10; i++) {
-      const t = (i / 10) * Math.PI * 2
-      const rr = r * (0.75 + Math.sin(t * 3 + a.ang) * 0.15)
-      const p = fromAngle(t, rr)
-      if (i === 0) {
-        path.moveTo(p.x, p.y)
-      } else {
-        path.lineTo(p.x, p.y)
+    // Destroyer
+    const destroyer = Skia.Path.Make()
+    destroyer.moveTo(0, -50)
+    destroyer.lineTo(40, -20)
+    destroyer.lineTo(50, 30)
+    destroyer.lineTo(20, 50)
+    destroyer.lineTo(-20, 50)
+    destroyer.lineTo(-50, 30)
+    destroyer.lineTo(-40, -20)
+    destroyer.close()
+    paths.destroyer = destroyer
+
+    // Carrier
+    const carrier = Skia.Path.Make()
+    carrier.moveTo(0, -45)
+    carrier.lineTo(60, -15)
+    carrier.lineTo(55, 40)
+    carrier.lineTo(0, 55)
+    carrier.lineTo(-55, 40)
+    carrier.lineTo(-60, -15)
+    carrier.close()
+    paths.carrier = carrier
+
+    // Dreadnought
+    const dreadnought = Skia.Path.Make()
+    dreadnought.moveTo(0, -60)
+    dreadnought.lineTo(50, -30)
+    dreadnought.lineTo(70, 10)
+    dreadnought.lineTo(45, 55)
+    dreadnought.lineTo(0, 65)
+    dreadnought.lineTo(-45, 55)
+    dreadnought.lineTo(-70, 10)
+    dreadnought.lineTo(-50, -30)
+    dreadnought.close()
+    paths.dreadnought = dreadnought
+
+    return paths
+  }, [])
+
+  // Asteroid path cache - memoize based on radius and angle
+  const asteroidPathCache = React.useRef<Map<string, any>>(new Map())
+
+  const getAsteroidPath = React.useCallback((a: Asteroid) => {
+    // Round angle and radius to reasonable precision to improve cache hits
+    const roundedAng = Math.round(a.ang * 100) / 100
+    const roundedRadius = Math.round(a.radius)
+    const cacheKey = `${roundedRadius}-${roundedAng}`
+
+    let path = asteroidPathCache.current.get(cacheKey)
+    if (!path) {
+      path = Skia.Path.Make()
+      const r = a.radius
+      for (let i = 0; i < 10; i++) {
+        const t = (i / 10) * Math.PI * 2
+        const rr = r * (0.75 + Math.sin(t * 3 + a.ang) * 0.15)
+        const p = fromAngle(t, rr)
+        if (i === 0) {
+          path.moveTo(p.x, p.y)
+        } else {
+          path.lineTo(p.x, p.y)
+        }
       }
+      path.close()
+
+      // Limit cache size to prevent memory growth
+      if (asteroidPathCache.current.size > 100) {
+        const firstKey = asteroidPathCache.current.keys().next().value
+        asteroidPathCache.current.delete(firstKey)
+      }
+
+      asteroidPathCache.current.set(cacheKey, path)
     }
-    path.close()
     return path
-  }
+  }, [])
 
   const getEnemyPath = (type: EnemyType) => {
     switch (type) {
-      case 'tank': return createTankPath()
-      case 'sniper': return createSniperPath()
-      case 'bomber': return createBomberPath()
-      default: return createShipPath()
+      case 'tank': return tankPath
+      case 'sniper': return sniperPath
+      case 'bomber': return bomberPath
+      default: return shipPath
     }
+  }
+
+  const getBossPath = (type: string) => {
+    return bossPaths[type] || bossPaths.destroyer
   }
 
   const blink = player.inv > 0 && Math.floor(time * 10) % 2 === 0
@@ -320,7 +342,7 @@ export const GameCanvas = React.memo<GameCanvasProps>(({
         {asteroids.map((a, i) => (
           <Group key={`asteroid-${i}`} transform={[{ translateX: a.pos.x }, { translateY: a.pos.y }, { rotate: a.ang }]}>
             <Path
-              path={createAsteroidPath(a)}
+              path={getAsteroidPath(a)}
               color={colors.asteroid}
               style="stroke"
               strokeWidth={2}
@@ -390,12 +412,12 @@ export const GameCanvas = React.memo<GameCanvasProps>(({
 
             {/* Boss body */}
             <Path
-              path={createBossPath(boss.type)}
+              path={getBossPath(boss.type)}
               color={colors.enemyShipFill}
               style="fill"
             />
             <Path
-              path={createBossPath(boss.type)}
+              path={getBossPath(boss.type)}
               color={colors.enemyShip}
               style="stroke"
               strokeWidth={3}
@@ -477,12 +499,12 @@ export const GameCanvas = React.memo<GameCanvasProps>(({
               />
             )}
             <Path
-              path={createShipPath()}
+              path={shipPath}
               color={colors.playerShipFill}
               style="fill"
             />
             <Path
-              path={createShipPath()}
+              path={shipPath}
               color={colors.playerShip}
               style="stroke"
               strokeWidth={2}
@@ -685,12 +707,12 @@ export const GameCanvas = React.memo<GameCanvasProps>(({
             ]}
           >
             <Path
-              path={createShipPath()}
+              path={shipPath}
               color={colors.playerShipFill}
               style="fill"
             />
             <Path
-              path={createShipPath()}
+              path={shipPath}
               color={colors.playerShip}
               style="stroke"
               strokeWidth={2}
