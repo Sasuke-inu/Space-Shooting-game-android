@@ -1,14 +1,16 @@
-import React, { useState, useCallback, useMemo } from "react"
+import React, { useState, useCallback, useMemo, useEffect } from "react"
 import { View, StyleSheet, Pressable } from "react-native"
 import { Gesture, GestureDetector } from "react-native-gesture-handler"
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
+  withTiming,
   runOnJS,
 } from "react-native-reanimated"
-import type { Vec2, Player } from "../types/game"
+import type { Vec2, Player, ShipType } from "../types/game"
 import type { ThemeColors } from "../theme/types"
+import { SHIP_STATS, ABILITY_STATS } from "../types/game"
 
 interface VirtualControlsProps {
   onJoystickMove: (value: Vec2) => void
@@ -19,6 +21,18 @@ interface VirtualControlsProps {
 }
 
 const JOY_MAX_RADIUS = 60
+
+// Helper function to map ship special ability name to ability type
+const getAbilityTypeFromShip = (shipType: ShipType): string => {
+  const specialName = SHIP_STATS[shipType].special
+  const abilityMap: Record<string, string> = {
+    'EMP Blast': 'emp_blast',
+    'Missile Barrage': 'missile_barrage',
+    'Time Warp': 'time_warp',
+    'Shield Burst': 'shield_burst',
+  }
+  return abilityMap[specialName] || 'emp_blast'
+}
 
 export const VirtualControls: React.FC<VirtualControlsProps> = ({
   onJoystickMove,
@@ -31,6 +45,7 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
   const joystickX = useSharedValue(0)
   const joystickY = useSharedValue(0)
   const joystickScale = useSharedValue(1)
+  const cooldownProgress = useSharedValue(0)
 
   const handleJoystickMove = useCallback((value: Vec2) => {
     onJoystickMove(value)
@@ -39,6 +54,14 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
   const handleSetActive = useCallback((active: boolean) => {
     setJoystickActive(active)
   }, [])
+
+  // Calculate cooldown progress
+  useEffect(() => {
+    const abilityType = getAbilityTypeFromShip(player.shipType) as keyof typeof ABILITY_STATS
+    const maxCooldown = ABILITY_STATS[abilityType].cooldown
+    const progress = player.specialReady ? 0 : player.specialCooldown / maxCooldown
+    cooldownProgress.value = withTiming(progress, { duration: 50 })
+  }, [player.specialCooldown, player.specialReady, player.shipType, cooldownProgress])
 
   const panGesture = useMemo(() => Gesture.Pan()
     .onStart(() => {
@@ -81,6 +104,14 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
     ],
   }))
 
+  const cooldownOverlayStyle = useAnimatedStyle(() => {
+    const rotation = cooldownProgress.value * 360
+    return {
+      transform: [{ rotate: `${rotation}deg` }],
+      opacity: cooldownProgress.value > 0 ? 0.6 : 0,
+    }
+  })
+
   const dynamicStyles = useMemo(() => ({
     joystickPad: {
       borderColor: colors.joystickBorder,
@@ -92,6 +123,9 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
     },
     abilityButton: {
       backgroundColor: colors.buttonPrimary,
+    },
+    cooldownOverlay: {
+      borderColor: colors.textPrimary,
     },
   }), [colors])
 
@@ -107,10 +141,20 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
       </GestureDetector>
 
       {/* Special ability button */}
-      <Pressable
-        style={[styles.abilityButton, dynamicStyles.abilityButton]}
-        onPress={onAbilityPress}
-      />
+      <View style={styles.abilityButtonContainer}>
+        <Pressable
+          style={[styles.abilityButton, dynamicStyles.abilityButton]}
+          onPress={onAbilityPress}
+        />
+        <Animated.View
+          style={[
+            styles.cooldownOverlay,
+            dynamicStyles.cooldownOverlay,
+            cooldownOverlayStyle
+          ]}
+          pointerEvents="none"
+        />
+      </View>
     </View>
   )
 }
@@ -147,10 +191,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 18,
   },
-  abilityButton: {
+  abilityButtonContainer: {
     position: "absolute",
     right: 20,
     bottom: 0,
+    width: 70,
+    height: 70,
+  },
+  abilityButton: {
     width: 70,
     height: 70,
     borderRadius: 35,
@@ -160,5 +208,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.6,
     shadowRadius: 10,
     elevation: 5,
+  },
+  cooldownOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    borderWidth: 4,
+    borderTopColor: "transparent",
+    borderRightColor: "transparent",
+    borderBottomColor: "transparent",
   },
 })
