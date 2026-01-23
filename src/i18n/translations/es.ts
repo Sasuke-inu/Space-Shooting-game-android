@@ -128,4 +128,15 @@ export const es: Translations = {
     on: 'Activado',
     off: 'Desactivado',
   },
+  tutorial: {
+    title: '¡Bienvenido a Space Shooter!',
+    skip: 'Saltar Tutorial',
+    next: 'Siguiente',
+    movement: 'Usa el joystick de la izquierda para mover tu nave. ¡Practica esquivando asteroides y enemigos!',
+    firing: 'Toca el botón de disparo a la derecha para disparar. Manténlo presionado para fuego continuo, o activa el Disparo Automático en la configuración.',
+    powerups: 'Recoge power-ups para obtener habilidades temporales: Escudo (azul), Disparo Rápido (rojo), Disparo Disperso (amarillo) y Imán (morado).',
+    combos: '¡Destruye enemigos rápidamente para construir combos! Encadena muertes en 2 segundos para multiplicar tu puntuación hasta 3x.',
+    abilities: 'Cada nave tiene una habilidad especial. ¡Toca el botón de habilidad cuando esté cargado para desatar efectos poderosos!',
+    complete: '¡Estás listo! Buena suerte, Comandante. Que las estrellas te acompañen.',
+  },
 };
