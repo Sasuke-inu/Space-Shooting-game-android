@@ -1,0 +1,25 @@
+{
+  "active": true,
+  "spec": "017-add-special-ability-activation-button",
+  "state": "building",
+  "subtasks": {
+    "completed": 2,
+    "total": 7,
+    "in_progress": 1,
+    "failed": 0
+  },
+  "phase": {
+    "current": "Add Special Ability Button UI",
+    "id": null,
+    "total": 5
+  },
+  "workers": {
+    "active": 0,
+    "max": 1
+  },
+  "session": {
+    "number": 4,
+    "started_at": "2026-01-23T18:16:36.482282"
+  },
+  "last_update": "2026-01-23T18:25:42.526422"
+}

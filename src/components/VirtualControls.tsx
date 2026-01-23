@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react"
-import { View, StyleSheet, Pressable } from "react-native"
+import { View, StyleSheet, Pressable, Text } from "react-native"
 import { Gesture, GestureDetector } from "react-native-gesture-handler"
 import Animated, {
   useAnimatedStyle,
@@ -127,6 +127,9 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
     cooldownOverlay: {
       borderColor: colors.textPrimary,
     },
+    abilityText: {
+      color: colors.textPrimary,
+    },
   }), [colors])
 
   return (
@@ -145,7 +148,11 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
         <Pressable
           style={[styles.abilityButton, dynamicStyles.abilityButton]}
           onPress={onAbilityPress}
-        />
+        >
+          <Text style={[styles.abilityText, dynamicStyles.abilityText]}>
+            {SHIP_STATS[player.shipType].special}
+          </Text>
+        </Pressable>
         <Animated.View
           style={[
             styles.cooldownOverlay,
@@ -220,5 +227,10 @@ const styles = StyleSheet.create({
     borderTopColor: "transparent",
     borderRightColor: "transparent",
     borderBottomColor: "transparent",
+  },
+  abilityText: {
+    fontSize: 10,
+    fontWeight: "600",
+    textAlign: "center",
   },
 })
