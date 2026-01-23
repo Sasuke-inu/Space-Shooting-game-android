@@ -838,6 +838,23 @@ export default function GameScreen() {
                 </View>
               </View>
 
+              {/* Leaderboard Button */}
+              <Pressable
+                style={{
+                  backgroundColor: colors.buttonSecondary,
+                  borderRadius: 12,
+                  paddingVertical: 14,
+                  paddingHorizontal: 16,
+                  marginBottom: 12,
+                }}
+                onPress={() => setShowLeaderboard(true)}
+              >
+                <Text style={{ color: colors.textPrimary, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
+                  🏆 VIEW LEADERBOARD
+                </Text>
+              </Pressable>
+
+              {/* Start Button */}
               <Pressable
                 style={{
                   backgroundColor: colors.buttonPrimary,
@@ -856,7 +873,7 @@ export default function GameScreen() {
         </Modal>
       )}
 
-      {/* Name Input Modal for Top 5 */}
+      {/* Name Input Modal for Top 10 */}
       {showNameInput && (
         <Modal visible={true} transparent animationType="fade">
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.modalOverlay }}>
@@ -972,9 +989,9 @@ export default function GameScreen() {
                       marginBottom: 20,
                     }}>
                       <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: 'bold', marginBottom: 12, textAlign: 'center' }}>
-                        🏆 TOP 5 HIGH SCORES
+                        🏆 TOP 10 HIGH SCORES
                       </Text>
-                      {highScores.slice(0, 5).map((hs, index) => (
+                      {highScores.slice(0, 10).map((hs, index) => (
                         <View
                           key={index}
                           style={{
@@ -982,7 +999,7 @@ export default function GameScreen() {
                             justifyContent: 'space-between',
                             alignItems: 'center',
                             paddingVertical: 8,
-                            borderBottomWidth: index < Math.min(highScores.length, 5) - 1 ? 1 : 0,
+                            borderBottomWidth: index < highScores.length - 1 ? 1 : 0,
                             borderBottomColor: colors.panelBorder,
                           }}
                         >
