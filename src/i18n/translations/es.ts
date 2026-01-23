@@ -5,6 +5,7 @@ export const es: Translations = {
     play: 'Jugar',
     settings: 'Configuración',
     highScores: 'Puntuaciones',
+    ships: 'Naves',
     quit: 'Salir',
   },
   game: {

@@ -5,6 +5,7 @@ export const ja: Translations = {
     play: 'プレイ',
     settings: '設定',
     highScores: 'ハイスコア',
+    ships: '機体',
     quit: '終了',
   },
   game: {

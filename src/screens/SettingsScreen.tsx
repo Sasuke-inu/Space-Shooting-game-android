@@ -10,6 +10,8 @@ import {
   Platform,
 } from 'react-native';
 import Slider from '@react-native-community/slider';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useI18nStore, SUPPORTED_LANGUAGES, LanguageCode } from '../i18n';
 import { useAppSettingsStore, JoystickSize } from '../state/settingsStore';
 import { useSettingsStore, useTheme, themeList, HapticIntensity } from '../theme';
@@ -18,9 +20,11 @@ import { ThemeId } from '../theme/types';
 import { scheduleDailyChallengeReminder, cancelDailyChallengeReminder } from '../utils/androidFeatures';
 
 type TabType = 'general' | 'controls' | 'account';
+type SettingsNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function SettingsScreen() {
   const theme = useTheme();
+  const navigation = useNavigation<SettingsNavigationProp>();
   const { t, currentLanguage, setLanguage } = useI18nStore();
   const [activeTab, setActiveTab] = useState<TabType>('general');
   const [languageModalVisible, setLanguageModalVisible] = useState(false);

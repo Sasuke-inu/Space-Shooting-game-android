@@ -5,6 +5,7 @@ export const en: Translations = {
     play: 'Play',
     settings: 'Settings',
     highScores: 'High Scores',
+    ships: 'Ships',
     quit: 'Quit',
   },
   game: {
