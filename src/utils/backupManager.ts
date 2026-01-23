@@ -238,6 +238,158 @@ export async function clearAllBackups(): Promise<boolean> {
 }
 
 // ------------------------------------------------------------------ //
+//                         Recovery Functions
+// ------------------------------------------------------------------ //
+
+/**
+ * Result of a recovery operation
+ */
+export interface RecoveryResult {
+  storeKey: StorageKey
+  recovered: boolean
+  method: 'backup' | 'reset' | 'none'
+  error?: string
+}
+
+/**
+ * Attempts to recover a single store from corruption
+ * 1. Checks if store is corrupted using storageHealth
+ * 2. If corrupted, attempts to restore from backup
+ * 3. If no backup, removes corrupted data to allow default initialization
+ */
+export async function recoverStore(storeKey: StorageKey): Promise<RecoveryResult> {
+  try {
+    // Import storageHealth functions dynamically to avoid circular dependency
+    const { checkStoreHealth } = await import('./storageHealth')
+
+    // Check if store is corrupted
+    const health = await checkStoreHealth(storeKey)
+
+    if (health.isValid) {
+      // Store is healthy, no recovery needed
+      return {
+        storeKey,
+        recovered: false,
+        method: 'none',
+      }
+    }
+
+    // Store is corrupted, attempt recovery
+    if (!health.canRecover) {
+      return {
+        storeKey,
+        recovered: false,
+        method: 'none',
+        error: 'Store is not recoverable',
+      }
+    }
+
+    // Try to restore from backup
+    const backupExists = await hasBackup(storeKey)
+    if (backupExists) {
+      const restored = await restoreStore(storeKey)
+      if (restored) {
+        return {
+          storeKey,
+          recovered: true,
+          method: 'backup',
+        }
+      }
+    }
+
+    // No backup or backup restore failed, reset to defaults
+    await AsyncStorage.removeItem(STORAGE_KEYS[storeKey])
+    return {
+      storeKey,
+      recovered: true,
+      method: 'reset',
+    }
+  } catch (error) {
+    return {
+      storeKey,
+      recovered: false,
+      method: 'none',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    }
+  }
+}
+
+/**
+ * Attempts to recover all corrupted stores
+ */
+export async function recoverAllStores(): Promise<RecoveryResult[]> {
+  try {
+    // Import storageHealth functions dynamically
+    const { getCorruptedStores } = await import('./storageHealth')
+
+    // Get list of corrupted stores
+    const corrupted = await getCorruptedStores()
+
+    if (corrupted.length === 0) {
+      return []
+    }
+
+    // Attempt to recover each corrupted store
+    const results: RecoveryResult[] = []
+    for (const storeKey of corrupted) {
+      const result = await recoverStore(storeKey)
+      results.push(result)
+    }
+
+    return results
+  } catch (error) {
+    console.error('Failed to recover all stores:', error)
+    return []
+  }
+}
+
+/**
+ * Performs automatic recovery check and fixes any corrupted stores
+ * Returns true if any stores were recovered
+ */
+export async function autoRecoverFromCorruption(): Promise<{
+  hadCorruption: boolean
+  recovered: StorageKey[]
+  failed: StorageKey[]
+}> {
+  try {
+    const results = await recoverAllStores()
+
+    if (results.length === 0) {
+      return {
+        hadCorruption: false,
+        recovered: [],
+        failed: [],
+      }
+    }
+
+    const recovered: StorageKey[] = []
+    const failed: StorageKey[] = []
+
+    for (const result of results) {
+      if (result.recovered) {
+        recovered.push(result.storeKey)
+      } else {
+        failed.push(result.storeKey)
+      }
+    }
+
+    return {
+      hadCorruption: true,
+      recovered,
+      failed,
+    }
+  } catch (error) {
+    console.error('Auto-recovery failed:', error)
+    return {
+      hadCorruption: false,
+      recovered: [],
+      failed: [],
+    }
+  }
+}
+
+// ------------------------------------------------------------------ //
 //                         Export All
 // ------------------------------------------------------------------ //
 
@@ -249,6 +401,11 @@ export const backupManager = {
   // Restore functions
   restoreStore,
   restoreAllStores,
+
+  // Recovery functions
+  recoverStore,
+  recoverAllStores,
+  autoRecoverFromCorruption,
 
   // Info functions
   getBackupMetadata,
