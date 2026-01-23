@@ -9,6 +9,7 @@ import { VirtualControls } from "../components/VirtualControls"
 import { useGameStore, MAX_DT, JOY_DEADZONE } from "../state/gameStore"
 import { useHighScoresStore } from "../state/highScoresStore"
 import { useSettingsStore, useThemeColors } from "../theme/themeStore"
+import { useAppSettingsStore } from "../state/settingsStore"
 import { useStatisticsStore, useAchievementStore, useUpgradesStore } from "../state/progressStore"
 import { themeList } from "../theme/themes"
 import type { ThemeId } from "../theme/types"
@@ -27,6 +28,9 @@ export default function GameScreen() {
 
   // Theme
   const colors = useThemeColors()
+
+  // App settings (quality level, etc.)
+  const qualityLevel = useAppSettingsStore((s) => s.qualityLevel)
 
   // Settings store - combine related settings with shallow comparison
   const {
@@ -759,6 +763,7 @@ export default function GameScreen() {
             homingMissiles={homingMissiles}
             showRadar={true}
             timeWarpActive={timeWarpActive}
+            qualityLevel={qualityLevel}
           />
         </View>
       </GestureDetector>
