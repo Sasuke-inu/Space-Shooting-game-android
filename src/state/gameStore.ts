@@ -21,6 +21,7 @@ import type {
 } from "../types/game"
 import { ENEMY_STATS, BOSS_STATS, SHIP_STATS, ABILITY_STATS } from "../types/game"
 import { v, add, fromAngle, rand } from "../utils/vectorMath"
+import { playSfx } from "../utils/audioManager"
 
 // ------------------------------------------------------------------ //
 //                Gameplay tuning (feel free to tweak)
@@ -544,15 +545,23 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   incrementCombo: () =>
     set((state) => {
+      const oldMultiplier = state.combo.multiplier
       const newCount = state.combo.count + 1
       const multiplierIndex = Math.min(
         Math.floor(newCount / 3),
         COMBO_MULTIPLIERS.length - 1
       )
+      const newMultiplier = COMBO_MULTIPLIERS[multiplierIndex]
+
+      // Play sound when reaching a new combo milestone
+      if (newMultiplier > oldMultiplier) {
+        playSfx('combo')
+      }
+
       return {
         combo: {
           count: newCount,
-          multiplier: COMBO_MULTIPLIERS[multiplierIndex],
+          multiplier: newMultiplier,
           timer: COMBO_TIMEOUT,
         },
       }
