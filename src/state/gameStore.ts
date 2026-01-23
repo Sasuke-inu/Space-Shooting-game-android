@@ -21,6 +21,7 @@ import type {
 } from "../types/game"
 import { ENEMY_STATS, BOSS_STATS, SHIP_STATS, ABILITY_STATS } from "../types/game"
 import { v, add, fromAngle, rand } from "../utils/vectorMath"
+import { useSettingsStore } from "../theme/themeStore"
 
 // ------------------------------------------------------------------ //
 //                Gameplay tuning (feel free to tweak)
@@ -576,14 +577,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
   //                         Screen Shake Actions
   // ------------------------------------------------------------------ //
 
-  triggerShake: (intensity, duration) =>
+  triggerShake: (intensity, duration) => {
+    const { screenShakeEnabled } = useSettingsStore.getState()
+    if (!screenShakeEnabled) return
+
     set({
       screenShake: {
         intensity,
         duration,
         elapsed: 0,
       },
-    }),
+    })
+  },
 
   updateShake: (dt) =>
     set((state) => {
