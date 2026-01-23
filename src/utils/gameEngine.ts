@@ -434,7 +434,7 @@ export const useGameEngine = () => {
       if (dist2(state.player.pos, p.pos) < 30 * 30) {
         state.collectPowerUp(pIdx)
         boom(p.pos, getPowerUpColor(p.type, themeColors), 16, 100)
-        playSfx('powerup_collect')
+        playSfx('powerup_pickup')
         hapticMedium()
       }
     })
