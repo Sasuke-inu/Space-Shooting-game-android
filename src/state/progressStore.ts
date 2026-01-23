@@ -117,7 +117,7 @@ interface StatisticsState {
   stats: GameStatistics
 
   // Actions
-  recordGameEnd: (score: number, wave: number, time: number, kills: number, shotsFired: number, shotsHit: number) => void
+  recordGameEnd: (score: number, wave: number, time: number, kills: number, shotsFired: number, shotsHit: number, shipType: ShipType) => void
   recordKill: (enemyType: EnemyType) => void
   recordBossKill: (bossType: BossType) => void
   recordPowerUpCollected: () => void
@@ -125,6 +125,19 @@ interface StatisticsState {
   setFavoriteShip: (ship: ShipType) => void
   setFavoriteTheme: (theme: string) => void
   resetStats: () => void
+}
+
+const initializeShipStats = (): Record<ShipType, { games: number; bestScore: number; bestWave: number }> => {
+  const shipTypes: ShipType[] = ['fighter', 'scout', 'tank', 'interceptor']
+  const stats: Partial<Record<ShipType, { games: number; bestScore: number; bestWave: number }>> = {}
+  for (const ship of shipTypes) {
+    stats[ship] = {
+      games: 0,
+      bestScore: 0,
+      bestWave: 0,
+    }
+  }
+  return stats as Record<ShipType, { games: number; bestScore: number; bestWave: number }>
 }
 
 const initialStats: GameStatistics = {
@@ -153,6 +166,7 @@ const initialStats: GameStatistics = {
     carrier: 0,
     dreadnought: 0,
   },
+  perShipStats: initializeShipStats(),
   favoriteShip: 'fighter',
   favoriteTheme: 'neon-void',
   lastPlayed: Date.now(),
@@ -163,9 +177,10 @@ export const useStatisticsStore = create<StatisticsState>()(
     (set, get) => ({
       stats: { ...initialStats },
 
-      recordGameEnd: (score, wave, time, kills, shotsFired, shotsHit) =>
+      recordGameEnd: (score, wave, time, kills, shotsFired, shotsHit, shipType) =>
         set((state) => {
           const accuracy = shotsFired > 0 ? (shotsHit / shotsFired) * 100 : 0
+          const currentShipStats = state.stats.perShipStats[shipType]
           return {
             stats: {
               ...state.stats,
@@ -180,6 +195,14 @@ export const useStatisticsStore = create<StatisticsState>()(
               highestWave: Math.max(state.stats.highestWave, wave),
               longestSurvival: Math.max(state.stats.longestSurvival, time),
               bestAccuracy: Math.max(state.stats.bestAccuracy, accuracy),
+              perShipStats: {
+                ...state.stats.perShipStats,
+                [shipType]: {
+                  games: currentShipStats.games + 1,
+                  bestScore: Math.max(currentShipStats.bestScore, score),
+                  bestWave: Math.max(currentShipStats.bestWave, wave),
+                },
+              },
               lastPlayed: Date.now(),
             },
           }
@@ -234,7 +257,8 @@ export const useStatisticsStore = create<StatisticsState>()(
           stats: { ...state.stats, favoriteTheme: theme },
         })),
 
-      resetStats: () => set({ stats: { ...initialStats } }),
+      resetStats: () =>
+        set({ stats: { ...initialStats, perShipStats: initializeShipStats() } }),
     }),
     {
       name: 'space-shooter-statistics',
