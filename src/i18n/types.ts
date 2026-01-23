@@ -190,6 +190,28 @@ export interface Translations {
     carrier: string;
     dreadnought: string;
   };
+  statistics: {
+    title: string;
+    tabs: {
+      overview: string;
+      perShip: string;
+      achievements: string;
+    };
+    charts: {
+      scoreProgression: string;
+      killsByType: string;
+      waveProgression: string;
+      playTimeByShip: string;
+    };
+    labels: {
+      bestCombo: string;
+      bossKills: string;
+      powerUpsCollected: string;
+      favoriteShip: string;
+      noDataYet: string;
+      playToUnlock: string;
+    };
+  };
   general: {
     confirm: string;
     cancel: string;

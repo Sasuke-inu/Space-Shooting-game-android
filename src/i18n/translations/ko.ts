@@ -183,6 +183,28 @@ export const ko: Translations = {
     carrier: '항공모함',
     dreadnought: '전함',
   },
+  statistics: {
+    title: '통계',
+    tabs: {
+      overview: '개요',
+      perShip: '우주선별 통계',
+      achievements: '업적',
+    },
+    charts: {
+      scoreProgression: '점수 진행',
+      killsByType: '유형별 격파',
+      waveProgression: '웨이브 진행',
+      playTimeByShip: '우주선별 플레이 시간',
+    },
+    labels: {
+      bestCombo: '최고 콤보',
+      bossKills: '보스 격파',
+      powerUpsCollected: '수집한 파워업',
+      favoriteShip: '선호 우주선',
+      noDataYet: '아직 데이터 없음',
+      playToUnlock: '플레이하여 잠금 해제',
+    },
+  },
   general: {
     confirm: '확인',
     cancel: '취소',

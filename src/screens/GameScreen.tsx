@@ -341,7 +341,7 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   const recordGameEndStats = () => {
     // Record game end statistics
     const state = useGameStore.getState()
-    recordGameEnd(score, wave, time, 0, state.sessionShotsFired, state.sessionShotsHit)
+    recordGameEnd(score, wave, time, 0, state.sessionShotsFired, state.sessionShotsHit, state.player.shipType)
 
     // Add credits to upgrade store
     addUpgradeCredits(credits)

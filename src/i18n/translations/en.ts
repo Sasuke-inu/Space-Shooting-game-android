@@ -183,6 +183,28 @@ export const en: Translations = {
     carrier: 'Carrier',
     dreadnought: 'Dreadnought',
   },
+  statistics: {
+    title: 'Statistics',
+    tabs: {
+      overview: 'Overview',
+      perShip: 'Per-Ship Stats',
+      achievements: 'Achievements',
+    },
+    charts: {
+      scoreProgression: 'Score Progression',
+      killsByType: 'Kills by Type',
+      waveProgression: 'Wave Progression',
+      playTimeByShip: 'Play Time by Ship',
+    },
+    labels: {
+      bestCombo: 'Best Combo',
+      bossKills: 'Boss Kills',
+      powerUpsCollected: 'Power-Ups Collected',
+      favoriteShip: 'Favorite Ship',
+      noDataYet: 'No data yet',
+      playToUnlock: 'Play to unlock',
+    },
+  },
   general: {
     confirm: 'Confirm',
     cancel: 'Cancel',
