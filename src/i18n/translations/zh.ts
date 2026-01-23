@@ -5,6 +5,7 @@ export const zh: Translations = {
     play: '开始游戏',
     settings: '设置',
     highScores: '最高分',
+    ships: '飞船',
     quit: '退出',
   },
   game: {

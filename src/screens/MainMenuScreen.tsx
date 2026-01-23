@@ -151,7 +151,7 @@ export default function MainMenuScreen() {
               className="text-xl font-semibold text-center"
               style={{ color: theme.colors.textPrimary }}
             >
-              Ships
+              {t('menu.ships')}
             </Text>
           </TouchableOpacity>
 

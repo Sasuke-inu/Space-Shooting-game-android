@@ -12,6 +12,7 @@ export interface Translations {
     play: string;
     settings: string;
     highScores: string;
+    ships: string;
     quit: string;
   };
   game: {

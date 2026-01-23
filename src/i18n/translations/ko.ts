@@ -5,6 +5,7 @@ export const ko: Translations = {
     play: '플레이',
     settings: '설정',
     highScores: '최고 점수',
+    ships: '우주선',
     quit: '종료',
   },
   game: {
