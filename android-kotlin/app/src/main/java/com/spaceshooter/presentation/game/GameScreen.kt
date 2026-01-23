@@ -68,6 +68,8 @@ fun GameScreen(
             lives = gameState.lives,
             combo = gameState.combo,
             specialAbility = gameState.player.specialAbility,
+            paused = gameState.paused,
+            onPause = { viewModel.pauseGame() },
             colors = colors,
             modifier = Modifier.fillMaxSize()
         )
@@ -163,6 +165,8 @@ private fun GameHUD(
     lives: Int,
     combo: com.spaceshooter.domain.model.ComboState,
     specialAbility: com.spaceshooter.domain.model.SpecialAbilityState,
+    paused: Boolean,
+    onPause: () -> Unit,
     colors: com.spaceshooter.theme.ThemeColors,
     modifier: Modifier = Modifier
 ) {
@@ -240,10 +244,11 @@ private fun GameHUD(
             }
         }
 
-        // Top-right: Special ability cooldown
+        // Top-right: Special ability cooldown and pause button
         Column(
             modifier = Modifier.align(Alignment.TopEnd),
-            horizontalAlignment = Alignment.End
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
                 text = specialAbility.type.displayName,
@@ -262,6 +267,30 @@ private fun GameHUD(
                     color = colors.hudAccent,
                     fontSize = 12.sp
                 )
+            }
+
+            // Pause button (only visible when not paused)
+            if (!paused) {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(
+                            color = colors.joystickPad,
+                            shape = androidx.compose.foundation.shape.CircleShape
+                        )
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onTap = { onPause() }
+                            )
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "||",
+                        color = colors.joystickStick,
+                        fontSize = 16.sp
+                    )
+                }
             }
         }
     }
