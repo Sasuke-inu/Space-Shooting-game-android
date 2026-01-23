@@ -8,7 +8,7 @@ import { VirtualControls } from "../components/VirtualControls"
 import { useGameStore, MAX_DT, JOY_DEADZONE } from "../state/gameStore"
 import { useHighScoresStore } from "../state/highScoresStore"
 import { useSettingsStore, useThemeColors } from "../theme/themeStore"
-import { useStatisticsStore, useAchievementStore, useUpgradesStore } from "../state/progressStore"
+import { useStatisticsStore, useAchievementStore, useUpgradesStore, SHIP_COSTS } from "../state/progressStore"
 import { themeList } from "../theme/themes"
 import type { ThemeId } from "../theme/types"
 import type { ShipType } from "../types/game"
@@ -424,14 +424,6 @@ export default function GameScreen() {
   const joyMag = len(joystickValue)
   const thrusting = joyMag > JOY_DEADZONE
 
-  // Ship costs for purchasing
-  const SHIP_COSTS: Record<ShipType, number> = {
-    fighter: 0,      // Default, always unlocked
-    scout: 500,
-    tank: 750,
-    interceptor: 1000,
-  }
-
   // Theme selector component
   const ThemeSelector = () => (
     <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 8 }}>
@@ -653,7 +645,7 @@ export default function GameScreen() {
           <Text style={{ fontSize: 32 }}>🚀</Text>
           <View>
             <Text style={{ color: colors.comboText, fontSize: 12, fontWeight: 'bold' }}>SHIP PURCHASED</Text>
-            <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: 'bold' }}>{SHIP_STATS[recentShipPurchase].name}</Text>
+            <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: 'bold' }}>{recentShipPurchase.charAt(0).toUpperCase() + recentShipPurchase.slice(1)}</Text>
           </View>
         </View>
       )}
