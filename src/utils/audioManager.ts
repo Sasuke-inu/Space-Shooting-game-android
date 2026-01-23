@@ -30,15 +30,15 @@ interface SoundPool {
 
 // Map sound effects to their asset files
 const SOUND_ASSETS: Record<SoundEffect, any> = {
-  shoot_player: null, // Will be: require('../../assets/sounds/shoot_player.mp3')
-  shoot_enemy: null, // Will be: require('../../assets/sounds/shoot_enemy.mp3')
-  explosion_small: null, // Will be: require('../../assets/sounds/explosion_small.mp3')
-  explosion_large: null, // Will be: require('../../assets/sounds/explosion_large.mp3')
-  powerup_pickup: null, // Will be: require('../../assets/sounds/powerup_pickup.mp3')
-  hit_damage: null, // Placeholder - not in current asset list
-  low_health: null, // Placeholder - not in current asset list
-  combo: null, // Will be: require('../../assets/sounds/combo.mp3')
-  boss_warning: null, // Will be: require('../../assets/sounds/boss_warning.mp3')
+  shoot_player: require('../../assets/sounds/shoot_player.mp3'),
+  shoot_enemy: require('../../assets/sounds/shoot_enemy.mp3'),
+  explosion_small: require('../../assets/sounds/explosion_small.mp3'),
+  explosion_large: require('../../assets/sounds/explosion_large.mp3'),
+  powerup_pickup: require('../../assets/sounds/powerup_pickup.mp3'),
+  hit_damage: null, // Not used in current implementation
+  low_health: null, // Not used in current implementation
+  combo: require('../../assets/sounds/combo.mp3'),
+  boss_warning: require('../../assets/sounds/boss_warning.mp3'),
 }
 
 class AudioManager {
