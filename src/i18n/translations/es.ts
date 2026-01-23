@@ -120,6 +120,28 @@ export const es: Translations = {
     averageScore: 'Puntuación Promedio',
     totalDeaths: 'Muertes Totales',
   },
+  statistics: {
+    title: 'Estadísticas',
+    tabs: {
+      overview: 'Resumen',
+      perShip: 'Estadísticas por Nave',
+      achievements: 'Logros',
+    },
+    charts: {
+      scoreProgression: 'Progresión de Puntuación',
+      killsByType: 'Muertes por Tipo',
+      waveProgression: 'Progresión de Oleadas',
+      playTimeByShip: 'Tiempo de Juego por Nave',
+    },
+    labels: {
+      bestCombo: 'Mejor Combo',
+      bossKills: 'Jefes Eliminados',
+      powerUpsCollected: 'Potenciadores Recogidos',
+      favoriteShip: 'Nave Favorita',
+      noDataYet: 'Aún no hay datos',
+      playToUnlock: 'Juega para desbloquear',
+    },
+  },
   general: {
     confirm: 'Confirmar',
     cancel: 'Cancelar',

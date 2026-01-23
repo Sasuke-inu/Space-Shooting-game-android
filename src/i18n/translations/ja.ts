@@ -120,6 +120,28 @@ export const ja: Translations = {
     averageScore: '平均スコア',
     totalDeaths: '総死亡回数',
   },
+  statistics: {
+    title: '統計',
+    tabs: {
+      overview: '概要',
+      perShip: '機体別統計',
+      achievements: 'アチーブメント',
+    },
+    charts: {
+      scoreProgression: 'スコア推移',
+      killsByType: 'タイプ別撃破数',
+      waveProgression: 'ウェーブ推移',
+      playTimeByShip: '機体別プレイ時間',
+    },
+    labels: {
+      bestCombo: 'ベストコンボ',
+      bossKills: 'ボス撃破数',
+      powerUpsCollected: 'パワーアップ収集数',
+      favoriteShip: 'お気に入り機体',
+      noDataYet: 'データなし',
+      playToUnlock: 'プレイして解除',
+    },
+  },
   general: {
     confirm: '確認',
     cancel: 'キャンセル',

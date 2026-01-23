@@ -120,6 +120,28 @@ export const zh: Translations = {
     averageScore: '平均分数',
     totalDeaths: '总死亡次数',
   },
+  statistics: {
+    title: '统计',
+    tabs: {
+      overview: '概览',
+      perShip: '各飞船统计',
+      achievements: '成就',
+    },
+    charts: {
+      scoreProgression: '分数进展',
+      killsByType: '按类型击杀',
+      waveProgression: '波次进展',
+      playTimeByShip: '各飞船游戏时间',
+    },
+    labels: {
+      bestCombo: '最佳连击',
+      bossKills: 'Boss击杀',
+      powerUpsCollected: '收集的道具',
+      favoriteShip: '最爱飞船',
+      noDataYet: '暂无数据',
+      playToUnlock: '游戏以解锁',
+    },
+  },
   general: {
     confirm: '确认',
     cancel: '取消',
