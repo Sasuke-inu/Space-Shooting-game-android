@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from "react"
-import { View, StyleSheet } from "react-native"
+import { View, StyleSheet, Pressable } from "react-native"
 import { Gesture, GestureDetector } from "react-native-gesture-handler"
 import Animated, {
   useAnimatedStyle,
@@ -7,13 +7,15 @@ import Animated, {
   withSpring,
   runOnJS,
 } from "react-native-reanimated"
-import type { Vec2 } from "../types/game"
+import type { Vec2, Player } from "../types/game"
 import type { ThemeColors } from "../theme/types"
 
 interface VirtualControlsProps {
   onJoystickMove: (value: Vec2) => void
   colors: ThemeColors
   sensitivity?: number
+  player: Player
+  onAbilityPress: () => void
 }
 
 const JOY_MAX_RADIUS = 60
@@ -22,6 +24,8 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
   onJoystickMove,
   colors,
   sensitivity = 1.0,
+  player,
+  onAbilityPress,
 }) => {
   const [joystickActive, setJoystickActive] = useState(false)
   const joystickX = useSharedValue(0)
@@ -86,6 +90,9 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
       backgroundColor: colors.joystickStick,
       shadowColor: colors.joystickGlow,
     },
+    abilityButton: {
+      backgroundColor: colors.buttonPrimary,
+    },
   }), [colors])
 
   return (
@@ -98,6 +105,12 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
           </View>
         </View>
       </GestureDetector>
+
+      {/* Special ability button */}
+      <Pressable
+        style={[styles.abilityButton, dynamicStyles.abilityButton]}
+        onPress={onAbilityPress}
+      />
     </View>
   )
 }
@@ -133,5 +146,19 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 18,
+  },
+  abilityButton: {
+    position: "absolute",
+    right: 20,
+    bottom: 0,
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 10,
+    elevation: 5,
   },
 })
