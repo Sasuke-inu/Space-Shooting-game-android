@@ -54,7 +54,7 @@ class AudioManager {
     try {
       await Audio.setAudioModeAsync({
         playsInSilentModeIOS: true,
-        staysActiveInBackground: false,
+        staysActiveInBackground: true,
         shouldDuckAndroid: true,
       })
       this.initialized = true

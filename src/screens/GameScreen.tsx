@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef, useCallback } from "react"
 import { View, Text, Pressable, Modal, useWindowDimensions, TextInput, Keyboard, ScrollView } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Gesture, GestureDetector } from "react-native-gesture-handler"
-import { Audio } from "expo-av"
 import { GameCanvas } from "../components/GameCanvas"
 import { VirtualControls } from "../components/VirtualControls"
 import { useGameStore, MAX_DT, JOY_DEADZONE } from "../state/gameStore"
@@ -16,6 +15,7 @@ import { SHIP_STATS, ACHIEVEMENTS } from "../types/game"
 import { useGameEngine } from "../utils/gameEngine"
 import { len, angleOf, nor, mul, v } from "../utils/vectorMath"
 import type { Vec2 } from "../types/game"
+import { audioManager } from "../utils/audioManager"
 
 export default function GameScreen() {
   const { width, height } = useWindowDimensions()
@@ -84,7 +84,6 @@ export default function GameScreen() {
   const initializedRef = useRef(false)
   const fireOnceRef = useRef(false)
   const fireOnceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const soundRef = useRef<Audio.Sound | null>(null)
   const swipeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lastAbilityActivationRef = useRef<string | null>(null) // Track last activated ability
   const [showInstructions, setShowInstructions] = useState(true)
@@ -161,45 +160,16 @@ export default function GameScreen() {
 
   // Setup and play background music
   useEffect(() => {
-    let isMounted = true
-
-    const setupAudio = async () => {
-      try {
-        await Audio.setAudioModeAsync({
-          playsInSilentModeIOS: true,
-          staysActiveInBackground: true,
-          shouldDuckAndroid: true,
-        })
-
-        const { sound } = await Audio.Sound.createAsync(
-          require("../../assets/music-1762534655955.mp3"),
-          { isLooping: true, volume: musicVolume }
-        )
-
-        if (isMounted) {
-          soundRef.current = sound
-          await sound.playAsync()
-        }
-      } catch (error) {
-        console.warn("Failed to load background music:", error)
-      }
-    }
-
-    setupAudio()
+    audioManager.loadMusic(require("../../assets/music-1762534655955.mp3"))
 
     return () => {
-      isMounted = false
-      if (soundRef.current) {
-        soundRef.current.unloadAsync()
-      }
+      audioManager.stopMusic()
     }
   }, [])
 
   // Update music volume when changed
   useEffect(() => {
-    if (soundRef.current) {
-      soundRef.current.setVolumeAsync(musicVolume)
-    }
+    audioManager.setMusicVolume(musicVolume)
   }, [musicVolume])
 
   // Double tap to activate special ability
