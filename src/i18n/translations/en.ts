@@ -128,4 +128,15 @@ export const en: Translations = {
     on: 'On',
     off: 'Off',
   },
+  tutorial: {
+    title: 'Welcome to Space Shooter!',
+    skip: 'Skip Tutorial',
+    next: 'Next',
+    movement: 'Use the joystick on the left to move your ship around. Practice dodging asteroids and enemies!',
+    firing: 'Tap the fire button on the right to shoot. Hold it down for continuous fire, or enable Auto-Fire in settings.',
+    powerups: 'Collect power-ups to gain temporary abilities: Shield (blue), Rapid Fire (red), Spread Shot (yellow), and Magnet (purple).',
+    combos: 'Destroy enemies quickly to build combos! Chain kills within 2 seconds to multiply your score up to 3x.',
+    abilities: 'Each ship has a special ability. Tap the ability button when charged to unleash powerful effects!',
+    complete: 'You\'re ready! Good luck, Commander. May the stars be with you.',
+  },
 };
