@@ -278,6 +278,9 @@ export default function GameScreen() {
   })
 
   const handleRestart = () => {
+    hapticSelection()
+    recordGameEndStats()
+    setShowNameInput(false)
     const store = useGameStore.getState()
     store.resetGame()
     store.spawnAsteroids(5)
@@ -285,21 +288,36 @@ export default function GameScreen() {
     store.setPaused(false)
   }
 
+  const handleMainMenu = () => {
+    recordGameEndStats()
+    setShowNameInput(false)
+    const store = useGameStore.getState()
+    store.resetGame()
+    store.spawnAsteroids(5)
+    store.spawnEnemy()
+    setShowInstructions(true)
+    store.setPaused(true)
+  }
+
   const handleStartGame = () => {
     setShowInstructions(false)
     useGameStore.getState().setPaused(false)
   }
 
-  const handleSubmitScore = () => {
-    const name = playerName.trim() || "Anonymous"
-    addScore(score, wave, name)
-
+  const recordGameEndStats = () => {
     // Record game end statistics
     const state = useGameStore.getState()
     recordGameEnd(score, wave, time, 0, state.sessionShotsFired, state.sessionShotsHit)
 
     // Add credits to upgrade store
     addUpgradeCredits(credits)
+  }
+
+  const handleSubmitScore = () => {
+    const name = playerName.trim() || "Anonymous"
+    addScore(score, wave, name)
+
+    recordGameEndStats()
 
     setShowNameInput(false)
     setPlayerName("")
