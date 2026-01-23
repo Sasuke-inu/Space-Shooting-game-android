@@ -8,6 +8,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import type { ThemeId, GameTheme, ThemeColors } from './types'
 import { themes, defaultThemeId, getTheme } from './themes'
 
+export type Difficulty = 'easy' | 'medium' | 'hard'
+
 interface SettingsState {
   // Theme
   themeId: ThemeId
@@ -20,6 +22,10 @@ interface SettingsState {
   joystickSensitivity: number
   autoFire: boolean
   hapticsEnabled: boolean
+
+  // Gameplay
+  screenShakeEnabled: boolean
+  difficulty: Difficulty
 }
 
 interface SettingsActions {
@@ -37,6 +43,10 @@ interface SettingsActions {
   setAutoFire: (enabled: boolean) => void
   setHapticsEnabled: (enabled: boolean) => void
 
+  // Gameplay
+  setScreenShakeEnabled: (enabled: boolean) => void
+  setDifficulty: (difficulty: Difficulty) => void
+
   // Reset
   resetSettings: () => void
 }
@@ -50,6 +60,8 @@ const defaultSettings: SettingsState = {
   joystickSensitivity: 1.0,
   autoFire: false,
   hapticsEnabled: true,
+  screenShakeEnabled: true,
+  difficulty: 'medium',
 }
 
 export const useSettingsStore = create<SettingsStore>()(
@@ -76,6 +88,11 @@ export const useSettingsStore = create<SettingsStore>()(
       setAutoFire: (enabled: boolean) => set({ autoFire: enabled }),
 
       setHapticsEnabled: (enabled: boolean) => set({ hapticsEnabled: enabled }),
+
+      // Gameplay actions
+      setScreenShakeEnabled: (enabled: boolean) => set({ screenShakeEnabled: enabled }),
+
+      setDifficulty: (difficulty: Difficulty) => set({ difficulty }),
 
       // Reset
       resetSettings: () => set(defaultSettings),
