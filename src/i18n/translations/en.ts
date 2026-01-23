@@ -42,6 +42,13 @@ export const en: Translations = {
     large: 'Large',
   },
   ships: {
+    selectShip: 'Select Ship',
+    compareShips: 'Compare Ships',
+    locked: 'Locked',
+    selected: 'Selected',
+    insufficientCredits: 'Insufficient Credits',
+    specialAbility: 'Special Ability',
+    cooldown: 'Cooldown',
     fighter: {
       name: 'Fighter',
       description: 'Balanced ship with good speed and firepower',
@@ -120,6 +127,10 @@ export const en: Translations = {
     totalPlayTime: 'Total Play Time',
     averageScore: 'Average Score',
     totalDeaths: 'Total Deaths',
+    speed: 'Speed',
+    fireRate: 'Fire Rate',
+    damage: 'Damage',
+    hull: 'Hull',
   },
   statistics: {
     title: 'Statistics Dashboard',
@@ -179,6 +190,7 @@ export const en: Translations = {
     back: 'Back',
     on: 'On',
     off: 'Off',
+    credits: 'Credits',
   },
   skins: {
     fighter: {

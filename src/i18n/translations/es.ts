@@ -42,6 +42,13 @@ export const es: Translations = {
     large: 'Grande',
   },
   ships: {
+    selectShip: 'Seleccionar Nave',
+    compareShips: 'Comparar Naves',
+    locked: 'Bloqueada',
+    selected: 'Seleccionada',
+    insufficientCredits: 'Créditos Insuficientes',
+    specialAbility: 'Habilidad Especial',
+    cooldown: 'Tiempo de Recarga',
     fighter: {
       name: 'Caza',
       description: 'Nave equilibrada con buena velocidad y potencia de fuego',
@@ -120,6 +127,10 @@ export const es: Translations = {
     totalPlayTime: 'Tiempo Total de Juego',
     averageScore: 'Puntuación Promedio',
     totalDeaths: 'Muertes Totales',
+    speed: 'Velocidad',
+    fireRate: 'Cadencia de Fuego',
+    damage: 'Daño',
+    hull: 'Casco',
   },
   statistics: {
     title: 'Panel de Estadísticas',
@@ -179,6 +190,7 @@ export const es: Translations = {
     back: 'Atrás',
     on: 'Activado',
     off: 'Desactivado',
+    credits: 'Créditos',
   },
   skins: {
     fighter: {

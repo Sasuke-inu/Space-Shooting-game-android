@@ -42,6 +42,13 @@ export const ko: Translations = {
     large: '크게',
   },
   ships: {
+    selectShip: '우주선 선택',
+    compareShips: '우주선 비교',
+    locked: '잠김',
+    selected: '선택됨',
+    insufficientCredits: '크레딧 부족',
+    specialAbility: '특수 능력',
+    cooldown: '재사용 대기시간',
     fighter: {
       name: '전투기',
       description: '속도와 화력이 균형잡힌 우주선',
@@ -120,6 +127,10 @@ export const ko: Translations = {
     totalPlayTime: '총 플레이 시간',
     averageScore: '평균 점수',
     totalDeaths: '총 사망 횟수',
+    speed: '속도',
+    fireRate: '연사 속도',
+    damage: '데미지',
+    hull: '실드',
   },
   statistics: {
     title: '통계 대시보드',
@@ -179,6 +190,7 @@ export const ko: Translations = {
     back: '뒤로',
     on: '켜짐',
     off: '꺼짐',
+    credits: '크레딧',
   },
   skins: {
     fighter: {

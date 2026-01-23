@@ -42,6 +42,13 @@ export const ja: Translations = {
     large: '大',
   },
   ships: {
+    selectShip: '機体を選択',
+    compareShips: '機体を比較',
+    locked: 'ロック中',
+    selected: '選択中',
+    insufficientCredits: 'クレジット不足',
+    specialAbility: '特殊能力',
+    cooldown: 'クールダウン',
     fighter: {
       name: 'ファイター',
       description: 'スピードと火力のバランスが良い機体',
@@ -120,6 +127,10 @@ export const ja: Translations = {
     totalPlayTime: '総プレイ時間',
     averageScore: '平均スコア',
     totalDeaths: '総死亡回数',
+    speed: 'スピード',
+    fireRate: '連射速度',
+    damage: 'ダメージ',
+    hull: 'シールド',
   },
   statistics: {
     title: '統計ダッシュボード',
@@ -179,6 +190,7 @@ export const ja: Translations = {
     back: '戻る',
     on: 'オン',
     off: 'オフ',
+    credits: 'クレジット',
   },
   skins: {
     fighter: {

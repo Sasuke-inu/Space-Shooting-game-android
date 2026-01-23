@@ -42,6 +42,13 @@ export const zh: Translations = {
     large: '大',
   },
   ships: {
+    selectShip: '选择飞船',
+    compareShips: '比较飞船',
+    locked: '已锁定',
+    selected: '已选择',
+    insufficientCredits: '积分不足',
+    specialAbility: '特殊能力',
+    cooldown: '冷却时间',
     fighter: {
       name: '战斗机',
       description: '速度和火力均衡的飞船',
@@ -120,6 +127,10 @@ export const zh: Translations = {
     totalPlayTime: '总游戏时间',
     averageScore: '平均分数',
     totalDeaths: '总死亡次数',
+    speed: '速度',
+    fireRate: '射速',
+    damage: '伤害',
+    hull: '护盾',
   },
   statistics: {
     title: '统计仪表板',
@@ -179,6 +190,7 @@ export const zh: Translations = {
     back: '返回',
     on: '开',
     off: '关',
+    credits: '积分',
   },
   skins: {
     fighter: {
