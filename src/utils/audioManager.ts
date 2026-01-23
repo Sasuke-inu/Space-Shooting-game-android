@@ -15,15 +15,36 @@ export type SoundEffect =
   | 'hit_damage'
   | 'low_health'
   | 'combo'
+  | 'boss_warning'
+
+// Sound pool entry with multiple instances for overlapping playback
+interface SoundPoolEntry {
+  instances: Audio.Sound[]
+  currentIndex: number
+}
 
 // Sound pool for reusable sounds
 interface SoundPool {
-  [key: string]: Audio.Sound | null
+  [key: string]: SoundPoolEntry
+}
+
+// Map sound effects to their asset files
+const SOUND_ASSETS: Record<SoundEffect, any> = {
+  shoot_player: null, // Will be: require('../../assets/sounds/shoot_player.mp3')
+  shoot_enemy: null, // Will be: require('../../assets/sounds/shoot_enemy.mp3')
+  explosion_small: null, // Will be: require('../../assets/sounds/explosion_small.mp3')
+  explosion_large: null, // Will be: require('../../assets/sounds/explosion_large.mp3')
+  powerup_pickup: null, // Will be: require('../../assets/sounds/powerup_pickup.mp3')
+  hit_damage: null, // Placeholder - not in current asset list
+  low_health: null, // Placeholder - not in current asset list
+  combo: null, // Will be: require('../../assets/sounds/combo.mp3')
+  boss_warning: null, // Will be: require('../../assets/sounds/boss_warning.mp3')
 }
 
 class AudioManager {
   private sounds: SoundPool = {}
   private initialized = false
+  private poolSize = 3 // Number of instances per sound effect
 
   async init() {
     if (this.initialized) return
@@ -35,13 +56,48 @@ class AudioManager {
         shouldDuckAndroid: true,
       })
       this.initialized = true
+      await this.loadSounds()
     } catch (error) {
       console.warn('AudioManager init failed:', error)
     }
   }
 
-  // Generate simple beep sounds procedurally since we don't have audio files
-  // In production, replace with actual sound file loading
+  // Load all sound effects into the pool
+  private async loadSounds() {
+    const effects = Object.keys(SOUND_ASSETS) as SoundEffect[]
+
+    for (const effect of effects) {
+      const asset = SOUND_ASSETS[effect]
+
+      // Skip if no asset file defined yet
+      if (!asset) continue
+
+      try {
+        const instances: Audio.Sound[] = []
+
+        // Create multiple instances for sound pooling
+        for (let i = 0; i < this.poolSize; i++) {
+          const { sound } = await Audio.Sound.createAsync(asset, {
+            isLooping: false,
+            volume: 1.0,
+          })
+          instances.push(sound)
+        }
+
+        this.sounds[effect] = {
+          instances,
+          currentIndex: 0,
+        }
+      } catch (error) {
+        // Silently fail for missing sound files - they're optional
+        if (__DEV__) {
+          console.warn(`Failed to load sound: ${effect}`, error)
+        }
+      }
+    }
+  }
+
+  // Play a sound effect with volume control
   async playSfx(effect: SoundEffect) {
     const sfxVolume = useSettingsStore.getState().sfxVolume
 
@@ -50,49 +106,33 @@ class AudioManager {
     try {
       await this.init()
 
-      // For now, we'll use a simple approach - in production you'd load actual files
-      // This is a placeholder that works without audio files
-      const soundConfig = this.getSoundConfig(effect)
+      const poolEntry = this.sounds[effect]
 
-      // Create a simple tone using expo-av
-      // Note: In a real implementation, you'd have actual audio files
-      // For demonstration, we'll just log the sound effect
-      if (__DEV__) {
-        // In development, just log - actual sounds would need audio files
-        // console.log(`[SFX] ${effect} at volume ${sfxVolume}`)
+      // If sound not loaded, skip silently (asset files may not exist yet)
+      if (!poolEntry || poolEntry.instances.length === 0) {
+        return
       }
+
+      // Get next available sound instance from pool
+      const sound = poolEntry.instances[poolEntry.currentIndex]
+      poolEntry.currentIndex = (poolEntry.currentIndex + 1) % poolEntry.instances.length
+
+      // Set volume and play
+      await sound.setVolumeAsync(sfxVolume)
+      await sound.setPositionAsync(0) // Reset to start
+      await sound.playAsync()
 
     } catch (error) {
       // Silently fail - sound effects are non-critical
-    }
-  }
-
-  private getSoundConfig(effect: SoundEffect): { frequency: number; duration: number } {
-    switch (effect) {
-      case 'shoot_player':
-        return { frequency: 800, duration: 50 }
-      case 'shoot_enemy':
-        return { frequency: 400, duration: 80 }
-      case 'explosion_small':
-        return { frequency: 200, duration: 150 }
-      case 'explosion_large':
-        return { frequency: 100, duration: 300 }
-      case 'powerup_pickup':
-        return { frequency: 1200, duration: 200 }
-      case 'hit_damage':
-        return { frequency: 300, duration: 100 }
-      case 'low_health':
-        return { frequency: 500, duration: 400 }
-      case 'combo':
-        return { frequency: 1000, duration: 100 }
-      default:
-        return { frequency: 440, duration: 100 }
+      if (__DEV__) {
+        console.warn(`Failed to play sound: ${effect}`, error)
+      }
     }
   }
 
   async cleanup() {
-    for (const sound of Object.values(this.sounds)) {
-      if (sound) {
+    for (const poolEntry of Object.values(this.sounds)) {
+      for (const sound of poolEntry.instances) {
         try {
           await sound.unloadAsync()
         } catch (e) {
@@ -101,6 +141,7 @@ class AudioManager {
       }
     }
     this.sounds = {}
+    this.initialized = false
   }
 }
 

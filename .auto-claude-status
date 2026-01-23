@@ -1,0 +1,25 @@
+{
+  "active": true,
+  "spec": "003-audio-system-with-sound-effects-and-music",
+  "state": "planning",
+  "subtasks": {
+    "completed": 0,
+    "total": 0,
+    "in_progress": 1,
+    "failed": 0
+  },
+  "phase": {
+    "current": "Audio Manager Enhancement",
+    "id": null,
+    "total": 2
+  },
+  "workers": {
+    "active": 0,
+    "max": 1
+  },
+  "session": {
+    "number": 2,
+    "started_at": "2026-01-23T15:48:09.225766"
+  },
+  "last_update": "2026-01-23T15:54:29.968103"
+}
