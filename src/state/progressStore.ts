@@ -351,7 +351,7 @@ const initialUpgrades: WeaponUpgrades = {
   piercing: false,
 }
 
-const SHIP_COSTS: Record<ShipType, number> = {
+export const SHIP_COSTS: Record<ShipType, number> = {
   fighter: 0,      // Default, always unlocked
   scout: 500,
   tank: 750,

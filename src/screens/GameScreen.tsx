@@ -504,6 +504,31 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
         </View>
       )}
 
+      {/* Ship purchase notification */}
+      {recentShipPurchase && (
+        <View style={{
+          position: 'absolute',
+          top: insets.top + 60,
+          left: 20,
+          right: 20,
+          backgroundColor: colors.panelBg,
+          borderWidth: 2,
+          borderColor: colors.comboText,
+          borderRadius: 12,
+          padding: 12,
+          zIndex: 100,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 12,
+        }}>
+          <Text style={{ fontSize: 32 }}>🚀</Text>
+          <View>
+            <Text style={{ color: colors.comboText, fontSize: 12, fontWeight: 'bold' }}>SHIP PURCHASED</Text>
+            <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: 'bold' }}>{recentShipPurchase.charAt(0).toUpperCase() + recentShipPurchase.slice(1)}</Text>
+          </View>
+        </View>
+      )}
+
       {/* Top bar */}
       <TopBar
         topInset={insets.top}
@@ -594,6 +619,255 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
         stats={stats}
         upgradesCredits={upgradesCredits}
       />
+
+      {/* Shop Modal */}
+      {showShop && (
+        <Modal visible={true} transparent animationType="fade">
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.modalOverlay }}>
+            <View style={{
+              backgroundColor: colors.panelBg,
+              borderWidth: 2,
+              borderColor: colors.panelBorder,
+              borderRadius: 16,
+              padding: 20,
+              marginHorizontal: 24,
+              width: 340,
+              maxHeight: '85%',
+            }}>
+              <Text style={{ color: colors.textPrimary, fontSize: 24, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
+                🛒 Ship Shop
+              </Text>
+
+              {/* Credit Balance */}
+              <View style={{
+                backgroundColor: colors.buttonSecondary,
+                borderRadius: 12,
+                padding: 12,
+                marginBottom: 16,
+                alignItems: 'center',
+              }}>
+                <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Your Credits</Text>
+                <Text style={{ color: colors.comboText, fontSize: 24, fontWeight: 'bold' }}>
+                  {upgradesCredits}
+                </Text>
+              </View>
+
+              <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 400 }}>
+                <View style={{ gap: 12 }}>
+                  {(['fighter', 'scout', 'tank', 'interceptor'] as ShipType[]).map((ship) => {
+                    const shipStats = SHIP_STATS[ship]
+                    const isUnlocked = unlockedShips.includes(ship)
+                    const cost = SHIP_COSTS[ship]
+
+                    return (
+                      <View
+                        key={ship}
+                        style={{
+                          padding: 12,
+                          borderRadius: 12,
+                          borderWidth: 2,
+                          borderColor: isUnlocked ? colors.comboText : colors.panelBorder,
+                          backgroundColor: isUnlocked ? colors.buttonSecondary : 'transparent',
+                        }}
+                      >
+                        {/* Ship Header */}
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                          <Text style={{ color: colors.textPrimary, fontSize: 18, fontWeight: 'bold', textTransform: 'capitalize' }}>
+                            {ship}
+                          </Text>
+                          {isUnlocked && (
+                            <Text style={{ color: colors.comboText, fontSize: 14, fontWeight: 'bold' }}>✓ OWNED</Text>
+                          )}
+                        </View>
+
+                        {/* Ship Stats */}
+                        <View style={{ marginBottom: 12, gap: 4 }}>
+                          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Speed</Text>
+                            <Text style={{ color: colors.textPrimary, fontSize: 12 }}>{(shipStats.speed * 100).toFixed(0)}%</Text>
+                          </View>
+                          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Fire Rate</Text>
+                            <Text style={{ color: colors.textPrimary, fontSize: 12 }}>{(shipStats.fireRate * 100).toFixed(0)}%</Text>
+                          </View>
+                          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Damage</Text>
+                            <Text style={{ color: colors.textPrimary, fontSize: 12 }}>{(shipStats.damage * 100).toFixed(0)}%</Text>
+                          </View>
+                          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Hull</Text>
+                            <Text style={{ color: colors.textPrimary, fontSize: 12 }}>{shipStats.hull}</Text>
+                          </View>
+                          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Special</Text>
+                            <Text style={{ color: colors.comboText, fontSize: 12 }}>{shipStats.special}</Text>
+                          </View>
+                        </View>
+
+                        {/* Price and Purchase Button */}
+                        {!isUnlocked && (
+                          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: 'bold' }}>
+                              💰 {cost} Credits
+                            </Text>
+                            <Pressable
+                              style={{
+                                backgroundColor: colors.buttonPrimary,
+                                borderRadius: 8,
+                                paddingHorizontal: 16,
+                                paddingVertical: 8,
+                              }}
+                              onPress={() => {
+                                setSelectedShipForPurchase(ship)
+                                setShowPurchaseConfirm(true)
+                              }}
+                            >
+                              <Text style={{ color: colors.buttonText, fontSize: 14, fontWeight: 'bold' }}>
+                                PURCHASE
+                              </Text>
+                            </Pressable>
+                          </View>
+                        )}
+                      </View>
+                    )
+                  })}
+                </View>
+              </ScrollView>
+
+              <Pressable
+                style={{
+                  backgroundColor: colors.buttonPrimary,
+                  borderRadius: 12,
+                  paddingVertical: 14,
+                  paddingHorizontal: 16,
+                  marginTop: 16,
+                }}
+                onPress={() => setShowShop(false)}
+              >
+                <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
+                  CLOSE
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+      )}
+
+      {/* Purchase Confirmation Modal */}
+      {showPurchaseConfirm && selectedShipForPurchase && (
+        <Modal visible={true} transparent animationType="fade">
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.modalOverlay }}>
+            <View style={{
+              backgroundColor: colors.panelBg,
+              borderWidth: 2,
+              borderColor: colors.buttonPrimary,
+              borderRadius: 16,
+              padding: 24,
+              marginHorizontal: 24,
+              width: 340,
+            }}>
+              <Text style={{ color: colors.textPrimary, fontSize: 24, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
+                Confirm Purchase
+              </Text>
+
+              <Text style={{ color: colors.textSecondary, fontSize: 16, marginBottom: 16, textAlign: 'center', textTransform: 'capitalize' }}>
+                {selectedShipForPurchase}
+              </Text>
+
+              {/* Ship Stats */}
+              <View style={{
+                backgroundColor: colors.buttonSecondary,
+                borderRadius: 12,
+                padding: 12,
+                marginBottom: 16,
+                gap: 4,
+              }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Speed</Text>
+                  <Text style={{ color: colors.textPrimary, fontSize: 12 }}>{(SHIP_STATS[selectedShipForPurchase].speed * 100).toFixed(0)}%</Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Fire Rate</Text>
+                  <Text style={{ color: colors.textPrimary, fontSize: 12 }}>{(SHIP_STATS[selectedShipForPurchase].fireRate * 100).toFixed(0)}%</Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Damage</Text>
+                  <Text style={{ color: colors.textPrimary, fontSize: 12 }}>{(SHIP_STATS[selectedShipForPurchase].damage * 100).toFixed(0)}%</Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Hull</Text>
+                  <Text style={{ color: colors.textPrimary, fontSize: 12 }}>{SHIP_STATS[selectedShipForPurchase].hull}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Special</Text>
+                  <Text style={{ color: colors.comboText, fontSize: 12 }}>{SHIP_STATS[selectedShipForPurchase].special}</Text>
+                </View>
+              </View>
+
+              {/* Price Display */}
+              <View style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginBottom: 16,
+                paddingHorizontal: 8,
+              }}>
+                <Text style={{ color: colors.textSecondary, fontSize: 14 }}>Your Credits:</Text>
+                <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: 'bold' }}>{upgradesCredits}</Text>
+              </View>
+              <View style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginBottom: 20,
+                paddingHorizontal: 8,
+              }}>
+                <Text style={{ color: colors.textSecondary, fontSize: 14 }}>Cost:</Text>
+                <Text style={{ color: colors.comboText, fontSize: 14, fontWeight: 'bold' }}>💰 {SHIP_COSTS[selectedShipForPurchase]}</Text>
+              </View>
+
+              {/* Insufficient credits warning */}
+              {upgradesCredits < SHIP_COSTS[selectedShipForPurchase] && (
+                <Text style={{ color: colors.enemyShip, fontSize: 14, marginBottom: 16, textAlign: 'center', fontWeight: 'bold' }}>
+                  ⚠️ Insufficient Credits
+                </Text>
+              )}
+
+              {/* Action Buttons */}
+              <View style={{ flexDirection: 'row', gap: 12 }}>
+                <Pressable
+                  style={{
+                    flex: 1,
+                    backgroundColor: colors.buttonSecondary,
+                    borderRadius: 12,
+                    paddingVertical: 14,
+                    paddingHorizontal: 16,
+                  }}
+                  onPress={handleCancelPurchase}
+                >
+                  <Text style={{ color: colors.textPrimary, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
+                    CANCEL
+                  </Text>
+                </Pressable>
+                <Pressable
+                  style={{
+                    flex: 1,
+                    backgroundColor: upgradesCredits >= SHIP_COSTS[selectedShipForPurchase] ? colors.buttonPrimary : colors.panelBorder,
+                    borderRadius: 12,
+                    paddingVertical: 14,
+                    paddingHorizontal: 16,
+                    opacity: upgradesCredits >= SHIP_COSTS[selectedShipForPurchase] ? 1 : 0.5,
+                  }}
+                  onPress={handleConfirmPurchase}
+                  disabled={upgradesCredits < SHIP_COSTS[selectedShipForPurchase]}
+                >
+                  <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
+                    CONFIRM
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      )}
 
       {/* Welcome Instructions Modal */}
       <InstructionsModal visible={showInstructions} onStartGame={handleStartGame} colors={colors} />
