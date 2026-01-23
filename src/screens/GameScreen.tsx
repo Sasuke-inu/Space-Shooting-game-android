@@ -7,7 +7,7 @@ import { GameCanvas } from "../components/GameCanvas"
 import { VirtualControls } from "../components/VirtualControls"
 import { useGameStore, MAX_DT, JOY_DEADZONE } from "../state/gameStore"
 import { useHighScoresStore } from "../state/highScoresStore"
-import { useSettingsStore, useThemeColors } from "../theme/themeStore"
+import { useSettingsStore, useThemeColors, type Difficulty } from "../theme/themeStore"
 import { useStatisticsStore, useAchievementStore, useUpgradesStore } from "../state/progressStore"
 import { themeList } from "../theme/themes"
 import type { ThemeId } from "../theme/types"
@@ -36,6 +36,10 @@ export default function GameScreen() {
   const setMusicVolume = useSettingsStore((s) => s.setMusicVolume)
   const sfxVolume = useSettingsStore((s) => s.sfxVolume)
   const setSfxVolume = useSettingsStore((s) => s.setSfxVolume)
+  const screenShakeEnabled = useSettingsStore((s) => s.screenShakeEnabled)
+  const setScreenShakeEnabled = useSettingsStore((s) => s.setScreenShakeEnabled)
+  const difficulty = useSettingsStore((s) => s.difficulty)
+  const setDifficulty = useSettingsStore((s) => s.setDifficulty)
 
   // Game state
   const paused = useGameStore((s) => s.paused)
@@ -403,6 +407,46 @@ export default function GameScreen() {
     </View>
   )
 
+  // Difficulty selector component
+  const DifficultySelector = () => {
+    const difficulties: { id: Difficulty; label: string; description: string; icon: string }[] = [
+      { id: 'easy', label: 'Easy', description: 'More forgiving', icon: '🟢' },
+      { id: 'medium', label: 'Medium', description: 'Balanced challenge', icon: '🟡' },
+      { id: 'hard', label: 'Hard', description: 'Expert mode', icon: '🔴' },
+    ]
+
+    return (
+      <View style={{ gap: 8 }}>
+        {difficulties.map((diff) => (
+          <Pressable
+            key={diff.id}
+            onPress={() => setDifficulty(diff.id)}
+            style={{
+              padding: 12,
+              borderRadius: 12,
+              borderWidth: 2,
+              borderColor: difficulty === diff.id ? colors.buttonPrimary : colors.panelBorder,
+              backgroundColor: difficulty === diff.id ? colors.buttonSecondary : 'transparent',
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 12,
+            }}
+          >
+            <Text style={{ fontSize: 20 }}>{diff.icon}</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: 'bold' }}>
+                {diff.label} {difficulty === diff.id && '✓'}
+              </Text>
+              <Text style={{ color: colors.textSecondary, fontSize: 12 }}>
+                {diff.description}
+              </Text>
+            </View>
+          </Pressable>
+        ))}
+      </View>
+    )
+  }
+
   // Ship selector component
   const ShipSelector = () => (
     <View style={{ gap: 12 }}>
@@ -740,6 +784,18 @@ export default function GameScreen() {
                     <Slider value={joystickSensitivity} onValueChange={setJoystickSensitivity} label="Joystick Sensitivity" />
                     <Toggle value={autoFire} onValueChange={setAutoFire} label="Auto-Fire" />
                     <Toggle value={hapticsEnabled} onValueChange={setHapticsEnabled} label="Haptic Feedback" />
+
+                    {/* Accessibility Section */}
+                    <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginTop: 20, marginBottom: 12 }}>
+                      ♿ Accessibility
+                    </Text>
+                    <Toggle value={screenShakeEnabled} onValueChange={setScreenShakeEnabled} label="Screen Shake" />
+
+                    {/* Difficulty Section */}
+                    <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginTop: 20, marginBottom: 12 }}>
+                      ⚔️ Difficulty
+                    </Text>
+                    <DifficultySelector />
                   </>
                 )}
 
