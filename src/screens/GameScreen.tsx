@@ -355,10 +355,11 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
 
     setShowNameInput(false)
     setPlayerName("")
+    setShowLeaderboard(true)
     Keyboard.dismiss()
   }
 
-  // Check for game over and show name input if top 5
+  // Check for game over and show name input if top 10
   useEffect(() => {
     if (paused && lives <= 0 && !showInstructions && !showNameInput) {
       if (isTopFive(score, gameMode)) {

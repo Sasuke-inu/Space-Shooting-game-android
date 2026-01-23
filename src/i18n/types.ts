@@ -289,6 +289,15 @@ export interface Translations {
       };
     };
   };
+  leaderboard: {
+    title: string;
+    rank: string;
+    name: string;
+    score: string;
+    wave: string;
+    noScores: string;
+    close: string;
+  };
 }
 
 export const SUPPORTED_LANGUAGES: LanguageOption[] = [

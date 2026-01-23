@@ -282,4 +282,13 @@ export const en: Translations = {
       },
     },
   },
+  leaderboard: {
+    title: 'Leaderboard',
+    rank: 'Rank',
+    name: 'Name',
+    score: 'Score',
+    wave: 'Wave',
+    noScores: 'No scores yet. Play a game to set your first record!',
+    close: 'Close',
+  },
 };

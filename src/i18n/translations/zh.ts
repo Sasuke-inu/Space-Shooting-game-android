@@ -282,4 +282,13 @@ export const zh: Translations = {
       },
     },
   },
+  leaderboard: {
+    title: '排行榜',
+    rank: '排名',
+    name: '姓名',
+    score: '分数',
+    wave: '波次',
+    noScores: '还没有分数。玩一局游戏来创造你的第一个记录！',
+    close: '关闭',
+  },
 };

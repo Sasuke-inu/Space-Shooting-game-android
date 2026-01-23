@@ -282,4 +282,13 @@ export const ja: Translations = {
       },
     },
   },
+  leaderboard: {
+    title: 'リーダーボード',
+    rank: '順位',
+    name: '名前',
+    score: 'スコア',
+    wave: 'ウェーブ',
+    noScores: 'まだスコアがありません。ゲームをプレイして最初の記録を作りましょう！',
+    close: '閉じる',
+  },
 };

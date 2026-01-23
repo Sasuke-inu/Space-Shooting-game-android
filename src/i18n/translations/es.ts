@@ -282,4 +282,13 @@ export const es: Translations = {
       },
     },
   },
+  leaderboard: {
+    title: 'Tabla de Clasificación',
+    rank: 'Rango',
+    name: 'Nombre',
+    score: 'Puntuación',
+    wave: 'Oleada',
+    noScores: '¡Aún no hay puntuaciones. Juega una partida para establecer tu primer récord!',
+    close: 'Cerrar',
+  },
 };

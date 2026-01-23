@@ -12,8 +12,8 @@ export interface HighScore {
 
 interface HighScoresState {
   scores: HighScore[]
-  addScore: (score: number, wave: number, name: string) => void
-  isTopFive: (score: number) => boolean
+  addScore: (score: number, wave: number, name: string, ship: ShipType) => void
+  isTopTen: (score: number) => boolean
   getScores: () => HighScore[]
   backup: () => Promise<boolean>
   restore: () => Promise<boolean>
