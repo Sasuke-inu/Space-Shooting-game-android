@@ -75,6 +75,50 @@ export const getEnemySpawnWeights = (wave: number): Record<EnemyType, number> =>
   bomber: wave >= 7 ? 15 : 0,
 })
 
+// ------------------------------------------------------------------ //
+//                         Bullet Pool
+// ------------------------------------------------------------------ //
+
+const BULLET_POOL_SIZE = 300
+const bulletPool: Bullet[] = []
+
+// Initialize bullet pool with pre-allocated objects
+for (let i = 0; i < BULLET_POOL_SIZE; i++) {
+  bulletPool.push({
+    pos: { x: 0, y: 0 },
+    vel: { x: 0, y: 0 },
+    life: 0,
+    friendly: false,
+    damage: undefined,
+  })
+}
+
+let bulletPoolIndex = 0
+
+/**
+ * Acquire a bullet from the pool and initialize it
+ */
+function acquireBullet(
+  pos: { x: number; y: number },
+  vel: { x: number; y: number },
+  life: number,
+  friendly: boolean,
+  damage?: number
+): Bullet {
+  const bullet = bulletPool[bulletPoolIndex]
+  bulletPoolIndex = (bulletPoolIndex + 1) % BULLET_POOL_SIZE
+
+  bullet.pos.x = pos.x
+  bullet.pos.y = pos.y
+  bullet.vel.x = vel.x
+  bullet.vel.y = vel.y
+  bullet.life = life
+  bullet.friendly = friendly
+  bullet.damage = damage
+
+  return bullet
+}
+
 interface GameStore extends GameState {
   // Actions
   setPaused: (paused: boolean) => void
@@ -444,11 +488,20 @@ export const useGameStore = create<GameStore>((set, get) => ({
     }),
 
   addBullet: (bullet) =>
-    set((state) => ({
-      bullets: [...state.bullets, bullet],
-      sessionShotsFired: bullet.friendly ? state.sessionShotsFired + 1 : state.sessionShotsFired,
-      sessionLastShotTime: bullet.friendly ? state.time : state.sessionLastShotTime,
-    })),
+    set((state) => {
+      const pooledBullet = acquireBullet(
+        bullet.pos,
+        bullet.vel,
+        bullet.life,
+        bullet.friendly,
+        bullet.damage
+      )
+      return {
+        bullets: [...state.bullets, pooledBullet],
+        sessionShotsFired: bullet.friendly ? state.sessionShotsFired + 1 : state.sessionShotsFired,
+        sessionLastShotTime: bullet.friendly ? state.time : state.sessionLastShotTime,
+      }
+    }),
 
   addParticles: (particles) =>
     set((state) => ({ particles: [...state.particles, ...particles] })),

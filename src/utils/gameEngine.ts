@@ -208,14 +208,21 @@ export const useGameEngine = () => {
       }
     }
 
-    // Update bullets
-    const newBullets = state.bullets
-      .map((b) => ({
-        ...b,
-        pos: wrap(add(b.pos, mul(b.vel, effectiveDt)), state.w, state.h),
-        life: b.life - effectiveDt,
-      }))
-      .filter((b) => b.life > 0)
+    // Update bullets (in-place to leverage object pooling)
+    const newBullets: typeof state.bullets = []
+    for (const b of state.bullets) {
+      const newLife = b.life - effectiveDt
+      if (newLife > 0) {
+        const newPos = wrap(add(b.pos, mul(b.vel, effectiveDt)), state.w, state.h)
+
+        // Update bullet in-place
+        b.pos.x = newPos.x
+        b.pos.y = newPos.y
+        b.life = newLife
+
+        newBullets.push(b)
+      }
+    }
     state.updateBullets(newBullets)
 
     // Update asteroids (with increasing animation speed)
