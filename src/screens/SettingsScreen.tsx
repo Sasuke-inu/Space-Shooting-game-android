@@ -26,13 +26,16 @@ export default function SettingsScreen() {
   const [languageModalVisible, setLanguageModalVisible] = useState(false);
   const [themeModalVisible, setThemeModalVisible] = useState(false);
   const [sizeModalVisible, setSizeModalVisible] = useState(false);
+  const [qualityModalVisible, setQualityModalVisible] = useState(false);
 
   // Settings from different stores
   const {
     joystickSize,
     invertY,
+    qualityLevel,
     setJoystickSize,
     setInvertY,
+    setQualityLevel,
     resetAppSettings,
   } = useAppSettingsStore();
 
@@ -278,6 +281,28 @@ export default function SettingsScreen() {
                 <Text style={{ color: theme.colors.textPrimary }}>
                   {themeList.find((th) => th.id === themeId)?.icon}{' '}
                   {themeList.find((th) => th.id === themeId)?.name}
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Quality Settings */}
+            <View className="mb-6">
+              <Text
+                className="text-sm font-semibold mb-2"
+                style={{ color: theme.colors.textSecondary }}
+              >
+                Graphics Quality
+              </Text>
+              <TouchableOpacity
+                className="p-4 rounded-lg border"
+                style={{
+                  backgroundColor: theme.colors.panelBg,
+                  borderColor: theme.colors.panelBorder,
+                }}
+                onPress={() => setQualityModalVisible(true)}
+              >
+                <Text style={{ color: theme.colors.textPrimary }} className="capitalize">
+                  {qualityLevel}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -913,6 +938,70 @@ export default function SettingsScreen() {
               >
                 <Text style={{ color: theme.colors.textPrimary }} className="capitalize">
                   {t(`settings.${size}`)}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </TouchableOpacity>
+      </Modal>
+
+      {/* Quality Modal */}
+      <Modal
+        visible={qualityModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setQualityModalVisible(false)}
+      >
+        <TouchableOpacity
+          className="flex-1 justify-center items-center"
+          style={{ backgroundColor: theme.colors.modalOverlay }}
+          activeOpacity={1}
+          onPress={() => setQualityModalVisible(false)}
+        >
+          <View
+            className="w-4/5 rounded-lg p-4"
+            style={{
+              backgroundColor: theme.colors.panelBg,
+              borderColor: theme.colors.panelBorder,
+              borderWidth: 1,
+            }}
+            onStartShouldSetResponder={() => true}
+          >
+            <Text
+              className="text-xl font-bold mb-4 text-center"
+              style={{ color: theme.colors.textPrimary }}
+            >
+              Graphics Quality
+            </Text>
+            {(['low', 'medium', 'high'] as QualityLevel[]).map((quality) => (
+              <TouchableOpacity
+                key={quality}
+                className="p-4 rounded-lg mb-2 border"
+                style={{
+                  backgroundColor:
+                    qualityLevel === quality
+                      ? theme.colors.buttonPrimary + '20'
+                      : theme.colors.background,
+                  borderColor:
+                    qualityLevel === quality
+                      ? theme.colors.buttonPrimary
+                      : theme.colors.panelBorder,
+                }}
+                onPress={() => {
+                  setQualityLevel(quality);
+                  setQualityModalVisible(false);
+                }}
+              >
+                <Text style={{ color: theme.colors.textPrimary }} className="capitalize">
+                  {quality}
+                </Text>
+                <Text
+                  className="text-xs mt-1"
+                  style={{ color: theme.colors.textMuted }}
+                >
+                  {quality === 'low' && 'Reduced particles and effects for better performance'}
+                  {quality === 'medium' && 'Balanced visuals and performance'}
+                  {quality === 'high' && 'Full visual effects with maximum particles'}
                 </Text>
               </TouchableOpacity>
             ))}

@@ -30,7 +30,7 @@ const SIZE_CONFIG = {
   large: { pad: 180, stick: 56, maxRadius: 77 },
 } as const
 
-export const VirtualControls: React.FC<VirtualControlsProps> = ({
+const VirtualControlsComponent: React.FC<VirtualControlsProps> = ({
   onJoystickMove,
   colors,
   sensitivity = 1.0,
@@ -194,6 +194,8 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
     </View>
   )
 }
+
+export const VirtualControls = React.memo(VirtualControlsComponent)
 
 const styles = StyleSheet.create({
   container: {

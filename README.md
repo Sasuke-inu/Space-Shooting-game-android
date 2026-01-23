@@ -128,6 +128,70 @@ Adjust these values in `src/state/gameStore.ts` to modify gameplay:
 - `ASTEROID_BASE_RADIUS`: Starting asteroid size
 - `JOY_DEADZONE`: Joystick sensitivity threshold (0.1 - reduced for more precise control)
 
+## Performance Optimizations
+
+The game has been extensively optimized for smooth 60fps gameplay on mid-range devices:
+
+### Performance Monitoring
+- **FPS Counter**: Real-time frame rate display in debug mode (shows current and average FPS)
+- **Memory Tracking**: Built-in memory usage monitoring
+- **Performance Stats Toggle**: Enable/disable performance overlay in settings
+
+### Object Pooling
+To reduce garbage collection pressure and improve frame rates:
+- **Particle Pool**: Pre-allocated pool of 500 particle objects (eliminates per-frame allocations)
+- **Bullet Pool**: Pre-allocated pool of 300 bullet objects (reduces GC during bullet-heavy scenes)
+- **Benefits**: Significantly reduced memory allocations during gameplay, smoother frame times
+
+### Rendering Optimizations
+- **Component Memoization**: GameCanvas and VirtualControls wrapped with React.memo to prevent unnecessary re-renders
+- **Skia Path Caching**: Ship, boss, and asteroid paths cached to avoid recreation every frame
+- **Optimized State Selectors**: Shallow equality checks on game state to minimize React re-renders
+- **Reduced Re-render Frequency**: Only update when actual values change, not object references
+
+### Quality Settings
+Three quality presets to match device capabilities:
+
+| Quality | Particles | Glow Effects | Target FPS | Target Devices |
+|---------|-----------|--------------|------------|----------------|
+| **Low** | 25% | Disabled | 45-60 fps | Low-end (2GB RAM) |
+| **Medium** | 50% | Enabled | 60 fps | Mid-range (4GB RAM) |
+| **High** | 100% | Enabled | 60 fps | High-end (6GB+) |
+
+Adjust quality in **Settings → General → Graphics Quality**
+
+### Performance Benchmarks
+
+#### Low-End Devices (2GB RAM, dual-core)
+- **Target**: 45-60 fps on low quality
+- **Memory**: < 200MB peak usage
+- **Stability**: Zero crashes in 30-minute sessions
+- **Settings**: Low quality (25% particles, no glow)
+
+#### Mid-Range Devices (4GB RAM, quad-core)
+- **Target**: 60 fps on medium quality
+- **Memory**: < 200MB peak, < 10MB growth over 20 minutes
+- **Stability**: Zero crashes during extended gameplay
+- **Settings**: Medium quality (50% particles, glow enabled)
+
+#### High-End Devices (6GB+ RAM, octa-core)
+- **Target**: Consistent 60 fps on high quality
+- **Memory**: < 200MB peak
+- **Visual Quality**: Full particle effects and glow
+- **Settings**: High quality (100% particles, all effects)
+
+### Testing Results
+For detailed performance test results and methodologies, see:
+- `.auto-claude/specs/011-performance-optimization/PERFORMANCE_TEST_RESULTS.md`
+- `.auto-claude/specs/011-performance-optimization/MID_RANGE_TEST_RESULTS.md`
+- `.auto-claude/specs/011-performance-optimization/TESTING_GUIDE.md`
+
+### Performance Tips
+- Lower **Graphics Quality** if experiencing frame drops
+- Disable **Performance Stats** in production for cleaner UI
+- Object pooling automatically manages memory - no configuration needed
+- Quality settings persist across app restarts
+
 ## Development
 
 The game uses:

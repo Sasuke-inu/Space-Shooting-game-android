@@ -11,11 +11,15 @@ interface AppSettingsState {
   language: LanguageCode;
   joystickSize: JoystickSize;
   invertY: boolean;
+  showPerformanceStats: boolean;
+  qualityLevel: QualityLevel;
 
   // Actions
   setLanguage: (language: LanguageCode) => void;
   setJoystickSize: (size: JoystickSize) => void;
   setInvertY: (enabled: boolean) => void;
+  setShowPerformanceStats: (enabled: boolean) => void;
+  setQualityLevel: (level: QualityLevel) => void;
   resetAppSettings: () => void;
   backup: () => Promise<boolean>;
   restore: () => Promise<boolean>;
@@ -25,6 +29,8 @@ const DEFAULT_APP_SETTINGS = {
   language: 'en' as LanguageCode,
   joystickSize: 'medium' as JoystickSize,
   invertY: false,
+  showPerformanceStats: false,
+  qualityLevel: 'high' as QualityLevel,
 };
 
 export const useAppSettingsStore = create<AppSettingsState>()(
@@ -35,6 +41,8 @@ export const useAppSettingsStore = create<AppSettingsState>()(
       setLanguage: (language) => set({ language }),
       setJoystickSize: (size) => set({ joystickSize: size }),
       setInvertY: (enabled) => set({ invertY: enabled }),
+      setShowPerformanceStats: (enabled) => set({ showPerformanceStats: enabled }),
+      setQualityLevel: (level) => set({ qualityLevel: level }),
 
       resetAppSettings: () => set(DEFAULT_APP_SETTINGS),
 

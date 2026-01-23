@@ -3,6 +3,8 @@ import { Canvas, Group, Path, Circle, Line, Text, Skia, vec, matchFont, Rect } f
 import { Platform } from "react-native"
 import type { Asteroid, Enemy, Vec2, PowerUp, ActivePowerUp, ComboState, Boss, HomingMissile, EnemyType, AbilityFlash } from "../types/game"
 import type { ThemeColors } from "../theme/types"
+import type { QualityLevel } from "../types/performance"
+import { QUALITY_PRESETS } from "../types/performance"
 import { fromAngle } from "../utils/vectorMath"
 import { SHIP_SKINS } from "../types/game"
 import { useUpgradesStore } from "../state/progressStore"
@@ -467,14 +469,16 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
           const powerUpColor = colorPalette.powerUp[p.type as keyof typeof colorPalette.powerUp] || colors.particle
           return (
             <Group key={`powerup-${i}`} transform={[{ translateX: p.pos.x }, { translateY: p.pos.y }]}>
-              {/* Outer glow */}
-              <Circle
-                cx={0}
-                cy={0}
-                r={18 * pulseScale}
-                color={powerUpColor}
-                opacity={0.3}
-              />
+              {/* Outer glow - only on medium/high quality */}
+              {enableGlow && (
+                <Circle
+                  cx={0}
+                  cy={0}
+                  r={18 * pulseScale}
+                  color={powerUpColor}
+                  opacity={0.3}
+                />
+              )}
               {/* Inner circle */}
               <Circle
                 cx={0}
@@ -714,7 +718,10 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
         {homingMissiles.map((m, i) => (
           <Group key={`missile-${i}`} transform={[{ translateX: m.pos.x }, { translateY: m.pos.y }]}>
             <Circle cx={0} cy={0} r={4} color="#ffaa00" />
-            <Circle cx={0} cy={0} r={8} color="#ffaa00" opacity={0.3} />
+            {/* Outer glow - only on medium/high quality */}
+            {enableGlow && (
+              <Circle cx={0} cy={0} r={8} color="#ffaa00" opacity={0.3} />
+            )}
           </Group>
         ))}
 

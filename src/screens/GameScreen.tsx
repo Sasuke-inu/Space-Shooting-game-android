@@ -18,6 +18,7 @@ import {
 import { useGameStore, JOY_DEADZONE } from "../state/gameStore"
 import { useHighScoresStore } from "../state/highScoresStore"
 import { useSettingsStore, useThemeColors } from "../theme/themeStore"
+import { useAppSettingsStore } from "../state/settingsStore"
 import { useStatisticsStore, useAchievementStore, useUpgradesStore } from "../state/progressStore"
 import { useTutorialStore } from "../state/tutorialStore"
 import { themeList } from "../theme/themes"
@@ -422,6 +423,32 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
+      {/* Performance FPS Counter */}
+      {performanceConfig.showFpsCounter && (
+        <View style={{
+          position: 'absolute',
+          top: insets.top + 60,
+          right: 12,
+          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+          borderWidth: 1,
+          borderColor: colors.hudAccent,
+          borderRadius: 6,
+          padding: 8,
+          zIndex: 100,
+          minWidth: 80,
+        }}>
+          <Text style={{ color: colors.hudAccent, fontSize: 11, fontWeight: 'bold', textAlign: 'center' }}>
+            FPS
+          </Text>
+          <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: 'bold', textAlign: 'center' }}>
+            {getMetrics().fps}
+          </Text>
+          <Text style={{ color: colors.textMuted, fontSize: 9, textAlign: 'center' }}>
+            avg: {getMetrics().avgFps}
+          </Text>
+        </View>
+      )}
+
       {/* Achievement unlock notification */}
       <AchievementNotification
         achievement={recentUnlock ? ACHIEVEMENTS[recentUnlock] : null}
