@@ -135,6 +135,17 @@ export interface Translations {
     on: string;
     off: string;
   };
+  tutorial: {
+    title: string;
+    skip: string;
+    next: string;
+    movement: string;
+    firing: string;
+    powerups: string;
+    combos: string;
+    abilities: string;
+    complete: string;
+  };
 }
 
 export const SUPPORTED_LANGUAGES: LanguageOption[] = [
