@@ -1217,6 +1217,96 @@ function updateEnemyBehaviorBatched(
       }
       break
 
+    case 'teleporter': {
+      // Teleportation logic
+      if (newEnemy.teleportTimer === undefined) {
+        newEnemy.teleportTimer = Math.random() * 2 + 3 // Random 3-5 seconds
+      }
+
+      newEnemy.teleportTimer -= dt
+
+      // Teleport when timer expires
+      if (newEnemy.teleportTimer <= 0) {
+        // Create particle effect at old position
+        state.addParticles(
+          Array.from({ length: 8 }, () => ({
+            pos: { x: e.pos.x, y: e.pos.y },
+            vel: fromAngle(Math.random() * Math.PI * 2, rand(50, 150)),
+            life: rand(0.3, 0.6),
+            color: '#cc66ff',
+          }))
+        )
+
+        // Teleport to random position 150-300px from player
+        const dist = Math.random() * 150 + 150
+        const angle = Math.random() * Math.PI * 2
+        newEnemy.pos.x = state.player.pos.x + Math.cos(angle) * dist
+        newEnemy.pos.y = state.player.pos.y + Math.sin(angle) * dist
+
+        // Keep within bounds
+        newEnemy.pos.x = Math.max(30, Math.min(state.w - 30, newEnemy.pos.x))
+        newEnemy.pos.y = Math.max(30, Math.min(state.h - 30, newEnemy.pos.y))
+
+        // Create particle effect at new position
+        state.addParticles(
+          Array.from({ length: 8 }, () => ({
+            pos: { x: newEnemy.pos.x, y: newEnemy.pos.y },
+            vel: fromAngle(Math.random() * Math.PI * 2, rand(50, 150)),
+            life: rand(0.3, 0.6),
+            color: '#cc66ff',
+          }))
+        )
+
+        // Reset velocity (pause after teleporting)
+        newEnemy.vel.x = 0
+        newEnemy.vel.y = 0
+
+        // Reset timer for next teleport
+        newEnemy.teleportTimer = Math.random() * 2 + 3
+      }
+
+      // Movement toward player (moderate speed with erratic pattern)
+      const pauseDuration = 0.5
+      const timeSinceTeleport = newEnemy.teleportTimer > 3 ? (5 - newEnemy.teleportTimer) : 1
+
+      if (timeSinceTeleport > pauseDuration) {
+        if (d > 0) {
+          const speed = stats.speed * difficulty * animSpeed
+          const erraticFactor = Math.sin(e.aiTimer * 5) * 0.3
+
+          newEnemy.vel.x += (dir.x) * speed * dt * (1 + erraticFactor)
+          newEnemy.vel.y += (dir.y) * speed * dt * (1 + erraticFactor)
+        }
+      }
+
+      // Apply friction
+      newEnemy.vel.x *= 0.95
+      newEnemy.vel.y *= 0.95
+
+      // Update position
+      newEnemy.pos = wrap(add(e.pos, mul(newEnemy.vel, dt * animSpeed)), state.w, state.h)
+      newEnemy.ang = angleOf(newEnemy.vel)
+
+      // Fire bullets (less frequently than scout, not during pause)
+      if (timeSinceTeleport > pauseDuration) {
+        newEnemy.cooldown -= dt
+        if (newEnemy.cooldown <= 0) {
+          const aim = angleOf(toP) + rand(-aimInaccuracy, aimInaccuracy)
+          state.addBullet({
+            pos: add(e.pos, fromAngle(aim, 16)),
+            vel: fromAngle(aim, BULLET_SPEED_ENEMY),
+            life: BULLET_LIFE_ENEMY,
+            friendly: false,
+            damage: stats.damage,
+          })
+
+          newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.25)
+        }
+      }
+
+      break
+    }
+
     default:
       // Default behavior (legacy)
       const desired = add(dir, fromAngle(context.time * 0.7, 0.4 * (1 - difficulty * 0.5)))

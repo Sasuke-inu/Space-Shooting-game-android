@@ -158,6 +158,7 @@ const initialStats: GameStatistics = {
     tank: 0,
     sniper: 0,
     bomber: 0,
+    teleporter: 0,
   },
   killsByBossType: {
     destroyer: 0,
