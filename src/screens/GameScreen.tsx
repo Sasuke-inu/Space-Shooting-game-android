@@ -3,6 +3,7 @@ import { View, Text, Pressable, Modal, useWindowDimensions, TextInput, Keyboard,
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Gesture, GestureDetector } from "react-native-gesture-handler"
 import { Audio } from "expo-av"
+import { shallow } from "zustand/shallow"
 import { GameCanvas } from "../components/GameCanvas"
 import { VirtualControls } from "../components/VirtualControls"
 import { useGameStore, MAX_DT, JOY_DEADZONE } from "../state/gameStore"
@@ -26,55 +27,100 @@ export default function GameScreen() {
 
   // Theme
   const colors = useThemeColors()
-  const themeId = useSettingsStore((s) => s.themeId)
-  const setTheme = useSettingsStore((s) => s.setTheme)
-  const joystickSensitivity = useSettingsStore((s) => s.joystickSensitivity)
-  const setJoystickSensitivity = useSettingsStore((s) => s.setJoystickSensitivity)
-  const autoFire = useSettingsStore((s) => s.autoFire)
-  const setAutoFire = useSettingsStore((s) => s.setAutoFire)
-  const hapticsEnabled = useSettingsStore((s) => s.hapticsEnabled)
-  const setHapticsEnabled = useSettingsStore((s) => s.setHapticsEnabled)
-  const musicVolume = useSettingsStore((s) => s.musicVolume)
-  const setMusicVolume = useSettingsStore((s) => s.setMusicVolume)
-  const sfxVolume = useSettingsStore((s) => s.sfxVolume)
-  const setSfxVolume = useSettingsStore((s) => s.setSfxVolume)
 
-  // Game state
-  const paused = useGameStore((s) => s.paused)
-  const score = useGameStore((s) => s.score)
-  const credits = useGameStore((s) => s.credits)
-  const lives = useGameStore((s) => s.lives)
-  const wave = useGameStore((s) => s.wave)
-  const player = useGameStore((s) => s.player)
-  const playerAng = useGameStore((s) => s.player.ang)
-  const bullets = useGameStore((s) => s.bullets)
-  const asteroids = useGameStore((s) => s.asteroids)
-  const enemies = useGameStore((s) => s.enemies)
-  const particles = useGameStore((s) => s.particles)
-  const time = useGameStore((s) => s.time)
-  const powerUps = useGameStore((s) => s.powerUps)
-  const activePowerUps = useGameStore((s) => s.activePowerUps)
-  const combo = useGameStore((s) => s.combo)
-  const getShakeOffset = useGameStore((s) => s.getShakeOffset)
-  const hasPowerUp = useGameStore((s) => s.hasPowerUp)
-  const boss = useGameStore((s) => s.boss)
+  // Settings store - combine related settings with shallow comparison
+  const {
+    themeId,
+    setTheme,
+    joystickSensitivity,
+    setJoystickSensitivity,
+    autoFire,
+    setAutoFire,
+    hapticsEnabled,
+    setHapticsEnabled,
+    musicVolume,
+    setMusicVolume,
+    sfxVolume,
+    setSfxVolume,
+  } = useSettingsStore(
+    (s) => ({
+      themeId: s.themeId,
+      setTheme: s.setTheme,
+      joystickSensitivity: s.joystickSensitivity,
+      setJoystickSensitivity: s.setJoystickSensitivity,
+      autoFire: s.autoFire,
+      setAutoFire: s.setAutoFire,
+      hapticsEnabled: s.hapticsEnabled,
+      setHapticsEnabled: s.setHapticsEnabled,
+      musicVolume: s.musicVolume,
+      setMusicVolume: s.setMusicVolume,
+      sfxVolume: s.sfxVolume,
+      setSfxVolume: s.setSfxVolume,
+    }),
+    shallow
+  )
+
+  // Game state - HUD values (frequently updated together)
+  const { paused, score, credits, lives, wave, time } = useGameStore(
+    (s) => ({
+      paused: s.paused,
+      score: s.score,
+      credits: s.credits,
+      lives: s.lives,
+      wave: s.wave,
+      time: s.time,
+    }),
+    shallow
+  )
+
+  // Player state
+  const player = useGameStore((s) => s.player, shallow)
+
+  // Game entities - use shallow comparison for arrays
+  const bullets = useGameStore((s) => s.bullets, shallow)
+  const asteroids = useGameStore((s) => s.asteroids, shallow)
+  const enemies = useGameStore((s) => s.enemies, shallow)
+  const particles = useGameStore((s) => s.particles, shallow)
+  const powerUps = useGameStore((s) => s.powerUps, shallow)
+  const activePowerUps = useGameStore((s) => s.activePowerUps, shallow)
+  const homingMissiles = useGameStore((s) => s.homingMissiles, shallow)
+
+  // Game features
+  const combo = useGameStore((s) => s.combo, shallow)
+  const boss = useGameStore((s) => s.boss, shallow)
   const bossWarning = useGameStore((s) => s.bossWarning)
-  const homingMissiles = useGameStore((s) => s.homingMissiles)
   const timeWarpActive = useGameStore((s) => s.timeWarpActive)
-  const activateSpecialAbility = useGameStore((s) => s.activateSpecialAbility)
-  const setShipType = useGameStore((s) => s.setShipType)
-  const spawnHomingMissiles = useGameStore((s) => s.spawnHomingMissiles)
-  const setTimeWarp = useGameStore((s) => s.setTimeWarp)
-  const specialAbility = useGameStore((s) => s.specialAbility)
-  const stunAllEnemies = useGameStore((s) => s.stunAllEnemies)
+  const specialAbility = useGameStore((s) => s.specialAbility, shallow)
+
+  // Game functions (stable references)
+  const {
+    getShakeOffset,
+    hasPowerUp,
+    activateSpecialAbility,
+    setShipType,
+    spawnHomingMissiles,
+    setTimeWarp,
+    stunAllEnemies,
+  } = useGameStore(
+    (s) => ({
+      getShakeOffset: s.getShakeOffset,
+      hasPowerUp: s.hasPowerUp,
+      activateSpecialAbility: s.activateSpecialAbility,
+      setShipType: s.setShipType,
+      spawnHomingMissiles: s.spawnHomingMissiles,
+      setTimeWarp: s.setTimeWarp,
+      stunAllEnemies: s.stunAllEnemies,
+    }),
+    shallow
+  )
 
   // Progress stores
-  const stats = useStatisticsStore((s) => s.stats)
+  const stats = useStatisticsStore((s) => s.stats, shallow)
   const recordGameEnd = useStatisticsStore((s) => s.recordGameEnd)
-  const achievements = useAchievementStore((s) => s.achievements)
+  const achievements = useAchievementStore((s) => s.achievements, shallow)
   const recentUnlock = useAchievementStore((s) => s.recentUnlock)
   const clearRecentUnlock = useAchievementStore((s) => s.clearRecentUnlock)
-  const unlockedShips = useUpgradesStore((s) => s.unlockedShips)
+  const unlockedShips = useUpgradesStore((s) => s.unlockedShips, shallow)
   const upgradesCredits = useUpgradesStore((s) => s.credits)
   const addUpgradeCredits = useUpgradesStore((s) => s.addCredits)
 
@@ -98,9 +144,15 @@ export default function GameScreen() {
   const [playerName, setPlayerName] = useState("")
   const [settingsTab, setSettingsTab] = useState<'general' | 'ship' | 'stats'>('general')
 
-  const highScores = useHighScoresStore((s) => s.scores)
-  const isTopFive = useHighScoresStore((s) => s.isTopFive)
-  const addScore = useHighScoresStore((s) => s.addScore)
+  // High scores store - combine related functions
+  const { highScores, isTopFive, addScore } = useHighScoresStore(
+    (s) => ({
+      highScores: s.scores,
+      isTopFive: s.isTopFive,
+      addScore: s.addScore,
+    }),
+    shallow
+  )
 
   // Performance monitoring
   const performanceConfig: PerformanceConfig = {
@@ -304,15 +356,15 @@ export default function GameScreen() {
       // Calculate thrust and angle from joystick
       const joyMag = len(joystickValue)
       let thrusting = false
-      let desiredAng = playerAng
+      let desiredAng = player.ang
 
       if (joyMag > JOY_DEADZONE) {
         desiredAng = angleOf(joystickValue)
         thrusting = true
 
-        let da = ((desiredAng - playerAng + Math.PI * 3) % (Math.PI * 2)) - Math.PI
+        let da = ((desiredAng - player.ang + Math.PI * 3) % (Math.PI * 2)) - Math.PI
         const turnSpeed = 8
-        const newAng = playerAng + Math.max(-1, Math.min(1, da)) * turnSpeed * dt
+        const newAng = player.ang + Math.max(-1, Math.min(1, da)) * turnSpeed * dt
         useGameStore.getState().updatePlayer({ ang: newAng })
       }
 
@@ -341,7 +393,7 @@ export default function GameScreen() {
         clearTimeout(swipeTimeoutRef.current)
       }
     }
-  }, [paused, joystickValue, playerAng, swipeImpulse, player.vel, fireOnce, updateGame, autoFire, colors, startFrame, endFrame])
+  }, [paused, joystickValue, swipeImpulse, player, fireOnce, updateGame, autoFire, colors, startFrame, endFrame])
 
   const handleRestart = () => {
     const store = useGameStore.getState()
