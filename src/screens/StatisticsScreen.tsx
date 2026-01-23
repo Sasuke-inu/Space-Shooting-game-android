@@ -4,7 +4,9 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
+import { BarChart } from 'react-native-chart-kit';
 import { useI18nStore } from '../i18n';
 import { useTheme } from '../theme';
 import { useStatisticsStore, useAchievementStore } from '../state/progressStore';
@@ -232,18 +234,34 @@ export default function StatisticsScreen() {
                     borderColor: theme.colors.panelBorder,
                   }}
                 >
-                  <Text
-                    className="text-sm font-semibold mb-1"
-                    style={{ color: theme.colors.textSecondary }}
-                  >
-                    Highest Score
-                  </Text>
-                  <Text
-                    className="text-2xl font-bold"
-                    style={{ color: theme.colors.textPrimary }}
-                  >
-                    {stats.highestScore.toLocaleString()}
-                  </Text>
+                  <View className="flex-row justify-between items-center mb-2">
+                    <Text
+                      className="text-sm font-semibold"
+                      style={{ color: theme.colors.textSecondary }}
+                    >
+                      Highest Score
+                    </Text>
+                    <Text
+                      className="text-2xl font-bold"
+                      style={{ color: theme.colors.textPrimary }}
+                    >
+                      {stats.highestScore.toLocaleString()}
+                    </Text>
+                  </View>
+                  {stats.highestScore > 0 && (
+                    <View
+                      className="h-2 rounded-full overflow-hidden"
+                      style={{ backgroundColor: theme.colors.panelBorder }}
+                    >
+                      <View
+                        className="h-2 rounded-full"
+                        style={{
+                          backgroundColor: theme.colors.buttonPrimary,
+                          width: `${Math.min((stats.highestScore / 100000) * 100, 100)}%`,
+                        }}
+                      />
+                    </View>
+                  )}
                 </View>
 
                 {/* Highest Wave */}
@@ -254,18 +272,34 @@ export default function StatisticsScreen() {
                     borderColor: theme.colors.panelBorder,
                   }}
                 >
-                  <Text
-                    className="text-sm font-semibold mb-1"
-                    style={{ color: theme.colors.textSecondary }}
-                  >
-                    Highest Wave
-                  </Text>
-                  <Text
-                    className="text-2xl font-bold"
-                    style={{ color: theme.colors.textPrimary }}
-                  >
-                    {stats.highestWave}
-                  </Text>
+                  <View className="flex-row justify-between items-center mb-2">
+                    <Text
+                      className="text-sm font-semibold"
+                      style={{ color: theme.colors.textSecondary }}
+                    >
+                      Highest Wave
+                    </Text>
+                    <Text
+                      className="text-2xl font-bold"
+                      style={{ color: theme.colors.textPrimary }}
+                    >
+                      {stats.highestWave}
+                    </Text>
+                  </View>
+                  {stats.highestWave > 0 && (
+                    <View
+                      className="h-2 rounded-full overflow-hidden"
+                      style={{ backgroundColor: theme.colors.panelBorder }}
+                    >
+                      <View
+                        className="h-2 rounded-full"
+                        style={{
+                          backgroundColor: theme.colors.buttonPrimary,
+                          width: `${Math.min((stats.highestWave / 50) * 100, 100)}%`,
+                        }}
+                      />
+                    </View>
+                  )}
                 </View>
 
                 {/* Longest Survival */}
@@ -276,21 +310,99 @@ export default function StatisticsScreen() {
                     borderColor: theme.colors.panelBorder,
                   }}
                 >
-                  <Text
-                    className="text-sm font-semibold mb-1"
-                    style={{ color: theme.colors.textSecondary }}
-                  >
-                    Longest Survival
-                  </Text>
-                  <Text
-                    className="text-2xl font-bold"
-                    style={{ color: theme.colors.textPrimary }}
-                  >
-                    {formatTime(stats.longestSurvival)}
-                  </Text>
+                  <View className="flex-row justify-between items-center mb-2">
+                    <Text
+                      className="text-sm font-semibold"
+                      style={{ color: theme.colors.textSecondary }}
+                    >
+                      Longest Survival
+                    </Text>
+                    <Text
+                      className="text-2xl font-bold"
+                      style={{ color: theme.colors.textPrimary }}
+                    >
+                      {formatTime(stats.longestSurvival)}
+                    </Text>
+                  </View>
+                  {stats.longestSurvival > 0 && (
+                    <View
+                      className="h-2 rounded-full overflow-hidden"
+                      style={{ backgroundColor: theme.colors.panelBorder }}
+                    >
+                      <View
+                        className="h-2 rounded-full"
+                        style={{
+                          backgroundColor: theme.colors.buttonPrimary,
+                          width: `${Math.min((stats.longestSurvival / 600) * 100, 100)}%`,
+                        }}
+                      />
+                    </View>
+                  )}
                 </View>
               </View>
             </View>
+
+            {/* Kills by Enemy Type Chart */}
+            {stats.totalKills > 0 && (
+              <View className="mb-6">
+                <Text
+                  className="text-xl font-bold mb-4"
+                  style={{ color: theme.colors.textPrimary }}
+                >
+                  {t('statistics.charts.killsByType')}
+                </Text>
+
+                <View
+                  className="rounded-lg border p-4"
+                  style={{
+                    backgroundColor: theme.colors.panelBg,
+                    borderColor: theme.colors.panelBorder,
+                  }}
+                >
+                  <BarChart
+                    data={{
+                      labels: ['Scout', 'Tank', 'Sniper', 'Bomber'],
+                      datasets: [
+                        {
+                          data: [
+                            stats.killsByEnemyType.scout || 0,
+                            stats.killsByEnemyType.tank || 0,
+                            stats.killsByEnemyType.sniper || 0,
+                            stats.killsByEnemyType.bomber || 0,
+                          ],
+                        },
+                      ],
+                    }}
+                    width={Dimensions.get('window').width - 80}
+                    height={220}
+                    yAxisLabel=""
+                    yAxisSuffix=""
+                    chartConfig={{
+                      backgroundColor: theme.colors.panelBg,
+                      backgroundGradientFrom: theme.colors.panelBg,
+                      backgroundGradientTo: theme.colors.panelBg,
+                      decimalPlaces: 0,
+                      color: (opacity = 1) => `${theme.colors.buttonPrimary}${Math.round(opacity * 255).toString(16).padStart(2, '0')}`,
+                      labelColor: (opacity = 1) => `${theme.colors.textSecondary}${Math.round(opacity * 255).toString(16).padStart(2, '0')}`,
+                      style: {
+                        borderRadius: 16,
+                      },
+                      propsForBackgroundLines: {
+                        strokeDasharray: '',
+                        stroke: theme.colors.panelBorder,
+                        strokeWidth: 1,
+                      },
+                    }}
+                    style={{
+                      marginVertical: 8,
+                      borderRadius: 16,
+                    }}
+                    showValuesOnTopOfBars
+                    fromZero
+                  />
+                </View>
+              </View>
+            )}
 
             {/* Boss Kills Section */}
             <View className="mb-6">
@@ -302,29 +414,50 @@ export default function StatisticsScreen() {
               </Text>
 
               <View className="space-y-3">
-                {Object.entries(stats.killsByBossType).map(([bossType, kills]) => (
-                  <View
-                    key={bossType}
-                    className="p-4 rounded-lg border"
-                    style={{
-                      backgroundColor: theme.colors.panelBg,
-                      borderColor: theme.colors.panelBorder,
-                    }}
-                  >
-                    <Text
-                      className="text-sm font-semibold mb-1 capitalize"
-                      style={{ color: theme.colors.textSecondary }}
+                {Object.entries(stats.killsByBossType).map(([bossType, kills]) => {
+                  const maxBossKills = Math.max(...Object.values(stats.killsByBossType), 1);
+                  const percentage = (kills / maxBossKills) * 100;
+
+                  return (
+                    <View
+                      key={bossType}
+                      className="p-4 rounded-lg border"
+                      style={{
+                        backgroundColor: theme.colors.panelBg,
+                        borderColor: theme.colors.panelBorder,
+                      }}
                     >
-                      {bossType}
-                    </Text>
-                    <Text
-                      className="text-2xl font-bold"
-                      style={{ color: theme.colors.textPrimary }}
-                    >
-                      {kills}
-                    </Text>
-                  </View>
-                ))}
+                      <View className="flex-row justify-between items-center mb-2">
+                        <Text
+                          className="text-sm font-semibold capitalize"
+                          style={{ color: theme.colors.textSecondary }}
+                        >
+                          {bossType}
+                        </Text>
+                        <Text
+                          className="text-2xl font-bold"
+                          style={{ color: theme.colors.textPrimary }}
+                        >
+                          {kills}
+                        </Text>
+                      </View>
+
+                      {/* Visual bar */}
+                      <View
+                        className="h-2 rounded-full overflow-hidden"
+                        style={{ backgroundColor: theme.colors.panelBorder }}
+                      >
+                        <View
+                          className="h-2 rounded-full"
+                          style={{
+                            backgroundColor: theme.colors.buttonPrimary,
+                            width: `${percentage}%`,
+                          }}
+                        />
+                      </View>
+                    </View>
+                  );
+                })}
               </View>
             </View>
 
