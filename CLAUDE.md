@@ -35,10 +35,14 @@ src/
 - `src/state/gameStore.ts` - Main game state, power-ups, combo, screen shake
 - `src/state/progressStore.ts` - Achievements, statistics, weapon upgrades, ship unlocks
 - `src/state/settingsStore.ts` - User preferences persistence
+- `src/state/highScoresStore.ts` - Top 10 high scores tracking
 - `src/theme/themeStore.ts` - Theme and settings persistence
 - `src/theme/themes.ts` - 6 theme color schemes
 - `src/utils/gameEngine.ts` - Core game loop, collisions, power-up logic
 - `src/utils/haptics.ts` - Haptic feedback integration
+- `src/utils/backupManager.ts` - Backup/restore system with auto-recovery
+- `src/utils/storageHealth.ts` - Data validation and corruption detection
+- `src/utils/dataVersioning.ts` - Version tracking and migration system
 - `src/types/game.ts` - Game entity types (Player, Enemy, Boss, Asteroid, PowerUp, Achievements)
 - `src/components/GameCanvas.tsx` - Skia canvas rendering with theme support
 - `src/components/VirtualControls.tsx` - Touch input controls
@@ -173,6 +177,93 @@ Four collectible power-ups that drop from enemies (25%) and large asteroids (5%)
 - Haptic feedback toggle
 - Invert Y-axis toggle
 
+### Data Persistence & Backup System
+All player progress and settings are persisted to AsyncStorage with automatic backup and corruption protection:
+
+**Persisted Stores** (5 stores):
+- **Achievements** (`space-shooter-achievements`) - Achievement progress and completion
+- **Statistics** (`space-shooter-statistics`) - Lifetime stats (games played, kills, accuracy, etc.)
+- **Upgrades** (`space-shooter-upgrades`) - Weapon upgrades, credits, ship unlocks
+- **Settings** (`app-settings-storage`) - User preferences and theme
+- **High Scores** (`high-scores-storage`) - Top 10 high scores
+
+**Backup System** (`src/utils/backupManager.ts`):
+- **Automatic Snapshots** - Creates backup copies with metadata tracking
+- **Manual Backup** - Call `backup()` method on any store to snapshot current state
+- **Backup Keys** - Prefixed with `backup-` (e.g., `backup-space-shooter-achievements`)
+- **Metadata Tracking** - Stores timestamp, version (1.0.0), and backed-up stores list
+- **Restore Operations** - Restore individual stores or all stores from backups
+
+**Corruption Detection** (`src/utils/storageHealth.ts`):
+- **Health Checks** - Validates JSON structure, required fields, data types, value ranges
+- **Store Validators** - Each store has custom validation logic:
+  - **Achievements** - Validates achievement IDs, progress, unlocked status
+  - **Statistics** - Validates numeric stats, enemy/boss kill counts
+  - **Upgrades** - Validates weapon levels, credits, unlocked ships
+  - **Settings** - Validates theme, language, volumes, control preferences
+  - **High Scores** - Validates score entries, timestamps, wave numbers
+- **Health Reports** - Overall status: `healthy`, `degraded`, or `critical`
+- **Corruption Identification** - Lists corrupted and recoverable stores
+
+**Auto-Recovery System**:
+Recovery flow when corruption is detected:
+1. **Health Check** - Validates store structure and data integrity
+2. **Backup Restore** - If backup exists, restores from backup automatically
+3. **Reset to Defaults** - If no backup exists, removes corrupted data for fresh start
+4. **Recovery Tracking** - Returns results for each store (recovered, method used, errors)
+
+**Data Versioning** (`src/utils/dataVersioning.ts`):
+- **Version Tracking** - Each store has version metadata for schema changes
+- **Migration System** - Extensible migration registry for future schema updates
+- **Migration Paths** - Automatically resolves and applies sequential migrations
+- **Backward Compatibility** - Ensures old data migrates to new schemas safely
+
+**Manual Backup/Restore API**:
+```typescript
+// Individual store operations
+const achievementStore = useAchievementStore.getState()
+await achievementStore.backup()    // Snapshot current state
+await achievementStore.restore()   // Restore from backup
+
+// Using backupManager utility
+import { backupManager } from '@/utils/backupManager'
+
+// Backup operations
+await backupManager.backupStore('achievements')
+await backupManager.backupAllStores()
+
+// Restore operations
+await backupManager.restoreStore('achievements')
+await backupManager.restoreAllStores()
+
+// Recovery operations
+const result = await backupManager.autoRecoverFromCorruption()
+// Returns: { hadCorruption: boolean, recovered: string[], failed: string[] }
+
+const storeResult = await backupManager.recoverStore('achievements')
+// Returns: { storeKey, recovered: boolean, method: 'backup'|'reset'|'none', error? }
+
+// Health checks
+import { checkStoreHealth, checkStorageHealth, getCorruptedStores } from '@/utils/storageHealth'
+
+const health = await checkStoreHealth('achievements')
+// Returns: { storeKey, isValid, issues, canRecover }
+
+const report = await checkStorageHealth()
+// Returns: { overallHealth, timestamp, stores, corruptedStores, recoverableStores }
+
+const corrupted = await getCorruptedStores()
+// Returns: string[] of corrupted store keys
+```
+
+**Store Integration**:
+All persisted stores include `backup()` and `restore()` methods:
+- `useAchievementStore` - `backup()`, `restore()`
+- `useStatisticsStore` - `backup()`, `restore()`
+- `useUpgradesStore` - `backup()`, `restore()`
+- `useSettingsStore` - `backup()`, `restore()`
+- `useHighScoresStore` - `backup()`, `restore()`
+
 ## State Management
 
 Game state via Zustand store (`useGameStore`):
@@ -185,9 +276,9 @@ Game state via Zustand store (`useGameStore`):
 - Session stats for achievements
 
 Progress stores (`progressStore.ts`):
-- `useAchievementStore` - Achievement tracking and progress
-- `useStatisticsStore` - Lifetime stats (games, kills, accuracy, etc.)
-- `useUpgradesStore` - Weapon upgrades, credits, ship unlocks
+- `useAchievementStore` - Achievement tracking and progress (with backup/restore)
+- `useStatisticsStore` - Lifetime stats (games, kills, accuracy, etc.) (with backup/restore)
+- `useUpgradesStore` - Weapon upgrades, credits, ship unlocks (with backup/restore)
 
 Settings via Zustand store (`useSettingsStore`):
 - Theme ID
@@ -256,6 +347,9 @@ Tests located in `src/__tests__/`:
 - `enemySpawning.test.ts` - Enemy wave generation
 - `bossSystem.test.ts` - Boss behavior
 - `specialAbilities.test.ts` - Ship abilities
+- `backupManager.test.ts` - Backup/restore operations
+- `storageHealth.test.ts` - Data validation and corruption detection
+- `dataRecovery.test.ts` - Integration tests for full backup/restore cycle
 
 ## Notes
 

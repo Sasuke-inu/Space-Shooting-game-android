@@ -14,6 +14,8 @@ interface HighScoresState {
   addScore: (score: number, wave: number, name: string) => void
   isTopFive: (score: number) => boolean
   getScores: () => HighScore[]
+  backup: () => Promise<boolean>
+  restore: () => Promise<boolean>
 }
 
 export const useHighScoresStore = create<HighScoresState>()(
@@ -43,6 +45,14 @@ export const useHighScoresStore = create<HighScoresState>()(
       },
 
       getScores: () => get().scores,
+
+      backup: async () => {
+        return await backupStore('highScores')
+      },
+
+      restore: async () => {
+        return await restoreStore('highScores')
+      },
     }),
     {
       name: "high-scores-storage",
