@@ -179,4 +179,94 @@ export const es: Translations = {
     on: 'Activado',
     off: 'Desactivado',
   },
+  skins: {
+    fighter: {
+      default: {
+        name: 'Estándar',
+        description: 'Colores clásicos del caza',
+      },
+      stealth: {
+        name: 'Sigilo',
+        description: 'Esquema de pintura de operaciones oscuras',
+      },
+      neon: {
+        name: 'Neón',
+        description: 'Estilo cyberpunk brillante',
+      },
+      gold: {
+        name: 'Oro',
+        description: 'Acabado dorado premium',
+      },
+      veteran: {
+        name: 'Veterano',
+        description: 'Colores de piloto élite',
+      },
+    },
+    scout: {
+      default: {
+        name: 'Estándar',
+        description: 'Colores estándar del explorador',
+      },
+      stealth: {
+        name: 'Sigilo',
+        description: 'Esquema de corredor en las sombras',
+      },
+      neon: {
+        name: 'Neón',
+        description: 'Estilo de corredor de alta velocidad',
+      },
+      gold: {
+        name: 'Oro',
+        description: 'Acabado de corredor campeón',
+      },
+      veteran: {
+        name: 'Veterano',
+        description: 'Colores de demonio de velocidad',
+      },
+    },
+    tank: {
+      default: {
+        name: 'Estándar',
+        description: 'Colores estándar del tanque',
+      },
+      stealth: {
+        name: 'Sigilo',
+        description: 'Negro de armadura pesada',
+      },
+      neon: {
+        name: 'Neón',
+        description: 'Esquema de brillo del ejecutor',
+      },
+      gold: {
+        name: 'Oro',
+        description: 'Revestimiento dorado de fortaleza',
+      },
+      veteran: {
+        name: 'Veterano',
+        description: 'Colores curtidos en batalla',
+      },
+    },
+    interceptor: {
+      default: {
+        name: 'Estándar',
+        description: 'Colores estándar del interceptor',
+      },
+      stealth: {
+        name: 'Sigilo',
+        description: 'Esquema de cazador silencioso',
+      },
+      neon: {
+        name: 'Neón',
+        description: 'Estilo de ataque relámpago',
+      },
+      gold: {
+        name: 'Oro',
+        description: 'Acabado de piloto as',
+      },
+      veteran: {
+        name: 'Veterano',
+        description: 'Colores de especialista EMP',
+      },
+    },
+  },
 };

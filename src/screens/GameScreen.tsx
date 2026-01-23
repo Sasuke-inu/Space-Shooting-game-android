@@ -104,6 +104,10 @@ export default function GameScreen() {
   const recordGameEnd = useStatisticsStore((s) => s.recordGameEnd)
   const clearRecentUnlock = useAchievementStore((s) => s.clearRecentUnlock)
   const addUpgradeCredits = useUpgradesStore((s) => s.addCredits)
+  const unlockSkin = useUpgradesStore((s) => s.unlockSkin)
+  const selectSkin = useUpgradesStore((s) => s.selectSkin)
+  const isSkinUnlocked = useUpgradesStore((s) => s.isSkinUnlocked)
+  const getSelectedSkin = useUpgradesStore((s) => s.getSelectedSkin)
 
   // Tutorial store
   const firstLaunch = useTutorialStore((s) => s.firstLaunch)
@@ -125,6 +129,7 @@ export default function GameScreen() {
   const [showTutorial, setShowTutorial] = useState(false)
   const [playerName, setPlayerName] = useState("")
   const [settingsTab, setSettingsTab] = useState<'general' | 'ship' | 'stats'>('general')
+  const [purchaseFeedback, setPurchaseFeedback] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
   // High scores - arrays (use shallow equality)
   const highScores = useHighScoresStore(useShallow((s) => s.scores))
@@ -351,6 +356,62 @@ export default function GameScreen() {
     }
   }
 
+  const handleSkinPurchase = (ship: ShipType, skinId: SkinId) => {
+    // If already unlocked, just select it
+    if (isSkinUnlocked(ship, skinId)) {
+      selectSkin(ship, skinId)
+      return
+    }
+
+    // Check if this skin requires an achievement
+    const skin = SHIP_SKINS[ship][skinId]
+    if (skin.achievementRequired) {
+      const achievementId = skin.achievementRequired as AchievementId
+      const achievementName = ACHIEVEMENTS[achievementId]?.name || 'required achievement'
+      setPurchaseFeedback({
+        message: `🏆 Unlock "${achievementName}" achievement to get this skin!`,
+        type: 'error',
+      })
+      return
+    }
+
+    // Get cost and check if user has enough credits
+    const cost = SKIN_COSTS[skinId]
+    if (cost === 0) {
+      // Free skin, just unlock it
+      unlockSkin(ship, skinId)
+      selectSkin(ship, skinId)
+      setPurchaseFeedback({
+        message: `✓ ${skin.name} skin unlocked!`,
+        type: 'success',
+      })
+      return
+    }
+
+    if (upgradesCredits < cost) {
+      setPurchaseFeedback({
+        message: `Not enough credits! Need ${cost}, have ${upgradesCredits}`,
+        type: 'error',
+      })
+      return
+    }
+
+    // Attempt to purchase
+    const success = unlockSkin(ship, skinId)
+    if (success) {
+      selectSkin(ship, skinId)
+      setPurchaseFeedback({
+        message: `✓ ${skin.name} skin purchased for ${cost} credits!`,
+        type: 'success',
+      })
+    } else {
+      setPurchaseFeedback({
+        message: 'Purchase failed. Please try again.',
+        type: 'error',
+      })
+    }
+  }
+
   const joyMag = len(joystickValue)
   const thrusting = joyMag > 0
 
@@ -362,6 +423,39 @@ export default function GameScreen() {
         topInset={insets.top}
         colors={colors}
       />
+
+      {/* Purchase feedback notification */}
+      {purchaseFeedback && (
+        <View style={{
+          position: 'absolute',
+          top: insets.top + 60,
+          left: 20,
+          right: 20,
+          backgroundColor: colors.panelBg,
+          borderWidth: 2,
+          borderColor: purchaseFeedback.type === 'success' ? colors.comboText : colors.enemyShip,
+          borderRadius: 12,
+          padding: 12,
+          zIndex: 100,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 12,
+        }}>
+          <Text style={{ fontSize: 24 }}>{purchaseFeedback.type === 'success' ? '✓' : '⚠️'}</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={{
+              color: purchaseFeedback.type === 'success' ? colors.comboText : colors.enemyShip,
+              fontSize: 12,
+              fontWeight: 'bold'
+            }}>
+              {purchaseFeedback.type === 'success' ? 'SUCCESS' : 'ERROR'}
+            </Text>
+            <Text style={{ color: colors.textPrimary, fontSize: 13 }}>
+              {purchaseFeedback.message}
+            </Text>
+          </View>
+        </View>
+      )}
 
       {/* Top bar */}
       <TopBar

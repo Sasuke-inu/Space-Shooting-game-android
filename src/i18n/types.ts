@@ -186,6 +186,96 @@ export interface Translations {
     on: string;
     off: string;
   };
+  skins: {
+    fighter: {
+      default: {
+        name: string;
+        description: string;
+      };
+      stealth: {
+        name: string;
+        description: string;
+      };
+      neon: {
+        name: string;
+        description: string;
+      };
+      gold: {
+        name: string;
+        description: string;
+      };
+      veteran: {
+        name: string;
+        description: string;
+      };
+    };
+    scout: {
+      default: {
+        name: string;
+        description: string;
+      };
+      stealth: {
+        name: string;
+        description: string;
+      };
+      neon: {
+        name: string;
+        description: string;
+      };
+      gold: {
+        name: string;
+        description: string;
+      };
+      veteran: {
+        name: string;
+        description: string;
+      };
+    };
+    tank: {
+      default: {
+        name: string;
+        description: string;
+      };
+      stealth: {
+        name: string;
+        description: string;
+      };
+      neon: {
+        name: string;
+        description: string;
+      };
+      gold: {
+        name: string;
+        description: string;
+      };
+      veteran: {
+        name: string;
+        description: string;
+      };
+    };
+    interceptor: {
+      default: {
+        name: string;
+        description: string;
+      };
+      stealth: {
+        name: string;
+        description: string;
+      };
+      neon: {
+        name: string;
+        description: string;
+      };
+      gold: {
+        name: string;
+        description: string;
+      };
+      veteran: {
+        name: string;
+        description: string;
+      };
+    };
+  };
 }
 
 export const SUPPORTED_LANGUAGES: LanguageOption[] = [
