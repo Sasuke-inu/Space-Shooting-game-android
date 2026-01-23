@@ -81,6 +81,41 @@ src/
     └── gameEngine.ts         # Game loop and physics logic
 ```
 
+## CI/CD Pipeline
+
+This project includes automated continuous integration and deployment via GitHub Actions:
+
+### 🔄 Continuous Integration
+- **Automated Testing**: Runs lint, type check, and unit tests on every PR
+- **Quality Gates**: Prevents merging broken code into main branch
+- **Fast Feedback**: Get results within minutes of pushing code
+
+### 🚀 Continuous Deployment
+- **Automated Builds**: iOS and Android builds on every push to main
+- **TestFlight/Play Store**: Automatic submission for internal testing
+- **Manual Triggers**: Deploy specific platforms on-demand from GitHub Actions UI
+
+### 📚 Documentation
+For detailed CI/CD setup instructions, required secrets, and troubleshooting, see:
+- **[CI/CD Workflows Guide](.github/workflows/README.md)** - Complete setup and configuration guide
+
+### Quick Setup
+```bash
+# 1. Install EAS CLI
+npm install -g eas-cli
+
+# 2. Login to Expo
+eas login
+
+# 3. Generate CI token
+eas token:create --description "GitHub Actions"
+
+# 4. Add secrets to GitHub repository settings
+# - EXPO_TOKEN
+# - APPLE_APP_STORE_CONNECT_API_KEY
+# - GOOGLE_PLAY_SERVICE_ACCOUNT_JSON
+```
+
 ## Game Tuning Constants
 
 Adjust these values in `src/state/gameStore.ts` to modify gameplay:
