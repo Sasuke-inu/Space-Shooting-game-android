@@ -93,6 +93,7 @@ export default function GameScreen() {
   const [showShipSelect, setShowShipSelect] = useState(false)
   const [showStats, setShowStats] = useState(false)
   const [showAchievements, setShowAchievements] = useState(false)
+  const [showShop, setShowShop] = useState(false)
   const [playerName, setPlayerName] = useState("")
   const [settingsTab, setSettingsTab] = useState<'general' | 'ship' | 'stats'>('general')
 
@@ -374,6 +375,14 @@ export default function GameScreen() {
   const joyMag = len(joystickValue)
   const thrusting = joyMag > JOY_DEADZONE
 
+  // Ship costs for purchasing
+  const SHIP_COSTS: Record<ShipType, number> = {
+    fighter: 0,      // Default, always unlocked
+    scout: 500,
+    tank: 750,
+    interceptor: 1000,
+  }
+
   // Theme selector component
   const ThemeSelector = () => (
     <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 8 }}>
@@ -615,6 +624,19 @@ export default function GameScreen() {
             paddingHorizontal: 12,
             paddingVertical: 8,
           }}
+          onPress={() => setShowShop(true)}
+        >
+          <Text style={{ color: colors.hudText, fontSize: 14 }}>🛒</Text>
+        </Pressable>
+        <Pressable
+          style={{
+            backgroundColor: colors.buttonSecondary,
+            borderWidth: 1,
+            borderColor: colors.panelBorder,
+            borderRadius: 8,
+            paddingHorizontal: 12,
+            paddingVertical: 8,
+          }}
           onPress={() => useGameStore.getState().setPaused(!paused)}
         >
           <Text style={{ color: colors.hudText, fontSize: 14 }}>{paused ? "Resume" : "Pause"}</Text>
@@ -777,6 +799,135 @@ export default function GameScreen() {
               >
                 <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
                   DONE
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+      )}
+
+      {/* Shop Modal */}
+      {showShop && (
+        <Modal visible={true} transparent animationType="fade">
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.modalOverlay }}>
+            <View style={{
+              backgroundColor: colors.panelBg,
+              borderWidth: 2,
+              borderColor: colors.panelBorder,
+              borderRadius: 16,
+              padding: 20,
+              marginHorizontal: 24,
+              width: 340,
+              maxHeight: '85%',
+            }}>
+              <Text style={{ color: colors.textPrimary, fontSize: 24, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
+                🛒 Ship Shop
+              </Text>
+
+              {/* Credit Balance */}
+              <View style={{
+                backgroundColor: colors.buttonSecondary,
+                borderRadius: 12,
+                padding: 12,
+                marginBottom: 16,
+                alignItems: 'center',
+              }}>
+                <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Your Credits</Text>
+                <Text style={{ color: colors.comboText, fontSize: 24, fontWeight: 'bold' }}>
+                  {upgradesCredits}
+                </Text>
+              </View>
+
+              <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 400 }}>
+                <View style={{ gap: 12 }}>
+                  {(['fighter', 'scout', 'tank', 'interceptor'] as ShipType[]).map((ship) => {
+                    const shipStats = SHIP_STATS[ship]
+                    const isUnlocked = unlockedShips.includes(ship)
+                    const cost = SHIP_COSTS[ship]
+
+                    return (
+                      <View
+                        key={ship}
+                        style={{
+                          padding: 12,
+                          borderRadius: 12,
+                          borderWidth: 2,
+                          borderColor: isUnlocked ? colors.comboText : colors.panelBorder,
+                          backgroundColor: isUnlocked ? colors.buttonSecondary : 'transparent',
+                        }}
+                      >
+                        {/* Ship Header */}
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                          <Text style={{ color: colors.textPrimary, fontSize: 18, fontWeight: 'bold', textTransform: 'capitalize' }}>
+                            {ship}
+                          </Text>
+                          {isUnlocked && (
+                            <Text style={{ color: colors.comboText, fontSize: 14, fontWeight: 'bold' }}>✓ OWNED</Text>
+                          )}
+                        </View>
+
+                        {/* Ship Stats */}
+                        <View style={{ marginBottom: 12, gap: 4 }}>
+                          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Speed</Text>
+                            <Text style={{ color: colors.textPrimary, fontSize: 12 }}>{(shipStats.speed * 100).toFixed(0)}%</Text>
+                          </View>
+                          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Fire Rate</Text>
+                            <Text style={{ color: colors.textPrimary, fontSize: 12 }}>{(shipStats.fireRate * 100).toFixed(0)}%</Text>
+                          </View>
+                          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Damage</Text>
+                            <Text style={{ color: colors.textPrimary, fontSize: 12 }}>{(shipStats.damage * 100).toFixed(0)}%</Text>
+                          </View>
+                          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Hull</Text>
+                            <Text style={{ color: colors.textPrimary, fontSize: 12 }}>{shipStats.hull}</Text>
+                          </View>
+                          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Special</Text>
+                            <Text style={{ color: colors.comboText, fontSize: 12 }}>{shipStats.special}</Text>
+                          </View>
+                        </View>
+
+                        {/* Price and Purchase Button */}
+                        {!isUnlocked && (
+                          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: 'bold' }}>
+                              💰 {cost} Credits
+                            </Text>
+                            <Pressable
+                              style={{
+                                backgroundColor: colors.buttonPrimary,
+                                borderRadius: 8,
+                                paddingHorizontal: 16,
+                                paddingVertical: 8,
+                              }}
+                            >
+                              <Text style={{ color: colors.buttonText, fontSize: 14, fontWeight: 'bold' }}>
+                                PURCHASE
+                              </Text>
+                            </Pressable>
+                          </View>
+                        )}
+                      </View>
+                    )
+                  })}
+                </View>
+              </ScrollView>
+
+              <Pressable
+                style={{
+                  backgroundColor: colors.buttonPrimary,
+                  borderRadius: 12,
+                  paddingVertical: 14,
+                  paddingHorizontal: 16,
+                  marginTop: 16,
+                }}
+                onPress={() => setShowShop(false)}
+              >
+                <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
+                  CLOSE
                 </Text>
               </Pressable>
             </View>
