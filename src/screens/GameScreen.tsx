@@ -11,7 +11,7 @@ import { useSettingsStore, useThemeColors } from "../theme/themeStore"
 import { useStatisticsStore, useAchievementStore, useUpgradesStore } from "../state/progressStore"
 import { themeList } from "../theme/themes"
 import type { ThemeId } from "../theme/types"
-import type { ShipType } from "../types/game"
+import type { ShipType, GameMode } from "../types/game"
 import { SHIP_STATS, ACHIEVEMENTS } from "../types/game"
 import { useGameEngine } from "../utils/gameEngine"
 import { len, angleOf, nor, mul, v } from "../utils/vectorMath"
@@ -43,6 +43,7 @@ export default function GameScreen() {
   const credits = useGameStore((s) => s.credits)
   const lives = useGameStore((s) => s.lives)
   const wave = useGameStore((s) => s.wave)
+  const gameMode = useGameStore((s) => s.gameMode)
   const player = useGameStore((s) => s.player)
   const playerAng = useGameStore((s) => s.player.ang)
   const bullets = useGameStore((s) => s.bullets)
@@ -96,9 +97,10 @@ export default function GameScreen() {
   const [playerName, setPlayerName] = useState("")
   const [settingsTab, setSettingsTab] = useState<'general' | 'ship' | 'stats'>('general')
 
-  const highScores = useHighScoresStore((s) => s.scores)
+  const getScores = useHighScoresStore((s) => s.getScores)
   const isTopFive = useHighScoresStore((s) => s.isTopFive)
   const addScore = useHighScoresStore((s) => s.addScore)
+  const highScores = getScores(gameMode)
 
   // Handle special ability effects
   useEffect(() => {
@@ -339,7 +341,7 @@ export default function GameScreen() {
 
   const handleSubmitScore = () => {
     const name = playerName.trim() || "Anonymous"
-    addScore(score, wave, name)
+    addScore(score, wave, name, gameMode)
 
     // Record game end statistics
     const state = useGameStore.getState()
@@ -356,14 +358,14 @@ export default function GameScreen() {
   // Check for game over and show name input if top 5
   useEffect(() => {
     if (paused && lives <= 0 && !showInstructions && !showNameInput) {
-      if (isTopFive(score)) {
+      if (isTopFive(score, gameMode)) {
         const timer = setTimeout(() => {
           setShowNameInput(true)
         }, 500)
         return () => clearTimeout(timer)
       }
     }
-  }, [paused, lives, score, showInstructions, showNameInput, isTopFive])
+  }, [paused, lives, score, showInstructions, showNameInput, isTopFive, gameMode])
 
   const handleShipSelect = (ship: ShipType) => {
     if (unlockedShips.includes(ship)) {
@@ -590,7 +592,7 @@ export default function GameScreen() {
         }}
       >
         <Text style={{ color: colors.hudAccent, fontSize: 16, fontWeight: '600', letterSpacing: 0.5 }}>
-          {themeList.find((t) => t.id === themeId)?.name || 'Neon Void'}
+          {gameMode === 'endless' ? '♾️ ENDLESS' : '🎮 CAMPAIGN'}
         </Text>
         <View style={{ flex: 1 }} />
         <Pressable
@@ -867,7 +869,7 @@ export default function GameScreen() {
               width: 340,
             }}>
               <Text style={{ color: colors.textPrimary, fontSize: 24, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
-                🏆 TOP 5 SCORE!
+                🏆 TOP 5 {gameMode === 'endless' ? 'ENDLESS' : 'CAMPAIGN'} SCORE!
               </Text>
               <Text style={{ color: colors.textSecondary, fontSize: 18, fontWeight: '600', marginBottom: 16, textAlign: 'center' }}>
                 Score: {score}
@@ -969,7 +971,7 @@ export default function GameScreen() {
                       marginBottom: 20,
                     }}>
                       <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: 'bold', marginBottom: 12, textAlign: 'center' }}>
-                        🏆 TOP 5 HIGH SCORES
+                        🏆 TOP 5 {gameMode === 'endless' ? 'ENDLESS' : 'CAMPAIGN'} SCORES
                       </Text>
                       {highScores.map((hs, index) => (
                         <View
