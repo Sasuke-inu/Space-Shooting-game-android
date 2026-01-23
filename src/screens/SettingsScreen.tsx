@@ -7,13 +7,15 @@ import {
   Modal,
   Switch,
   Alert,
+  Platform,
 } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { useI18nStore, SUPPORTED_LANGUAGES, LanguageCode } from '../i18n';
 import { useAppSettingsStore, JoystickSize } from '../state/settingsStore';
-import { useSettingsStore, useTheme, themeList } from '../theme';
+import { useSettingsStore, useTheme, themeList, HapticIntensity } from '../theme';
 import { useStatisticsStore, useAchievementStore, useUpgradesStore } from '../state/progressStore';
 import { ThemeId } from '../theme/types';
+import { scheduleDailyChallengeReminder, cancelDailyChallengeReminder } from '../utils/androidFeatures';
 
 type TabType = 'general' | 'controls' | 'account';
 
@@ -41,14 +43,25 @@ export default function SettingsScreen() {
     joystickSensitivity,
     autoFire,
     hapticsEnabled,
+    // Android-specific
+    hapticIntensity,
+    keepScreenAwake,
+    immersiveMode,
     setTheme,
     setMusicVolume,
     setSfxVolume,
     setJoystickSensitivity,
     setAutoFire,
     setHapticsEnabled,
+    // Android-specific setters
+    setHapticIntensity,
+    setKeepScreenAwake,
+    setImmersiveMode,
     resetSettings: resetThemeSettings,
   } = useSettingsStore();
+
+  // Android notification state
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   const { stats, resetStats } = useStatisticsStore();
   const { achievements } = useAchievementStore((s) => ({ achievements: s.achievements }));
@@ -284,6 +297,162 @@ export default function SettingsScreen() {
                 />
               </View>
             </View>
+
+            {/* Android-Specific Settings */}
+            {Platform.OS === 'android' && (
+              <View className="mt-6">
+                <Text
+                  className="text-lg font-bold mb-4"
+                  style={{ color: theme.colors.textPrimary }}
+                >
+                  Android Settings
+                </Text>
+
+                {/* Haptic Intensity */}
+                {hapticsEnabled && (
+                  <View className="mb-4">
+                    <Text
+                      className="text-sm font-semibold mb-2"
+                      style={{ color: theme.colors.textSecondary }}
+                    >
+                      Vibration Intensity
+                    </Text>
+                    <View className="flex-row">
+                      {(['light', 'medium', 'strong'] as HapticIntensity[]).map((intensity) => (
+                        <TouchableOpacity
+                          key={intensity}
+                          className="flex-1 py-3 mx-1 rounded-lg border"
+                          style={{
+                            backgroundColor: hapticIntensity === intensity
+                              ? theme.colors.buttonPrimary
+                              : theme.colors.panelBg,
+                            borderColor: theme.colors.panelBorder,
+                          }}
+                          onPress={() => setHapticIntensity(intensity)}
+                        >
+                          <Text
+                            className="text-center text-sm font-semibold capitalize"
+                            style={{
+                              color: hapticIntensity === intensity
+                                ? '#ffffff'
+                                : theme.colors.textSecondary,
+                            }}
+                          >
+                            {intensity}
+                          </Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  </View>
+                )}
+
+                {/* Keep Screen Awake */}
+                <View
+                  className="flex-row justify-between items-center p-4 rounded-lg border mb-4"
+                  style={{
+                    backgroundColor: theme.colors.panelBg,
+                    borderColor: theme.colors.panelBorder,
+                  }}
+                >
+                  <View className="flex-1 mr-4">
+                    <Text
+                      className="text-sm font-semibold"
+                      style={{ color: theme.colors.textSecondary }}
+                    >
+                      Keep Screen Awake
+                    </Text>
+                    <Text
+                      className="text-xs mt-1"
+                      style={{ color: theme.colors.textMuted }}
+                    >
+                      Prevent screen from sleeping during gameplay
+                    </Text>
+                  </View>
+                  <Switch
+                    value={keepScreenAwake}
+                    onValueChange={setKeepScreenAwake}
+                    trackColor={{
+                      false: theme.colors.panelBorder,
+                      true: theme.colors.buttonPrimary,
+                    }}
+                    thumbColor="#ffffff"
+                  />
+                </View>
+
+                {/* Immersive Mode */}
+                <View
+                  className="flex-row justify-between items-center p-4 rounded-lg border mb-4"
+                  style={{
+                    backgroundColor: theme.colors.panelBg,
+                    borderColor: theme.colors.panelBorder,
+                  }}
+                >
+                  <View className="flex-1 mr-4">
+                    <Text
+                      className="text-sm font-semibold"
+                      style={{ color: theme.colors.textSecondary }}
+                    >
+                      Immersive Mode
+                    </Text>
+                    <Text
+                      className="text-xs mt-1"
+                      style={{ color: theme.colors.textMuted }}
+                    >
+                      Hide navigation bar during gameplay
+                    </Text>
+                  </View>
+                  <Switch
+                    value={immersiveMode}
+                    onValueChange={setImmersiveMode}
+                    trackColor={{
+                      false: theme.colors.panelBorder,
+                      true: theme.colors.buttonPrimary,
+                    }}
+                    thumbColor="#ffffff"
+                  />
+                </View>
+
+                {/* Daily Reminder Notifications */}
+                <View
+                  className="flex-row justify-between items-center p-4 rounded-lg border"
+                  style={{
+                    backgroundColor: theme.colors.panelBg,
+                    borderColor: theme.colors.panelBorder,
+                  }}
+                >
+                  <View className="flex-1 mr-4">
+                    <Text
+                      className="text-sm font-semibold"
+                      style={{ color: theme.colors.textSecondary }}
+                    >
+                      Daily Challenge Reminder
+                    </Text>
+                    <Text
+                      className="text-xs mt-1"
+                      style={{ color: theme.colors.textMuted }}
+                    >
+                      Get notified at 9 AM daily
+                    </Text>
+                  </View>
+                  <Switch
+                    value={notificationsEnabled}
+                    onValueChange={async (enabled) => {
+                      setNotificationsEnabled(enabled);
+                      if (enabled) {
+                        await scheduleDailyChallengeReminder(9, 0);
+                      } else {
+                        await cancelDailyChallengeReminder();
+                      }
+                    }}
+                    trackColor={{
+                      false: theme.colors.panelBorder,
+                      true: theme.colors.buttonPrimary,
+                    }}
+                    thumbColor="#ffffff"
+                  />
+                </View>
+              </View>
+            )}
           </View>
         )}
 

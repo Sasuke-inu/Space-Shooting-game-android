@@ -1,22 +1,33 @@
 import React, { useEffect, useState, useRef, useCallback } from "react"
-import { View, Text, Pressable, useWindowDimensions, Keyboard } from "react-native"
+import { View, useWindowDimensions, Keyboard } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { Gesture, GestureDetector } from "react-native-gesture-handler"
-import { Audio } from "expo-av"
+import { GestureDetector } from "react-native-gesture-handler"
 import { GameCanvas } from "../components/GameCanvas"
 import { VirtualControls } from "../components/VirtualControls"
-import { InstructionsModal, SettingsModal, NameInputModal, PauseGameOverModal, AchievementNotification, TopBar } from "../components/game-ui"
-import { useGameStore, MAX_DT, JOY_DEADZONE } from "../state/gameStore"
+import {
+  InstructionsModal,
+  SettingsModal,
+  NameInputModal,
+  PauseGameOverModal,
+  AchievementNotification,
+  TopBar,
+  useBackgroundMusic,
+  useGameGestures,
+  useGameLoop,
+} from "../components/game-ui"
+import { useGameStore, JOY_DEADZONE } from "../state/gameStore"
 import { useHighScoresStore } from "../state/highScoresStore"
 import { useSettingsStore, useThemeColors } from "../theme/themeStore"
 import { useStatisticsStore, useAchievementStore, useUpgradesStore } from "../state/progressStore"
 import { themeList } from "../theme/themes"
-import type { ThemeId } from "../theme/types"
 import type { ShipType } from "../types/game"
-import { SHIP_STATS, ACHIEVEMENTS } from "../types/game"
+import { ACHIEVEMENTS } from "../types/game"
 import { useGameEngine } from "../utils/gameEngine"
-import { len, angleOf, nor, mul, v } from "../utils/vectorMath"
+import { len } from "../utils/vectorMath"
 import type { Vec2 } from "../types/game"
+// Android-specific features
+import { useAndroidGameFeatures, sendAchievementNotification } from "../utils/androidFeatures"
+import { hapticBossSpawn, hapticBossDefeat, hapticWaveComplete, hapticCombo, hapticSpecialAbility } from "../utils/haptics"
 
 export default function GameScreen() {
   const { width, height } = useWindowDimensions()
@@ -79,14 +90,7 @@ export default function GameScreen() {
 
   const [joystickValue, setJoystickValue] = useState<Vec2>({ x: 0, y: 0 })
   const [swipeImpulse, setSwipeImpulse] = useState<Vec2>({ x: 0, y: 0 })
-  const [shakeOffset, setShakeOffset] = useState<Vec2>({ x: 0, y: 0 })
-  const lastTimeRef = useRef(Date.now())
-  const rafRef = useRef<number | null>(null)
   const initializedRef = useRef(false)
-  const fireOnceRef = useRef(false)
-  const fireOnceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const soundRef = useRef<Audio.Sound | null>(null)
-  const swipeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lastAbilityActivationRef = useRef<string | null>(null) // Track last activated ability
   const [showInstructions, setShowInstructions] = useState(true)
   const [showNameInput, setShowNameInput] = useState(false)
@@ -101,6 +105,26 @@ export default function GameScreen() {
   const isTopFive = useHighScoresStore((s) => s.isTopFive)
   const addScore = useHighScoresStore((s) => s.addScore)
 
+  // Use custom hooks
+  useBackgroundMusic(musicVolume)
+
+  // Android-specific features (screen awake, immersive mode, back button)
+  const handlePause = useCallback(() => {
+    useGameStore.getState().setPaused(true)
+  }, [])
+
+  const handleResume = useCallback(() => {
+    useGameStore.getState().setPaused(false)
+  }, [])
+
+  useAndroidGameFeatures(
+    !paused && !showInstructions, // isPlaying
+    paused,
+    handlePause,
+    handleResume,
+    colors.background
+  )
+
   // Handle special ability effects
   useEffect(() => {
     if (specialAbility?.isActive) {
@@ -110,6 +134,9 @@ export default function GameScreen() {
       // Only trigger if this is a new activation
       if (lastAbilityActivationRef.current !== abilityKey) {
         lastAbilityActivationRef.current = abilityKey
+
+        // Trigger enhanced haptic for special ability (Android)
+        hapticSpecialAbility()
 
         switch (specialAbility.type) {
           case 'missile_barrage':
@@ -137,15 +164,52 @@ export default function GameScreen() {
     }
   }, [specialAbility?.isActive, specialAbility?.type, specialAbility?.maxCooldown])
 
-  // Achievement notification timeout
+  // Achievement notification timeout + Android notification
   useEffect(() => {
     if (recentUnlock) {
+      // Send Android notification for achievement
+      const achievement = ACHIEVEMENTS[recentUnlock]
+      if (achievement) {
+        sendAchievementNotification(achievement.name)
+      }
+
       const timer = setTimeout(() => {
         clearRecentUnlock()
       }, 3000)
       return () => clearTimeout(timer)
     }
   }, [recentUnlock])
+
+  // Enhanced haptics for boss events (Android)
+  const prevBossRef = useRef(boss)
+  useEffect(() => {
+    if (boss && !prevBossRef.current) {
+      // Boss just spawned
+      hapticBossSpawn()
+    } else if (!boss && prevBossRef.current) {
+      // Boss just defeated
+      hapticBossDefeat()
+    }
+    prevBossRef.current = boss
+  }, [boss])
+
+  // Enhanced haptics for wave completion (Android)
+  const prevWaveRef = useRef(wave)
+  useEffect(() => {
+    if (wave > prevWaveRef.current && wave > 1) {
+      hapticWaveComplete()
+    }
+    prevWaveRef.current = wave
+  }, [wave])
+
+  // Enhanced haptics for combos (Android)
+  const prevComboRef = useRef(combo.count)
+  useEffect(() => {
+    if (combo.count > prevComboRef.current && combo.count >= 3) {
+      hapticCombo(combo.count)
+    }
+    prevComboRef.current = combo.count
+  }, [combo.count])
 
   // Initialize game on mount
   useEffect(() => {
@@ -160,170 +224,29 @@ export default function GameScreen() {
     }
   }, [width, height])
 
-  // Setup and play background music
-  useEffect(() => {
-    let isMounted = true
-
-    const setupAudio = async () => {
-      try {
-        await Audio.setAudioModeAsync({
-          playsInSilentModeIOS: true,
-          staysActiveInBackground: true,
-          shouldDuckAndroid: true,
-        })
-
-        const { sound } = await Audio.Sound.createAsync(
-          require("../../assets/music-1762534655955.mp3"),
-          { isLooping: true, volume: musicVolume }
-        )
-
-        if (isMounted) {
-          soundRef.current = sound
-          await sound.playAsync()
-        }
-      } catch (error) {
-        console.warn("Failed to load background music:", error)
-      }
+  // Setup gesture handlers
+  const { combinedGesture } = useGameGestures(
+    { paused, autoFire, specialReady: player.specialReady },
+    {
+      onFire: fireOnce,
+      onSpecialAbility: activateSpecialAbility,
+      onSwipeUpdate: setSwipeImpulse,
+      onSwipeEnd: () => setSwipeImpulse({ x: 0, y: 0 }),
     }
+  )
 
-    setupAudio()
-
-    return () => {
-      isMounted = false
-      if (soundRef.current) {
-        soundRef.current.unloadAsync()
-      }
-    }
-  }, [])
-
-  // Update music volume when changed
-  useEffect(() => {
-    if (soundRef.current) {
-      soundRef.current.setVolumeAsync(musicVolume)
-    }
-  }, [musicVolume])
-
-  // Double tap to activate special ability
-  const doubleTapGesture = Gesture.Tap()
-    .numberOfTaps(2)
-    .runOnJS(true)
-    .onStart(() => {
-      if (paused) return
-      if (player.specialReady) {
-        activateSpecialAbility()
-      }
-    })
-
-  // Tap gesture to fire
-  const tapGesture = Gesture.Tap()
-    .runOnJS(true)
-    .onStart(() => {
-      if (paused) return
-      if (!fireOnceRef.current && !autoFire) {
-        fireOnce()
-        fireOnceRef.current = true
-        // Clear existing timeout to prevent memory leaks
-        if (fireOnceTimeoutRef.current) {
-          clearTimeout(fireOnceTimeoutRef.current)
-        }
-        fireOnceTimeoutRef.current = setTimeout(() => {
-          fireOnceRef.current = false
-        }, 200)
-      }
-    })
-
-  // Swipe gesture for ship control
-  const swipeGesture = Gesture.Pan()
-    .runOnJS(true)
-    .onUpdate((event) => {
-      if (paused) return
-
-      const swipeX = event.velocityX / 1000
-      const swipeY = event.velocityY / 1000
-      const swipeMag = Math.sqrt(swipeX * swipeX + swipeY * swipeY)
-
-      if (swipeMag > 0.3) {
-        const normalized = nor(v(swipeX, swipeY))
-        const impulse = mul(normalized, Math.min(swipeMag * 2, 3))
-        setSwipeImpulse(impulse)
-      }
-    })
-    .onEnd(() => {
-      // Clear any existing timeout to prevent memory leaks
-      if (swipeTimeoutRef.current) {
-        clearTimeout(swipeTimeoutRef.current)
-      }
-      swipeTimeoutRef.current = setTimeout(() => setSwipeImpulse({ x: 0, y: 0 }), 100)
-    })
-
-  const combinedGesture = Gesture.Race(doubleTapGesture, Gesture.Simultaneous(tapGesture, swipeGesture))
-
-  // Game loop
-  useEffect(() => {
-    if (paused) {
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current)
-        rafRef.current = null
-      }
-      return
-    }
-
-    const loop = () => {
-      const now = Date.now()
-      const dt = Math.min((now - lastTimeRef.current) / 1000, MAX_DT)
-      lastTimeRef.current = now
-
-      // Apply swipe impulse to player velocity
-      if (swipeImpulse.x !== 0 || swipeImpulse.y !== 0) {
-        const currentVel = player.vel
-        const newVel = {
-          x: currentVel.x + swipeImpulse.x * 150 * dt,
-          y: currentVel.y + swipeImpulse.y * 150 * dt,
-        }
-        useGameStore.getState().updatePlayer({ vel: newVel })
-
-        const swipeAngle = angleOf(swipeImpulse)
-        useGameStore.getState().updatePlayer({ ang: swipeAngle })
-      }
-
-      // Calculate thrust and angle from joystick
-      const joyMag = len(joystickValue)
-      let thrusting = false
-      let desiredAng = playerAng
-
-      if (joyMag > JOY_DEADZONE) {
-        desiredAng = angleOf(joystickValue)
-        thrusting = true
-
-        let da = ((desiredAng - playerAng + Math.PI * 3) % (Math.PI * 2)) - Math.PI
-        const turnSpeed = 8
-        const newAng = playerAng + Math.max(-1, Math.min(1, da)) * turnSpeed * dt
-        useGameStore.getState().updatePlayer({ ang: newAng })
-      }
-
-      // Auto-fire support
-      const shouldFire = autoFire && joyMag > JOY_DEADZONE
-
-      updateGame(dt, joystickValue, shouldFire, thrusting, colors)
-
-      rafRef.current = requestAnimationFrame(loop)
-    }
-
-    rafRef.current = requestAnimationFrame(loop)
-
-    return () => {
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current)
-      }
-      // Cleanup timeouts to prevent memory leaks
-      if (fireOnceTimeoutRef.current) {
-        clearTimeout(fireOnceTimeoutRef.current)
-      }
-      if (swipeTimeoutRef.current) {
-        clearTimeout(swipeTimeoutRef.current)
-      }
-    }
-  }, [paused, joystickValue, playerAng, swipeImpulse, player.vel, fireOnce, updateGame, autoFire, colors])
+  // Setup game loop
+  useGameLoop({
+    paused,
+    joystickValue,
+    playerAng,
+    playerVel: player.vel,
+    swipeImpulse,
+    autoFire,
+    colors,
+    updateGame,
+    fireOnce,
+  })
 
   const handleRestart = () => {
     const store = useGameStore.getState()
