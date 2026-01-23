@@ -113,8 +113,18 @@ export const useAchievementStore = create<AchievementState>()(
 //                         Statistics Store
 // ------------------------------------------------------------------ //
 
+interface SessionStats {
+  score: number
+  wave: number
+  kills: number
+  accuracy: number
+  time: number
+  date: number
+}
+
 interface StatisticsState {
   stats: GameStatistics
+  lastSessionStats: SessionStats | null
 
   // Actions
   recordGameEnd: (score: number, wave: number, time: number, kills: number, shotsFired: number, shotsHit: number) => void
@@ -162,6 +172,7 @@ export const useStatisticsStore = create<StatisticsState>()(
   persist(
     (set, get) => ({
       stats: { ...initialStats },
+      lastSessionStats: null,
 
       recordGameEnd: (score, wave, time, kills, shotsFired, shotsHit) =>
         set((state) => {
@@ -181,6 +192,14 @@ export const useStatisticsStore = create<StatisticsState>()(
               longestSurvival: Math.max(state.stats.longestSurvival, time),
               bestAccuracy: Math.max(state.stats.bestAccuracy, accuracy),
               lastPlayed: Date.now(),
+            },
+            lastSessionStats: {
+              score,
+              wave,
+              kills,
+              accuracy,
+              time,
+              date: Date.now(),
             },
           }
         }),
