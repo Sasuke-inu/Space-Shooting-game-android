@@ -29,6 +29,7 @@ import {
   rand,
 } from "./vectorMath"
 import { hapticLight, hapticMedium, hapticHeavy, hapticWarning } from "./haptics"
+import { playSfx } from "./audioManager"
 
 export const useGameEngine = () => {
   const boom = useCallback((pos: Vec2, color: string, count = 24, speed = 120) => {
@@ -72,6 +73,7 @@ export const useGameEngine = () => {
       }
 
       state.updatePlayer({ cooldown })
+      playSfx('shoot_player')
       hapticLight()
     }
   }, [])
@@ -163,6 +165,7 @@ export const useGameEngine = () => {
         }
 
         state.updatePlayer({ cooldown })
+        playSfx('shoot_player')
         hapticLight()
       }
     }
@@ -495,6 +498,7 @@ function updateEnemyBehavior(
           life: BULLET_LIFE_ENEMY * 0.8,
           friendly: false,
         })
+        playSfx('shoot_enemy')
         newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.3)
       }
       break
@@ -521,6 +525,7 @@ function updateEnemyBehavior(
             friendly: false,
           })
         }
+        playSfx('shoot_enemy')
         newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.2)
       }
       break
@@ -554,6 +559,7 @@ function updateEnemyBehavior(
           friendly: false,
           damage: 35,
         })
+        playSfx('shoot_enemy')
         newEnemy.chargeTime = 0
       }
       break
@@ -578,6 +584,7 @@ function updateEnemyBehavior(
           life: BULLET_LIFE_ENEMY,
           friendly: false,
         })
+        playSfx('shoot_enemy')
         newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.25)
       }
 
@@ -593,6 +600,7 @@ function updateEnemyBehavior(
             friendly: false,
           })
         }
+        playSfx('shoot_enemy')
         newEnemy.bombCooldown = 4 - difficulty
       }
       break
@@ -618,6 +626,7 @@ function updateEnemyBehavior(
           life: BULLET_LIFE_ENEMY,
           friendly: false,
         })
+        playSfx('shoot_enemy')
         const cooldownBase = 1.4 - (difficulty * 0.6)
         newEnemy.cooldown = rand(0.5, cooldownBase)
       }
@@ -674,6 +683,7 @@ function updateBossBehavior(
         friendly: false,
       })
     }
+    playSfx('shoot_enemy')
 
     newCooldown = 2 - boss.phase * 0.3
   }
@@ -692,6 +702,7 @@ function updateBossBehavior(
             friendly: false,
           })
         }
+        playSfx('shoot_enemy')
         break
 
       case 'carrier':
@@ -728,6 +739,7 @@ function updateBossBehavior(
             })
           }
         }
+        playSfx('shoot_enemy')
         break
     }
 
