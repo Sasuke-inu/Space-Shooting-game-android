@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react"
+import React, { useEffect, useState, useRef, useCallback } from "react"
 import { View, useWindowDimensions, Keyboard } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { GestureDetector } from "react-native-gesture-handler"
@@ -25,6 +25,9 @@ import { ACHIEVEMENTS } from "../types/game"
 import { useGameEngine } from "../utils/gameEngine"
 import { len } from "../utils/vectorMath"
 import type { Vec2 } from "../types/game"
+// Android-specific features
+import { useAndroidGameFeatures, sendAchievementNotification } from "../utils/androidFeatures"
+import { hapticBossSpawn, hapticBossDefeat, hapticWaveComplete, hapticCombo, hapticSpecialAbility } from "../utils/haptics"
 
 export default function GameScreen() {
   const { width, height } = useWindowDimensions()
@@ -105,6 +108,23 @@ export default function GameScreen() {
   // Use custom hooks
   useBackgroundMusic(musicVolume)
 
+  // Android-specific features (screen awake, immersive mode, back button)
+  const handlePause = useCallback(() => {
+    useGameStore.getState().setPaused(true)
+  }, [])
+
+  const handleResume = useCallback(() => {
+    useGameStore.getState().setPaused(false)
+  }, [])
+
+  useAndroidGameFeatures(
+    !paused && !showInstructions, // isPlaying
+    paused,
+    handlePause,
+    handleResume,
+    colors.background
+  )
+
   // Handle special ability effects
   useEffect(() => {
     if (specialAbility?.isActive) {
@@ -114,6 +134,9 @@ export default function GameScreen() {
       // Only trigger if this is a new activation
       if (lastAbilityActivationRef.current !== abilityKey) {
         lastAbilityActivationRef.current = abilityKey
+
+        // Trigger enhanced haptic for special ability (Android)
+        hapticSpecialAbility()
 
         switch (specialAbility.type) {
           case 'missile_barrage':
@@ -141,15 +164,52 @@ export default function GameScreen() {
     }
   }, [specialAbility?.isActive, specialAbility?.type, specialAbility?.maxCooldown])
 
-  // Achievement notification timeout
+  // Achievement notification timeout + Android notification
   useEffect(() => {
     if (recentUnlock) {
+      // Send Android notification for achievement
+      const achievement = ACHIEVEMENTS[recentUnlock]
+      if (achievement) {
+        sendAchievementNotification(achievement.name)
+      }
+
       const timer = setTimeout(() => {
         clearRecentUnlock()
       }, 3000)
       return () => clearTimeout(timer)
     }
   }, [recentUnlock])
+
+  // Enhanced haptics for boss events (Android)
+  const prevBossRef = useRef(boss)
+  useEffect(() => {
+    if (boss && !prevBossRef.current) {
+      // Boss just spawned
+      hapticBossSpawn()
+    } else if (!boss && prevBossRef.current) {
+      // Boss just defeated
+      hapticBossDefeat()
+    }
+    prevBossRef.current = boss
+  }, [boss])
+
+  // Enhanced haptics for wave completion (Android)
+  const prevWaveRef = useRef(wave)
+  useEffect(() => {
+    if (wave > prevWaveRef.current && wave > 1) {
+      hapticWaveComplete()
+    }
+    prevWaveRef.current = wave
+  }, [wave])
+
+  // Enhanced haptics for combos (Android)
+  const prevComboRef = useRef(combo.count)
+  useEffect(() => {
+    if (combo.count > prevComboRef.current && combo.count >= 3) {
+      hapticCombo(combo.count)
+    }
+    prevComboRef.current = combo.count
+  }, [combo.count])
 
   // Initialize game on mount
   useEffect(() => {

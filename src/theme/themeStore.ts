@@ -8,6 +8,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import type { ThemeId, GameTheme, ThemeColors } from './types'
 import { themes, defaultThemeId, getTheme } from './themes'
 
+// Haptic intensity levels for Android
+export type HapticIntensity = 'off' | 'light' | 'medium' | 'strong'
+
 interface SettingsState {
   // Theme
   themeId: ThemeId
@@ -20,6 +23,11 @@ interface SettingsState {
   joystickSensitivity: number
   autoFire: boolean
   hapticsEnabled: boolean
+
+  // Android-specific
+  hapticIntensity: HapticIntensity
+  keepScreenAwake: boolean
+  immersiveMode: boolean
 }
 
 interface SettingsActions {
@@ -37,6 +45,11 @@ interface SettingsActions {
   setAutoFire: (enabled: boolean) => void
   setHapticsEnabled: (enabled: boolean) => void
 
+  // Android-specific
+  setHapticIntensity: (intensity: HapticIntensity) => void
+  setKeepScreenAwake: (enabled: boolean) => void
+  setImmersiveMode: (enabled: boolean) => void
+
   // Reset
   resetSettings: () => void
 }
@@ -50,6 +63,10 @@ const defaultSettings: SettingsState = {
   joystickSensitivity: 1.0,
   autoFire: false,
   hapticsEnabled: true,
+  // Android-specific defaults
+  hapticIntensity: 'medium',
+  keepScreenAwake: true,
+  immersiveMode: true,
 }
 
 export const useSettingsStore = create<SettingsStore>()(
@@ -76,6 +93,13 @@ export const useSettingsStore = create<SettingsStore>()(
       setAutoFire: (enabled: boolean) => set({ autoFire: enabled }),
 
       setHapticsEnabled: (enabled: boolean) => set({ hapticsEnabled: enabled }),
+
+      // Android-specific actions
+      setHapticIntensity: (intensity: HapticIntensity) => set({ hapticIntensity: intensity }),
+
+      setKeepScreenAwake: (enabled: boolean) => set({ keepScreenAwake: enabled }),
+
+      setImmersiveMode: (enabled: boolean) => set({ immersiveMode: enabled }),
 
       // Reset
       resetSettings: () => set(defaultSettings),
