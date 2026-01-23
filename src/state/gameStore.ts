@@ -1,6 +1,7 @@
 import { create } from "zustand"
 import type {
   GameState,
+  GameMode,
   Asteroid,
   Enemy,
   EnemyType,
@@ -94,6 +95,7 @@ interface GameStore extends GameState {
   particlePool: PooledParticle[]
   particlePoolIndex: number  // Circular buffer index for next particle allocation
   // Actions
+  setGameMode: (mode: GameMode) => void
   setPaused: (paused: boolean) => void
   setDimensions: (w: number, h: number) => void
   updateTime: (dt: number) => void
@@ -212,6 +214,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   h: 600,
   time: 0,
   paused: false,
+  gameMode: 'campaign',
   score: 0,
   credits: 0,
   lives: 3,

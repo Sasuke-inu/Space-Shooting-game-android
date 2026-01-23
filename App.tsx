@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -32,7 +33,15 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <GameScreen />
+        {currentScreen === "menu" ? (
+          <MenuScreen
+            onStartGame={handleStartGame}
+            onShowSettings={handleShowSettings}
+            onShowHighScores={handleShowHighScores}
+          />
+        ) : (
+          <GameScreen onBackToMenu={handleBackToMenu} />
+        )}
         <StatusBar style="light" />
       </SafeAreaProvider>
     </GestureHandlerRootView>

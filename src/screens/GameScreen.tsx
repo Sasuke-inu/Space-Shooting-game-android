@@ -30,7 +30,11 @@ import type { Vec2 } from "../types/game"
 import { useAndroidGameFeatures, sendAchievementNotification } from "../utils/androidFeatures"
 import { hapticBossSpawn, hapticBossDefeat, hapticWaveComplete, hapticCombo, hapticSpecialAbility } from "../utils/haptics"
 
-export default function GameScreen() {
+interface GameScreenProps {
+  onBackToMenu?: () => void;
+}
+
+export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   const { width, height } = useWindowDimensions()
   const insets = useSafeAreaInsets()
   const { updateGame, fireOnce } = useGameEngine()
@@ -137,6 +141,7 @@ export default function GameScreen() {
   // High scores - actions
   const isTopFive = useHighScoresStore((s) => s.isTopFive)
   const addScore = useHighScoresStore((s) => s.addScore)
+  const highScores = getScores(gameMode)
 
   // Use custom hooks
   useBackgroundMusic(musicVolume)
@@ -341,14 +346,14 @@ export default function GameScreen() {
   // Check for game over and show name input if top 5
   useEffect(() => {
     if (paused && lives <= 0 && !showInstructions && !showNameInput) {
-      if (isTopFive(score)) {
+      if (isTopFive(score, gameMode)) {
         const timer = setTimeout(() => {
           setShowNameInput(true)
         }, 500)
         return () => clearTimeout(timer)
       }
     }
-  }, [paused, lives, score, showInstructions, showNameInput, isTopFive])
+  }, [paused, lives, score, showInstructions, showNameInput, isTopFive, gameMode])
 
   const handleShipSelect = (ship: ShipType) => {
     if (unlockedShips.includes(ship)) {

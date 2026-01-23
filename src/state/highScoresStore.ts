@@ -7,6 +7,7 @@ export interface HighScore {
   score: number
   wave: number
   date: number
+  gameMode: GameMode
 }
 
 interface HighScoresState {
@@ -21,25 +22,35 @@ interface HighScoresState {
 export const useHighScoresStore = create<HighScoresState>()(
   persist(
     (set, get) => ({
-      scores: [],
+      scores: {
+        campaign: [],
+        endless: [],
+      },
 
-      addScore: (score: number, wave: number, name: string) => {
+      addScore: (score: number, wave: number, name: string, gameMode: GameMode) => {
         set((state) => {
           const newScore: HighScore = {
             name,
             score,
             wave,
             date: Date.now(),
+            gameMode,
           }
-          const newScores = [...state.scores, newScore]
+          const currentModeScores = state.scores[gameMode]
+          const newModeScores = [...currentModeScores, newScore]
             .sort((a, b) => b.score - a.score)
             .slice(0, 5)
-          return { scores: newScores }
+          return {
+            scores: {
+              ...state.scores,
+              [gameMode]: newModeScores,
+            },
+          }
         })
       },
 
-      isTopFive: (score: number) => {
-        const scores = get().scores
+      isTopFive: (score: number, gameMode: GameMode) => {
+        const scores = get().scores[gameMode]
         if (scores.length < 5) return true
         return score > scores[scores.length - 1].score
       },

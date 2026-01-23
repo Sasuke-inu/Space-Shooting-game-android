@@ -5,6 +5,8 @@
 /** 2D vector type */
 export type Vec2 = { x: number; y: number }
 
+export type GameMode = 'campaign' | 'endless'
+
 export interface Bullet {
   pos: Vec2
   vel: Vec2
