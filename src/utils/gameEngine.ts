@@ -30,16 +30,57 @@ import {
 } from "./vectorMath"
 import { hapticLight, hapticMedium, hapticHeavy, hapticWarning } from "./haptics"
 
+// ------------------------------------------------------------------ //
+//                         Particle Pool
+// ------------------------------------------------------------------ //
+
+const PARTICLE_POOL_SIZE = 500
+const particlePool: Particle[] = []
+
+// Initialize particle pool with pre-allocated objects
+for (let i = 0; i < PARTICLE_POOL_SIZE; i++) {
+  particlePool.push({
+    pos: { x: 0, y: 0 },
+    vel: { x: 0, y: 0 },
+    life: 0,
+    color: '',
+  })
+}
+
+let poolIndex = 0
+
+/**
+ * Acquire a particle from the pool and initialize it
+ */
+function acquireParticle(pos: Vec2, vel: Vec2, life: number, color: string): Particle {
+  const particle = particlePool[poolIndex]
+  poolIndex = (poolIndex + 1) % PARTICLE_POOL_SIZE
+
+  particle.pos.x = pos.x
+  particle.pos.y = pos.y
+  particle.vel.x = vel.x
+  particle.vel.y = vel.y
+  particle.life = life
+  particle.color = color
+
+  return particle
+}
+
+/**
+ * Release a particle back to the pool (just mark it as dead, it will be reused)
+ */
+function releaseParticle(particle: Particle): void {
+  particle.life = 0
+}
+
 export const useGameEngine = () => {
   const boom = useCallback((pos: Vec2, color: string, count = 24, speed = 120) => {
     const newParticles: Particle[] = []
     for (let i = 0; i < count; i++) {
-      newParticles.push({
-        pos: { ...pos },
-        vel: fromAngle((i / count) * Math.PI * 2, rand(speed * 0.5, speed)),
-        life: rand(0.4, 0.9),
-        color,
-      })
+      const vel = fromAngle((i / count) * Math.PI * 2, rand(speed * 0.5, speed))
+      const life = rand(0.4, 0.9)
+      const particle = acquireParticle(pos, vel, life, color)
+      newParticles.push(particle)
     }
     useGameStore.getState().addParticles(newParticles)
   }, [])
@@ -240,15 +281,24 @@ export const useGameEngine = () => {
       updateHomingMissiles(state, effectiveDt, themeColors)
     }
 
-    // Update particles
-    const newParticles = state.particles
-      .map((p) => ({
-        ...p,
-        pos: wrap(add(p.pos, mul(p.vel, effectiveDt)), state.w, state.h),
-        vel: mul(p.vel, 0.98),
-        life: p.life - effectiveDt,
-      }))
-      .filter((p) => p.life > 0)
+    // Update particles (in-place to leverage object pooling)
+    const newParticles: Particle[] = []
+    for (const p of state.particles) {
+      const newLife = p.life - effectiveDt
+      if (newLife > 0) {
+        const newPos = wrap(add(p.pos, mul(p.vel, effectiveDt)), state.w, state.h)
+        const newVel = mul(p.vel, 0.98)
+
+        // Update particle in-place
+        p.pos.x = newPos.x
+        p.pos.y = newPos.y
+        p.vel.x = newVel.x
+        p.vel.y = newVel.y
+        p.life = newLife
+
+        newParticles.push(p)
+      }
+    }
     state.updateParticles(newParticles)
 
     // Collisions - bullets vs asteroids
@@ -828,15 +878,13 @@ function updateHomingMissiles(
     if (!hit) {
       updatedMissiles.push(newMissile)
     } else {
-      // Create explosion effect
+      // Create explosion effect using particle pool
       const newParticles: Particle[] = []
       for (let i = 0; i < 12; i++) {
-        newParticles.push({
-          pos: { ...newMissile.pos },
-          vel: fromAngle((i / 12) * Math.PI * 2, rand(80, 150)),
-          life: rand(0.3, 0.6),
-          color: colors.particleExplosion,
-        })
+        const vel = fromAngle((i / 12) * Math.PI * 2, rand(80, 150))
+        const life = rand(0.3, 0.6)
+        const particle = acquireParticle(newMissile.pos, vel, life, colors.particleExplosion)
+        newParticles.push(particle)
       }
       state.addParticles(newParticles)
     }
