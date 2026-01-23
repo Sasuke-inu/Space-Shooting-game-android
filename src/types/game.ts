@@ -240,7 +240,7 @@ export interface GameStatistics {
 //                         Power-up Types
 // ------------------------------------------------------------------ //
 
-export type PowerUpType = 'shield' | 'rapid_fire' | 'spread_shot' | 'magnet'
+export type PowerUpType = 'shield' | 'rapid_fire' | 'spread_shot' | 'magnet' | 'score_multiplier'
 
 export interface PowerUp {
   pos: Vec2

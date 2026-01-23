@@ -563,7 +563,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   spawnPowerUp: (pos, type) =>
     set((state) => {
-      const types: PowerUpType[] = ['shield', 'rapid_fire', 'spread_shot', 'magnet']
+      const types: PowerUpType[] = ['shield', 'rapid_fire', 'spread_shot', 'magnet', 'score_multiplier']
       const powerUpType = type ?? types[Math.floor(Math.random() * types.length)]
       const newPowerUp: PowerUp = {
         pos: { ...pos },

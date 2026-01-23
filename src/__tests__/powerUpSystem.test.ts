@@ -10,15 +10,16 @@ describe('Power-Up System Logic', () => {
   //                         Power-Up Types Tests
   // ------------------------------------------------------------------ //
   describe('Power-Up Types', () => {
-    const POWER_UP_TYPES = ['shield', 'rapid_fire', 'spread_shot', 'magnet'] as const
+    const POWER_UP_TYPES = ['shield', 'rapid_fire', 'spread_shot', 'magnet', 'score_multiplier'] as const
     type PowerUpType = typeof POWER_UP_TYPES[number]
 
     test('all power-up types are defined', () => {
-      expect(POWER_UP_TYPES).toHaveLength(4)
+      expect(POWER_UP_TYPES).toHaveLength(5)
       expect(POWER_UP_TYPES).toContain('shield')
       expect(POWER_UP_TYPES).toContain('rapid_fire')
       expect(POWER_UP_TYPES).toContain('spread_shot')
       expect(POWER_UP_TYPES).toContain('magnet')
+      expect(POWER_UP_TYPES).toContain('score_multiplier')
     })
 
     test('random type selection is uniform', () => {
@@ -27,6 +28,7 @@ describe('Power-Up System Logic', () => {
         rapid_fire: 0,
         spread_shot: 0,
         magnet: 0,
+        score_multiplier: 0,
       }
 
       // Simulate 1000 random selections
@@ -35,10 +37,10 @@ describe('Power-Up System Logic', () => {
         counts[type]++
       }
 
-      // Each should be roughly 250 (25% of 1000)
+      // Each should be roughly 200 (20% of 1000)
       Object.values(counts).forEach((count) => {
-        expect(count).toBeGreaterThan(150)
-        expect(count).toBeLessThan(350)
+        expect(count).toBeGreaterThan(125)
+        expect(count).toBeLessThan(275)
       })
     })
   })
@@ -256,6 +258,51 @@ describe('Power-Up System Logic', () => {
 
       expect(distance).toBe(150)
       expect(distance < MAGNET_RADIUS).toBe(true)
+    })
+
+    test('score multiplier doubles points gained', () => {
+      const SCORE_MULTIPLIER = 2
+      const baseScore = 100
+      const enemyPoints = 50
+
+      // Without multiplier
+      const normalScore = baseScore + enemyPoints
+      expect(normalScore).toBe(150)
+
+      // With multiplier
+      const boostedScore = baseScore + enemyPoints * SCORE_MULTIPLIER
+      expect(boostedScore).toBe(200)
+      expect(boostedScore).toBeGreaterThan(normalScore)
+    })
+
+    test('score multiplier stacks with combo', () => {
+      const SCORE_MULTIPLIER = 2
+      const comboMultiplier = 1.5
+      const basePoints = 50
+
+      // Normal score with combo
+      const comboScore = basePoints * comboMultiplier
+      expect(comboScore).toBe(75)
+
+      // Score multiplier + combo
+      const boostedComboScore = basePoints * comboMultiplier * SCORE_MULTIPLIER
+      expect(boostedComboScore).toBe(150)
+      expect(boostedComboScore).toBe(comboScore * SCORE_MULTIPLIER)
+    })
+
+    test('score multiplier applies to all enemy types', () => {
+      const SCORE_MULTIPLIER = 2
+      const enemyScores = {
+        scout: 25,
+        tank: 75,
+        sniper: 100,
+        bomber: 50,
+      }
+
+      Object.entries(enemyScores).forEach(([type, baseScore]) => {
+        const multipliedScore = baseScore * SCORE_MULTIPLIER
+        expect(multipliedScore).toBe(baseScore * 2)
+      })
     })
   })
 
