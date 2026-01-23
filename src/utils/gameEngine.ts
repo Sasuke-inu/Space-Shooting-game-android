@@ -212,6 +212,7 @@ export const useGameEngine = () => {
       }
 
       state.updatePlayer({ cooldown })
+      playSfx('shoot_player')
       hapticLight()
       playSfx('shoot_player')
     }
@@ -392,6 +393,7 @@ export const useGameEngine = () => {
       }
 
         state.updatePlayer({ cooldown })
+        playSfx('shoot_player')
         hapticLight()
         playSfx('shoot_player')
       }
@@ -842,6 +844,8 @@ export const useGameEngine = () => {
         state.collectPowerUp(pIdx)
         playSfx('powerup_pickup')
         boom(p.pos, getPowerUpColor(p.type, themeColors), 16, 100)
+        playSfx('powerup_pickup')
+        hapticMedium()
       }
     })
     const finalPowerUps = [
@@ -1115,6 +1119,7 @@ function updateEnemyBehaviorBatched(
           life: BULLET_LIFE_ENEMY * 0.8,
           friendly: false,
         })
+        playSfx('shoot_enemy')
         newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.3)
       }
       break
@@ -1141,6 +1146,7 @@ function updateEnemyBehaviorBatched(
             friendly: false,
           })
         }
+        playSfx('shoot_enemy')
         newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.2)
       }
       break
@@ -1174,6 +1180,7 @@ function updateEnemyBehaviorBatched(
           friendly: false,
           damage: 35,
         })
+        playSfx('shoot_enemy')
         newEnemy.chargeTime = 0
       }
       break
@@ -1198,6 +1205,7 @@ function updateEnemyBehaviorBatched(
           life: BULLET_LIFE_ENEMY,
           friendly: false,
         })
+        playSfx('shoot_enemy')
         newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.25)
       }
 
@@ -1213,6 +1221,7 @@ function updateEnemyBehaviorBatched(
             friendly: false,
           })
         }
+        playSfx('shoot_enemy')
         newEnemy.bombCooldown = 4 - difficulty
       }
       break
@@ -1328,6 +1337,7 @@ function updateEnemyBehaviorBatched(
           life: BULLET_LIFE_ENEMY,
           friendly: false,
         })
+        playSfx('shoot_enemy')
         const cooldownBase = 1.4 - (difficulty * 0.6)
         newEnemy.cooldown = rand(0.5, cooldownBase)
       }
@@ -1562,6 +1572,7 @@ function updateBossBehaviorBatched(
         friendly: false,
       })
     }
+    playSfx('shoot_enemy')
 
     newCooldown = 2 - boss.phase * 0.3
   }
@@ -1580,6 +1591,7 @@ function updateBossBehaviorBatched(
             friendly: false,
           })
         }
+        playSfx('shoot_enemy')
         break
 
       case 'carrier':
@@ -1610,6 +1622,7 @@ function updateBossBehaviorBatched(
             })
           }
         }
+        playSfx('shoot_enemy')
         break
     }
 

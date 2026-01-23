@@ -630,6 +630,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   incrementCombo: () =>
     set((state) => {
+      const oldMultiplier = state.combo.multiplier
       const newCount = state.combo.count + 1
       const multiplierIndex = Math.min(
         Math.floor(newCount / 3),
@@ -775,6 +776,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
         spawnedEnemiesCount: 0,
       }
 
+      // Play dramatic entrance sound
+      playSfx('explosion_large')
+
       return { boss, bossWarning: false, bossWarningStartTime: undefined }
     }),
 
@@ -819,7 +823,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
       }
     }),
 
-  setBossWarning: (active) => set({ bossWarning: active }),
+  setBossWarning: (active) => {
+    if (active) {
+      playSfx('boss_warning')
+    }
+    set({ bossWarning: active })
+  },
 
   // ------------------------------------------------------------------ //
   //                         Ship Selection
