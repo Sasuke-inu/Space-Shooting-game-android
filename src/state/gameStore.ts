@@ -11,6 +11,7 @@ import type {
   ActivePowerUp,
   ComboState,
   ScreenShake,
+  AbilityFlash,
   Boss,
   BossType,
   ShipType,
@@ -134,6 +135,11 @@ interface GameStore extends GameState {
   updateShake: (dt: number) => void
   getShakeOffset: () => { x: number; y: number }
 
+  // Ability flash actions
+  triggerAbilityFlash: (abilityType: AbilityType) => void
+  updateAbilityFlash: (dt: number) => void
+  getAbilityFlashOpacity: () => number
+
   // Boss actions
   spawnBoss: (type?: BossType) => void
   updateBoss: (update: Partial<Boss>) => void
@@ -230,6 +236,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   // Screen effects
   screenShake: null,
+  abilityFlash: null,
   timeWarpActive: false,
   timeWarpMultiplier: 1,
 
@@ -701,6 +708,46 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   // ------------------------------------------------------------------ //
+  //                         Ability Flash Actions
+  // ------------------------------------------------------------------ //
+
+  triggerAbilityFlash: (abilityType) =>
+    set({
+      abilityFlash: {
+        intensity: 0.6,
+        duration: 0.3,
+        elapsed: 0,
+        abilityType,
+      },
+    }),
+
+  updateAbilityFlash: (dt) =>
+    set((state) => {
+      if (!state.abilityFlash) return state
+      const newElapsed = state.abilityFlash.elapsed + dt
+      if (newElapsed >= state.abilityFlash.duration) {
+        return { abilityFlash: null }
+      }
+      return {
+        abilityFlash: {
+          ...state.abilityFlash,
+          elapsed: newElapsed,
+        },
+      }
+    }),
+
+  getAbilityFlashOpacity: () => {
+    const flash = get().abilityFlash
+    if (!flash) return 0
+
+    const progress = flash.elapsed / flash.duration
+    const decay = 1 - progress
+    const opacity = flash.intensity * decay
+
+    return opacity
+  },
+
+  // ------------------------------------------------------------------ //
   //                         Boss Actions
   // ------------------------------------------------------------------ //
 
@@ -791,38 +838,40 @@ export const useGameStore = create<GameStore>((set, get) => ({
   //                         Special Abilities
   // ------------------------------------------------------------------ //
 
-  activateSpecialAbility: () =>
-    set((state) => {
-      if (!state.player.specialReady) return state
+  activateSpecialAbility: () => {
+    const state = get()
+    if (!state.player.specialReady) return
 
-      const shipType = state.player.shipType
-      let abilityType: AbilityType
+    const shipType = state.player.shipType
+    let abilityType: AbilityType
 
-      switch (shipType) {
-        case 'fighter': abilityType = 'missile_barrage'; break
-        case 'scout': abilityType = 'time_warp'; break
-        case 'tank': abilityType = 'shield_burst'; break
-        case 'interceptor': abilityType = 'emp_blast'; break
-        default: abilityType = 'missile_barrage'
-      }
+    switch (shipType) {
+      case 'fighter': abilityType = 'missile_barrage'; break
+      case 'scout': abilityType = 'time_warp'; break
+      case 'tank': abilityType = 'shield_burst'; break
+      case 'interceptor': abilityType = 'emp_blast'; break
+      default: abilityType = 'missile_barrage'
+    }
 
-      const stats = ABILITY_STATS[abilityType]
+    const stats = ABILITY_STATS[abilityType]
 
-      return {
-        player: {
-          ...state.player,
-          specialReady: false,
-          specialCooldown: stats.cooldown,
-        },
-        specialAbility: {
-          type: abilityType,
-          cooldown: stats.cooldown,
-          maxCooldown: stats.cooldown,
-          duration: stats.duration,
-          isActive: true,
-        },
-      }
-    }),
+    set({
+      player: {
+        ...state.player,
+        specialReady: false,
+        specialCooldown: stats.cooldown,
+      },
+      specialAbility: {
+        type: abilityType,
+        cooldown: stats.cooldown,
+        maxCooldown: stats.cooldown,
+        duration: stats.duration,
+        isActive: true,
+      },
+    })
+
+    get().triggerAbilityFlash(abilityType)
+  },
 
   updateSpecialAbility: (dt) =>
     set((state) => {

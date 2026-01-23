@@ -402,6 +402,8 @@ export default function GameScreen() {
             homingMissiles={homingMissiles}
             showRadar={true}
             timeWarpActive={timeWarpActive}
+            abilityFlash={abilityFlash}
+            abilityFlashOpacity={getAbilityFlashOpacity()}
           />
         </View>
       </GestureDetector>
