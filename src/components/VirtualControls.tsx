@@ -11,6 +11,7 @@ import Animated, {
 import type { Vec2, Player, ShipType } from "../types/game"
 import type { ThemeColors } from "../theme/types"
 import { SHIP_STATS, ABILITY_STATS } from "../types/game"
+import { useGameStore } from "../state/gameStore"
 
 interface VirtualControlsProps {
   onJoystickMove: (value: Vec2) => void
@@ -46,6 +47,7 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
   const joystickY = useSharedValue(0)
   const joystickScale = useSharedValue(1)
   const cooldownProgress = useSharedValue(0)
+  const activateSpecialAbility = useGameStore((s) => s.activateSpecialAbility)
 
   const handleJoystickMove = useCallback((value: Vec2) => {
     onJoystickMove(value)
@@ -147,7 +149,7 @@ export const VirtualControls: React.FC<VirtualControlsProps> = ({
       <View style={styles.abilityButtonContainer}>
         <Pressable
           style={[styles.abilityButton, dynamicStyles.abilityButton]}
-          onPress={onAbilityPress}
+          onPress={activateSpecialAbility}
         >
           <Text style={[styles.abilityText, dynamicStyles.abilityText]}>
             {SHIP_STATS[player.shipType].special}
