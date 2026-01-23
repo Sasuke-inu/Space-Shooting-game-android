@@ -16,6 +16,8 @@ import { SHIP_STATS, ACHIEVEMENTS } from "../types/game"
 import { useGameEngine } from "../utils/gameEngine"
 import { len, angleOf, nor, mul, v } from "../utils/vectorMath"
 import type { Vec2 } from "../types/game"
+import { usePerformanceMonitor } from "../utils/performanceMonitor"
+import type { PerformanceConfig } from "../types/performance"
 
 export default function GameScreen() {
   const { width, height } = useWindowDimensions()
@@ -99,6 +101,17 @@ export default function GameScreen() {
   const highScores = useHighScoresStore((s) => s.scores)
   const isTopFive = useHighScoresStore((s) => s.isTopFive)
   const addScore = useHighScoresStore((s) => s.addScore)
+
+  // Performance monitoring
+  const performanceConfig: PerformanceConfig = {
+    enabled: true,
+    showFpsCounter: __DEV__, // Show FPS counter in debug mode
+    showMemoryUsage: __DEV__,
+    enableWarnings: __DEV__,
+    logInterval: 5000,
+    metricsHistorySize: 60,
+  }
+  const { startFrame, endFrame, getMetrics } = usePerformanceMonitor(performanceConfig)
 
   // Handle special ability effects
   useEffect(() => {
@@ -268,6 +281,9 @@ export default function GameScreen() {
     }
 
     const loop = () => {
+      // Performance monitoring: mark frame start
+      startFrame()
+
       const now = Date.now()
       const dt = Math.min((now - lastTimeRef.current) / 1000, MAX_DT)
       lastTimeRef.current = now
@@ -305,6 +321,9 @@ export default function GameScreen() {
 
       updateGame(dt, joystickValue, shouldFire, thrusting, colors)
 
+      // Performance monitoring: mark frame end
+      endFrame()
+
       rafRef.current = requestAnimationFrame(loop)
     }
 
@@ -322,7 +341,7 @@ export default function GameScreen() {
         clearTimeout(swipeTimeoutRef.current)
       }
     }
-  }, [paused, joystickValue, playerAng, swipeImpulse, player.vel, fireOnce, updateGame, autoFire, colors])
+  }, [paused, joystickValue, playerAng, swipeImpulse, player.vel, fireOnce, updateGame, autoFire, colors, startFrame, endFrame])
 
   const handleRestart = () => {
     const store = useGameStore.getState()
@@ -550,6 +569,32 @@ export default function GameScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
+      {/* Performance FPS Counter */}
+      {performanceConfig.showFpsCounter && (
+        <View style={{
+          position: 'absolute',
+          top: insets.top + 60,
+          right: 12,
+          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+          borderWidth: 1,
+          borderColor: colors.hudAccent,
+          borderRadius: 6,
+          padding: 8,
+          zIndex: 100,
+          minWidth: 80,
+        }}>
+          <Text style={{ color: colors.hudAccent, fontSize: 11, fontWeight: 'bold', textAlign: 'center' }}>
+            FPS
+          </Text>
+          <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: 'bold', textAlign: 'center' }}>
+            {getMetrics().fps}
+          </Text>
+          <Text style={{ color: colors.textMuted, fontSize: 9, textAlign: 'center' }}>
+            avg: {getMetrics().avgFps}
+          </Text>
+        </View>
+      )}
+
       {/* Achievement unlock notification */}
       {recentUnlock && (
         <View style={{
