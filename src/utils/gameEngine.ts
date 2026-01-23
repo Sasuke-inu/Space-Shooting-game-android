@@ -29,6 +29,8 @@ import {
   rand,
 } from "./vectorMath"
 import { hapticLight, hapticMedium, hapticHeavy, hapticWarning } from "./haptics"
+import { useAppSettingsStore } from "../state/settingsStore"
+import { QUALITY_PRESETS } from "../types/performance"
 
 // ------------------------------------------------------------------ //
 //                         Particle Pool
@@ -75,9 +77,14 @@ function releaseParticle(particle: Particle): void {
 
 export const useGameEngine = () => {
   const boom = useCallback((pos: Vec2, color: string, count = 24, speed = 120) => {
+    // Apply quality-based particle reduction
+    const qualityLevel = useAppSettingsStore.getState().qualityLevel
+    const particleMultiplier = QUALITY_PRESETS[qualityLevel].particleMultiplier
+    const adjustedCount = Math.max(1, Math.round(count * particleMultiplier))
+
     const newParticles: Particle[] = []
-    for (let i = 0; i < count; i++) {
-      const vel = fromAngle((i / count) * Math.PI * 2, rand(speed * 0.5, speed))
+    for (let i = 0; i < adjustedCount; i++) {
+      const vel = fromAngle((i / adjustedCount) * Math.PI * 2, rand(speed * 0.5, speed))
       const life = rand(0.4, 0.9)
       const particle = acquireParticle(pos, vel, life, color)
       newParticles.push(particle)
