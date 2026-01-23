@@ -29,6 +29,7 @@ import {
   rand,
 } from "./vectorMath"
 import { hapticLight, hapticMedium, hapticHeavy, hapticWarning } from "./haptics"
+import { playSfx } from "./audioManager"
 
 export const useGameEngine = () => {
   const boom = useCallback((pos: Vec2, color: string, count = 24, speed = 120) => {
@@ -73,6 +74,7 @@ export const useGameEngine = () => {
 
       state.updatePlayer({ cooldown })
       hapticLight()
+      playSfx('shoot_player')
     }
   }, [])
 
@@ -164,6 +166,7 @@ export const useGameEngine = () => {
 
         state.updatePlayer({ cooldown })
         hapticLight()
+        playSfx('shoot_player')
       }
     }
 
@@ -265,6 +268,7 @@ export const useGameEngine = () => {
         if (!bulletsToRemove.has(bIdx) && !asteroidsToRemove.has(aIdx)) {
           if (dist2(b.pos, a.pos) < (a.radius + 2) * (a.radius + 2)) {
             boom(b.pos, themeColors.particleHit, 12, 180)
+            playSfx('explosion_small')
             state.splitAsteroid(a)
             asteroidsToRemove.add(aIdx)
             bulletsToRemove.add(bIdx)
@@ -299,6 +303,7 @@ export const useGameEngine = () => {
                 dropPowerUp: Math.random() < POWERUP_DROP_ENEMY,
               })
               boom(e.pos, themeColors.particleExplosion, 28, 200)
+              playSfx('explosion_large')
               state.incrementCombo()
               state.recordKill()
               state.addScore(ENEMY_STATS[e.type].points)
@@ -334,6 +339,7 @@ export const useGameEngine = () => {
           const updatedState = useGameStore.getState()
           if (updatedState.boss && updatedState.boss.hp <= 0) {
             boom(bossPos, themeColors.particleExplosion, 60, 300)
+            playSfx('explosion_boss')
             state.defeatBoss()
             state.triggerShake(20, 500)
             hapticHeavy()
@@ -350,6 +356,7 @@ export const useGameEngine = () => {
           state.recordDamage()
           state.triggerShake(10, 150)
           hapticWarning()
+          playSfx('player_damage')
         }
         bulletsToRemove.add(bIdx)
         boom(b.pos, themeColors.particleDamage, 8, 140)
@@ -393,6 +400,7 @@ export const useGameEngine = () => {
           boom(state.player.pos, themeColors.particleCollision, 18, 200)
           state.triggerShake(12, 200)
           hapticWarning()
+          playSfx('player_damage')
         }
       }
     })
@@ -406,6 +414,7 @@ export const useGameEngine = () => {
           boom(state.player.pos, themeColors.particleCollision, 18, 200)
           state.triggerShake(12, 200)
           hapticWarning()
+          playSfx('player_damage')
         }
       }
     })
@@ -419,6 +428,7 @@ export const useGameEngine = () => {
           boom(state.player.pos, themeColors.particleCollision, 24, 250)
           state.triggerShake(15, 300)
           hapticWarning()
+          playSfx('player_damage')
         }
       }
     }
@@ -427,6 +437,7 @@ export const useGameEngine = () => {
     state.powerUps.forEach((p, pIdx) => {
       if (dist2(state.player.pos, p.pos) < 30 * 30) {
         state.collectPowerUp(pIdx)
+        playSfx('powerup_pickup')
         boom(p.pos, getPowerUpColor(p.type, themeColors), 16, 100)
       }
     })
