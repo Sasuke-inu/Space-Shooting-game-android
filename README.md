@@ -38,17 +38,19 @@ The ship controls have been optimized for easier aiming with:
 - Enemy fighter: 150 points
 
 ### High Scores Leaderboard
-- Top 5 scores are saved locally on your device
+- Top 5 scores are saved locally on your device with encryption
 - When you achieve a top 5 score, you will be prompted to enter your name
 - View the leaderboard on the game over screen
 - Compete against yourself to beat your best scores!
+- Scores protected by hardware-backed encryption (Keychain/Keystore)
 
 ## Technical Architecture
 
 ### State Management
 - **Zustand** for game state (player, enemies, bullets, asteroids, particles)
-- **Zustand with AsyncStorage** for persistent high scores leaderboard
+- **Zustand with Expo SecureStore** for encrypted persistent storage (high scores, credits, achievements, settings)
 - Efficient updates using individual selectors
+- Hardware-backed encryption protects sensitive game data
 
 ### Rendering
 - **@shopify/react-native-skia** for high-performance 2D canvas rendering
@@ -73,7 +75,7 @@ src/
 │   └── GameScreen.tsx        # Main game screen with loop
 ├── state/
 │   ├── gameStore.ts          # Zustand game state
-│   └── highScoresStore.ts    # Persistent high scores with AsyncStorage
+│   └── highScoresStore.ts    # Persistent high scores with SecureStore
 ├── types/
 │   └── game.ts               # TypeScript interfaces
 └── utils/

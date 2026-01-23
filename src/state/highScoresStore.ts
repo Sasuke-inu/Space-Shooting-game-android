@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
-import AsyncStorage from "@react-native-async-storage/async-storage"
+import secureStorage from "../utils/secureStorage"
 
 export interface HighScore {
   name: string
@@ -46,7 +46,7 @@ export const useHighScoresStore = create<HighScoresState>()(
     }),
     {
       name: "high-scores-storage",
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createJSONStorage(() => secureStorage),
     }
   )
 )
