@@ -6,12 +6,15 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useI18nStore } from '../i18n';
 import { useTheme } from '../theme';
 import { useGameStore } from '../state/gameStore';
 import { useUpgradesStore } from '../state/progressStore';
 import { SHIP_STATS, ABILITY_STATS } from '../types/game';
 import type { ShipType, AbilityType } from '../types/game';
+import type { RootStackParamList } from '../navigation/AppNavigator';
 
 const SHIP_COSTS: Record<ShipType, number> = {
   fighter: 0,
@@ -32,8 +35,11 @@ interface ShipSelectionScreenProps {
   onShipSelected?: (ship: ShipType) => void;
 }
 
+type ShipSelectionNavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
 export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSelectionScreenProps) {
   const theme = useTheme();
+  const navigation = useNavigation<ShipSelectionNavigationProp>();
   const { t } = useI18nStore();
 
   const currentShip = useGameStore((s) => s.player.shipType);
@@ -304,30 +310,12 @@ export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSele
           borderBottomColor: theme.colors.panelBorder,
         }}
       >
-        <View className="flex-row items-center justify-between">
-          {onBack && (
-            <TouchableOpacity
-              onPress={onBack}
-              className="mr-4"
-            >
-              <Text
-                className="text-lg font-semibold"
-                style={{ color: theme.colors.buttonPrimary }}
-              >
-                ← {t('general.back')}
-              </Text>
-            </TouchableOpacity>
-          )}
-          <View className="flex-1">
-            <Text
-              className="text-3xl font-bold text-center"
-              style={{ color: theme.colors.textPrimary }}
-            >
-              {t('menu.ships')}
-            </Text>
-          </View>
-          {onBack && <View className="mr-4 opacity-0"><Text>←</Text></View>}
-        </View>
+        <Text
+          className="text-3xl font-bold text-center"
+          style={{ color: theme.colors.textPrimary }}
+        >
+          {t('menu.ships')}
+        </Text>
 
         {/* Credits Display */}
         <View className="mt-4 flex-row items-center justify-center">
@@ -354,8 +342,8 @@ export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSele
         <View className="h-20" />
       </ScrollView>
 
-      {/* Confirm Selection Button */}
-      {selectedShip !== currentShip && isShipUnlocked(selectedShip) && (
+      {/* Confirm Selection Button or Back Button */}
+      {selectedShip !== currentShip && isShipUnlocked(selectedShip) ? (
         <View
           className="absolute bottom-0 left-0 right-0 p-6"
           style={{
@@ -374,6 +362,27 @@ export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSele
               style={{ color: theme.colors.textPrimary }}
             >
               Select {t(`ships.${selectedShip}.name`)}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View
+          className="p-6 border-t"
+          style={{
+            backgroundColor: theme.colors.panelBg,
+            borderTopColor: theme.colors.panelBorder,
+          }}
+        >
+          <TouchableOpacity
+            className="py-4 rounded-lg items-center"
+            style={{ backgroundColor: theme.colors.buttonSecondary }}
+            onPress={onBack || (() => navigation.goBack())}
+          >
+            <Text
+              className="text-lg font-semibold"
+              style={{ color: theme.colors.textPrimary }}
+            >
+              {t('general.back')}
             </Text>
           </TouchableOpacity>
         </View>

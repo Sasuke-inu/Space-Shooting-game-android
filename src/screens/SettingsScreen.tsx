@@ -9,16 +9,21 @@ import {
   Alert,
 } from 'react-native';
 import Slider from '@react-native-community/slider';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useI18nStore, SUPPORTED_LANGUAGES, LanguageCode } from '../i18n';
 import { useAppSettingsStore, JoystickSize } from '../state/settingsStore';
 import { useSettingsStore, useTheme, themeList } from '../theme';
 import { useStatisticsStore, useAchievementStore, useUpgradesStore } from '../state/progressStore';
 import { ThemeId } from '../theme/types';
+import type { RootStackParamList } from '../navigation/AppNavigator';
 
 type TabType = 'general' | 'controls' | 'account';
+type SettingsNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function SettingsScreen() {
   const theme = useTheme();
+  const navigation = useNavigation<SettingsNavigationProp>();
   const { t, currentLanguage, setLanguage } = useI18nStore();
   const [activeTab, setActiveTab] = useState<TabType>('general');
   const [languageModalVisible, setLanguageModalVisible] = useState(false);
@@ -653,6 +658,28 @@ export default function SettingsScreen() {
           </View>
         </TouchableOpacity>
       </Modal>
+
+      {/* Back Button */}
+      <View
+        className="p-6 border-t"
+        style={{
+          backgroundColor: theme.colors.panelBg,
+          borderTopColor: theme.colors.panelBorder,
+        }}
+      >
+        <TouchableOpacity
+          className="py-4 rounded-lg items-center"
+          style={{ backgroundColor: theme.colors.buttonSecondary }}
+          onPress={() => navigation.goBack()}
+        >
+          <Text
+            className="text-lg font-semibold"
+            style={{ color: theme.colors.textPrimary }}
+          >
+            {t('general.back')}
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
