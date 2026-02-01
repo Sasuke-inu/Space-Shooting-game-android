@@ -37,6 +37,7 @@ interface GameCanvasProps {
   abilityFlash?: AbilityFlash | null
   abilityFlashOpacity?: number
   activeChallenge?: Challenge | null
+  completedChallenge?: Challenge | null
 }
 
 // Helper to get power-up color from theme
@@ -108,6 +109,7 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
   abilityFlash = null,
   abilityFlashOpacity = 0,
   activeChallenge = null,
+  completedChallenge = null,
 }) => {
   // Get selected skin for player ship
   const getSelectedSkin = useUpgradesStore((state) => state.getSelectedSkin)
@@ -825,6 +827,61 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
               font={hudFont}
             />
           </>
+        )}
+
+        {/* Challenge completion celebration */}
+        {completedChallenge && (
+          <Group>
+            {/* Background panel */}
+            <Rect
+              x={20}
+              y={140}
+              width={width - 40}
+              height={80}
+              color={colors.panelBg}
+            />
+            {/* Border */}
+            <Rect
+              x={20}
+              y={140}
+              width={width - 40}
+              height={80}
+              color={colors.comboText}
+              style="stroke"
+              strokeWidth={2}
+            />
+            {/* Challenge icon */}
+            <Text
+              x={32}
+              y={166}
+              text={completedChallenge.icon}
+              font={comboFont}
+            />
+            {/* "CHALLENGE COMPLETE" text */}
+            <Text
+              x={62}
+              y={160}
+              text="CHALLENGE COMPLETE"
+              color={colors.buttonPrimary}
+              font={smallFont}
+            />
+            {/* Challenge name */}
+            <Text
+              x={62}
+              y={178}
+              text={completedChallenge.name}
+              color={colors.textPrimary}
+              font={hudFont}
+            />
+            {/* Credit reward */}
+            <Text
+              x={62}
+              y={196}
+              text={`+${completedChallenge.reward} Credits`}
+              color={colors.comboText}
+              font={smallFont}
+            />
+          </Group>
         )}
 
         {/* HUD - Combo counter */}

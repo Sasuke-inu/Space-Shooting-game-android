@@ -651,6 +651,7 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
             abilityFlash={abilityFlash}
             abilityFlashOpacity={getAbilityFlashOpacity()}
             activeChallenge={activeChallenge}
+            completedChallenge={recentChallengeCompletion ? challenges.find((c) => c.id === recentChallengeCompletion) || null : null}
           />
         </View>
       </GestureDetector>
