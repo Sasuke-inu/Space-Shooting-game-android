@@ -446,30 +446,31 @@ export const useGameEngine = () => {
       updatedBullets.push(bulletsToAdd[i])
     }
 
-    // Update asteroids (with increasing animation speed) - use mutable Vec2 operations
-    let updatedAsteroids: Asteroid[] = []
+    // Update asteroids (with increasing animation speed) - in-place mutation pattern
+    // Start with shallow copy for Zustand immutability
+    const updatedAsteroids = state.asteroids.slice()
+
     // Reusable temp Vec2 for mutable operations
     const asteroidTempVec = v()
-    for (let i = 0; i < state.asteroids.length; i++) {
-      const a = state.asteroids[i]
+
+    for (let i = 0; i < updatedAsteroids.length; i++) {
+      const a = updatedAsteroids[i]
 
       // Update position using mutable operations
       // Pattern: asteroidTempVec = a.vel * (effectiveDt * animSpeedMultiplier)
       asteroidTempVec.x = a.vel.x
       asteroidTempVec.y = a.vel.y
       mulTo(asteroidTempVec, effectiveDt * animSpeedMultiplier)
-      // a.pos += asteroidTempVec
-      const newPos = v(a.pos.x, a.pos.y)
-      addTo(newPos, asteroidTempVec)
 
-      updatedAsteroids.push({
-        pos: wrap(newPos, state.w, state.h),
-        vel: a.vel,
-        radius: a.radius,
-        spin: a.spin,
-        ang: a.ang + a.spin * effectiveDt * animSpeedMultiplier,
-        tier: a.tier,
-      })
+      // a.pos += asteroidTempVec (mutate in-place)
+      addTo(a.pos, asteroidTempVec)
+
+      // Wrap position (inline to avoid Vec2 allocation from wrap())
+      a.pos.x = ((a.pos.x % state.w) + state.w) % state.w
+      a.pos.y = ((a.pos.y % state.h) + state.h) % state.h
+
+      // Update rotation in-place
+      a.ang += a.spin * effectiveDt * animSpeedMultiplier
     }
 
     // Track enemy bullets to add
