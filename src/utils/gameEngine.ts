@@ -404,36 +404,47 @@ export const useGameEngine = () => {
       }
     }
 
-    // Update bullets (position, velocity, life) - use mutable Vec2 operations to avoid allocations
-    let updatedBullets: Bullet[] = []
-    // Reusable temp Vec2 for mutable operations
+    // Update bullets - in-place mutation pattern to eliminate allocations
+    // Start with shallow copy for Zustand immutability
+    const updatedBullets = state.bullets.slice()
+
+    // Compact array: filter out dead bullets using write index pattern
+    let writeIdx = 0
     const tempVec = v()
-    for (let i = 0; i < state.bullets.length; i++) {
-      const bullet = state.bullets[i]
-      const newLife = bullet.life - effectiveDt
 
-      // Skip dead bullets
-      if (newLife <= 0) continue
+    for (let i = 0; i < updatedBullets.length; i++) {
+      const bullet = updatedBullets[i]
+      bullet.life -= effectiveDt
 
-      // Update position using mutable operations
+      // Skip dead bullets (don't write them)
+      if (bullet.life <= 0) continue
+
+      // Update position in-place using mutable Vec2 operations
       // Pattern: tempVec = bullet.vel * effectiveDt
       tempVec.x = bullet.vel.x
       tempVec.y = bullet.vel.y
       mulTo(tempVec, effectiveDt)
       // bullet.pos += tempVec
-      const newPos = v(bullet.pos.x, bullet.pos.y)
-      addTo(newPos, tempVec)
+      addTo(bullet.pos, tempVec)
 
-      updatedBullets.push({
-        pos: wrap(newPos, state.w, state.h),
-        vel: bullet.vel,
-        life: newLife,
-        friendly: bullet.friendly,
-      })
+      // Wrap position (inline to avoid Vec2 allocation from wrap())
+      bullet.pos.x = ((bullet.pos.x % state.w) + state.w) % state.w
+      bullet.pos.y = ((bullet.pos.y % state.h) + state.h) % state.h
+
+      // Move bullet to write position if different
+      if (writeIdx !== i) {
+        updatedBullets[writeIdx] = bullet
+      }
+      writeIdx++
     }
 
-    // Add player-fired bullets
-    updatedBullets = [...updatedBullets, ...bulletsToAdd]
+    // Truncate array to remove dead bullets
+    updatedBullets.length = writeIdx
+
+    // Add player-fired bullets (use push to avoid array reallocation)
+    for (let i = 0; i < bulletsToAdd.length; i++) {
+      updatedBullets.push(bulletsToAdd[i])
+    }
 
     // Update asteroids (with increasing animation speed) - use mutable Vec2 operations
     let updatedAsteroids: Asteroid[] = []
@@ -499,8 +510,10 @@ export const useGameEngine = () => {
       }
     }
 
-    // Add enemy bullets to the bullets array
-    updatedBullets = [...updatedBullets, ...enemyBulletsToAdd]
+    // Add enemy bullets to the bullets array (use push to avoid array reallocation)
+    for (let i = 0; i < enemyBulletsToAdd.length; i++) {
+      updatedBullets.push(enemyBulletsToAdd[i])
+    }
 
     // Update boss
     let updatedBoss = state.boss
@@ -521,7 +534,10 @@ export const useGameEngine = () => {
         updateBossBehavior(state.boss, state, effectiveDt, themeColors)
       }
     }
-    updatedBullets = [...updatedBullets, ...bossBulletsToAdd]
+    // Add boss bullets to the bullets array (use push to avoid array reallocation)
+    for (let i = 0; i < bossBulletsToAdd.length; i++) {
+      updatedBullets.push(bossBulletsToAdd[i])
+    }
 
     // Handle boss warning - spawn boss after warning time has elapsed
     let shouldSpawnBoss = false
