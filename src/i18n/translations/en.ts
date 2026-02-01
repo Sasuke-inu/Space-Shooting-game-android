@@ -177,11 +177,14 @@ export const en: Translations = {
     tank: 'Tank',
     sniper: 'Sniper',
     bomber: 'Bomber',
+    healer: 'Healer',
+    juggernaut: 'Juggernaut',
   },
   bossTypes: {
     destroyer: 'Destroyer',
     carrier: 'Carrier',
     dreadnought: 'Dreadnought',
+    mothership: 'Mothership',
   },
   statistics: {
     title: 'Statistics',

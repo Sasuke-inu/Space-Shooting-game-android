@@ -177,11 +177,14 @@ export const zh: Translations = {
     tank: '坦克',
     sniper: '狙击手',
     bomber: '轰炸机',
+    healer: '治疗者',
+    juggernaut: '重装兵',
   },
   bossTypes: {
     destroyer: '驱逐舰',
     carrier: '航母',
     dreadnought: '无畏舰',
+    mothership: '母舰',
   },
   statistics: {
     title: '统计',

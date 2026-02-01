@@ -177,11 +177,14 @@ export const ko: Translations = {
     tank: '탱크',
     sniper: '스나이퍼',
     bomber: '폭격기',
+    healer: '힐러',
+    juggernaut: '저거너트',
   },
   bossTypes: {
     destroyer: '구축함',
     carrier: '항공모함',
     dreadnought: '전함',
+    mothership: '모선',
   },
   statistics: {
     title: '통계',

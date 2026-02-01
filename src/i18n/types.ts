@@ -184,11 +184,14 @@ export interface Translations {
     tank: string;
     sniper: string;
     bomber: string;
+    healer: string;
+    juggernaut: string;
   };
   bossTypes: {
     destroyer: string;
     carrier: string;
     dreadnought: string;
+    mothership: string;
   };
   statistics: {
     title: string;

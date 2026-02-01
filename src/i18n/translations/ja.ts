@@ -177,11 +177,14 @@ export const ja: Translations = {
     tank: 'タンク',
     sniper: 'スナイパー',
     bomber: 'ボマー',
+    healer: 'ヒーラー',
+    juggernaut: 'ジャガーノート',
   },
   bossTypes: {
     destroyer: 'デストロイヤー',
     carrier: 'キャリア',
     dreadnought: 'ドレッドノート',
+    mothership: 'マザーシップ',
   },
   statistics: {
     title: '統計',
