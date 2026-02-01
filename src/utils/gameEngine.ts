@@ -1129,9 +1129,16 @@ function updateEnemyBehaviorBatched(
 ): Enemy {
   const { state, effectiveDt: dt, difficultyProgress: difficulty, aimInaccuracy, animSpeedMultiplier: animSpeed, bulletsToAdd } = context
   const stats = ENEMY_STATS[e.type]
-  const toP = sub(state.player.pos, e.pos)
+
+  // Reusable temp Vec2s for mutable operations to avoid allocations
+  const toP = v()
+  toP.x = state.player.pos.x - e.pos.x
+  toP.y = state.player.pos.y - e.pos.y
   const d = len(toP)
-  const dir = nor(toP)
+  const dir = v()
+  dir.x = toP.x
+  dir.y = toP.y
+  norTo(dir)
 
   // Create new enemy object - we'll mutate properties as needed
   const newEnemy: Enemy = {
@@ -1148,23 +1155,65 @@ function updateEnemyBehaviorBatched(
     stunDuration: e.stunDuration,
   }
 
+  // Reusable temp Vec2s for all enemy calculations
+  const temp1 = v()
+  const temp2 = v()
+  const temp3 = v()
+
   switch (e.type) {
     case 'scout':
       // Fast, erratic movement
-      const scoutDesired = add(dir, fromAngle(context.time * 2, 0.6))
-      let scoutVel = add(e.vel, mul(nor(scoutDesired), stats.speed * dt))
-      scoutVel = mul(scoutVel, 0.99)
+      // scoutDesired = dir + fromAngle(context.time * 2, 0.6)
+      const angle1 = context.time * 2
+      temp1.x = Math.cos(angle1) * 0.6
+      temp1.y = Math.sin(angle1) * 0.6
+      temp2.x = dir.x
+      temp2.y = dir.y
+      addTo(temp2, temp1)
+      const scoutDesired = temp2
+
+      // scoutVel = e.vel + nor(scoutDesired) * stats.speed * dt
+      temp3.x = scoutDesired.x
+      temp3.y = scoutDesired.y
+      norTo(temp3)
+      mulTo(temp3, stats.speed * dt)
+      const scoutVel = v(e.vel.x, e.vel.y)
+      addTo(scoutVel, temp3)
+      mulTo(scoutVel, 0.99)
+
       newEnemy.vel = scoutVel
-      newEnemy.pos = wrap(add(e.pos, mul(scoutVel, dt * animSpeed)), state.w, state.h)
+
+      // newPos = e.pos + scoutVel * dt * animSpeed
+      temp1.x = scoutVel.x
+      temp1.y = scoutVel.y
+      mulTo(temp1, dt * animSpeed)
+      const scoutPos = v(e.pos.x, e.pos.y)
+      addTo(scoutPos, temp1)
+      newEnemy.pos = wrap(scoutPos, state.w, state.h)
       newEnemy.ang = angleOf(scoutVel)
 
       // Fire at player
       newEnemy.cooldown = e.cooldown - dt
       if (d < 400 && newEnemy.cooldown <= 0) {
-        const aim = angleOf(sub(state.player.pos, e.pos)) + rand(-aimInaccuracy * 1.5, aimInaccuracy * 1.5)
+        temp1.x = state.player.pos.x - e.pos.x
+        temp1.y = state.player.pos.y - e.pos.y
+        const aim = angleOf(temp1) + rand(-aimInaccuracy * 1.5, aimInaccuracy * 1.5)
+
+        // bulletPos = e.pos + fromAngle(aim, 16)
+        temp2.x = Math.cos(aim) * 16
+        temp2.y = Math.sin(aim) * 16
+        const bulletPos = v(e.pos.x, e.pos.y)
+        addTo(bulletPos, temp2)
+
+        // bulletVel = e.vel + fromAngle(aim, BULLET_SPEED_ENEMY * 0.9)
+        temp3.x = Math.cos(aim) * (BULLET_SPEED_ENEMY * 0.9)
+        temp3.y = Math.sin(aim) * (BULLET_SPEED_ENEMY * 0.9)
+        const bulletVel = v(e.vel.x, e.vel.y)
+        addTo(bulletVel, temp3)
+
         bulletsToAdd.push({
-          pos: add(e.pos, fromAngle(aim, 16)),
-          vel: add(e.vel, fromAngle(aim, BULLET_SPEED_ENEMY * 0.9)),
+          pos: bulletPos,
+          vel: bulletVel,
           life: BULLET_LIFE_ENEMY * 0.8,
           friendly: false,
         })
@@ -1175,22 +1224,55 @@ function updateEnemyBehaviorBatched(
 
     case 'tank':
       // Slow, steady approach
-      const tankDesired = mul(dir, 0.8)
-      let tankVel = add(e.vel, mul(nor(tankDesired), stats.speed * dt))
-      tankVel = mul(tankVel, 0.995)
+      // tankDesired = dir * 0.8
+      temp1.x = dir.x * 0.8
+      temp1.y = dir.y * 0.8
+      const tankDesired = temp1
+
+      // tankVel = e.vel + nor(tankDesired) * stats.speed * dt
+      temp2.x = tankDesired.x
+      temp2.y = tankDesired.y
+      norTo(temp2)
+      mulTo(temp2, stats.speed * dt)
+      const tankVel = v(e.vel.x, e.vel.y)
+      addTo(tankVel, temp2)
+      mulTo(tankVel, 0.995)
+
       newEnemy.vel = tankVel
-      newEnemy.pos = wrap(add(e.pos, mul(tankVel, dt * animSpeed * 0.7)), state.w, state.h)
+
+      // newPos = e.pos + tankVel * dt * animSpeed * 0.7
+      temp3.x = tankVel.x
+      temp3.y = tankVel.y
+      mulTo(temp3, dt * animSpeed * 0.7)
+      const tankPos = v(e.pos.x, e.pos.y)
+      addTo(tankPos, temp3)
+      newEnemy.pos = wrap(tankPos, state.w, state.h)
       newEnemy.ang = angleOf(toP)
 
       // Heavy shots with less accuracy needed
       newEnemy.cooldown = e.cooldown - dt
       if (d < 500 && newEnemy.cooldown <= 0) {
-        const aim = angleOf(sub(state.player.pos, e.pos)) + rand(-aimInaccuracy * 0.5, aimInaccuracy * 0.5)
+        temp1.x = state.player.pos.x - e.pos.x
+        temp1.y = state.player.pos.y - e.pos.y
+        const aim = angleOf(temp1) + rand(-aimInaccuracy * 0.5, aimInaccuracy * 0.5)
         // Fire 2 bullets
         for (let i = -1; i <= 1; i += 2) {
+          // bulletPos = e.pos + fromAngle(aim + i * 0.1, 20)
+          const bulletAngle = aim + i * 0.1
+          temp2.x = Math.cos(bulletAngle) * 20
+          temp2.y = Math.sin(bulletAngle) * 20
+          const tankBulletPos = v(e.pos.x, e.pos.y)
+          addTo(tankBulletPos, temp2)
+
+          // bulletVel = fromAngle(aim + i * 0.05, BULLET_SPEED_ENEMY * 0.7)
+          const velAngle = aim + i * 0.05
+          const tankBulletVel = v()
+          tankBulletVel.x = Math.cos(velAngle) * (BULLET_SPEED_ENEMY * 0.7)
+          tankBulletVel.y = Math.sin(velAngle) * (BULLET_SPEED_ENEMY * 0.7)
+
           bulletsToAdd.push({
-            pos: add(e.pos, fromAngle(aim + i * 0.1, 20)),
-            vel: fromAngle(aim + i * 0.05, BULLET_SPEED_ENEMY * 0.7),
+            pos: tankBulletPos,
+            vel: tankBulletVel,
             life: BULLET_LIFE_ENEMY * 1.2,
             friendly: false,
           })
@@ -1203,28 +1285,63 @@ function updateEnemyBehaviorBatched(
     case 'sniper':
       // Stay at distance, precise shots
       const preferredDist = 350
-      let sniperVel = e.vel
+      const sniperVel = v(e.vel.x, e.vel.y)
       if (d < preferredDist - 50) {
-        // Move away
-        sniperVel = add(sniperVel, mul(nor(sub(e.pos, state.player.pos)), stats.speed * dt))
+        // Move away: sniperVel += nor(e.pos - state.player.pos) * stats.speed * dt
+        temp1.x = e.pos.x - state.player.pos.x
+        temp1.y = e.pos.y - state.player.pos.y
+        norTo(temp1)
+        mulTo(temp1, stats.speed * dt)
+        addTo(sniperVel, temp1)
       } else if (d > preferredDist + 100) {
-        // Move closer
-        sniperVel = add(sniperVel, mul(dir, stats.speed * dt))
+        // Move closer: sniperVel += dir * stats.speed * dt
+        temp1.x = dir.x
+        temp1.y = dir.y
+        mulTo(temp1, stats.speed * dt)
+        addTo(sniperVel, temp1)
       }
-      sniperVel = mul(sniperVel, 0.98)
+      mulTo(sniperVel, 0.98)
       newEnemy.vel = sniperVel
-      newEnemy.pos = wrap(add(e.pos, mul(sniperVel, dt * animSpeed * 0.5)), state.w, state.h)
+
+      // newPos = e.pos + sniperVel * dt * animSpeed * 0.5
+      temp2.x = sniperVel.x
+      temp2.y = sniperVel.y
+      mulTo(temp2, dt * animSpeed * 0.5)
+      const sniperPos = v(e.pos.x, e.pos.y)
+      addTo(sniperPos, temp2)
+      newEnemy.pos = wrap(sniperPos, state.w, state.h)
       newEnemy.ang = angleOf(toP)
 
       // Charged precision shots
       newEnemy.chargeTime = (e.chargeTime || 0) + dt
       if (newEnemy.chargeTime >= 2 && d < 600) {
         const leadFactor = 0.5 + difficulty * 0.3
-        const lead = add(state.player.pos, mul(state.player.vel, leadFactor))
-        const aim = angleOf(sub(lead, e.pos))
+        // lead = state.player.pos + state.player.vel * leadFactor
+        temp1.x = state.player.vel.x
+        temp1.y = state.player.vel.y
+        mulTo(temp1, leadFactor)
+        const lead = v(state.player.pos.x, state.player.pos.y)
+        addTo(lead, temp1)
+
+        // aim = angleOf(lead - e.pos)
+        temp2.x = lead.x - e.pos.x
+        temp2.y = lead.y - e.pos.y
+        const aim = angleOf(temp2)
+
+        // bulletPos = e.pos + fromAngle(aim, 18)
+        temp3.x = Math.cos(aim) * 18
+        temp3.y = Math.sin(aim) * 18
+        const sniperBulletPos = v(e.pos.x, e.pos.y)
+        addTo(sniperBulletPos, temp3)
+
+        // bulletVel = fromAngle(aim, BULLET_SPEED_ENEMY * 1.3)
+        const sniperBulletVel = v()
+        sniperBulletVel.x = Math.cos(aim) * (BULLET_SPEED_ENEMY * 1.3)
+        sniperBulletVel.y = Math.sin(aim) * (BULLET_SPEED_ENEMY * 1.3)
+
         bulletsToAdd.push({
-          pos: add(e.pos, fromAngle(aim, 18)),
-          vel: fromAngle(aim, BULLET_SPEED_ENEMY * 1.3),
+          pos: sniperBulletPos,
+          vel: sniperBulletVel,
           life: BULLET_LIFE_ENEMY * 1.5,
           friendly: false,
           damage: 35,
@@ -1237,20 +1354,51 @@ function updateEnemyBehaviorBatched(
     case 'bomber':
       // Circles player, drops area attacks
       const circleAngle = Math.atan2(toP.y, toP.x) + Math.PI / 2
-      const bomberDesired = fromAngle(circleAngle, 1)
-      let bomberVel = add(e.vel, mul(bomberDesired, stats.speed * dt))
-      bomberVel = mul(bomberVel, 0.995)
+      // bomberDesired = fromAngle(circleAngle, 1)
+      temp1.x = Math.cos(circleAngle)
+      temp1.y = Math.sin(circleAngle)
+      const bomberDesired = temp1
+
+      // bomberVel = e.vel + bomberDesired * stats.speed * dt
+      temp2.x = bomberDesired.x
+      temp2.y = bomberDesired.y
+      mulTo(temp2, stats.speed * dt)
+      const bomberVel = v(e.vel.x, e.vel.y)
+      addTo(bomberVel, temp2)
+      mulTo(bomberVel, 0.995)
+
       newEnemy.vel = bomberVel
-      newEnemy.pos = wrap(add(e.pos, mul(bomberVel, dt * animSpeed)), state.w, state.h)
+
+      // newPos = e.pos + bomberVel * dt * animSpeed
+      temp3.x = bomberVel.x
+      temp3.y = bomberVel.y
+      mulTo(temp3, dt * animSpeed)
+      const bomberPos = v(e.pos.x, e.pos.y)
+      addTo(bomberPos, temp3)
+      newEnemy.pos = wrap(bomberPos, state.w, state.h)
       newEnemy.ang = angleOf(bomberVel)
 
       // Regular shots
       newEnemy.cooldown = e.cooldown - dt
       if (d < 450 && newEnemy.cooldown <= 0) {
-        const aim = angleOf(sub(state.player.pos, e.pos)) + rand(-aimInaccuracy, aimInaccuracy)
+        temp1.x = state.player.pos.x - e.pos.x
+        temp1.y = state.player.pos.y - e.pos.y
+        const aim = angleOf(temp1) + rand(-aimInaccuracy, aimInaccuracy)
+
+        // bulletPos = e.pos + fromAngle(aim, 16)
+        temp2.x = Math.cos(aim) * 16
+        temp2.y = Math.sin(aim) * 16
+        const bomberBulletPos = v(e.pos.x, e.pos.y)
+        addTo(bomberBulletPos, temp2)
+
+        // bulletVel = fromAngle(aim, BULLET_SPEED_ENEMY * 0.85)
+        const bomberBulletVel = v()
+        bomberBulletVel.x = Math.cos(aim) * (BULLET_SPEED_ENEMY * 0.85)
+        bomberBulletVel.y = Math.sin(aim) * (BULLET_SPEED_ENEMY * 0.85)
+
         bulletsToAdd.push({
-          pos: add(e.pos, fromAngle(aim, 16)),
-          vel: fromAngle(aim, BULLET_SPEED_ENEMY * 0.85),
+          pos: bomberBulletPos,
+          vel: bomberBulletVel,
           life: BULLET_LIFE_ENEMY,
           friendly: false,
         })
@@ -1263,9 +1411,14 @@ function updateEnemyBehaviorBatched(
       if (newEnemy.bombCooldown <= 0 && d < 300) {
         for (let i = 0; i < 8; i++) {
           const angle = (i / 8) * Math.PI * 2
+          const bombPos = v(e.pos.x, e.pos.y)
+          const bombVel = v()
+          bombVel.x = Math.cos(angle) * (BULLET_SPEED_ENEMY * 0.6)
+          bombVel.y = Math.sin(angle) * (BULLET_SPEED_ENEMY * 0.6)
+
           bulletsToAdd.push({
-            pos: { ...e.pos },
-            vel: fromAngle(angle, BULLET_SPEED_ENEMY * 0.6),
+            pos: bombPos,
+            vel: bombVel,
             life: BULLET_LIFE_ENEMY * 0.7,
             friendly: false,
           })
