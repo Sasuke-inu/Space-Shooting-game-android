@@ -27,6 +27,9 @@ interface WeeklyEventsState {
   // Participation tracking (map of eventId -> participation data)
   participation: Record<string, EventParticipation>
 
+  // Recent completion tracking (for UI feedback)
+  recentCompletion: string | null  // ID of recently completed event
+
   // Actions
   getCurrentEvent: () => WeeklyEvent | null
   submitScore: (eventId: string, score: number, wave: number, playerName: string, shipType: ShipType) => void
@@ -36,6 +39,8 @@ interface WeeklyEventsState {
   hasParticipated: (eventId: string) => boolean
   getEventReward: (eventId: string, rank: number) => number
   isTopTen: (eventId: string, score: number) => boolean
+  claimEventReward: (eventId: string, playerName: string) => boolean
+  clearRecentCompletion: () => void
   backup: () => Promise<boolean>
   restore: () => Promise<boolean>
 }
@@ -164,6 +169,7 @@ export const useWeeklyEventsStore = create<WeeklyEventsState>()(
       rotationIndex: 0,
       leaderboards: {},
       participation: {},
+      recentCompletion: null,
 
       getCurrentEvent: () => {
         const state = get()
@@ -239,7 +245,8 @@ export const useWeeklyEventsStore = create<WeeklyEventsState>()(
           }
 
           // Award participation reward if first time playing this event
-          if (!currentParticipation.participated && state.currentEvent) {
+          const isFirstParticipation = !currentParticipation.participated
+          if (isFirstParticipation && state.currentEvent) {
             import('./progressStore').then(({ useUpgradesStore }) => {
               useUpgradesStore.getState().addCredits(state.currentEvent!.rewards.participation)
             })
@@ -259,6 +266,7 @@ export const useWeeklyEventsStore = create<WeeklyEventsState>()(
               ...state.participation,
               [eventId]: updatedParticipation,
             },
+            recentCompletion: isFirstParticipation ? eventId : state.recentCompletion,
           }
         })
       },
@@ -337,6 +345,69 @@ export const useWeeklyEventsStore = create<WeeklyEventsState>()(
         if (leaderboard.entries.length < 10) return true
         return score > leaderboard.entries[leaderboard.entries.length - 1].score
       },
+
+      claimEventReward: (eventId, playerName) => {
+        const state = get()
+        const participation = state.participation[eventId]
+
+        // Check if player participated in this event
+        if (!participation || !participation.participated) {
+          return false
+        }
+
+        // Check if reward already claimed
+        if (participation.rewardClaimed) {
+          return false
+        }
+
+        // Get player's rank from leaderboard
+        const leaderboard = state.leaderboards[eventId]
+        if (!leaderboard) {
+          return false
+        }
+
+        const playerEntry = leaderboard.entries.find((e) => e.playerId === playerName)
+        if (!playerEntry) {
+          return false
+        }
+
+        // Calculate reward based on rank (participation reward already given on first play)
+        const rank = playerEntry.rank
+        let bonusReward = 0
+
+        // Find the event to get reward values
+        const event = state.currentEvent?.id === eventId ? state.currentEvent : null
+        if (event) {
+          const rewards = event.rewards
+          if (rank === 1) bonusReward = rewards.rank1
+          else if (rank === 2) bonusReward = rewards.rank2
+          else if (rank === 3) bonusReward = rewards.rank3
+          else if (rank <= 10) bonusReward = rewards.top10
+        }
+
+        // Award bonus reward if any
+        if (bonusReward > 0) {
+          import('./progressStore').then(({ useUpgradesStore }) => {
+            useUpgradesStore.getState().addCredits(bonusReward)
+          })
+        }
+
+        // Mark reward as claimed
+        set((state) => ({
+          participation: {
+            ...state.participation,
+            [eventId]: {
+              ...state.participation[eventId],
+              rewardClaimed: true,
+            },
+          },
+          recentCompletion: eventId,
+        }))
+
+        return true
+      },
+
+      clearRecentCompletion: () => set({ recentCompletion: null }),
 
       backup: async () => {
         return await backupStore('weeklyEvents')
