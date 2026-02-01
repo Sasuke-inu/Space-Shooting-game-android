@@ -36,6 +36,8 @@ import {
   dist2,
   rand,
   v,
+  addTo,
+  mulTo,
 } from "./vectorMath"
 import { hapticLight, hapticMedium, hapticHeavy, hapticWarning } from "./haptics"
 import { playSfx } from "./audioManager"
@@ -401,6 +403,37 @@ export const useGameEngine = () => {
         playSfx('shoot_player')
       }
     }
+
+    // Update bullets (position, velocity, life) - use mutable Vec2 operations to avoid allocations
+    let updatedBullets: Bullet[] = []
+    // Reusable temp Vec2 for mutable operations
+    const tempVec = v()
+    for (let i = 0; i < state.bullets.length; i++) {
+      const bullet = state.bullets[i]
+      const newLife = bullet.life - effectiveDt
+
+      // Skip dead bullets
+      if (newLife <= 0) continue
+
+      // Update position using mutable operations
+      // Pattern: tempVec = bullet.vel * effectiveDt
+      tempVec.x = bullet.vel.x
+      tempVec.y = bullet.vel.y
+      mulTo(tempVec, effectiveDt)
+      // bullet.pos += tempVec
+      const newPos = v(bullet.pos.x, bullet.pos.y)
+      addTo(newPos, tempVec)
+
+      updatedBullets.push({
+        pos: wrap(newPos, state.w, state.h),
+        vel: bullet.vel,
+        life: newLife,
+        friendly: bullet.friendly,
+      })
+    }
+
+    // Add player-fired bullets
+    updatedBullets = [...updatedBullets, ...bulletsToAdd]
 
     // Update asteroids (with increasing animation speed) - mutate during iteration
     let updatedAsteroids: Asteroid[] = []
