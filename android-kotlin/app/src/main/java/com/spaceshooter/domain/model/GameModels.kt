@@ -127,25 +127,29 @@ enum class BossType(
     val displayName: String,
     val hp: Int,
     val phases: Int,
-    val points: Int
+    val points: Int,
+    val radius: Float
 ) {
     DESTROYER(
         displayName = "Destroyer",
         hp = 500,
         phases = 2,
-        points = 1000
+        points = 1000,
+        radius = 50f
     ),
     CARRIER(
         displayName = "Carrier",
         hp = 750,
         phases = 3,
-        points = 1500
+        points = 1500,
+        radius = 60f
     ),
     DREADNOUGHT(
         displayName = "Dreadnought",
         hp = 1000,
         phases = 3,
-        points = 2500
+        points = 2500,
+        radius = 70f
     )
 }
 
