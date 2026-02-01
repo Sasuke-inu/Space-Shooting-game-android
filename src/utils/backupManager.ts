@@ -10,6 +10,7 @@ export const STORAGE_KEYS = {
   upgrades: 'space-shooter-upgrades',
   settings: 'app-settings-storage',
   highScores: 'high-scores-storage',
+  weeklyEvents: 'weekly-events-storage',
 } as const
 
 export const BACKUP_KEYS = {
@@ -18,6 +19,7 @@ export const BACKUP_KEYS = {
   upgrades: 'backup-space-shooter-upgrades',
   settings: 'backup-app-settings-storage',
   highScores: 'backup-high-scores-storage',
+  weeklyEvents: 'backup-weekly-events-storage',
 } as const
 
 export type StorageKey = keyof typeof STORAGE_KEYS
