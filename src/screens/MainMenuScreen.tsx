@@ -9,6 +9,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AnimatedStarBackground } from '../components/AnimatedStarBackground';
+import ChallengesModal from '../components/ChallengesModal';
 import { useTheme } from '../theme';
 import { useI18nStore } from '../i18n';
 import type { RootStackParamList } from '../navigation/AppNavigator';
@@ -25,6 +26,9 @@ export default function MainMenuScreen() {
   // Animation time for background
   const [time, setTime] = useState(0);
   const rafRef = useRef<number | null>(null);
+
+  // Challenges modal state
+  const [challengesModalVisible, setChallengesModalVisible] = useState(false);
 
   // Animate background
   useEffect(() => {
@@ -65,7 +69,11 @@ export default function MainMenuScreen() {
   };
 
   const handleChallenges = () => {
-    navigation.navigate('Challenges');
+    setChallengesModalVisible(true);
+  };
+
+  const handleCloseChallenges = () => {
+    setChallengesModalVisible(false);
   };
 
   return (
@@ -206,6 +214,12 @@ export default function MainMenuScreen() {
           </Text>
         </View>
       </View>
+
+      {/* Challenges Modal */}
+      <ChallengesModal
+        visible={challengesModalVisible}
+        onClose={handleCloseChallenges}
+      />
     </View>
   );
 }
