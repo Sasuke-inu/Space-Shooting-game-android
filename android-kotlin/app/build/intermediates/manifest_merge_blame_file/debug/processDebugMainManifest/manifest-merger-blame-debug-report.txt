@@ -10,13 +10,13 @@
 10
 11    <!-- Vibration permission for haptic feedback -->
 12    <uses-permission android:name="android.permission.VIBRATE" />
-12-->/Users/d/Developer/Space Shooting game/android-kotlin/app/src/main/AndroidManifest.xml:5:5-66
-12-->/Users/d/Developer/Space Shooting game/android-kotlin/app/src/main/AndroidManifest.xml:5:22-63
+12-->/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/025-optimize-immutable-state-updates-with-structural-s/android-kotlin/app/src/main/AndroidManifest.xml:5:5-66
+12-->/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/025-optimize-immutable-state-updates-with-structural-s/android-kotlin/app/src/main/AndroidManifest.xml:5:22-63
 13
 14    <!-- Keep screen on permission -->
 15    <uses-permission android:name="android.permission.WAKE_LOCK" />
-15-->/Users/d/Developer/Space Shooting game/android-kotlin/app/src/main/AndroidManifest.xml:8:5-68
-15-->/Users/d/Developer/Space Shooting game/android-kotlin/app/src/main/AndroidManifest.xml:8:22-65
+15-->/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/025-optimize-immutable-state-updates-with-structural-s/android-kotlin/app/src/main/AndroidManifest.xml:8:5-68
+15-->/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/025-optimize-immutable-state-updates-with-structural-s/android-kotlin/app/src/main/AndroidManifest.xml:8:22-65
 16
 17    <permission
 17-->[androidx.core:core:1.15.0] /Users/d/.gradle/caches/8.9/transforms/b97685b428f86a876b08519ad3e0d6d0/transformed/core-1.15.0/AndroidManifest.xml:22:5-24:47
@@ -30,46 +30,46 @@
 21-->[androidx.core:core:1.15.0] /Users/d/.gradle/caches/8.9/transforms/b97685b428f86a876b08519ad3e0d6d0/transformed/core-1.15.0/AndroidManifest.xml:26:22-94
 22
 23    <application
-23-->/Users/d/Developer/Space Shooting game/android-kotlin/app/src/main/AndroidManifest.xml:10:5-29:19
+23-->/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/025-optimize-immutable-state-updates-with-structural-s/android-kotlin/app/src/main/AndroidManifest.xml:10:5-29:19
 24        android:name="com.spaceshooter.SpaceShooterApp"
-24-->/Users/d/Developer/Space Shooting game/android-kotlin/app/src/main/AndroidManifest.xml:11:9-40
+24-->/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/025-optimize-immutable-state-updates-with-structural-s/android-kotlin/app/src/main/AndroidManifest.xml:11:9-40
 25        android:allowBackup="true"
-25-->/Users/d/Developer/Space Shooting game/android-kotlin/app/src/main/AndroidManifest.xml:12:9-35
+25-->/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/025-optimize-immutable-state-updates-with-structural-s/android-kotlin/app/src/main/AndroidManifest.xml:12:9-35
 26        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
 26-->[androidx.core:core:1.15.0] /Users/d/.gradle/caches/8.9/transforms/b97685b428f86a876b08519ad3e0d6d0/transformed/core-1.15.0/AndroidManifest.xml:28:18-86
 27        android:debuggable="true"
 28        android:extractNativeLibs="false"
 29        android:icon="@mipmap/ic_launcher"
-29-->/Users/d/Developer/Space Shooting game/android-kotlin/app/src/main/AndroidManifest.xml:13:9-43
+29-->/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/025-optimize-immutable-state-updates-with-structural-s/android-kotlin/app/src/main/AndroidManifest.xml:13:9-43
 30        android:label="@string/app_name"
-30-->/Users/d/Developer/Space Shooting game/android-kotlin/app/src/main/AndroidManifest.xml:14:9-41
+30-->/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/025-optimize-immutable-state-updates-with-structural-s/android-kotlin/app/src/main/AndroidManifest.xml:14:9-41
 31        android:roundIcon="@mipmap/ic_launcher_round"
-31-->/Users/d/Developer/Space Shooting game/android-kotlin/app/src/main/AndroidManifest.xml:15:9-54
+31-->/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/025-optimize-immutable-state-updates-with-structural-s/android-kotlin/app/src/main/AndroidManifest.xml:15:9-54
 32        android:supportsRtl="true"
-32-->/Users/d/Developer/Space Shooting game/android-kotlin/app/src/main/AndroidManifest.xml:16:9-35
+32-->/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/025-optimize-immutable-state-updates-with-structural-s/android-kotlin/app/src/main/AndroidManifest.xml:16:9-35
 33        android:theme="@style/Theme.SpaceShooter" >
-33-->/Users/d/Developer/Space Shooting game/android-kotlin/app/src/main/AndroidManifest.xml:17:9-50
+33-->/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/025-optimize-immutable-state-updates-with-structural-s/android-kotlin/app/src/main/AndroidManifest.xml:17:9-50
 34        <activity
-34-->/Users/d/Developer/Space Shooting game/android-kotlin/app/src/main/AndroidManifest.xml:18:9-28:20
+34-->/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/025-optimize-immutable-state-updates-with-structural-s/android-kotlin/app/src/main/AndroidManifest.xml:18:9-28:20
 35            android:name="com.spaceshooter.MainActivity"
-35-->/Users/d/Developer/Space Shooting game/android-kotlin/app/src/main/AndroidManifest.xml:19:13-41
+35-->/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/025-optimize-immutable-state-updates-with-structural-s/android-kotlin/app/src/main/AndroidManifest.xml:19:13-41
 36            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
-36-->/Users/d/Developer/Space Shooting game/android-kotlin/app/src/main/AndroidManifest.xml:22:13-87
+36-->/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/025-optimize-immutable-state-updates-with-structural-s/android-kotlin/app/src/main/AndroidManifest.xml:22:13-87
 37            android:exported="true"
-37-->/Users/d/Developer/Space Shooting game/android-kotlin/app/src/main/AndroidManifest.xml:20:13-36
+37-->/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/025-optimize-immutable-state-updates-with-structural-s/android-kotlin/app/src/main/AndroidManifest.xml:20:13-36
 38            android:screenOrientation="portrait"
-38-->/Users/d/Developer/Space Shooting game/android-kotlin/app/src/main/AndroidManifest.xml:21:13-49
+38-->/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/025-optimize-immutable-state-updates-with-structural-s/android-kotlin/app/src/main/AndroidManifest.xml:21:13-49
 39            android:theme="@style/Theme.SpaceShooter" >
-39-->/Users/d/Developer/Space Shooting game/android-kotlin/app/src/main/AndroidManifest.xml:23:13-54
+39-->/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/025-optimize-immutable-state-updates-with-structural-s/android-kotlin/app/src/main/AndroidManifest.xml:23:13-54
 40            <intent-filter>
-40-->/Users/d/Developer/Space Shooting game/android-kotlin/app/src/main/AndroidManifest.xml:24:13-27:29
+40-->/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/025-optimize-immutable-state-updates-with-structural-s/android-kotlin/app/src/main/AndroidManifest.xml:24:13-27:29
 41                <action android:name="android.intent.action.MAIN" />
-41-->/Users/d/Developer/Space Shooting game/android-kotlin/app/src/main/AndroidManifest.xml:25:17-69
-41-->/Users/d/Developer/Space Shooting game/android-kotlin/app/src/main/AndroidManifest.xml:25:25-66
+41-->/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/025-optimize-immutable-state-updates-with-structural-s/android-kotlin/app/src/main/AndroidManifest.xml:25:17-69
+41-->/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/025-optimize-immutable-state-updates-with-structural-s/android-kotlin/app/src/main/AndroidManifest.xml:25:25-66
 42
 43                <category android:name="android.intent.category.LAUNCHER" />
-43-->/Users/d/Developer/Space Shooting game/android-kotlin/app/src/main/AndroidManifest.xml:26:17-77
-43-->/Users/d/Developer/Space Shooting game/android-kotlin/app/src/main/AndroidManifest.xml:26:27-74
+43-->/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/025-optimize-immutable-state-updates-with-structural-s/android-kotlin/app/src/main/AndroidManifest.xml:26:17-77
+43-->/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/025-optimize-immutable-state-updates-with-structural-s/android-kotlin/app/src/main/AndroidManifest.xml:26:27-74
 44            </intent-filter>
 45        </activity>
 46        <activity
