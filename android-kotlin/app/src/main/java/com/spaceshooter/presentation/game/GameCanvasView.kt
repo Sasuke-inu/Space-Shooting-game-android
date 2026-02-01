@@ -377,7 +377,7 @@ class GameRenderer {
         }
     }
 
-    private fun drawSniperEnemy(canvas: Canvas, color: Int, chargeTime: Float, time: Float) {
+    private fun drawSniperEnemy(canvas: Canvas, color: Int, chargeTime: Float, time: Float, healthPercent: Float) {
         paint.color = color
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 2f
