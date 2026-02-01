@@ -931,6 +931,8 @@ export const useGameEngine = () => {
             type: enemyType,
             chargeTime: enemyType === 'sniper' ? 0 : undefined,
             bombCooldown: enemyType === 'bomber' ? 3 : undefined,
+            teleportTimer: enemyType === 'teleporter' ? 0 : undefined,
+            healCooldown: enemyType === 'healer' ? 3 : undefined,
             chargeCooldown: enemyType === 'juggernaut' ? 5 : undefined,
             isCharging: enemyType === 'juggernaut' ? false : undefined,
           })
@@ -1110,6 +1112,8 @@ function updateEnemyBehaviorBatched(
     chargeTime: e.chargeTime,
     bombCooldown: e.bombCooldown,
     stunDuration: e.stunDuration,
+    teleportTimer: e.teleportTimer,
+    healCooldown: e.healCooldown,
     chargeCooldown: e.chargeCooldown,
     isCharging: e.isCharging,
     chargeDirection: e.chargeDirection,
