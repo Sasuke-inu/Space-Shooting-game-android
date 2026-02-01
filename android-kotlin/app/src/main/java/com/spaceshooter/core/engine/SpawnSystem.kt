@@ -230,20 +230,18 @@ object SpawnSystem {
             else -> BossType.DREADNOUGHT
         }
 
-        val stats = getBossStats(type)
-
         return Boss(
             pos = Vec2(width / 2f, -100f),
             vel = Vec2(0f, 30f),
             ang = PI.toFloat() / 2f,
             type = type,
-            hp = stats.hp,
-            maxHp = stats.hp,
-            radius = stats.radius,
+            hp = type.hp,
+            maxHp = type.hp,
+            radius = type.radius,
             phase = 1,
-            maxPhase = stats.maxPhase,
+            maxPhase = type.phases,
             firePatternTimer = 0f,
-            score = stats.score
+            score = type.points
         )
     }
 
