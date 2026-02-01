@@ -117,25 +117,24 @@ object SpawnSystem {
 
         // Choose enemy type based on difficulty
         val type = chooseEnemyType(difficulty)
-        val stats = getEnemyStats(type)
 
         // Initial velocity toward player
         val toPlayer = (playerPos - pos).normalized()
-        val speed = stats.speed * (1f + difficulty * 0.3f)
+        val speed = type.speed * (1f + difficulty * 0.3f)
 
         return Enemy(
             pos = pos,
             vel = toPlayer * speed,
             ang = toPlayer.angle(),
             type = type,
-            hp = stats.hp,
-            maxHp = stats.hp,
-            radius = stats.radius,
-            damage = stats.damage,
-            fireRate = stats.fireRate,
-            fireCooldown = Random.nextFloat() * stats.fireRate,
+            hp = type.hp,
+            maxHp = type.hp,
+            radius = type.radius,
+            damage = type.damage,
+            fireRate = type.fireRate,
+            fireCooldown = Random.nextFloat() * type.fireRate,
             speed = speed,
-            accuracy = stats.accuracy + difficulty * 0.2f
+            accuracy = type.accuracy + difficulty * 0.2f
         )
     }
 
