@@ -305,6 +305,20 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
       path.close()
       return path
     })(),
+    mothership: (() => {
+      const path = Skia.Path.Make()
+      // Large octagonal shape - biggest boss
+      path.moveTo(0, -80)
+      path.lineTo(56, -56)
+      path.lineTo(80, 0)
+      path.lineTo(56, 56)
+      path.lineTo(0, 80)
+      path.lineTo(-56, 56)
+      path.lineTo(-80, 0)
+      path.lineTo(-56, -56)
+      path.close()
+      return path
+    })(),
     default: (() => {
       const path = Skia.Path.Make()
       path.addCircle(0, 0, 40)
@@ -399,6 +413,7 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
       tank: '#ff6666',
       sniper: '#9966ff',
       bomber: '#ff9933',
+      teleporter: '#cc66ff',
       healer: colors.enemyHealer,
       juggernaut: colors.enemyJuggernaut,
       default: colors.enemyShip,
@@ -409,6 +424,7 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
       tank: '#ff666620',
       sniper: '#9966ff20',
       bomber: '#ff993320',
+      teleporter: '#cc66ff20',
       healer: colors.enemyHealer + '20',
       juggernaut: colors.enemyJuggernaut + '20',
       default: colors.enemyShip + '20',
@@ -883,6 +899,37 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
               strokeWidth={3}
             />
 
+            {/* Mothership shield visual - pulsing outer ring when shield is active */}
+            {boss.type === 'mothership' && boss.shieldActive && (
+              <>
+                <Circle
+                  cx={0}
+                  cy={0}
+                  r={90 + Math.sin(time * 6) * 5}
+                  color="#ff6600"
+                  style="stroke"
+                  strokeWidth={3}
+                  opacity={0.7 + Math.sin(time * 4) * 0.2}
+                />
+                <Circle
+                  cx={0}
+                  cy={0}
+                  r={95 + Math.sin(time * 6) * 5}
+                  color="#ff4400"
+                  style="stroke"
+                  strokeWidth={1.5}
+                  opacity={0.4 + Math.sin(time * 8) * 0.15}
+                />
+                <Circle
+                  cx={0}
+                  cy={0}
+                  r={88 + Math.sin(time * 6) * 5}
+                  color="#ff6600"
+                  opacity={0.1}
+                />
+              </>
+            )}
+
             {/* Boss core - intensifies when charging special */}
             <Circle
               cx={0}
@@ -893,15 +940,15 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
             />
 
             {/* Boss health bar */}
-            <Rect x={-60} y={-70} width={120} height={8} color={colors.panelBorder} />
-            <Rect x={-60} y={-70} width={120 * (boss.hp / boss.maxHp)} height={8} color="#ff4444" />
+            <Rect x={-60} y={boss.type === 'mothership' ? -95 : -70} width={120} height={8} color={colors.panelBorder} />
+            <Rect x={-60} y={boss.type === 'mothership' ? -95 : -70} width={120 * (boss.hp / boss.maxHp)} height={8} color="#ff4444" />
 
             {/* Phase indicators */}
             {[1, 2, 3].map((phase) => (
               <Circle
                 key={phase}
                 cx={-20 + phase * 20}
-                cy={-80}
+                cy={boss.type === 'mothership' ? -105 : -80}
                 r={4}
                 color={boss.phase >= phase ? '#ff4444' : colors.panelBorder}
               />
