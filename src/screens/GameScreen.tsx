@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from "react"
 import { View, useWindowDimensions, Keyboard } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { GestureDetector } from "react-native-gesture-handler"
+import { useShallow } from "zustand/react/shallow"
 import { GameCanvas } from "../components/GameCanvas"
 import { VirtualControls } from "../components/VirtualControls"
 import {
@@ -252,12 +253,13 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
         sendAchievementNotification(achievement.name)
       }
 
+      // Clear after notification completes (4s display + 300ms fade = 4300ms, use 4500ms for safety)
       const timer = setTimeout(() => {
         clearRecentUnlock()
-      }, 3000)
+      }, 4500)
       return () => clearTimeout(timer)
     }
-  }, [recentUnlock])
+  }, [recentUnlock, clearRecentUnlock])
 
   // Enhanced haptics for boss events (Android)
   const prevBossRef = useRef(boss)
