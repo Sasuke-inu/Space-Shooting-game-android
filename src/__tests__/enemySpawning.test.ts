@@ -18,13 +18,13 @@ describe('Enemy Spawning Logic', () => {
       expect(ENEMY_STATS.scout.hp).toBeLessThan(ENEMY_STATS.tank.hp)
     })
 
-    test('tank is toughest (sniper is slowest)', () => {
+    test('juggernaut is toughest (sniper is slowest)', () => {
       const speeds = Object.values(ENEMY_STATS).map((s) => s.speed)
       const hps = Object.values(ENEMY_STATS).map((s) => s.hp)
 
-      // Sniper is actually slowest (40), tank is second slowest (60)
+      // Sniper is slowest (40), juggernaut is second slowest (50)
       expect(ENEMY_STATS.sniper.speed).toBe(Math.min(...speeds))
-      expect(ENEMY_STATS.tank.hp).toBe(Math.max(...hps))
+      expect(ENEMY_STATS.juggernaut.hp).toBe(Math.max(...hps))
     })
 
     test('sniper has highest damage', () => {
@@ -43,6 +43,45 @@ describe('Enemy Spawning Logic', () => {
       expect(ENEMY_STATS.teleporter.hp).toBeGreaterThan(ENEMY_STATS.scout.hp)
       expect(ENEMY_STATS.teleporter.hp).toBeLessThan(ENEMY_STATS.tank.hp)
     })
+
+    test('healer is fragile with low threat', () => {
+      // Healer has low HP - only tougher than scout
+      expect(ENEMY_STATS.healer.hp).toBeLessThan(ENEMY_STATS.tank.hp)
+      expect(ENEMY_STATS.healer.hp).toBeLessThan(ENEMY_STATS.bomber.hp)
+      expect(ENEMY_STATS.healer.hp).toBeGreaterThan(ENEMY_STATS.scout.hp)
+
+      // Healer has lowest damage (tied with scout)
+      expect(ENEMY_STATS.healer.damage).toBeLessThanOrEqual(ENEMY_STATS.scout.damage)
+      const damages = Object.values(ENEMY_STATS).map((s) => s.damage)
+      expect(ENEMY_STATS.healer.damage).toBe(Math.min(...damages))
+
+      // Moderate speed - between tank and teleporter
+      expect(ENEMY_STATS.healer.speed).toBeGreaterThan(ENEMY_STATS.tank.speed)
+      expect(ENEMY_STATS.healer.speed).toBeLessThan(ENEMY_STATS.teleporter.speed)
+    })
+
+    test('juggernaut is heaviest non-tank enemy', () => {
+      // Juggernaut has the most HP of all enemies (even more than tank)
+      expect(ENEMY_STATS.juggernaut.hp).toBeGreaterThan(ENEMY_STATS.tank.hp)
+
+      // Among non-tank enemies, juggernaut is the heaviest
+      const nonTankHps = Object.entries(ENEMY_STATS)
+        .filter(([type]) => type !== 'tank')
+        .map(([, stats]) => stats.hp)
+      expect(ENEMY_STATS.juggernaut.hp).toBe(Math.max(...nonTankHps))
+
+      // Second slowest (only sniper is slower)
+      expect(ENEMY_STATS.juggernaut.speed).toBeGreaterThan(ENEMY_STATS.sniper.speed)
+      expect(ENEMY_STATS.juggernaut.speed).toBeLessThan(ENEMY_STATS.tank.speed)
+
+      // High damage, second only to sniper
+      expect(ENEMY_STATS.juggernaut.damage).toBeGreaterThan(ENEMY_STATS.tank.damage)
+      expect(ENEMY_STATS.juggernaut.damage).toBeLessThan(ENEMY_STATS.sniper.damage)
+
+      // Highest points of all regular enemies
+      const allPoints = Object.values(ENEMY_STATS).map((s) => s.points)
+      expect(ENEMY_STATS.juggernaut.points).toBe(Math.max(...allPoints))
+    })
   })
 
   // ------------------------------------------------------------------ //
@@ -56,6 +95,8 @@ describe('Enemy Spawning Logic', () => {
       expect(weights.sniper).toBe(0)
       expect(weights.bomber).toBe(0)
       expect(weights.teleporter).toBe(0)
+      expect(weights.healer).toBe(0)
+      expect(weights.juggernaut).toBe(0)
     })
 
     test('tanks unlock at wave 3', () => {
@@ -90,42 +131,65 @@ describe('Enemy Spawning Logic', () => {
       expect(wave9.teleporter).toBe(10)
     })
 
-    test('all enemies available at wave 9+', () => {
-      const weights = getEnemySpawnWeights(10)
+    test('healers unlock at wave 11', () => {
+      const wave10 = getEnemySpawnWeights(10)
+      const wave11 = getEnemySpawnWeights(11)
+
+      expect(wave10.healer).toBe(0)
+      expect(wave11.healer).toBe(10)
+    })
+
+    test('juggernauts unlock at wave 15', () => {
+      const wave14 = getEnemySpawnWeights(14)
+      const wave15 = getEnemySpawnWeights(15)
+
+      expect(wave14.juggernaut).toBe(0)
+      expect(wave15.juggernaut).toBe(8)
+    })
+
+    test('all enemies available at wave 15+', () => {
+      const weights = getEnemySpawnWeights(15)
       expect(Object.values(weights).every((w) => w > 0)).toBe(true)
     })
 
     test('weighted random selection', () => {
-      const weights = getEnemySpawnWeights(10) // All types available
+      const weights = getEnemySpawnWeights(15) // All types available
       const totalWeight = Object.values(weights).reduce((a, b) => a + b, 0)
 
-      expect(totalWeight).toBe(40 + 20 + 15 + 15 + 10) // 100
+      expect(totalWeight).toBe(40 + 20 + 15 + 15 + 10 + 10 + 8) // 118
 
       // Simulate 1000 spawns
-      const counts = { scout: 0, tank: 0, sniper: 0, bomber: 0, teleporter: 0 }
+      const counts: Record<string, number> = {
+        scout: 0, tank: 0, sniper: 0, bomber: 0,
+        teleporter: 0, healer: 0, juggernaut: 0,
+      }
 
       for (let i = 0; i < 1000; i++) {
         let random = Math.random() * totalWeight
         for (const [type, weight] of Object.entries(weights)) {
           random -= weight
           if (random <= 0) {
-            counts[type as keyof typeof counts]++
+            counts[type]++
             break
           }
         }
       }
 
-      // Scouts should be ~40% (40/100)
-      expect(counts.scout / 1000).toBeGreaterThan(0.32)
-      expect(counts.scout / 1000).toBeLessThan(0.48)
+      // Scouts should be ~34% (40/118)
+      expect(counts.scout / 1000).toBeGreaterThan(0.26)
+      expect(counts.scout / 1000).toBeLessThan(0.42)
 
-      // Tanks should be ~20% (20/100)
-      expect(counts.tank / 1000).toBeGreaterThan(0.13)
-      expect(counts.tank / 1000).toBeLessThan(0.27)
+      // Tanks should be ~17% (20/118)
+      expect(counts.tank / 1000).toBeGreaterThan(0.10)
+      expect(counts.tank / 1000).toBeLessThan(0.24)
 
-      // Teleporters should be ~10% (10/100)
-      expect(counts.teleporter / 1000).toBeGreaterThan(0.05)
-      expect(counts.teleporter / 1000).toBeLessThan(0.15)
+      // Teleporters should be ~8.5% (10/118)
+      expect(counts.teleporter / 1000).toBeGreaterThan(0.04)
+      expect(counts.teleporter / 1000).toBeLessThan(0.14)
+
+      // Juggernauts should be ~6.8% (8/118)
+      expect(counts.juggernaut / 1000).toBeGreaterThan(0.03)
+      expect(counts.juggernaut / 1000).toBeLessThan(0.12)
     })
   })
 
