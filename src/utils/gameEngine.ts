@@ -176,9 +176,11 @@ export const useGameEngine = () => {
       const p = particles[i]
       p.pos.x = pos.x
       p.pos.y = pos.y
-      const vel = fromAngle((i / count) * Math.PI * 2, rand(speed * 0.5, speed))
-      p.vel.x = vel.x
-      p.vel.y = vel.y
+      // Calculate velocity directly to avoid temporary Vec2 allocation
+      const angle = (i / count) * Math.PI * 2
+      const magnitude = rand(speed * 0.5, speed)
+      p.vel.x = Math.cos(angle) * magnitude
+      p.vel.y = Math.sin(angle) * magnitude
       p.life = rand(0.4, 0.9)
       p.color = color
       p.active = true
