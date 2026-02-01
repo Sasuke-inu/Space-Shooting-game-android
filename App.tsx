@@ -5,6 +5,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useEffect, useState } from "react";
 import GameScreen from "./src/screens/GameScreen";
 import { migrateStorageToSecureStore } from "./src/utils/migrateStorage";
+import { useChallengesStore } from "./src/state/challengesStore";
 
 export default function App() {
   const [migrationComplete, setMigrationComplete] = useState(false);
@@ -23,6 +24,13 @@ export default function App() {
         setMigrationComplete(true);
       });
   }, []);
+
+  // Initialize challenges after migration completes
+  useEffect(() => {
+    if (migrationComplete) {
+      useChallengesStore.getState().checkAndRefreshChallenges();
+    }
+  }, [migrationComplete]);
 
   // Show nothing while migration runs
   // This prevents stores from initializing before migration completes
