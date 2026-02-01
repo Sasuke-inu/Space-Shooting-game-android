@@ -17,8 +17,8 @@ import {
   getCategoryDisplayName,
   getCategoryIcon,
   getAchievementsByCategory,
-  getAchievementCount,
-  getCompletionPercentage,
+  getAchievementCounts,
+  getAchievementCompletionPercentage,
 } from '../utils/achievementTracker';
 import { ACHIEVEMENTS, type AchievementId } from '../types/game';
 
@@ -32,8 +32,8 @@ export default function AchievementsScreen() {
   const [selectedCategory, setSelectedCategory] = useState<AchievementCategory | 'all'>('all');
 
   // Calculate summary stats
-  const { unlocked: unlockedCount, total: totalCount } = getAchievementCount(achievements);
-  const completionPercentage = getCompletionPercentage(achievements);
+  const { unlocked: unlockedCount, total: totalCount } = getAchievementCounts();
+  const completionPercentage = getAchievementCompletionPercentage();
 
   // Filter achievements by category
   const filteredAchievements = useMemo(() => {
