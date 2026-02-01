@@ -100,3 +100,20 @@ class GameStateBuilder(state: GameState) {
         sessionStats = sessionStats
     )
 }
+
+/**
+ * Extension function to convert GameState to GameStateBuilder.
+ *
+ * Enables convenient conversion for batched updates:
+ * ```
+ * val newState = state.toBuilder()
+ *     .apply {
+ *         score = 100
+ *         lives = 2
+ *     }
+ *     .build()
+ * ```
+ *
+ * @return A new GameStateBuilder initialized with this state's values
+ */
+fun GameState.toBuilder(): GameStateBuilder = GameStateBuilder(this)
