@@ -636,7 +636,8 @@ export const useGameEngine = () => {
           if (nearby.some(e => e.pos === a.pos)) {
             if (dist2(b.pos, a.pos) < (a.radius + 2) * (a.radius + 2)) {
               const damage = 1 // Asteroids take 1 damage per bullet (tier 3 = 3 hits, tier 2 = 2 hits, tier 1 = 1 hit)
-              const newHp = a.hp - damage
+              const accumulatedDamage = asteroidDamage.get(aIdx) || 0
+              const newHp = a.hp - accumulatedDamage - damage
 
               if (newHp <= 0) {
                 // Asteroid destroyed - mark for removal
@@ -671,7 +672,7 @@ export const useGameEngine = () => {
                 sessionShotsHit++ // Record shot hit
               } else {
                 // Asteroid damaged - track damage to apply
-                asteroidDamage.set(aIdx, (asteroidDamage.get(aIdx) || 0) + damage)
+                asteroidDamage.set(aIdx, accumulatedDamage + damage)
                 boom(b.pos, themeColors.particleHit, 8, 140)
               }
 
@@ -781,19 +782,59 @@ export const useGameEngine = () => {
 
     // Apply asteroid damage (deferred to avoid race conditions)
     if (asteroidDamage.size > 0) {
-      const damagedAsteroids: Asteroid[] = []
       for (let idx = 0; idx < updatedAsteroids.length; idx++) {
         const a = updatedAsteroids[idx]
         const dmg = asteroidDamage.get(idx)
         if (dmg) {
-          const damagedAsteroid = { ...a }
-          damagedAsteroid.hp = a.hp - dmg
-          damagedAsteroids.push(damagedAsteroid)
-        } else {
-          damagedAsteroids.push(a)
+          const newHp = a.hp - dmg
+
+          // Check if asteroid died from accumulated damage
+          if (newHp <= 0) {
+            // Mark for removal (will be filtered out later)
+            asteroidsToRemove.add(idx)
+
+            // Add to death effects for splitting
+            asteroidDeathEffects.push({
+              pos: { ...a.pos },
+              tier: a.tier,
+              vel: { ...a.vel },
+              radius: a.radius,
+            })
+
+            // Award score and credits (same as instant-death path)
+            score += Math.floor(20 * a.tier * comboMultiplier)
+            credits += a.tier
+
+            // Increment combo
+            comboCount++
+            const multiplierIndex = Math.min(
+              Math.floor(comboCount / 3),
+              COMBO_MULTIPLIERS.length - 1
+            )
+            comboMultiplier = COMBO_MULTIPLIERS[multiplierIndex]
+            comboTimer = COMBO_TIMEOUT
+
+            // Effects
+            boom(a.pos, themeColors.particleHit, 12, 180)
+            playSfx('explosion_small')
+            newScreenShake = { intensity: 3, duration: 100, elapsed: 0 }
+            hapticMedium()
+
+            // Power-up drop chance for tier 3
+            if (a.tier === 3 && Math.random() < POWERUP_DROP_ASTEROID) {
+              newPowerUpsToSpawn.push({ ...a.pos })
+            }
+
+            sessionShotsHit++
+          } else {
+            // Asteroid survived - update HP
+            updatedAsteroids[idx] = { ...a, hp: newHp }
+          }
         }
       }
-      updatedAsteroids = damagedAsteroids
+
+      // Filter out destroyed asteroids
+      updatedAsteroids = updatedAsteroids.filter((_, i) => !asteroidsToRemove.has(i))
     }
 
     // Apply enemy damage and removals (deferred to avoid race conditions) - mutate during iteration
