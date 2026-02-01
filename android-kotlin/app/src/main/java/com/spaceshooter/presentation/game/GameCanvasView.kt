@@ -412,7 +412,7 @@ class GameRenderer {
         }
     }
 
-    private fun drawBomberEnemy(canvas: Canvas, color: Int) {
+    private fun drawBomberEnemy(canvas: Canvas, color: Int, healthPercent: Float) {
         paint.color = color
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 2f
