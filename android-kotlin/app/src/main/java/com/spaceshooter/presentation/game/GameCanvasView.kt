@@ -343,6 +343,15 @@ class GameRenderer {
             close()
         }
         canvas.drawPath(path, paint)
+
+        // Health bar for scouts
+        if (healthPercent < 1f) {
+            paint.style = Paint.Style.FILL
+            paint.color = Color.DKGRAY
+            canvas.drawRect(-15f, 15f, 15f, 18f, paint)
+            paint.color = Color.GREEN
+            canvas.drawRect(-15f, 15f, -15f + 30f * healthPercent, 18f, paint)
+        }
     }
 
     private fun drawTankEnemy(canvas: Canvas, color: Int, healthPercent: Float) {
