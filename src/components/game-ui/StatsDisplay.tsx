@@ -18,6 +18,9 @@ export interface GameStatistics {
     tank: number
     sniper: number
     bomber: number
+    teleporter: number
+    healer: number
+    juggernaut: number
   }
 }
 
@@ -52,6 +55,9 @@ export const StatsDisplay: React.FC<StatsDisplayProps> = ({ stats, colors }) => 
         <StatRow label="Tanks" value={stats.killsByEnemyType.tank.toString()} colors={colors} />
         <StatRow label="Snipers" value={stats.killsByEnemyType.sniper.toString()} colors={colors} />
         <StatRow label="Bombers" value={stats.killsByEnemyType.bomber.toString()} colors={colors} />
+        <StatRow label="Teleporters" value={stats.killsByEnemyType.teleporter.toString()} colors={colors} />
+        <StatRow label="Healers" value={stats.killsByEnemyType.healer.toString()} colors={colors} />
+        <StatRow label="Juggernauts" value={stats.killsByEnemyType.juggernaut.toString()} colors={colors} />
       </View>
     </View>
   </ScrollView>

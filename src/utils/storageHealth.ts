@@ -199,7 +199,7 @@ function validateStatistics(data: unknown): ValidationResult {
   } else if (!isObject(stats.killsByEnemyType)) {
     issues.push('Stats "killsByEnemyType" must be an object')
   } else {
-    const enemyTypes: EnemyType[] = ['scout', 'tank', 'sniper', 'bomber']
+    const enemyTypes: EnemyType[] = ['scout', 'tank', 'sniper', 'bomber', 'teleporter', 'healer', 'juggernaut']
     const killsByEnemy = stats.killsByEnemyType as Record<string, unknown>
     for (const type of enemyTypes) {
       if (!(type in killsByEnemy) || !isNonNegativeNumber(killsByEnemy[type])) {
@@ -214,7 +214,7 @@ function validateStatistics(data: unknown): ValidationResult {
   } else if (!isObject(stats.killsByBossType)) {
     issues.push('Stats "killsByBossType" must be an object')
   } else {
-    const bossTypes: BossType[] = ['destroyer', 'carrier', 'dreadnought']
+    const bossTypes: BossType[] = ['destroyer', 'carrier', 'dreadnought', 'mothership']
     const killsByBoss = stats.killsByBossType as Record<string, unknown>
     for (const type of bossTypes) {
       if (!(type in killsByBoss) || !isNonNegativeNumber(killsByBoss[type])) {
