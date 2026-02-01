@@ -488,26 +488,25 @@ export const useGameEngine = () => {
       time: stateUpdates.time!,
     }
 
-    // Update enemies - mutate during iteration
-    let updatedEnemies: Enemy[] = []
-    for (let i = 0; i < state.enemies.length; i++) {
-      const e = state.enemies[i]
+    // Update enemies - in-place mutation pattern
+    // Start with shallow copy for Zustand immutability
+    const updatedEnemies = state.enemies.slice()
+
+    for (let i = 0; i < updatedEnemies.length; i++) {
+      const e = updatedEnemies[i]
       // Handle stun duration
       if (e.stunDuration && e.stunDuration > 0) {
         const newStunDuration = e.stunDuration - effectiveDt
         // Stunned enemies don't move or shoot
         if (newStunDuration > 0) {
-          const stunnedEnemy = { ...e }
-          stunnedEnemy.stunDuration = newStunDuration
-          updatedEnemies.push(stunnedEnemy)
+          e.stunDuration = newStunDuration
           continue
         }
         // Stun expired, clear it and continue normal behavior
-        const unStunnedEnemy = { ...e }
-        unStunnedEnemy.stunDuration = undefined
-        updatedEnemies.push(updateEnemyBehaviorBatched(unStunnedEnemy, enemyUpdateContext))
+        e.stunDuration = undefined
+        updateEnemyBehaviorBatched(e, enemyUpdateContext)
       } else {
-        updatedEnemies.push(updateEnemyBehaviorBatched(e, enemyUpdateContext))
+        updateEnemyBehaviorBatched(e, enemyUpdateContext)
       }
     }
 
@@ -1143,7 +1142,7 @@ interface EnemyUpdateContext {
 function updateEnemyBehaviorBatched(
   e: Enemy,
   context: EnemyUpdateContext
-): Enemy {
+): void {
   const { state, effectiveDt: dt, difficultyProgress: difficulty, aimInaccuracy, animSpeedMultiplier: animSpeed, bulletsToAdd } = context
   const stats = ENEMY_STATS[e.type]
 
@@ -1156,21 +1155,6 @@ function updateEnemyBehaviorBatched(
   dir.x = toP.x
   dir.y = toP.y
   norTo(dir)
-
-  // Create new enemy object - we'll mutate properties as needed
-  const newEnemy: Enemy = {
-    pos: e.pos,
-    vel: e.vel,
-    ang: e.ang,
-    cooldown: e.cooldown,
-    hp: e.hp,
-    maxHp: e.maxHp,
-    aiTimer: e.aiTimer,
-    type: e.type,
-    chargeTime: e.chargeTime,
-    bombCooldown: e.bombCooldown,
-    stunDuration: e.stunDuration,
-  }
 
   // Reusable temp Vec2s for all enemy calculations
   const temp1 = v()
@@ -1198,7 +1182,7 @@ function updateEnemyBehaviorBatched(
       addTo(scoutVel, temp3)
       mulTo(scoutVel, 0.99)
 
-      newEnemy.vel = scoutVel
+      e.vel = scoutVel
 
       // newPos = e.pos + scoutVel * dt * animSpeed
       temp1.x = scoutVel.x
@@ -1206,12 +1190,12 @@ function updateEnemyBehaviorBatched(
       mulTo(temp1, dt * animSpeed)
       const scoutPos = v(e.pos.x, e.pos.y)
       addTo(scoutPos, temp1)
-      newEnemy.pos = wrap(scoutPos, state.w, state.h)
-      newEnemy.ang = angleOf(scoutVel)
+      e.pos = wrap(scoutPos, state.w, state.h)
+      e.ang = angleOf(scoutVel)
 
       // Fire at player
-      newEnemy.cooldown = e.cooldown - dt
-      if (d < 400 && newEnemy.cooldown <= 0) {
+      e.cooldown = e.cooldown - dt
+      if (d < 400 && e.cooldown <= 0) {
         temp1.x = state.player.pos.x - e.pos.x
         temp1.y = state.player.pos.y - e.pos.y
         const aim = angleOf(temp1) + rand(-aimInaccuracy * 1.5, aimInaccuracy * 1.5)
@@ -1235,7 +1219,7 @@ function updateEnemyBehaviorBatched(
           friendly: false,
         })
         playSfx('shoot_enemy')
-        newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.3)
+        e.cooldown = stats.fireRate * (1 - difficulty * 0.3)
       }
       break
 
@@ -1255,7 +1239,7 @@ function updateEnemyBehaviorBatched(
       addTo(tankVel, temp2)
       mulTo(tankVel, 0.995)
 
-      newEnemy.vel = tankVel
+      e.vel = tankVel
 
       // newPos = e.pos + tankVel * dt * animSpeed * 0.7
       temp3.x = tankVel.x
@@ -1263,12 +1247,12 @@ function updateEnemyBehaviorBatched(
       mulTo(temp3, dt * animSpeed * 0.7)
       const tankPos = v(e.pos.x, e.pos.y)
       addTo(tankPos, temp3)
-      newEnemy.pos = wrap(tankPos, state.w, state.h)
-      newEnemy.ang = angleOf(toP)
+      e.pos = wrap(tankPos, state.w, state.h)
+      e.ang = angleOf(toP)
 
       // Heavy shots with less accuracy needed
-      newEnemy.cooldown = e.cooldown - dt
-      if (d < 500 && newEnemy.cooldown <= 0) {
+      e.cooldown = e.cooldown - dt
+      if (d < 500 && e.cooldown <= 0) {
         temp1.x = state.player.pos.x - e.pos.x
         temp1.y = state.player.pos.y - e.pos.y
         const aim = angleOf(temp1) + rand(-aimInaccuracy * 0.5, aimInaccuracy * 0.5)
@@ -1295,7 +1279,7 @@ function updateEnemyBehaviorBatched(
           })
         }
         playSfx('shoot_enemy')
-        newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.2)
+        e.cooldown = stats.fireRate * (1 - difficulty * 0.2)
       }
       break
 
@@ -1318,7 +1302,7 @@ function updateEnemyBehaviorBatched(
         addTo(sniperVel, temp1)
       }
       mulTo(sniperVel, 0.98)
-      newEnemy.vel = sniperVel
+      e.vel = sniperVel
 
       // newPos = e.pos + sniperVel * dt * animSpeed * 0.5
       temp2.x = sniperVel.x
@@ -1326,12 +1310,12 @@ function updateEnemyBehaviorBatched(
       mulTo(temp2, dt * animSpeed * 0.5)
       const sniperPos = v(e.pos.x, e.pos.y)
       addTo(sniperPos, temp2)
-      newEnemy.pos = wrap(sniperPos, state.w, state.h)
-      newEnemy.ang = angleOf(toP)
+      e.pos = wrap(sniperPos, state.w, state.h)
+      e.ang = angleOf(toP)
 
       // Charged precision shots
-      newEnemy.chargeTime = (e.chargeTime || 0) + dt
-      if (newEnemy.chargeTime >= 2 && d < 600) {
+      e.chargeTime = (e.chargeTime || 0) + dt
+      if (e.chargeTime >= 2 && d < 600) {
         const leadFactor = 0.5 + difficulty * 0.3
         // lead = state.player.pos + state.player.vel * leadFactor
         temp1.x = state.player.vel.x
@@ -1364,7 +1348,7 @@ function updateEnemyBehaviorBatched(
           damage: 35,
         })
         playSfx('shoot_enemy')
-        newEnemy.chargeTime = 0
+        e.chargeTime = 0
       }
       break
 
@@ -1384,7 +1368,7 @@ function updateEnemyBehaviorBatched(
       addTo(bomberVel, temp2)
       mulTo(bomberVel, 0.995)
 
-      newEnemy.vel = bomberVel
+      e.vel = bomberVel
 
       // newPos = e.pos + bomberVel * dt * animSpeed
       temp3.x = bomberVel.x
@@ -1392,12 +1376,12 @@ function updateEnemyBehaviorBatched(
       mulTo(temp3, dt * animSpeed)
       const bomberPos = v(e.pos.x, e.pos.y)
       addTo(bomberPos, temp3)
-      newEnemy.pos = wrap(bomberPos, state.w, state.h)
-      newEnemy.ang = angleOf(bomberVel)
+      e.pos = wrap(bomberPos, state.w, state.h)
+      e.ang = angleOf(bomberVel)
 
       // Regular shots
-      newEnemy.cooldown = e.cooldown - dt
-      if (d < 450 && newEnemy.cooldown <= 0) {
+      e.cooldown = e.cooldown - dt
+      if (d < 450 && e.cooldown <= 0) {
         temp1.x = state.player.pos.x - e.pos.x
         temp1.y = state.player.pos.y - e.pos.y
         const aim = angleOf(temp1) + rand(-aimInaccuracy, aimInaccuracy)
@@ -1420,12 +1404,12 @@ function updateEnemyBehaviorBatched(
           friendly: false,
         })
         playSfx('shoot_enemy')
-        newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.25)
+        e.cooldown = stats.fireRate * (1 - difficulty * 0.25)
       }
 
       // Bomb attack (spread of bullets)
-      newEnemy.bombCooldown = (e.bombCooldown || 3) - dt
-      if (newEnemy.bombCooldown <= 0 && d < 300) {
+      e.bombCooldown = (e.bombCooldown || 3) - dt
+      if (e.bombCooldown <= 0 && d < 300) {
         for (let i = 0; i < 8; i++) {
           const angle = (i / 8) * Math.PI * 2
           const bombPos = v(e.pos.x, e.pos.y)
@@ -1441,20 +1425,20 @@ function updateEnemyBehaviorBatched(
           })
         }
         playSfx('shoot_enemy')
-        newEnemy.bombCooldown = 4 - difficulty
+        e.bombCooldown = 4 - difficulty
       }
       break
 
     case 'teleporter': {
       // Teleportation logic
-      if (newEnemy.teleportTimer === undefined) {
-        newEnemy.teleportTimer = Math.random() * 2 + 3 // Random 3-5 seconds
+      if (e.teleportTimer === undefined) {
+        e.teleportTimer = Math.random() * 2 + 3 // Random 3-5 seconds
       }
 
-      newEnemy.teleportTimer -= dt
+      e.teleportTimer -= dt
 
       // Teleport when timer expires
-      if (newEnemy.teleportTimer <= 0) {
+      if (e.teleportTimer <= 0) {
         // Create particle effect at old position
         state.addParticles(
           Array.from({ length: 8 }, () => ({
@@ -1468,17 +1452,17 @@ function updateEnemyBehaviorBatched(
         // Teleport to random position 150-300px from player
         const dist = Math.random() * 150 + 150
         const angle = Math.random() * Math.PI * 2
-        newEnemy.pos.x = state.player.pos.x + Math.cos(angle) * dist
-        newEnemy.pos.y = state.player.pos.y + Math.sin(angle) * dist
+        e.pos.x = state.player.pos.x + Math.cos(angle) * dist
+        e.pos.y = state.player.pos.y + Math.sin(angle) * dist
 
         // Keep within bounds
-        newEnemy.pos.x = Math.max(30, Math.min(state.w - 30, newEnemy.pos.x))
-        newEnemy.pos.y = Math.max(30, Math.min(state.h - 30, newEnemy.pos.y))
+        e.pos.x = Math.max(30, Math.min(state.w - 30, e.pos.x))
+        e.pos.y = Math.max(30, Math.min(state.h - 30, e.pos.y))
 
         // Create particle effect at new position
         state.addParticles(
           Array.from({ length: 8 }, () => ({
-            pos: { x: newEnemy.pos.x, y: newEnemy.pos.y },
+            pos: { x: e.pos.x, y: e.pos.y },
             vel: fromAngle(Math.random() * Math.PI * 2, rand(50, 150)),
             life: rand(0.3, 0.6),
             color: '#cc66ff',
@@ -1486,39 +1470,39 @@ function updateEnemyBehaviorBatched(
         )
 
         // Reset velocity (pause after teleporting)
-        newEnemy.vel.x = 0
-        newEnemy.vel.y = 0
+        e.vel.x = 0
+        e.vel.y = 0
 
         // Reset timer for next teleport
-        newEnemy.teleportTimer = Math.random() * 2 + 3
+        e.teleportTimer = Math.random() * 2 + 3
       }
 
       // Movement toward player (moderate speed with erratic pattern)
       const pauseDuration = 0.5
-      const timeSinceTeleport = newEnemy.teleportTimer > 3 ? (5 - newEnemy.teleportTimer) : 1
+      const timeSinceTeleport = e.teleportTimer > 3 ? (5 - e.teleportTimer) : 1
 
       if (timeSinceTeleport > pauseDuration) {
         if (d > 0) {
           const speed = stats.speed * difficulty * animSpeed
           const erraticFactor = Math.sin(e.aiTimer * 5) * 0.3
 
-          newEnemy.vel.x += (dir.x) * speed * dt * (1 + erraticFactor)
-          newEnemy.vel.y += (dir.y) * speed * dt * (1 + erraticFactor)
+          e.vel.x += (dir.x) * speed * dt * (1 + erraticFactor)
+          e.vel.y += (dir.y) * speed * dt * (1 + erraticFactor)
         }
       }
 
       // Apply friction
-      newEnemy.vel.x *= 0.95
-      newEnemy.vel.y *= 0.95
+      e.vel.x *= 0.95
+      e.vel.y *= 0.95
 
       // Update position
-      newEnemy.pos = wrap(add(e.pos, mul(newEnemy.vel, dt * animSpeed)), state.w, state.h)
-      newEnemy.ang = angleOf(newEnemy.vel)
+      e.pos = wrap(add(e.pos, mul(e.vel, dt * animSpeed)), state.w, state.h)
+      e.ang = angleOf(e.vel)
 
       // Fire bullets (less frequently than scout, not during pause)
       if (timeSinceTeleport > pauseDuration) {
-        newEnemy.cooldown -= dt
-        if (newEnemy.cooldown <= 0) {
+        e.cooldown -= dt
+        if (e.cooldown <= 0) {
           const aim = angleOf(toP) + rand(-aimInaccuracy, aimInaccuracy)
           state.addBullet({
             pos: add(e.pos, fromAngle(aim, 16)),
@@ -1528,7 +1512,7 @@ function updateEnemyBehaviorBatched(
             damage: stats.damage,
           })
 
-          newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.25)
+          e.cooldown = stats.fireRate * (1 - difficulty * 0.25)
         }
       }
 
@@ -1541,12 +1525,12 @@ function updateEnemyBehaviorBatched(
       const accelMultiplier = 1.0 + (difficulty * 0.8)
       let eVel = add(e.vel, mul(nor(desired), 90 * dt * accelMultiplier))
       eVel = mul(eVel, 0.993)
-      newEnemy.vel = eVel
-      newEnemy.pos = wrap(add(e.pos, mul(eVel, dt * animSpeed)), state.w, state.h)
-      newEnemy.ang = angleOf(eVel)
+      e.vel = eVel
+      e.pos = wrap(add(e.pos, mul(eVel, dt * animSpeed)), state.w, state.h)
+      e.ang = angleOf(eVel)
 
-      newEnemy.cooldown = e.cooldown - dt
-      if (d < 520 && newEnemy.cooldown <= 0) {
+      e.cooldown = e.cooldown - dt
+      if (d < 520 && e.cooldown <= 0) {
         const leadFactor = 0.35 + (difficulty * 0.4)
         const lead = add(state.player.pos, mul(state.player.vel, leadFactor))
         const aim = angleOf(sub(lead, e.pos)) + rand(-aimInaccuracy, aimInaccuracy)
@@ -1558,12 +1542,11 @@ function updateEnemyBehaviorBatched(
         })
         playSfx('shoot_enemy')
         const cooldownBase = 1.4 - (difficulty * 0.6)
-        newEnemy.cooldown = rand(0.5, cooldownBase)
+        e.cooldown = rand(0.5, cooldownBase)
       }
   }
 
-  newEnemy.aiTimer = e.aiTimer + dt
-  return newEnemy
+  e.aiTimer = e.aiTimer + dt
 }
 
 // ------------------------------------------------------------------ //
