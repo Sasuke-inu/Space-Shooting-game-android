@@ -821,6 +821,21 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
               color={colors.comboText}
               font={comboFont}
             />
+            {/* Combo timer progress bar */}
+            <Group transform={[{ translateX: width / 2 - 40 }, { translateY: 88 }]}>
+              {/* Timer bar background */}
+              <Path
+                path={Skia.Path.Make().addRect(Skia.XYWHRect(0, 0, 80, 4))}
+                color={colors.panelBorder}
+                style="fill"
+              />
+              {/* Timer bar fill */}
+              <Path
+                path={Skia.Path.Make().addRect(Skia.XYWHRect(0, 0, 80 * (combo.timer / 2.0), 4))}
+                color={colors.comboText}
+                style="fill"
+              />
+            </Group>
             {combo.multiplier > 1 && (
               <Text
                 x={width / 2 - 30}
