@@ -372,6 +372,7 @@ export interface Achievement {
   name: string
   description: string
   icon: string
+  creditReward: number // Credits awarded when unlocked
   unlocked: boolean
   unlockedAt?: number  // Timestamp
   progress?: number    // For progressive achievements
@@ -379,28 +380,28 @@ export interface Achievement {
 }
 
 export const ACHIEVEMENTS: Record<AchievementId, Omit<Achievement, 'unlocked' | 'unlockedAt' | 'progress'>> = {
-  first_blood: { id: 'first_blood', name: 'First Blood', description: 'Destroy your first enemy', icon: '🎯', target: 1 },
-  combo_master: { id: 'combo_master', name: 'Combo Master', description: 'Reach a 20x combo', icon: '🔥', target: 20 },
-  survivor_10: { id: 'survivor_10', name: 'Survivor', description: 'Reach wave 10', icon: '🛡️', target: 10 },
-  survivor_20: { id: 'survivor_20', name: 'Veteran', description: 'Reach wave 20', icon: '⭐', target: 20 },
-  survivor_30: { id: 'survivor_30', name: 'Elite Survivor', description: 'Reach wave 30', icon: '💪', target: 30 },
-  survivor_40: { id: 'survivor_40', name: 'Legendary', description: 'Reach wave 40', icon: '🏆', target: 40 },
-  untouchable: { id: 'untouchable', name: 'Untouchable', description: 'Complete a wave without taking damage', icon: '👻' },
-  boss_slayer: { id: 'boss_slayer', name: 'Boss Slayer', description: 'Defeat your first boss', icon: '👑', target: 1 },
-  destroyer_hunter: { id: 'destroyer_hunter', name: 'Destroyer Hunter', description: 'Defeat 5 Destroyer bosses', icon: '⚔️', target: 5 },
-  carrier_hunter: { id: 'carrier_hunter', name: 'Carrier Hunter', description: 'Defeat 5 Carrier bosses', icon: '🛡️', target: 5 },
-  dreadnought_slayer: { id: 'dreadnought_slayer', name: 'Dreadnought Slayer', description: 'Defeat a Dreadnought boss', icon: '💀', target: 1 },
-  power_collector: { id: 'power_collector', name: 'Power Collector', description: 'Collect 50 power-ups', icon: '💎', target: 50 },
-  sharpshooter: { id: 'sharpshooter', name: 'Sharpshooter', description: 'Achieve 80% accuracy in a game', icon: '🎯' },
-  speed_demon: { id: 'speed_demon', name: 'Speed Demon', description: 'Destroy 10 enemies in 10 seconds', icon: '⚡', target: 10 },
-  pacifist: { id: 'pacifist', name: 'Pacifist', description: 'Survive 60 seconds without shooting', icon: '☮️' },
-  millionaire: { id: 'millionaire', name: 'Millionaire', description: 'Accumulate 1,000,000 total score', icon: '💰', target: 1000000 },
-  fully_upgraded: { id: 'fully_upgraded', name: 'Fully Loaded', description: 'Max out all weapon upgrades', icon: '🚀' },
-  ship_master_fighter: { id: 'ship_master_fighter', name: 'Fighter Ace', description: 'Destroy 100 enemies with the Fighter', icon: '✈️', target: 100 },
-  ship_master_scout: { id: 'ship_master_scout', name: 'Scout Expert', description: 'Destroy 100 enemies with the Scout', icon: '🚁', target: 100 },
-  ship_master_tank: { id: 'ship_master_tank', name: 'Tank Commander', description: 'Destroy 100 enemies with the Tank', icon: '🛡️', target: 100 },
-  ship_master_interceptor: { id: 'ship_master_interceptor', name: 'Interceptor Master', description: 'Destroy 100 enemies with the Interceptor', icon: '🚀', target: 100 },
-  time_warrior: { id: 'time_warrior', name: 'Time Warrior', description: 'Survive for 10 minutes in a single game', icon: '⏱️', target: 600 },
+  first_blood: { id: 'first_blood', name: 'First Blood', description: 'Destroy your first enemy', icon: '🎯', creditReward: 50, target: 1 },
+  combo_master: { id: 'combo_master', name: 'Combo Master', description: 'Reach a 20x combo', icon: '🔥', creditReward: 200, target: 20 },
+  survivor_10: { id: 'survivor_10', name: 'Survivor', description: 'Reach wave 10', icon: '🛡️', creditReward: 150, target: 10 },
+  survivor_20: { id: 'survivor_20', name: 'Veteran', description: 'Reach wave 20', icon: '⭐', creditReward: 300, target: 20 },
+  survivor_30: { id: 'survivor_30', name: 'Elite Survivor', description: 'Reach wave 30', icon: '💪', creditReward: 500, target: 30 },
+  survivor_40: { id: 'survivor_40', name: 'Legendary', description: 'Reach wave 40', icon: '🏆', creditReward: 1000, target: 40 },
+  untouchable: { id: 'untouchable', name: 'Untouchable', description: 'Complete a wave without taking damage', icon: '👻', creditReward: 250 },
+  boss_slayer: { id: 'boss_slayer', name: 'Boss Slayer', description: 'Defeat your first boss', icon: '👑', creditReward: 200, target: 1 },
+  destroyer_hunter: { id: 'destroyer_hunter', name: 'Destroyer Hunter', description: 'Defeat 5 Destroyer bosses', icon: '⚔️', creditReward: 400, target: 5 },
+  carrier_hunter: { id: 'carrier_hunter', name: 'Carrier Hunter', description: 'Defeat 5 Carrier bosses', icon: '🛡️', creditReward: 450, target: 5 },
+  dreadnought_slayer: { id: 'dreadnought_slayer', name: 'Dreadnought Slayer', description: 'Defeat a Dreadnought boss', icon: '💀', creditReward: 500, target: 1 },
+  power_collector: { id: 'power_collector', name: 'Power Collector', description: 'Collect 50 power-ups', icon: '💎', creditReward: 150, target: 50 },
+  sharpshooter: { id: 'sharpshooter', name: 'Sharpshooter', description: 'Achieve 80% accuracy in a game', icon: '🎯', creditReward: 250 },
+  speed_demon: { id: 'speed_demon', name: 'Speed Demon', description: 'Destroy 10 enemies in 10 seconds', icon: '⚡', creditReward: 200, target: 10 },
+  pacifist: { id: 'pacifist', name: 'Pacifist', description: 'Survive 60 seconds without shooting', icon: '☮️', creditReward: 300 },
+  millionaire: { id: 'millionaire', name: 'Millionaire', description: 'Accumulate 1,000,000 total score', icon: '💰', creditReward: 500, target: 1000000 },
+  fully_upgraded: { id: 'fully_upgraded', name: 'Fully Loaded', description: 'Max out all weapon upgrades', icon: '🚀', creditReward: 1000 },
+  ship_master_fighter: { id: 'ship_master_fighter', name: 'Fighter Ace', description: 'Destroy 100 enemies with the Fighter', icon: '✈️', creditReward: 300, target: 100 },
+  ship_master_scout: { id: 'ship_master_scout', name: 'Scout Expert', description: 'Destroy 100 enemies with the Scout', icon: '🚁', creditReward: 300, target: 100 },
+  ship_master_tank: { id: 'ship_master_tank', name: 'Tank Commander', description: 'Destroy 100 enemies with the Tank', icon: '🛡️', creditReward: 300, target: 100 },
+  ship_master_interceptor: { id: 'ship_master_interceptor', name: 'Interceptor Master', description: 'Destroy 100 enemies with the Interceptor', icon: '🚀', creditReward: 300, target: 100 },
+  time_warrior: { id: 'time_warrior', name: 'Time Warrior', description: 'Survive for 10 minutes in a single game', icon: '⏱️', creditReward: 750, target: 600 },
 }
 
 // ------------------------------------------------------------------ //
