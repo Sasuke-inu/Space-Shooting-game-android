@@ -1,0 +1,1077 @@
+androidx.compose.foundation.IndicationModifierElement
+com.spaceshooter.MainActivity_GeneratedInjector
+dagger.hilt.android.internal.lifecycle.HiltWrapper_HiltViewModelFactory_ActivityCreatorEntryPoint
+androidx.room.MultiInstanceInvalidationService
+androidx.compose.ui.viewinterop.FocusTargetPropertiesElement
+dagger.hilt.android.internal.managers.ActivityComponentManager$ActivityComponentBuilderEntryPoint
+androidx.compose.ui.focus.FocusTargetNode$FocusTargetElement
+com.spaceshooter.domain.entity.Bullet
+androidx.profileinstaller.ProfileInstallReceiver
+androidx.compose.foundation.text.modifiers.TextStringSimpleElement
+com.spaceshooter.domain.model.ShipType
+androidx.emoji2.text.EmojiCompatInitializer
+androidx.compose.foundation.ClickableElement
+androidx.compose.ui.focus.FocusOwnerImpl$modifier$2
+com.spaceshooter.domain.entity.Boss
+androidx.compose.ui.graphics.GraphicsLayerElement
+com.spaceshooter.presentation.game.GameViewModel
+androidx.compose.ui.draw.DrawBehindElement
+androidx.compose.ui.input.key.KeyInputElement
+com.spaceshooter.domain.model.AbilityType
+dagger.hilt.android.internal.managers.ActivityRetainedComponentManager$ActivityRetainedComponentBuilderEntryPoint
+androidx.lifecycle.LifecycleDispatcher$DispatcherActivityCallback
+androidx.lifecycle.ReportFragment$LifecycleCallbacks
+androidx.core.app.RemoteActionCompatParcelizer
+kotlinx.coroutines.internal.StackTraceRecoveryKt
+com.spaceshooter.domain.model.BossType
+androidx.core.graphics.drawable.IconCompatParcelizer
+kotlinx.coroutines.android.AndroidDispatcherFactory
+androidx.versionedparcelable.ParcelImpl
+androidx.graphics.path.PathIteratorPreApi34Impl
+androidx.lifecycle.LegacySavedStateHandleController$OnRecreation
+androidx.compose.foundation.layout.FillElement
+dagger.hilt.android.internal.lifecycle.DefaultViewModelFactories$ActivityEntryPoint
+androidx.versionedparcelable.CustomVersionedParcelable
+dagger.hilt.android.internal.managers.ActivityRetainedComponentManager$ActivityRetainedLifecycleEntryPoint
+androidx.compose.ui.semantics.AppendedSemanticsElement
+com.spaceshooter.domain.model.ComboState
+androidx.lifecycle.ReportFragment
+androidx.compose.foundation.BackgroundElement
+androidx.lifecycle.SavedStateHandlesVM
+androidx.profileinstaller.ProfileInstallerInitializer
+androidx.lifecycle.ProcessLifecycleOwner$attach$1
+kotlin.coroutines.jvm.internal.BaseContinuationImpl
+androidx.compose.foundation.layout.UnspecifiedConstraintsElement
+androidx.lifecycle.ProcessLifecycleInitializer
+androidx.compose.foundation.text.modifiers.TextAnnotatedStringElement
+androidx.annotation.Keep
+dagger.hilt.android.internal.lifecycle.HiltViewModelFactory$ViewModelFactoriesEntryPoint
+androidx.compose.foundation.layout.PaddingElement
+androidx.compose.ui.input.nestedscroll.NestedScrollElement
+com.spaceshooter.domain.entity.Enemy
+com.spaceshooter.domain.model.ActivePowerUp
+androidx.core.graphics.drawable.IconCompat
+android.support.v4.app.RemoteActionCompatParcelizer
+com.spaceshooter.domain.entity.Asteroid
+androidx.compose.foundation.layout.PaddingValuesElement
+androidx.compose.ui.semantics.EmptySemanticsElement
+androidx.compose.foundation.layout.SizeElement
+com.spaceshooter.domain.entity.HomingMissile
+com.spaceshooter.domain.model.SpecialAbilityState
+androidx.compose.ui.input.rotary.RotaryInputElement
+com.spaceshooter.domain.model.ScreenShake
+com.spaceshooter.SpaceShooterApp
+com.spaceshooter.domain.entity.Player
+androidx.compose.foundation.text.modifiers.SelectableTextAnnotatedStringElement
+androidx.core.app.CoreComponentFactory
+dagger.hilt.android.internal.lifecycle.HiltViewModelFactory$ActivityCreatorEntryPoint
+androidx.graphics.path.ConicConverter
+androidx.compose.ui.input.pointer.SuspendPointerInputElement
+androidx.lifecycle.ProcessLifecycleOwner$attach$1$onActivityPreCreated$1
+com.spaceshooter.domain.model.EnemyType
+com.spaceshooter.SpaceShooterApp_GeneratedInjector
+androidx.compose.foundation.layout.WrapContentElement
+android.support.v4.graphics.drawable.IconCompatParcelizer
+androidx.core.app.RemoteActionCompat
+androidx.compose.ui.focus.FocusPropertiesElement
+com.spaceshooter.domain.model.AsteroidTier
+androidx.compose.foundation.layout.BoxChildDataElement
+androidx.compose.ui.viewinterop.FocusGroupPropertiesElement
+androidx.compose.ui.input.pointer.PointerHoverIconModifierElement
+androidx.compose.material3.MinimumInteractiveModifier
+androidx.compose.ui.layout.OnSizeChangedModifier
+com.spaceshooter.MainActivity
+com.spaceshooter.domain.model.PowerUpType
+androidx.startup.InitializationProvider
+com.spaceshooter.domain.entity.Particle
+androidx.compose.ui.layout.OnGloballyPositionedElement
+androidx.compose.foundation.BorderModifierNodeElement
+com.spaceshooter.domain.entity.PowerUp
+androidx.compose.ui.platform.DragAndDropModifierOnDragListener$modifier$1
+com.spaceshooter.domain.entity.Boss: float firePatternTimer
+kotlinx.coroutines.internal.Segment: int cleanedAndPointers$volatile
+androidx.concurrent.futures.AbstractResolvableFuture$Waiter: java.lang.Thread thread
+androidx.concurrent.futures.AbstractResolvableFuture: java.lang.Object value
+com.spaceshooter.domain.model.EnemyType: com.spaceshooter.domain.model.EnemyType BOMBER
+kotlinx.coroutines.internal.ResizableAtomicArray: java.util.concurrent.atomic.AtomicReferenceArray array
+kotlinx.coroutines.CancellableContinuationImpl: java.lang.Object _parentHandle$volatile
+com.spaceshooter.domain.entity.Enemy: float bombCooldown
+com.spaceshooter.domain.entity.Enemy: float ang
+com.spaceshooter.domain.entity.Enemy: com.spaceshooter.domain.model.EnemyType type
+com.spaceshooter.domain.entity.Enemy: float speed
+com.spaceshooter.domain.model.ShipType: int maxHp
+com.spaceshooter.domain.model.AsteroidTier: com.spaceshooter.domain.model.AsteroidTier[] $VALUES
+kotlinx.coroutines.channels.BufferedChannel: java.lang.Object closeHandler$volatile
+com.spaceshooter.domain.entity.Boss: float stunTime
+kotlinx.coroutines.JobSupport$Finishing: java.lang.Object _exceptionsHolder$volatile
+androidx.lifecycle.Lifecycle$Event: androidx.lifecycle.Lifecycle$Event ON_CREATE
+com.spaceshooter.domain.entity.Boss: float radius
+androidx.lifecycle.Lifecycle$Event: androidx.lifecycle.Lifecycle$Event ON_PAUSE
+kotlinx.coroutines.scheduling.CoroutineScheduler$Worker: int workerCtl$volatile
+kotlinx.coroutines.channels.BufferedChannel: java.lang.Object sendSegment$volatile
+com.spaceshooter.domain.model.AsteroidTier: com.spaceshooter.domain.model.AsteroidTier SMALL
+com.spaceshooter.domain.entity.HomingMissile: int $stable
+com.spaceshooter.domain.entity.Bullet: com.spaceshooter.core.math.Vec2 vel
+com.spaceshooter.domain.model.AsteroidTier: com.spaceshooter.domain.model.AsteroidTier LARGE
+com.spaceshooter.domain.model.ShipType: float damageMultiplier
+com.spaceshooter.domain.model.EnemyType: int damage
+kotlinx.coroutines.EventLoopImplBase: java.lang.Object _queue$volatile
+kotlinx.coroutines.internal.DispatchedContinuation: java.lang.Object _reusableCancellableContinuation$volatile
+kotlinx.coroutines.internal.LockFreeLinkedListNode: java.lang.Object _prev$volatile
+com.spaceshooter.domain.entity.Bullet: float radius
+com.spaceshooter.domain.entity.Boss: int phase
+kotlinx.coroutines.DefaultExecutor: int debugStatus
+kotlinx.coroutines.scheduling.CoroutineScheduler: int _isTerminated$volatile
+com.spaceshooter.domain.entity.Bullet: int damage
+com.spaceshooter.domain.entity.Asteroid: float radius
+com.spaceshooter.domain.entity.Particle: com.spaceshooter.core.math.Vec2 pos
+kotlinx.coroutines.DispatchedCoroutine: int _decision$volatile
+com.spaceshooter.domain.model.EnemyType: com.spaceshooter.domain.model.EnemyType SNIPER
+com.spaceshooter.domain.entity.Player: int hp
+kotlinx.coroutines.channels.BufferedChannel: long completedExpandBuffersAndPauseFlag$volatile
+kotlinx.coroutines.EventLoopImplBase: java.lang.Object _delayed$volatile
+kotlinx.coroutines.internal.ConcurrentLinkedListNode: java.lang.Object _next$volatile
+kotlinx.coroutines.internal.LockFreeLinkedListNode: java.lang.Object _removedRef$volatile
+com.spaceshooter.domain.entity.Boss: int $stable
+com.spaceshooter.domain.entity.Asteroid: com.spaceshooter.core.math.Vec2 vel
+kotlinx.coroutines.CancellableContinuationImpl: int _decisionAndIndex$volatile
+com.spaceshooter.domain.model.AbilityType: com.spaceshooter.domain.model.AbilityType TIME_WARP
+kotlinx.coroutines.InvokeOnCancelling: int _invoked$volatile
+com.spaceshooter.domain.model.BossType: java.lang.String displayName
+kotlinx.coroutines.sync.SemaphoreAndMutexImpl: long enqIdx$volatile
+com.spaceshooter.domain.model.ShipType: com.spaceshooter.domain.model.ShipType TANK
+com.spaceshooter.domain.entity.Player: com.spaceshooter.core.math.Vec2 pos
+androidx.lifecycle.ProcessLifecycleOwner$attach$1: androidx.lifecycle.ProcessLifecycleOwner this$0
+kotlinx.coroutines.scheduling.WorkQueue: int consumerIndex$volatile
+com.spaceshooter.domain.model.ShipType: com.spaceshooter.domain.model.AbilityType abilityType
+com.spaceshooter.domain.model.ShipType: float abilityCooldown
+kotlinx.coroutines.scheduling.CoroutineScheduler$Worker: java.lang.Object nextParkedWorker
+kotlinx.coroutines.UndispatchedCoroutine: boolean threadLocalIsSet
+com.spaceshooter.domain.model.EnemyType: int points
+kotlinx.coroutines.sync.SemaphoreAndMutexImpl: int _availablePermits$volatile
+com.spaceshooter.domain.model.EnemyType: com.spaceshooter.domain.model.EnemyType[] $VALUES
+kotlinx.coroutines.channels.BufferedChannel: long bufferEnd$volatile
+com.spaceshooter.domain.model.ScreenShake: float intensity
+com.spaceshooter.domain.entity.PowerUp: com.spaceshooter.domain.model.PowerUpType type
+com.spaceshooter.domain.model.AsteroidTier: kotlin.enums.EnumEntries $ENTRIES
+com.spaceshooter.domain.model.ComboState: int multiplierTier
+kotlinx.coroutines.channels.BufferedChannel: java.lang.Object bufferEndSegment$volatile
+com.spaceshooter.domain.model.ShipType: kotlin.enums.EnumEntries $ENTRIES
+com.spaceshooter.domain.model.ShipType: com.spaceshooter.domain.model.ShipType FIGHTER
+kotlinx.coroutines.scheduling.CoroutineScheduler$Worker: int indexInArray
+androidx.lifecycle.ProcessLifecycleOwner$attach$1$onActivityPreCreated$1: androidx.lifecycle.ProcessLifecycleOwner this$0
+com.spaceshooter.domain.entity.Bullet: com.spaceshooter.core.math.Vec2 pos
+com.spaceshooter.domain.entity.Boss: int hp
+kotlin.coroutines.SafeContinuation: java.lang.Object result
+com.spaceshooter.domain.entity.Particle: com.spaceshooter.core.math.Vec2 vel
+kotlinx.coroutines.scheduling.WorkQueue: int producerIndex$volatile
+kotlinx.coroutines.sync.SemaphoreAndMutexImpl: java.lang.Object tail$volatile
+com.spaceshooter.domain.entity.HomingMissile: com.spaceshooter.core.math.Vec2 target
+androidx.lifecycle.Lifecycle$Event: androidx.lifecycle.Lifecycle$Event ON_STOP
+kotlinx.coroutines.channels.BufferedChannel: java.lang.Object _closeCause$volatile
+com.spaceshooter.domain.model.PowerUpType: java.lang.String displayName
+com.spaceshooter.domain.model.EnemyType: kotlin.enums.EnumEntries $ENTRIES
+com.spaceshooter.domain.entity.Enemy: com.spaceshooter.core.math.Vec2 pos
+kotlinx.coroutines.CompletedExceptionally: int _handled$volatile
+com.spaceshooter.domain.entity.Boss: com.spaceshooter.core.math.Vec2 vel
+com.spaceshooter.domain.entity.Enemy: int maxHp
+com.spaceshooter.domain.model.EnemyType: float speed
+com.spaceshooter.domain.model.BossType: int phases
+com.spaceshooter.domain.model.ShipType: float speedMultiplier
+com.spaceshooter.domain.model.ScreenShake: int $stable
+com.spaceshooter.domain.entity.Asteroid: float rotation
+kotlinx.coroutines.scheduling.WorkQueue: java.lang.Object lastScheduledTask$volatile
+androidx.lifecycle.Lifecycle$Event: androidx.lifecycle.Lifecycle$Event ON_RESUME
+com.spaceshooter.domain.model.AbilityType: com.spaceshooter.domain.model.AbilityType[] $VALUES
+com.spaceshooter.domain.model.PowerUpType: com.spaceshooter.domain.model.PowerUpType SPREAD_SHOT
+com.spaceshooter.domain.model.BossType: com.spaceshooter.domain.model.BossType DREADNOUGHT
+com.spaceshooter.domain.model.SpecialAbilityState: float maxCooldown
+androidx.concurrent.futures.AbstractResolvableFuture: androidx.concurrent.futures.AbstractResolvableFuture$Listener listeners
+kotlinx.coroutines.android.HandlerDispatcherKt: android.view.Choreographer choreographer
+com.spaceshooter.domain.entity.Particle: float lifetime
+com.spaceshooter.domain.entity.Enemy: com.spaceshooter.core.math.Vec2 vel
+com.spaceshooter.domain.entity.Boss: float specialCooldown
+com.spaceshooter.domain.model.BossType: int hp
+com.spaceshooter.domain.model.ActivePowerUp: float remainingDuration
+com.spaceshooter.domain.entity.HomingMissile: float speed
+com.spaceshooter.domain.entity.Enemy: int $stable
+com.spaceshooter.domain.model.ShipType: com.spaceshooter.domain.model.ShipType INTERCEPTOR
+kotlinx.coroutines.CancelledContinuation: int _resumed$volatile
+kotlinx.coroutines.sync.SemaphoreAndMutexImpl: java.lang.Object head$volatile
+com.spaceshooter.domain.entity.Boss: int maxPhase
+com.spaceshooter.domain.entity.Boss: com.spaceshooter.domain.model.BossType type
+com.spaceshooter.domain.model.SpecialAbilityState: boolean isActive
+androidx.lifecycle.ReportFragment$LifecycleCallbacks: androidx.lifecycle.ReportFragment$LifecycleCallbacks$Companion Companion
+com.spaceshooter.domain.model.ComboState: int $stable
+com.spaceshooter.domain.entity.HomingMissile: float turnRate
+com.spaceshooter.domain.model.ShipType: int cost
+com.spaceshooter.domain.entity.PowerUp: com.spaceshooter.core.math.Vec2 pos
+com.spaceshooter.domain.entity.Boss: float ang
+kotlinx.coroutines.channels.BufferedChannel: java.lang.Object receiveSegment$volatile
+com.spaceshooter.domain.entity.Player: int $stable
+com.spaceshooter.domain.model.ShipType: com.spaceshooter.domain.model.ShipType[] $VALUES
+com.spaceshooter.domain.entity.Enemy: int damage
+com.spaceshooter.domain.model.ActivePowerUp: com.spaceshooter.domain.model.PowerUpType type
+com.spaceshooter.domain.model.EnemyType: float radius
+kotlinx.coroutines.JobSupport: java.lang.Object _state$volatile
+kotlinx.coroutines.DefaultExecutor: java.lang.Thread _thread
+kotlinx.coroutines.internal.LockFreeLinkedListNode: java.lang.Object _next$volatile
+androidx.activity.result.ActivityResult: android.os.Parcelable$Creator CREATOR
+androidx.versionedparcelable.ParcelImpl: android.os.Parcelable$Creator CREATOR
+com.spaceshooter.domain.entity.Particle: float maxLifetime
+com.spaceshooter.domain.model.BossType: com.spaceshooter.domain.model.BossType[] $VALUES
+androidx.lifecycle.Lifecycle$Event: androidx.lifecycle.Lifecycle$Event ON_DESTROY
+com.spaceshooter.domain.entity.Enemy: float chargeTime
+com.spaceshooter.domain.model.AsteroidTier: com.spaceshooter.domain.model.AsteroidTier MEDIUM
+com.spaceshooter.domain.entity.Bullet: boolean piercing
+kotlinx.coroutines.internal.LockFreeTaskQueue: java.lang.Object _cur$volatile
+kotlinx.coroutines.internal.ThreadSafeHeap: int _size$volatile
+com.spaceshooter.domain.model.AsteroidTier: float radius
+com.spaceshooter.domain.entity.Asteroid: int $stable
+androidx.lifecycle.Lifecycle$Event: androidx.lifecycle.Lifecycle$Event ON_START
+com.spaceshooter.domain.entity.Particle: int $stable
+com.spaceshooter.domain.entity.Player: int maxHp
+com.spaceshooter.domain.entity.Enemy: float fireRate
+com.spaceshooter.domain.model.ComboState: float timer
+com.spaceshooter.domain.entity.Player: float invincibility
+kotlinx.coroutines.flow.StateFlowImpl: java.lang.Object _state$volatile
+com.spaceshooter.domain.entity.Player: com.spaceshooter.domain.model.ShipType shipType
+kotlinx.coroutines.scheduling.WorkQueue: int blockingTasksInBuffer$volatile
+com.spaceshooter.domain.entity.PowerUp: float radius
+kotlinx.coroutines.android.AndroidExceptionPreHandler: java.lang.Object _preHandler
+com.spaceshooter.domain.model.AbilityType: com.spaceshooter.domain.model.AbilityType MISSILE_BARRAGE
+com.spaceshooter.domain.model.EnemyType: float accuracy
+com.spaceshooter.domain.model.ShipType: java.lang.String displayName
+com.spaceshooter.domain.entity.Player: float radius
+com.spaceshooter.domain.entity.Asteroid: int hp
+kotlinx.coroutines.JobSupport$Finishing: int _isCompleting$volatile
+com.spaceshooter.domain.entity.PowerUp: com.spaceshooter.core.math.Vec2 vel
+com.spaceshooter.domain.model.PowerUpType: com.spaceshooter.domain.model.PowerUpType MAGNET
+kotlinx.coroutines.internal.LockFreeTaskQueueCore: java.lang.Object _next$volatile
+kotlinx.coroutines.channels.BufferedChannel: long sendersAndCloseStatus$volatile
+kotlinx.coroutines.EventLoopImplBase$DelayedTask: java.lang.Object _heap
+kotlinx.coroutines.internal.LimitedDispatcher: int runningWorkers$volatile
+com.spaceshooter.domain.entity.Enemy: float radius
+com.spaceshooter.domain.model.EnemyType: java.lang.String displayName
+com.spaceshooter.domain.entity.PowerUp: int $stable
+com.spaceshooter.domain.entity.Bullet: int $stable
+androidx.lifecycle.Lifecycle$Event: androidx.lifecycle.Lifecycle$Event ON_ANY
+androidx.lifecycle.Lifecycle$Event: androidx.lifecycle.Lifecycle$Event[] $VALUES
+kotlinx.coroutines.sync.MutexImpl: java.lang.Object owner$volatile
+com.spaceshooter.domain.entity.PowerUp: float lifetime
+com.spaceshooter.domain.model.EnemyType: com.spaceshooter.domain.model.EnemyType TANK
+com.spaceshooter.domain.model.BossType: com.spaceshooter.domain.model.BossType DESTROYER
+com.spaceshooter.domain.model.BossType: int points
+com.spaceshooter.domain.model.PowerUpType: com.spaceshooter.domain.model.PowerUpType[] $VALUES
+com.spaceshooter.domain.model.ActivePowerUp: int $stable
+com.spaceshooter.domain.model.EnemyType: int hp
+com.spaceshooter.domain.entity.Boss: float attackCooldown
+com.spaceshooter.domain.model.ComboState: int count
+kotlinx.coroutines.internal.ConcurrentLinkedListNode: java.lang.Object _prev$volatile
+com.spaceshooter.domain.entity.Bullet: boolean isPlayerBullet
+com.spaceshooter.domain.model.AbilityType: kotlin.enums.EnumEntries $ENTRIES
+com.spaceshooter.domain.entity.Particle: float size
+com.spaceshooter.domain.model.SpecialAbilityState: com.spaceshooter.domain.model.AbilityType type
+com.spaceshooter.domain.entity.Boss: com.spaceshooter.core.math.Vec2 pos
+com.spaceshooter.domain.model.AbilityType: com.spaceshooter.domain.model.AbilityType SHIELD_BURST
+kotlinx.coroutines.JobSupport: java.lang.Object _parentHandle$volatile
+com.spaceshooter.domain.model.SpecialAbilityState: float duration
+androidx.lifecycle.Lifecycle$Event: androidx.lifecycle.Lifecycle$Event$Companion Companion
+com.spaceshooter.domain.entity.Boss: int score
+com.spaceshooter.domain.entity.Boss: int maxHp
+com.spaceshooter.domain.model.AbilityType: java.lang.String displayName
+com.spaceshooter.domain.entity.Enemy: float accuracy
+kotlinx.coroutines.CancellableContinuationImpl: java.lang.Object _state$volatile
+com.spaceshooter.domain.entity.HomingMissile: com.spaceshooter.core.math.Vec2 vel
+com.spaceshooter.domain.model.ShipType: com.spaceshooter.domain.model.ShipType SCOUT
+com.spaceshooter.domain.model.BossType: kotlin.enums.EnumEntries $ENTRIES
+com.spaceshooter.domain.entity.Enemy: float stunTime
+com.spaceshooter.domain.entity.Asteroid: com.spaceshooter.domain.model.AsteroidTier tier
+com.spaceshooter.domain.entity.Player: float fireCooldown
+com.spaceshooter.domain.model.AsteroidTier: int points
+com.spaceshooter.domain.model.BossType: float radius
+kotlinx.coroutines.EventLoopImplBase: int _isCompleted$volatile
+com.spaceshooter.domain.model.PowerUpType: float duration
+com.spaceshooter.domain.entity.HomingMissile: int damage
+androidx.compose.runtime.ParcelableSnapshotMutableState: android.os.Parcelable$Creator CREATOR
+kotlin.SafePublicationLazyImpl: java.lang.Object _value
+com.spaceshooter.domain.model.PowerUpType: com.spaceshooter.domain.model.PowerUpType SHIELD
+com.spaceshooter.domain.model.AbilityType: float duration
+androidx.concurrent.futures.AbstractResolvableFuture: androidx.concurrent.futures.AbstractResolvableFuture$Waiter waiters
+com.spaceshooter.domain.model.ScreenShake: float duration
+com.spaceshooter.domain.entity.Player: com.spaceshooter.domain.model.SpecialAbilityState specialAbility
+com.spaceshooter.domain.model.AbilityType: com.spaceshooter.domain.model.AbilityType EMP_BLAST
+com.spaceshooter.domain.model.PowerUpType: com.spaceshooter.domain.model.PowerUpType RAPID_FIRE
+com.spaceshooter.domain.model.ShipType: float fireRateMultiplier
+com.spaceshooter.domain.entity.Enemy: float fireCooldown
+com.spaceshooter.domain.entity.HomingMissile: com.spaceshooter.core.math.Vec2 pos
+kotlinx.coroutines.internal.LockFreeTaskQueueCore: long _state$volatile
+com.spaceshooter.domain.model.EnemyType: float fireRate
+kotlinx.coroutines.scheduling.CoroutineScheduler: long controlState$volatile
+kotlinx.coroutines.sync.SemaphoreAndMutexImpl: long deqIdx$volatile
+com.spaceshooter.domain.entity.HomingMissile: float lifetime
+com.spaceshooter.domain.model.PowerUpType: kotlin.enums.EnumEntries $ENTRIES
+kotlinx.coroutines.JobSupport$Finishing: java.lang.Object _rootCause$volatile
+com.spaceshooter.domain.entity.Particle: int color
+com.spaceshooter.domain.entity.Player: float ang
+com.spaceshooter.domain.model.EnemyType: com.spaceshooter.domain.model.EnemyType SCOUT
+com.spaceshooter.domain.entity.Asteroid: float rotationSpeed
+kotlinx.coroutines.channels.BufferedChannel: long receivers$volatile
+androidx.concurrent.futures.AbstractResolvableFuture$Waiter: androidx.concurrent.futures.AbstractResolvableFuture$Waiter next
+androidx.compose.runtime.ParcelableSnapshotMutableFloatState: android.os.Parcelable$Creator CREATOR
+com.spaceshooter.domain.entity.Player: com.spaceshooter.core.math.Vec2 vel
+kotlinx.coroutines.scheduling.CoroutineScheduler: long parkedWorkersStack$volatile
+com.spaceshooter.domain.entity.Asteroid: com.spaceshooter.core.math.Vec2 pos
+com.spaceshooter.domain.model.SpecialAbilityState: int $stable
+com.spaceshooter.domain.entity.Enemy: int hp
+com.spaceshooter.domain.model.BossType: com.spaceshooter.domain.model.BossType CARRIER
+com.spaceshooter.domain.model.SpecialAbilityState: float cooldown
+androidx.compose.material3.MinimumInteractiveModifier: MinimumInteractiveModifier()
+androidx.core.view.ViewCompat$Api30Impl: java.lang.CharSequence getStateDescription(android.view.View)
+androidx.activity.EdgeToEdgeApi26: void setUp(androidx.activity.SystemBarStyle,androidx.activity.SystemBarStyle,android.view.Window,android.view.View,boolean,boolean)
+kotlinx.coroutines.scheduling.CoroutineScheduler$WorkerState: kotlinx.coroutines.scheduling.CoroutineScheduler$WorkerState[] values()
+com.spaceshooter.domain.entity.Enemy: float getStunTime()
+kotlinx.coroutines.flow.SharingCommand: kotlinx.coroutines.flow.SharingCommand[] values()
+androidx.core.view.ViewCompat$Api29Impl: android.view.View$AccessibilityDelegate getAccessibilityDelegate(android.view.View)
+com.spaceshooter.domain.model.ShipType: java.lang.String getDisplayName()
+androidx.compose.ui.graphics.BlendModeColorFilterHelper: androidx.compose.ui.graphics.BlendModeColorFilter createBlendModeColorFilter(android.graphics.BlendModeColorFilter)
+androidx.lifecycle.Lifecycle$State: androidx.lifecycle.Lifecycle$State[] values()
+androidx.lifecycle.ProcessLifecycleOwner$attach$1: void onActivityPaused(android.app.Activity)
+androidx.compose.ui.viewinterop.ViewFactoryHolder: kotlin.jvm.functions.Function1 getUpdateBlock()
+androidx.compose.ui.platform.AbstractComposeView: void setViewCompositionStrategy(androidx.compose.ui.platform.ViewCompositionStrategy)
+com.spaceshooter.domain.entity.Enemy: float component11()
+androidx.compose.ui.focus.CustomDestinationResult: androidx.compose.ui.focus.CustomDestinationResult[] values()
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.platform.AndroidComposeView$ViewTreeOwners getViewTreeOwners()
+kotlinx.coroutines.CoroutineStart: kotlinx.coroutines.CoroutineStart valueOf(java.lang.String)
+com.spaceshooter.domain.model.SpecialAbilityState: float component4()
+com.spaceshooter.domain.entity.Player: float getAng()
+com.spaceshooter.domain.entity.Boss: com.spaceshooter.core.math.Vec2 component2()
+com.spaceshooter.domain.model.ActivePowerUp: float component2()
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.modifier.ModifierLocalManager getModifierLocalManager()
+androidx.compose.ui.state.ToggleableState: androidx.compose.ui.state.ToggleableState valueOf(java.lang.String)
+com.spaceshooter.domain.model.PowerUpType: float getDuration()
+com.spaceshooter.domain.entity.Asteroid: com.spaceshooter.domain.model.AsteroidTier getTier()
+com.spaceshooter.domain.model.ScreenShake: com.spaceshooter.core.math.Vec2 getOffset()
+androidx.compose.animation.core.MutatePriority: androidx.compose.animation.core.MutatePriority valueOf(java.lang.String)
+com.spaceshooter.domain.entity.Bullet: com.spaceshooter.domain.entity.Bullet copy$default(com.spaceshooter.domain.entity.Bullet,com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,boolean,int,float,boolean,int,java.lang.Object)
+androidx.activity.EdgeToEdgeApi21: void setUp(androidx.activity.SystemBarStyle,androidx.activity.SystemBarStyle,android.view.Window,android.view.View,boolean,boolean)
+com.spaceshooter.domain.entity.Player: float component6()
+com.spaceshooter.domain.model.AbilityType: com.spaceshooter.domain.model.AbilityType[] $values()
+androidx.profileinstaller.ProfileVerifier$Api33Impl: android.content.pm.PackageInfo getPackageInfo(android.content.pm.PackageManager,android.content.Context)
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.semantics.SemanticsOwner getSemanticsOwner()
+androidx.compose.ui.text.platform.extensions.LocaleListHelperMethods: java.lang.Object localeSpan(androidx.compose.ui.text.intl.LocaleList)
+com.spaceshooter.domain.model.EnemyType: float getRadius()
+com.spaceshooter.domain.entity.Bullet: float component5()
+androidx.compose.ui.platform.AndroidComposeView: long getLastMatrixRecalculationAnimationTime$ui_release()
+androidx.compose.ui.text.android.CanvasCompatO: boolean clipOutPath(android.graphics.Canvas,android.graphics.Path)
+com.spaceshooter.domain.entity.Bullet: com.spaceshooter.domain.entity.Bullet copy(com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,boolean,int,float,boolean)
+com.spaceshooter.domain.model.ActivePowerUp: ActivePowerUp(com.spaceshooter.domain.model.PowerUpType,float)
+androidx.activity.Api34Impl: int swipeEdge(android.window.BackEvent)
+androidx.compose.ui.viewinterop.AndroidViewHolder: void setUpdate(kotlin.jvm.functions.Function0)
+com.spaceshooter.domain.model.SpecialAbilityState: float component5()
+com.spaceshooter.domain.entity.Boss: com.spaceshooter.domain.entity.Boss copy(com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,float,int,int,float,com.spaceshooter.domain.model.BossType,int,int,float,float,float,float,int)
+com.spaceshooter.domain.model.ActivePowerUp: com.spaceshooter.domain.model.ActivePowerUp copy(com.spaceshooter.domain.model.PowerUpType,float)
+com.spaceshooter.domain.model.ScreenShake: boolean equals(java.lang.Object)
+androidx.compose.ui.text.android.CanvasCompatQ: void drawColor(android.graphics.Canvas,long,android.graphics.BlendMode)
+androidx.core.app.RemoteActionCompatParcelizer: RemoteActionCompatParcelizer()
+androidx.compose.ui.platform.AndroidComposeView: void setShowLayoutBounds(boolean)
+com.spaceshooter.domain.entity.Enemy: com.spaceshooter.core.math.Vec2 getVel()
+androidx.compose.ui.input.pointer.PointerInteropFilter$DispatchToViewState: androidx.compose.ui.input.pointer.PointerInteropFilter$DispatchToViewState valueOf(java.lang.String)
+com.spaceshooter.domain.model.EnemyType: java.lang.String getDisplayName()
+com.spaceshooter.domain.entity.Enemy: float component3()
+com.spaceshooter.domain.entity.Enemy: com.spaceshooter.domain.entity.Enemy copy(com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,float,int,int,float,com.spaceshooter.domain.model.EnemyType,int,float,float,float,float,float,float,float)
+com.spaceshooter.domain.entity.Player: int component4()
+androidx.compose.ui.platform.coreshims.ViewStructureCompat$Api23Impl: android.os.Bundle getExtras(android.view.ViewStructure)
+androidx.lifecycle.EmptyActivityLifecycleCallbacks: void onActivityResumed(android.app.Activity)
+androidx.compose.ui.platform.AndroidViewsHandler: java.util.HashMap getLayoutNodeToHolder()
+androidx.compose.ui.autofill.AutofillApi23Helper: void setId(android.view.ViewStructure,int,java.lang.String,java.lang.String,java.lang.String)
+com.spaceshooter.domain.entity.Boss: boolean equals(java.lang.Object)
+kotlinx.coroutines.android.AndroidExceptionPreHandler: AndroidExceptionPreHandler()
+androidx.compose.ui.graphics.layer.ViewLayer: boolean getCanUseCompositingLayer$ui_graphics_release()
+com.spaceshooter.domain.entity.Boss: float getRadius()
+androidx.compose.ui.unit.LayoutDirection: androidx.compose.ui.unit.LayoutDirection[] values()
+com.spaceshooter.domain.model.ComboState: ComboState()
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.platform.AndroidClipboardManager getClipboardManager()
+com.spaceshooter.domain.model.SpecialAbilityState: com.spaceshooter.domain.model.SpecialAbilityState copy(com.spaceshooter.domain.model.AbilityType,boolean,float,float,float)
+androidx.core.view.ViewCompat$Api28Impl: boolean isScreenReaderFocusable(android.view.View)
+com.spaceshooter.domain.entity.Bullet: java.lang.String toString()
+androidx.core.app.RemoteActionCompatParcelizer: void write(androidx.core.app.RemoteActionCompat,androidx.versionedparcelable.VersionedParcel)
+androidx.compose.ui.graphics.Api26Bitmap: androidx.compose.ui.graphics.colorspace.ColorSpace composeColorSpace$ui_graphics_release(android.graphics.Bitmap)
+com.spaceshooter.domain.model.ComboState: float getMultiplier()
+com.spaceshooter.domain.model.EnemyType: float getSpeed()
+com.spaceshooter.domain.entity.Boss: int getMaxHp()
+androidx.compose.ui.platform.AbstractComposeView: void setParentContext(androidx.compose.runtime.CompositionContext)
+androidx.lifecycle.ProcessLifecycleOwner$attach$1$onActivityPreCreated$1: ProcessLifecycleOwner$attach$1$onActivityPreCreated$1(androidx.lifecycle.ProcessLifecycleOwner)
+com.spaceshooter.domain.entity.Player: int getMaxHp()
+com.spaceshooter.domain.entity.Bullet: float getRadius()
+com.spaceshooter.domain.entity.Boss: int component9()
+com.spaceshooter.presentation.game.GameViewModel: GameViewModel()
+androidx.compose.ui.autofill.AutofillApi26Helper: boolean isText(android.view.autofill.AutofillValue)
+com.spaceshooter.domain.entity.HomingMissile: boolean equals(java.lang.Object)
+kotlin.LazyThreadSafetyMode: kotlin.LazyThreadSafetyMode valueOf(java.lang.String)
+com.spaceshooter.domain.entity.PowerUp: com.spaceshooter.core.math.Vec2 getVel()
+com.spaceshooter.domain.model.BossType: int getPoints()
+androidx.graphics.path.PathIteratorPreApi34Impl: boolean internalPathIteratorHasNext(long)
+com.spaceshooter.domain.model.BossType: com.spaceshooter.domain.model.BossType valueOf(java.lang.String)
+kotlin.LazyThreadSafetyMode: kotlin.LazyThreadSafetyMode[] values()
+androidx.core.graphics.drawable.IconCompatParcelizer: androidx.core.graphics.drawable.IconCompat read(androidx.versionedparcelable.VersionedParcel)
+androidx.compose.ui.input.pointer.PointerEventPass: androidx.compose.ui.input.pointer.PointerEventPass valueOf(java.lang.String)
+androidx.compose.ui.focus.FocusTargetNode$FocusTargetElement: FocusTargetNode$FocusTargetElement()
+com.spaceshooter.domain.model.SpecialAbilityState: com.spaceshooter.domain.model.AbilityType getType()
+androidx.lifecycle.ProcessLifecycleOwner$attach$1: ProcessLifecycleOwner$attach$1(androidx.lifecycle.ProcessLifecycleOwner)
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.node.LayoutNode getRoot()
+com.spaceshooter.domain.model.AbilityType: com.spaceshooter.domain.model.AbilityType valueOf(java.lang.String)
+android.support.v4.graphics.drawable.IconCompatParcelizer: IconCompatParcelizer()
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.text.font.FontFamily$Resolver getFontFamilyResolver()
+androidx.compose.ui.text.platform.extensions.LocaleListHelperMethods: void setTextLocales(androidx.compose.ui.text.platform.AndroidTextPaint,androidx.compose.ui.text.intl.LocaleList)
+androidx.lifecycle.ProcessLifecycleOwner$attach$1: void onActivityStopped(android.app.Activity)
+androidx.compose.ui.platform.ViewLayer: void setInvalidated(boolean)
+com.spaceshooter.domain.model.ComboState: com.spaceshooter.domain.model.ComboState copy(int,float,int)
+com.spaceshooter.domain.entity.Particle: int hashCode()
+com.spaceshooter.domain.entity.HomingMissile: com.spaceshooter.core.math.Vec2 component3()
+com.spaceshooter.domain.entity.Enemy: int component8()
+com.spaceshooter.domain.model.ActivePowerUp: float getRemainingDuration()
+androidx.compose.ui.platform.WrapperRenderNodeLayerHelperMethods: void onDescendantInvalidated(androidx.compose.ui.platform.AndroidComposeView)
+androidx.compose.ui.text.android.BoringLayoutFactory33: android.text.BoringLayout create(java.lang.CharSequence,android.text.TextPaint,int,android.text.Layout$Alignment,float,float,android.text.BoringLayout$Metrics,boolean,boolean,android.text.TextUtils$TruncateAt,int)
+com.spaceshooter.domain.entity.Particle: com.spaceshooter.core.math.Vec2 component1()
+com.spaceshooter.domain.entity.Asteroid: com.spaceshooter.core.math.Vec2 component1()
+com.spaceshooter.domain.entity.Enemy: float getSpeed()
+androidx.compose.ui.platform.coreshims.ContentCaptureSessionCompat$Api29Impl: android.view.autofill.AutofillId newAutofillId(android.view.contentcapture.ContentCaptureSession,android.view.autofill.AutofillId,long)
+androidx.compose.ui.platform.ViewLayerVerificationHelper31: void setRenderEffect(android.view.View,androidx.compose.ui.graphics.RenderEffect)
+androidx.compose.ui.platform.coreshims.ViewStructureCompat$Api23Impl: void setTextStyle(android.view.ViewStructure,float,int,int,int)
+androidx.lifecycle.ReportFragment$LifecycleCallbacks: void onActivityPaused(android.app.Activity)
+com.spaceshooter.domain.entity.Boss: com.spaceshooter.core.math.Vec2 getPos()
+com.spaceshooter.domain.model.BossType: float getRadius()
+androidx.compose.ui.platform.DrawChildContainer: int getChildCount()
+androidx.lifecycle.LifecycleDispatcher$DispatcherActivityCallback: LifecycleDispatcher$DispatcherActivityCallback()
+com.spaceshooter.domain.model.BossType: com.spaceshooter.domain.model.BossType[] values()
+com.spaceshooter.domain.entity.Bullet: com.spaceshooter.core.math.Vec2 getPos()
+com.spaceshooter.domain.entity.Particle: Particle(com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,float,float,float,int)
+androidx.compose.ui.platform.AndroidComposeView: kotlin.coroutines.CoroutineContext getCoroutineContext()
+androidx.compose.foundation.layout.Direction: androidx.compose.foundation.layout.Direction[] values()
+com.spaceshooter.domain.model.ShipType: com.spaceshooter.domain.model.ShipType valueOf(java.lang.String)
+com.spaceshooter.domain.model.ComboState: int hashCode()
+com.spaceshooter.domain.entity.PowerUp: com.spaceshooter.domain.model.PowerUpType component3()
+androidx.compose.ui.platform.TextToolbarStatus: androidx.compose.ui.platform.TextToolbarStatus[] values()
+androidx.compose.ui.viewinterop.ViewFactoryHolder: void setSavableRegistryEntry(androidx.compose.runtime.saveable.SaveableStateRegistry$Entry)
+androidx.compose.ui.viewinterop.AndroidViewHolder: kotlin.jvm.functions.Function1 getOnRequestDisallowInterceptTouchEvent$ui_release()
+androidx.compose.ui.platform.ComposeView: java.lang.CharSequence getAccessibilityClassName()
+androidx.emoji2.text.ConcurrencyHelpers$Handler28Impl: android.os.Handler createAsync(android.os.Looper)
+kotlin.DeprecationLevel: kotlin.DeprecationLevel[] values()
+com.spaceshooter.domain.model.ShipType: float getSpeedMultiplier()
+com.spaceshooter.domain.entity.Particle: int getColor()
+androidx.compose.foundation.gestures.Orientation: androidx.compose.foundation.gestures.Orientation[] values()
+com.spaceshooter.domain.entity.Particle: boolean equals(java.lang.Object)
+androidx.compose.ui.platform.AndroidComposeView: void setFontFamilyResolver(androidx.compose.ui.text.font.FontFamily$Resolver)
+androidx.compose.ui.viewinterop.AndroidViewHolder: android.view.View getView()
+androidx.compose.ui.platform.ViewLayer: androidx.compose.ui.graphics.Path getManualClipPath()
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.hapticfeedback.HapticFeedback getHapticFeedBack()
+com.spaceshooter.domain.entity.Boss: float getSpecialCooldown()
+androidx.compose.ui.autofill.AutofillApi26Helper: boolean isToggle(android.view.autofill.AutofillValue)
+androidx.compose.ui.platform.ViewLayerContainer: void dispatchGetDisplayList()
+com.spaceshooter.domain.model.AsteroidTier: kotlin.enums.EnumEntries getEntries()
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.unit.Density getDensity()
+com.spaceshooter.domain.entity.Bullet: com.spaceshooter.core.math.Vec2 component2()
+com.spaceshooter.domain.entity.Enemy: float component6()
+androidx.graphics.path.PathIteratorPreApi34Impl: int internalPathIteratorSize(long)
+androidx.compose.ui.graphics.BlendModeColorFilterHelper: android.graphics.BlendModeColorFilter BlendModeColorFilter-xETnrds(long,int)
+androidx.compose.ui.viewinterop.AndroidViewHolder: void setModifier(androidx.compose.ui.Modifier)
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.platform.ViewConfiguration getViewConfiguration()
+com.spaceshooter.domain.entity.Enemy: float component14()
+com.spaceshooter.domain.entity.Boss: float component3()
+androidx.lifecycle.ProcessLifecycleOwner$attach$1$onActivityPreCreated$1: void onActivityPostStarted(android.app.Activity)
+androidx.lifecycle.ReportFragment: ReportFragment()
+com.spaceshooter.domain.model.ShipType: float getAbilityCooldown()
+androidx.lifecycle.ReportFragment$LifecycleCallbacks: void onActivityPostResumed(android.app.Activity)
+androidx.compose.ui.contentcapture.AndroidContentCaptureManager$ViewTranslationHelperMethods: void onVirtualViewTranslationResponses(androidx.compose.ui.contentcapture.AndroidContentCaptureManager,android.util.LongSparseArray)
+androidx.graphics.path.PathIteratorPreApi34Impl: int internalPathIteratorNext(long,float[],int)
+androidx.compose.ui.platform.AbstractComposeView: void getDisposeViewCompositionStrategy$annotations()
+com.spaceshooter.domain.entity.Particle: com.spaceshooter.core.math.Vec2 component2()
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.platform.AccessibilityManager getAccessibilityManager()
+androidx.compose.ui.graphics.layer.RenderNodeVerificationHelper28: void setAmbientShadowColor(android.view.RenderNode,int)
+com.spaceshooter.domain.entity.Player: boolean isInvincible()
+androidx.lifecycle.EmptyActivityLifecycleCallbacks: void onActivitySaveInstanceState(android.app.Activity,android.os.Bundle)
+androidx.compose.ui.platform.ViewLayer: float getCameraDistancePx()
+com.spaceshooter.domain.entity.HomingMissile: com.spaceshooter.core.math.Vec2 component2()
+androidx.compose.ui.viewinterop.AndroidViewHolder: androidx.compose.ui.Modifier getModifier()
+androidx.compose.ui.focus.FocusStateImpl: androidx.compose.ui.focus.FocusStateImpl[] values()
+androidx.lifecycle.LegacySavedStateHandleController$OnRecreation: LegacySavedStateHandleController$OnRecreation()
+androidx.lifecycle.Lifecycle$Event: androidx.lifecycle.Lifecycle$Event[] values()
+androidx.compose.ui.platform.AndroidComposeViewTranslationCallbackS: void setViewTranslationCallback(android.view.View)
+androidx.compose.ui.text.android.StaticLayoutFactory26: void setJustificationMode(android.text.StaticLayout$Builder,int)
+com.spaceshooter.domain.entity.Particle: Particle(com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,float,float,float,int,int,kotlin.jvm.internal.DefaultConstructorMarker)
+androidx.lifecycle.SavedStateHandlesVM: SavedStateHandlesVM()
+com.spaceshooter.domain.entity.Bullet: boolean isPlayerBullet()
+androidx.compose.ui.platform.AndroidComposeView: void setAccessibilityEventBatchIntervalMillis(long)
+androidx.activity.EdgeToEdgeApi30: void adjustLayoutInDisplayCutoutMode(android.view.Window)
+androidx.compose.ui.text.android.CanvasCompatO: boolean clipOutRect(android.graphics.Canvas,android.graphics.RectF)
+com.spaceshooter.domain.entity.Particle: com.spaceshooter.domain.entity.Particle copy(com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,float,float,float,int)
+com.spaceshooter.domain.entity.PowerUp: PowerUp(com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,com.spaceshooter.domain.model.PowerUpType,float,float)
+com.spaceshooter.domain.entity.Enemy: com.spaceshooter.domain.model.EnemyType component7()
+com.spaceshooter.domain.entity.Boss: com.spaceshooter.domain.model.BossType component7()
+com.spaceshooter.domain.entity.Boss: int component5()
+androidx.compose.ui.platform.ViewLayer: void setCameraDistancePx(float)
+com.spaceshooter.domain.entity.Bullet: boolean component6()
+androidx.compose.ui.text.style.ResolvedTextDirection: androidx.compose.ui.text.style.ResolvedTextDirection valueOf(java.lang.String)
+androidx.compose.ui.text.android.StaticLayoutFactoryDefault: android.text.StaticLayout create(androidx.compose.ui.text.android.StaticLayoutParams)
+kotlin.coroutines.intrinsics.CoroutineSingletons: kotlin.coroutines.intrinsics.CoroutineSingletons[] values()
+androidx.compose.ui.graphics.layer.RenderNodeVerificationHelper28: int getSpotShadowColor(android.view.RenderNode)
+androidx.compose.ui.graphics.Path$Direction: androidx.compose.ui.graphics.Path$Direction valueOf(java.lang.String)
+androidx.compose.ui.platform.AndroidComposeView: boolean getShowLayoutBounds()
+androidx.compose.ui.platform.RenderNodeVerificationHelper28: int getSpotShadowColor(android.view.RenderNode)
+androidx.activity.EdgeToEdgeApi29: void setUp(androidx.activity.SystemBarStyle,androidx.activity.SystemBarStyle,android.view.Window,android.view.View,boolean,boolean)
+com.spaceshooter.domain.entity.Boss: int getMaxPhase()
+androidx.compose.ui.text.input.CursorAnchorInfoApi34Helper: android.view.inputmethod.CursorAnchorInfo$Builder addVisibleLineBounds(android.view.inputmethod.CursorAnchorInfo$Builder,androidx.compose.ui.text.TextLayoutResult,androidx.compose.ui.geometry.Rect)
+com.spaceshooter.domain.model.ShipType: ShipType(java.lang.String,int,java.lang.String,int,float,float,float,int,com.spaceshooter.domain.model.AbilityType,float)
+com.spaceshooter.domain.model.ScreenShake: com.spaceshooter.domain.model.ScreenShake copy$default(com.spaceshooter.domain.model.ScreenShake,float,float,int,java.lang.Object)
+androidx.compose.ui.viewinterop.AndroidViewHolder: java.lang.CharSequence getAccessibilityClassName()
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.autofill.Autofill getAutofill()
+androidx.core.view.ViewCompat$Api28Impl: java.lang.CharSequence getAccessibilityPaneTitle(android.view.View)
+com.spaceshooter.domain.entity.Particle: com.spaceshooter.domain.entity.Particle copy$default(com.spaceshooter.domain.entity.Particle,com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,float,float,float,int,int,java.lang.Object)
+com.spaceshooter.domain.entity.Enemy: float getRadius()
+com.spaceshooter.domain.entity.Boss: float getAttackCooldown()
+com.spaceshooter.SpaceShooterApp: SpaceShooterApp()
+kotlinx.coroutines.CoroutineStart: kotlinx.coroutines.CoroutineStart[] values()
+com.spaceshooter.domain.model.ScreenShake: float getIntensity()
+androidx.activity.Api34Impl: float progress(android.window.BackEvent)
+com.spaceshooter.domain.model.ScreenShake: boolean isActive()
+androidx.lifecycle.EmptyActivityLifecycleCallbacks: void onActivityDestroyed(android.app.Activity)
+androidx.compose.ui.platform.RenderNodeVerificationHelper28: void setSpotShadowColor(android.view.RenderNode,int)
+kotlin.collections.AbstractList: AbstractList()
+androidx.compose.ui.text.android.BoringLayoutFactoryDefault: android.text.BoringLayout$Metrics isBoring(java.lang.CharSequence,android.text.TextPaint,android.text.TextDirectionHeuristic)
+androidx.compose.ui.graphics.Api26Bitmap: android.graphics.Bitmap createBitmap-x__-hDU$ui_graphics_release(int,int,int,boolean,androidx.compose.ui.graphics.colorspace.ColorSpace)
+com.spaceshooter.domain.entity.Asteroid: com.spaceshooter.core.math.Vec2 getPos()
+androidx.compose.ui.text.android.CanvasCompatS: void drawGlyphs(android.graphics.Canvas,int[],int,float[],int,int,android.graphics.fonts.Font,android.graphics.Paint)
+com.spaceshooter.domain.entity.Player: com.spaceshooter.core.math.Vec2 component2()
+androidx.compose.ui.platform.AndroidViewsHandler: java.util.HashMap getHolderToLayoutNode()
+com.spaceshooter.domain.entity.Asteroid: float getRotation()
+androidx.compose.ui.viewinterop.ViewFactoryHolder: kotlin.jvm.functions.Function1 getResetBlock()
+com.spaceshooter.domain.entity.Boss: java.lang.String toString()
+com.spaceshooter.domain.entity.Enemy: float getAng()
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.node.OwnerSnapshotObserver getSnapshotObserver()
+com.spaceshooter.domain.entity.Player: Player(com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,float,int,int,float,com.spaceshooter.domain.model.ShipType,float,float,com.spaceshooter.domain.model.SpecialAbilityState,int,kotlin.jvm.internal.DefaultConstructorMarker)
+com.spaceshooter.domain.model.ComboState: com.spaceshooter.domain.model.ComboState copy$default(com.spaceshooter.domain.model.ComboState,int,float,int,int,java.lang.Object)
+com.spaceshooter.domain.entity.Player: com.spaceshooter.domain.entity.Player copy(com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,float,int,int,float,com.spaceshooter.domain.model.ShipType,float,float,com.spaceshooter.domain.model.SpecialAbilityState)
+com.spaceshooter.domain.model.BossType: BossType(java.lang.String,int,java.lang.String,int,int,int,float)
+androidx.compose.ui.unit.LayoutDirection: androidx.compose.ui.unit.LayoutDirection valueOf(java.lang.String)
+androidx.compose.ui.platform.ViewLayerVerificationHelper28: void setOutlineAmbientShadowColor(android.view.View,int)
+com.spaceshooter.domain.entity.Asteroid: float component3()
+com.spaceshooter.domain.entity.Enemy: int component5()
+kotlin.coroutines.intrinsics.CoroutineSingletons: kotlin.coroutines.intrinsics.CoroutineSingletons valueOf(java.lang.String)
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.platform.AndroidViewsHandler getAndroidViewsHandler$ui_release()
+com.spaceshooter.domain.entity.HomingMissile: float getLifetime()
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.text.input.TextInputService getTextInputService()
+androidx.compose.ui.platform.AndroidComposeViewAccessibilityDelegateCompat$Api24Impl: void addSetProgressAction(androidx.core.view.accessibility.AccessibilityNodeInfoCompat,androidx.compose.ui.semantics.SemanticsNode)
+com.spaceshooter.domain.entity.HomingMissile: HomingMissile(com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,float,float,float,int)
+com.spaceshooter.domain.model.ShipType: int getCost()
+androidx.compose.ui.autofill.AutofillApi26Helper: void setAutofillType(android.view.ViewStructure,int)
+androidx.compose.ui.graphics.ColorSpaceVerificationHelper: androidx.compose.ui.graphics.colorspace.ColorSpace composeColorSpace(android.graphics.ColorSpace)
+androidx.compose.ui.viewinterop.AndroidViewHolder: void setSavedStateRegistryOwner(androidx.savedstate.SavedStateRegistryOwner)
+androidx.compose.ui.platform.coreshims.ContentCaptureSessionCompat$Api29Impl: android.view.ViewStructure newVirtualViewStructure(android.view.contentcapture.ContentCaptureSession,android.view.autofill.AutofillId,long)
+com.spaceshooter.domain.model.ActivePowerUp: com.spaceshooter.domain.model.PowerUpType getType()
+com.spaceshooter.domain.entity.HomingMissile: float getTurnRate()
+com.spaceshooter.domain.entity.Enemy: Enemy(com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,float,int,int,float,com.spaceshooter.domain.model.EnemyType,int,float,float,float,float,float,float,float)
+androidx.compose.ui.text.android.CanvasCompatQ: void drawColor(android.graphics.Canvas,int,android.graphics.BlendMode)
+androidx.compose.ui.platform.AndroidComposeView: kotlin.jvm.functions.Function1 getConfigurationChangeObserver()
+com.spaceshooter.domain.entity.HomingMissile: int component7()
+androidx.compose.ui.text.android.CanvasCompatR: boolean quickReject(android.graphics.Canvas,android.graphics.RectF)
+com.spaceshooter.domain.entity.Particle: java.lang.String toString()
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.platform.WindowInfo getWindowInfo()
+kotlinx.coroutines.flow.SharingCommand: kotlinx.coroutines.flow.SharingCommand valueOf(java.lang.String)
+com.spaceshooter.domain.entity.Bullet: com.spaceshooter.core.math.Vec2 component1()
+androidx.compose.ui.platform.RenderNodeVerificationHelper28: int getAmbientShadowColor(android.view.RenderNode)
+com.spaceshooter.domain.entity.Boss: float component10()
+com.spaceshooter.domain.entity.Boss: com.spaceshooter.domain.entity.Boss copy$default(com.spaceshooter.domain.entity.Boss,com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,float,int,int,float,com.spaceshooter.domain.model.BossType,int,int,float,float,float,float,int,int,java.lang.Object)
+com.spaceshooter.domain.model.ComboState: ComboState(int,float,int,int,kotlin.jvm.internal.DefaultConstructorMarker)
+com.spaceshooter.domain.model.ShipType: float getFireRateMultiplier()
+com.spaceshooter.domain.entity.Bullet: int hashCode()
+androidx.compose.ui.platform.AbstractComposeView: void setPreviousAttachedWindowToken(android.os.IBinder)
+androidx.compose.ui.platform.AndroidComposeView: void setOnViewTreeOwnersAvailable(kotlin.jvm.functions.Function1)
+androidx.compose.ui.platform.AndroidComposeView: void set_viewTreeOwners(androidx.compose.ui.platform.AndroidComposeView$ViewTreeOwners)
+androidx.compose.material3.tokens.ShapeKeyTokens: androidx.compose.material3.tokens.ShapeKeyTokens valueOf(java.lang.String)
+com.spaceshooter.domain.model.AbilityType: kotlin.enums.EnumEntries getEntries()
+android.support.v4.app.RemoteActionCompatParcelizer: void write(androidx.core.app.RemoteActionCompat,androidx.versionedparcelable.VersionedParcel)
+com.spaceshooter.domain.model.ActivePowerUp: boolean equals(java.lang.Object)
+androidx.activity.OnBackPressedDispatcher$Api33Impl: android.window.OnBackInvokedCallback createOnBackInvokedCallback(kotlin.jvm.functions.Function0)
+com.spaceshooter.domain.entity.Asteroid: float getRotationSpeed()
+com.spaceshooter.domain.model.EnemyType: int getPoints()
+android.support.v4.graphics.drawable.IconCompatParcelizer: void write(androidx.core.graphics.drawable.IconCompat,androidx.versionedparcelable.VersionedParcel)
+com.spaceshooter.domain.model.AsteroidTier: int getPoints()
+com.spaceshooter.domain.model.EnemyType: int getDamage()
+com.spaceshooter.domain.model.ComboState: int getMultiplierTier()
+androidx.emoji2.text.EmojiCompatInitializer: EmojiCompatInitializer()
+com.spaceshooter.domain.model.ScreenShake: float component2()
+androidx.compose.ui.node.TraversableNode$Companion$TraverseDescendantsAction: androidx.compose.ui.node.TraversableNode$Companion$TraverseDescendantsAction[] values()
+com.spaceshooter.domain.entity.Particle: float getSize()
+androidx.profileinstaller.ProfileInstallerInitializer$Handler28Impl: android.os.Handler createAsync(android.os.Looper)
+com.spaceshooter.domain.model.SpecialAbilityState: boolean component2()
+com.spaceshooter.domain.entity.Boss: int component4()
+com.spaceshooter.domain.entity.Player: Player()
+com.spaceshooter.domain.model.ActivePowerUp: int hashCode()
+androidx.compose.ui.text.input.TextInputServiceAndroid$TextInputCommand: androidx.compose.ui.text.input.TextInputServiceAndroid$TextInputCommand valueOf(java.lang.String)
+androidx.compose.ui.viewinterop.AndroidViewHolder: kotlin.jvm.functions.Function0 getReset()
+androidx.compose.ui.text.input.TextInputServiceAndroid$TextInputCommand: androidx.compose.ui.text.input.TextInputServiceAndroid$TextInputCommand[] values()
+androidx.compose.ui.platform.AndroidComposeView: boolean getHasPendingMeasureOrLayout()
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.autofill.AutofillTree getAutofillTree()
+com.spaceshooter.domain.model.BossType: kotlin.enums.EnumEntries getEntries()
+com.spaceshooter.domain.model.PowerUpType: PowerUpType(java.lang.String,int,java.lang.String,float)
+androidx.lifecycle.ReportFragment$LifecycleCallbacks: void registerIn(android.app.Activity)
+com.spaceshooter.domain.entity.Asteroid: Asteroid(com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,float,int,float,float,com.spaceshooter.domain.model.AsteroidTier,int,kotlin.jvm.internal.DefaultConstructorMarker)
+com.spaceshooter.domain.entity.Asteroid: Asteroid(com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,float,int,float,float,com.spaceshooter.domain.model.AsteroidTier)
+androidx.compose.ui.platform.AndroidComposeView: android.view.View findViewByAccessibilityIdTraversal(int)
+androidx.compose.ui.text.android.StaticLayoutFactory28: void setUseLineSpacingFromFallbacks(android.text.StaticLayout$Builder,boolean)
+androidx.lifecycle.LifecycleDispatcher$DispatcherActivityCallback: void onActivityCreated(android.app.Activity,android.os.Bundle)
+androidx.compose.ui.graphics.layer.ViewLayer: android.view.View getOwnerView()
+androidx.compose.ui.viewinterop.ViewFactoryHolder: kotlin.jvm.functions.Function1 getReleaseBlock()
+com.spaceshooter.domain.model.ActivePowerUp: java.lang.String toString()
+androidx.profileinstaller.FileSectionType: androidx.profileinstaller.FileSectionType[] values()
+androidx.compose.ui.platform.AbstractComposeView: void setParentCompositionContext(androidx.compose.runtime.CompositionContext)
+androidx.compose.ui.viewinterop.AndroidViewHolder: androidx.compose.ui.unit.Density getDensity()
+androidx.lifecycle.ReportFragment$LifecycleCallbacks: void onActivitySaveInstanceState(android.app.Activity,android.os.Bundle)
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.platform.ClipboardManager getClipboardManager()
+androidx.compose.ui.text.android.CanvasCompatQ: void drawRenderNode(android.graphics.Canvas,android.graphics.RenderNode)
+com.spaceshooter.domain.entity.Boss: float component11()
+com.spaceshooter.domain.model.PowerUpType: com.spaceshooter.domain.model.PowerUpType[] values()
+com.spaceshooter.domain.model.ComboState: float getTimer()
+androidx.lifecycle.ReportFragment$LifecycleCallbacks: void onActivityPrePaused(android.app.Activity)
+androidx.lifecycle.ReportFragment$LifecycleCallbacks: void onActivityPostStarted(android.app.Activity)
+com.spaceshooter.domain.entity.Boss: int getHp()
+com.spaceshooter.domain.entity.Enemy: float component12()
+androidx.compose.ui.platform.AndroidComposeView: boolean getScrollCaptureInProgress$ui_release()
+com.spaceshooter.domain.entity.HomingMissile: float component6()
+com.spaceshooter.domain.entity.Enemy: float getChargeTime()
+com.spaceshooter.domain.model.SpecialAbilityState: float getCooldownProgress()
+com.spaceshooter.domain.entity.Player: float component9()
+kotlinx.coroutines.android.AndroidDispatcherFactory: java.lang.String hintOnError()
+com.spaceshooter.domain.entity.PowerUp: com.spaceshooter.core.math.Vec2 getPos()
+androidx.lifecycle.ReportFragment$LifecycleCallbacks: void onActivityPreStopped(android.app.Activity)
+androidx.compose.ui.platform.ViewLayer: androidx.compose.ui.platform.DrawChildContainer getContainer()
+com.spaceshooter.domain.model.ShipType: com.spaceshooter.domain.model.AbilityType getAbilityType()
+com.spaceshooter.domain.model.ScreenShake: float getDuration()
+androidx.compose.ui.viewinterop.AndroidViewHolder: void setRelease(kotlin.jvm.functions.Function0)
+androidx.compose.ui.text.android.CanvasCompatO: boolean clipOutRect(android.graphics.Canvas,int,int,int,int)
+androidx.compose.material.ripple.RippleHostView: void setRippleState$lambda$2(androidx.compose.material.ripple.RippleHostView)
+com.spaceshooter.domain.entity.HomingMissile: com.spaceshooter.core.math.Vec2 getPos()
+com.spaceshooter.domain.entity.Asteroid: com.spaceshooter.core.math.Vec2 getVel()
+com.spaceshooter.domain.entity.Boss: com.spaceshooter.core.math.Vec2 component1()
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.platform.AndroidAccessibilityManager getAccessibilityManager()
+androidx.compose.ui.platform.TextToolbarStatus: androidx.compose.ui.platform.TextToolbarStatus valueOf(java.lang.String)
+com.spaceshooter.domain.entity.Bullet: Bullet(com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,boolean,int,float,boolean)
+androidx.compose.ui.autofill.AutofillCallback: void unregister(androidx.compose.ui.autofill.AndroidAutofill)
+android.support.v4.graphics.drawable.IconCompatParcelizer: androidx.core.graphics.drawable.IconCompat read(androidx.versionedparcelable.VersionedParcel)
+androidx.activity.Api34Impl: android.window.BackEvent createOnBackEvent(float,float,float,int)
+com.spaceshooter.domain.entity.Asteroid: boolean equals(java.lang.Object)
+androidx.activity.Api34Impl: float touchX(android.window.BackEvent)
+com.spaceshooter.domain.entity.Enemy: java.lang.String toString()
+com.spaceshooter.domain.entity.PowerUp: com.spaceshooter.domain.entity.PowerUp copy(com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,com.spaceshooter.domain.model.PowerUpType,float,float)
+androidx.compose.ui.text.android.Paint29: void getTextBounds(android.graphics.Paint,java.lang.CharSequence,int,int,android.graphics.Rect)
+androidx.compose.ui.focus.FocusStateImpl: androidx.compose.ui.focus.FocusStateImpl valueOf(java.lang.String)
+com.spaceshooter.domain.entity.Player: com.spaceshooter.core.math.Vec2 getVel()
+com.spaceshooter.domain.model.EnemyType: float getFireRate()
+com.spaceshooter.domain.entity.Boss: int component8()
+androidx.compose.ui.platform.AndroidComposeView: void setDensity(androidx.compose.ui.unit.Density)
+com.spaceshooter.domain.entity.HomingMissile: float component5()
+androidx.compose.ui.viewinterop.AndroidViewHolder: kotlin.jvm.functions.Function1 getOnDensityChanged$ui_release()
+androidx.compose.ui.platform.RenderNodeVerificationHelper23: void destroyDisplayListData(android.view.RenderNode)
+com.spaceshooter.domain.entity.Asteroid: com.spaceshooter.domain.model.AsteroidTier component7()
+androidx.profileinstaller.FileSectionType: androidx.profileinstaller.FileSectionType valueOf(java.lang.String)
+com.spaceshooter.domain.entity.Asteroid: com.spaceshooter.core.math.Vec2 component2()
+androidx.lifecycle.EmptyActivityLifecycleCallbacks: void onActivityCreated(android.app.Activity,android.os.Bundle)
+androidx.compose.ui.graphics.AndroidGraphicsContext$UniqueDrawingIdApi29: long getUniqueDrawingId(android.view.View)
+androidx.compose.ui.viewinterop.AndroidViewHolder: void setOnDensityChanged$ui_release(kotlin.jvm.functions.Function1)
+androidx.compose.animation.core.AnimationEndReason: androidx.compose.animation.core.AnimationEndReason valueOf(java.lang.String)
+com.spaceshooter.domain.model.PowerUpType: com.spaceshooter.domain.model.PowerUpType[] $values()
+com.spaceshooter.domain.entity.Enemy: float getBombCooldown()
+com.spaceshooter.domain.entity.Player: com.spaceshooter.domain.model.ShipType getShipType()
+com.spaceshooter.domain.entity.Boss: Boss(com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,float,int,int,float,com.spaceshooter.domain.model.BossType,int,int,float,float,float,float,int,int,kotlin.jvm.internal.DefaultConstructorMarker)
+androidx.compose.ui.platform.coreshims.ViewCompatShims$Api26Impl: android.view.autofill.AutofillId getAutofillId(android.view.View)
+kotlinx.coroutines.selects.TrySelectDetailedResult: kotlinx.coroutines.selects.TrySelectDetailedResult[] values()
+kotlinx.coroutines.android.AndroidDispatcherFactory: AndroidDispatcherFactory()
+com.spaceshooter.domain.entity.Player: com.spaceshooter.core.math.Vec2 getPos()
+com.spaceshooter.domain.model.SpecialAbilityState: com.spaceshooter.domain.model.SpecialAbilityState copy$default(com.spaceshooter.domain.model.SpecialAbilityState,com.spaceshooter.domain.model.AbilityType,boolean,float,float,float,int,java.lang.Object)
+androidx.compose.ui.viewinterop.AndroidViewHolder: androidx.savedstate.SavedStateRegistryOwner getSavedStateRegistryOwner()
+androidx.compose.ui.text.android.StaticLayoutFactory33: boolean isFallbackLineSpacingEnabled(android.text.StaticLayout)
+com.spaceshooter.domain.entity.Enemy: com.spaceshooter.domain.model.EnemyType getType()
+com.spaceshooter.domain.entity.Player: int getHp()
+androidx.compose.ui.platform.AndroidComposeView: void getFontLoader$annotations()
+androidx.compose.ui.platform.RenderNodeApi29VerificationHelper: void setRenderEffect(android.graphics.RenderNode,androidx.compose.ui.graphics.RenderEffect)
+androidx.lifecycle.Lifecycle$Event: androidx.lifecycle.Lifecycle$Event valueOf(java.lang.String)
+androidx.lifecycle.ReportFragment$LifecycleCallbacks: void onActivityResumed(android.app.Activity)
+androidx.core.graphics.drawable.IconCompatParcelizer: IconCompatParcelizer()
+androidx.compose.ui.text.platform.Api28Impl: android.text.style.TypefaceSpan createTypefaceSpan(android.graphics.Typeface)
+kotlinx.coroutines.channels.BufferOverflow: kotlinx.coroutines.channels.BufferOverflow[] values()
+com.spaceshooter.domain.model.SpecialAbilityState: float getMaxCooldown()
+com.spaceshooter.domain.entity.Player: boolean getSpecialReady()
+com.spaceshooter.domain.model.SpecialAbilityState: boolean isReady()
+androidx.compose.ui.node.LayoutNode$UsageByParent: androidx.compose.ui.node.LayoutNode$UsageByParent valueOf(java.lang.String)
+androidx.compose.foundation.gestures.Orientation: androidx.compose.foundation.gestures.Orientation valueOf(java.lang.String)
+androidx.compose.ui.input.pointer.MotionEventHelper: long toRawOffset-dBAh8RU(android.view.MotionEvent,int)
+com.spaceshooter.domain.entity.Enemy: com.spaceshooter.core.math.Vec2 component1()
+androidx.compose.ui.graphics.layer.view.DrawChildContainer: int getChildCount()
+androidx.compose.ui.autofill.AutofillCallback: void register(androidx.compose.ui.autofill.AndroidAutofill)
+androidx.activity.ComponentActivity$Api33Impl: android.window.OnBackInvokedDispatcher getOnBackInvokedDispatcher(android.app.Activity)
+com.spaceshooter.domain.entity.Player: com.spaceshooter.domain.entity.Player copy$default(com.spaceshooter.domain.entity.Player,com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,float,int,int,float,com.spaceshooter.domain.model.ShipType,float,float,com.spaceshooter.domain.model.SpecialAbilityState,int,java.lang.Object)
+com.spaceshooter.domain.model.ScreenShake: ScreenShake(float,float,int,kotlin.jvm.internal.DefaultConstructorMarker)
+com.spaceshooter.domain.entity.Enemy: float component9()
+com.spaceshooter.domain.model.ComboState: float component2()
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.graphics.GraphicsContext getGraphicsContext()
+androidx.compose.ui.platform.AndroidComposeView: long getMeasureIteration()
+androidx.compose.ui.node.LayoutNode$LayoutState: androidx.compose.ui.node.LayoutNode$LayoutState[] values()
+com.spaceshooter.presentation.game.GameCanvasView: void setOnDimensionsCallback(kotlin.jvm.functions.Function2)
+androidx.compose.ui.viewinterop.ViewFactoryHolder: androidx.compose.ui.platform.AbstractComposeView getSubCompositionView()
+androidx.compose.ui.platform.coreshims.ViewStructureCompat$Api23Impl: void setContentDescription(android.view.ViewStructure,java.lang.CharSequence)
+com.spaceshooter.domain.entity.Asteroid: java.lang.String toString()
+com.spaceshooter.domain.entity.Bullet: int component4()
+com.spaceshooter.domain.model.EnemyType: EnemyType(java.lang.String,int,java.lang.String,int,float,int,float,int,float,float)
+com.spaceshooter.domain.entity.PowerUp: boolean equals(java.lang.Object)
+com.spaceshooter.domain.entity.Bullet: com.spaceshooter.core.math.Vec2 getVel()
+androidx.compose.ui.platform.AndroidComposeView: void getShowLayoutBounds$annotations()
+com.spaceshooter.domain.entity.HomingMissile: com.spaceshooter.core.math.Vec2 component1()
+com.spaceshooter.domain.model.ComboState: ComboState(int,float,int)
+androidx.compose.ui.text.android.BoringLayoutFactoryDefault: android.text.BoringLayout create(java.lang.CharSequence,android.text.TextPaint,int,android.text.Layout$Alignment,float,float,android.text.BoringLayout$Metrics,boolean,android.text.TextUtils$TruncateAt,int)
+com.spaceshooter.domain.model.EnemyType: int getHp()
+androidx.compose.ui.platform.coreshims.ContentCaptureSessionCompat$Api29Impl: void notifyViewsDisappeared(android.view.contentcapture.ContentCaptureSession,android.view.autofill.AutofillId,long[])
+com.spaceshooter.domain.entity.Player: com.spaceshooter.core.math.Vec2 component1()
+com.spaceshooter.domain.model.ScreenShake: float component1()
+androidx.compose.ui.platform.AbstractComposeView: void getShowLayoutBounds$annotations()
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.draganddrop.DragAndDropManager getDragAndDropManager()
+androidx.compose.foundation.layout.Direction: androidx.compose.foundation.layout.Direction valueOf(java.lang.String)
+androidx.compose.ui.text.android.BoringLayoutFactory33: android.text.BoringLayout$Metrics isBoring(java.lang.CharSequence,android.text.TextPaint,android.text.TextDirectionHeuristic)
+androidx.lifecycle.ReportFragment$LifecycleCallbacks: void onActivityStopped(android.app.Activity)
+com.spaceshooter.domain.entity.Enemy: float getHealthPercent()
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.text.font.Font$ResourceLoader getFontLoader()
+com.spaceshooter.domain.model.SpecialAbilityState: float getDuration()
+androidx.compose.ui.scrollcapture.ScrollCapture: void onScrollCaptureSearch(android.view.View,androidx.compose.ui.semantics.SemanticsOwner,kotlin.coroutines.CoroutineContext,java.util.function.Consumer)
+com.spaceshooter.domain.entity.HomingMissile: com.spaceshooter.domain.entity.HomingMissile copy(com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,float,float,float,int)
+androidx.compose.ui.text.input.CursorAnchorInfoApi33Helper: android.view.inputmethod.CursorAnchorInfo$Builder setEditorBoundsInfo(android.view.inputmethod.CursorAnchorInfo$Builder,androidx.compose.ui.geometry.Rect)
+com.spaceshooter.domain.model.ShipType: float getDamageMultiplier()
+com.spaceshooter.domain.entity.Enemy: float component15()
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.input.InputModeManager getInputModeManager()
+com.spaceshooter.domain.entity.Player: com.spaceshooter.domain.model.ShipType component7()
+com.spaceshooter.domain.entity.Asteroid: int component4()
+androidx.compose.ui.text.font.TypefaceHelperMethodsApi28: android.graphics.Typeface create(android.graphics.Typeface,int,boolean)
+com.spaceshooter.domain.entity.Player: int hashCode()
+com.spaceshooter.domain.entity.Particle: float component3()
+com.spaceshooter.domain.entity.Player: float getInvincibility()
+com.spaceshooter.domain.entity.HomingMissile: com.spaceshooter.core.math.Vec2 getTarget()
+androidx.tracing.TraceApi29Impl: boolean isEnabled()
+androidx.activity.OnBackPressedDispatcher$Api34Impl: android.window.OnBackInvokedCallback createOnBackAnimationCallback(kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function1,kotlin.jvm.functions.Function0,kotlin.jvm.functions.Function0)
+androidx.core.graphics.drawable.IconCompat: IconCompat()
+androidx.compose.ui.text.android.CanvasCompatQ: void disableZ(android.graphics.Canvas)
+androidx.compose.ui.viewinterop.AndroidViewHolder: void setDensity(androidx.compose.ui.unit.Density)
+com.spaceshooter.domain.model.AsteroidTier: AsteroidTier(java.lang.String,int,float,int)
+com.spaceshooter.domain.entity.HomingMissile: com.spaceshooter.core.math.Vec2 getVel()
+androidx.versionedparcelable.CustomVersionedParcelable: CustomVersionedParcelable()
+androidx.compose.ui.platform.AndroidComposeViewAccessibilityDelegateCompat$Api29Impl: void addPageActions(androidx.core.view.accessibility.AccessibilityNodeInfoCompat,androidx.compose.ui.semantics.SemanticsNode)
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.node.LayoutNodeDrawScope getSharedDrawScope()
+com.spaceshooter.domain.entity.Particle: com.spaceshooter.core.math.Vec2 getVel()
+androidx.compose.ui.graphics.layer.RenderNodeVerificationHelper24: void discardDisplayList(android.view.RenderNode)
+com.spaceshooter.domain.entity.Asteroid: int getHp()
+com.spaceshooter.domain.entity.HomingMissile: int getDamage()
+com.spaceshooter.domain.model.ComboState: java.lang.String toString()
+androidx.lifecycle.ReportFragment$LifecycleCallbacks: void onActivityStarted(android.app.Activity)
+kotlin.collections.AbstractMutableList: AbstractMutableList()
+com.spaceshooter.domain.model.SpecialAbilityState: int hashCode()
+androidx.compose.ui.text.android.CanvasCompatR: boolean quickReject(android.graphics.Canvas,android.graphics.Path)
+com.spaceshooter.domain.entity.Player: float component3()
+com.spaceshooter.domain.model.ScreenShake: int hashCode()
+androidx.compose.material.ripple.RippleHostView: void setRippleState(boolean)
+com.spaceshooter.domain.entity.Player: com.spaceshooter.domain.model.SpecialAbilityState getSpecialAbility()
+com.spaceshooter.domain.entity.Boss: int component14()
+androidx.compose.ui.viewinterop.ViewFactoryHolder: void setResetBlock(kotlin.jvm.functions.Function1)
+com.spaceshooter.domain.entity.Enemy: float component13()
+androidx.compose.ui.text.android.CanvasCompatM: void drawTextRun(android.graphics.Canvas,java.lang.CharSequence,int,int,int,int,float,float,boolean,android.graphics.Paint)
+com.spaceshooter.domain.entity.PowerUp: java.lang.String toString()
+androidx.compose.ui.text.android.CanvasCompatQ: void drawTextRun(android.graphics.Canvas,android.graphics.text.MeasuredText,int,int,int,int,float,float,boolean,android.graphics.Paint)
+com.spaceshooter.domain.entity.HomingMissile: java.lang.String toString()
+com.spaceshooter.domain.model.ShipType: com.spaceshooter.domain.model.ShipType[] values()
+com.spaceshooter.domain.entity.Player: Player(com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,float,int,int,float,com.spaceshooter.domain.model.ShipType,float,float,com.spaceshooter.domain.model.SpecialAbilityState)
+androidx.compose.ui.viewinterop.AndroidViewHolder: androidx.lifecycle.LifecycleOwner getLifecycleOwner()
+androidx.compose.ui.text.android.CanvasCompatS: void drawPatch(android.graphics.Canvas,android.graphics.NinePatch,android.graphics.Rect,android.graphics.Paint)
+androidx.compose.ui.autofill.AutofillApi26Helper: boolean isList(android.view.autofill.AutofillValue)
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.unit.LayoutDirection getLayoutDirection()
+androidx.compose.ui.node.LayoutNode$LayoutState: androidx.compose.ui.node.LayoutNode$LayoutState valueOf(java.lang.String)
+com.spaceshooter.domain.entity.Enemy: int getHp()
+com.spaceshooter.domain.entity.Asteroid: float component5()
+androidx.compose.ui.text.android.StaticLayoutFactory23: android.text.StaticLayout create(androidx.compose.ui.text.android.StaticLayoutParams)
+kotlinx.coroutines.android.AndroidDispatcherFactory: kotlinx.coroutines.MainCoroutineDispatcher createDispatcher(java.util.List)
+com.spaceshooter.domain.entity.Enemy: float getFireRate()
+com.spaceshooter.domain.entity.Boss: int getCurrentPhase()
+com.spaceshooter.domain.model.AbilityType: float getDuration()
+com.spaceshooter.domain.model.ScreenShake: com.spaceshooter.domain.model.ScreenShake copy(float,float)
+androidx.compose.ui.platform.AndroidComposeView: void setLastMatrixRecalculationAnimationTime$ui_release(long)
+androidx.graphics.path.PathIteratorPreApi34Impl: int internalPathIteratorRawSize(long)
+com.spaceshooter.domain.entity.Asteroid: com.spaceshooter.domain.entity.Asteroid copy(com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,float,int,float,float,com.spaceshooter.domain.model.AsteroidTier)
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.input.pointer.PointerIconService getPointerIconService()
+androidx.compose.ui.platform.AndroidComposeViewAssistHelperMethodsO: void setClassName(android.view.ViewStructure,android.view.View)
+androidx.compose.ui.platform.AndroidComposeView: void setCoroutineContext(kotlin.coroutines.CoroutineContext)
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.focus.FocusOwner getFocusOwner()
+androidx.profileinstaller.ProfileInstallerInitializer: ProfileInstallerInitializer()
+com.spaceshooter.domain.model.ActivePowerUp: com.spaceshooter.domain.model.PowerUpType component1()
+com.spaceshooter.domain.entity.Bullet: boolean component3()
+androidx.compose.ui.platform.ComposeView: boolean getShouldCreateCompositionOnAttachedToWindow()
+androidx.compose.ui.platform.AndroidComposeViewTranslationCallbackS: void clearViewTranslationCallback(android.view.View)
+androidx.startup.InitializationProvider: InitializationProvider()
+androidx.activity.Api34Impl: float touchY(android.window.BackEvent)
+com.spaceshooter.domain.entity.Boss: int getPhase()
+androidx.compose.ui.platform.AndroidComposeView: void setConfigurationChangeObserver(kotlin.jvm.functions.Function1)
+com.spaceshooter.domain.entity.Boss: boolean isStunned()
+com.spaceshooter.domain.model.EnemyType: com.spaceshooter.domain.model.EnemyType[] $values()
+androidx.compose.ui.platform.RenderNodeVerificationHelper28: void setAmbientShadowColor(android.view.RenderNode,int)
+com.spaceshooter.domain.model.ScreenShake: ScreenShake(float,float)
+androidx.profileinstaller.ProfileInstallerInitializer$Choreographer16Impl: void postFrameCallback(java.lang.Runnable)
+com.spaceshooter.domain.model.ShipType: com.spaceshooter.domain.model.ShipType[] $values()
+com.spaceshooter.domain.entity.Particle: com.spaceshooter.core.math.Vec2 getPos()
+androidx.compose.ui.graphics.layer.ViewLayer: androidx.compose.ui.graphics.CanvasHolder getCanvasHolder()
+androidx.compose.ui.platform.ComposeView: void getShouldCreateCompositionOnAttachedToWindow$annotations()
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.node.RootForTest getRootForTest()
+androidx.activity.OnBackPressedDispatcher$Api33Impl: void registerOnBackInvokedCallback(java.lang.Object,int,java.lang.Object)
+androidx.compose.ui.viewinterop.AndroidViewHolder: int getNestedScrollAxes()
+com.spaceshooter.domain.model.SpecialAbilityState: float component3()
+com.spaceshooter.domain.model.ShipType: kotlin.enums.EnumEntries getEntries()
+com.spaceshooter.domain.entity.Enemy: int component4()
+androidx.compose.material3.tokens.TypographyKeyTokens: androidx.compose.material3.tokens.TypographyKeyTokens valueOf(java.lang.String)
+com.spaceshooter.domain.model.SpecialAbilityState: SpecialAbilityState(com.spaceshooter.domain.model.AbilityType,boolean,float,float,float)
+androidx.lifecycle.EmptyActivityLifecycleCallbacks: void onActivityPaused(android.app.Activity)
+androidx.compose.ui.graphics.ColorSpaceVerificationHelper: android.graphics.ColorSpace androidColorSpace(androidx.compose.ui.graphics.colorspace.ColorSpace)
+androidx.compose.ui.platform.coreshims.ContentCaptureSessionCompat$Api23Impl: android.os.Bundle getExtras(android.view.ViewStructure)
+com.spaceshooter.domain.entity.Boss: Boss(com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,float,int,int,float,com.spaceshooter.domain.model.BossType,int,int,float,float,float,float,int)
+com.spaceshooter.domain.model.SpecialAbilityState: SpecialAbilityState(com.spaceshooter.domain.model.AbilityType,boolean,float,float,float,int,kotlin.jvm.internal.DefaultConstructorMarker)
+androidx.compose.ui.graphics.WrapperVerificationHelperMethods: void setBlendMode-GB0RdKg(android.graphics.Paint,int)
+androidx.compose.ui.text.android.CanvasCompatO: boolean clipOutRect(android.graphics.Canvas,android.graphics.Rect)
+com.spaceshooter.domain.entity.Particle: float getLifetime()
+androidx.compose.ui.viewinterop.AndroidViewHolder: android.view.View getInteropView()
+androidx.compose.ui.platform.MotionEventVerifierApi29: boolean isValidMotionEvent(android.view.MotionEvent,int)
+com.spaceshooter.domain.entity.Bullet: boolean equals(java.lang.Object)
+androidx.graphics.path.ConicConverter: int internalConicToQuadratics(float[],int,float[],float,float)
+com.spaceshooter.domain.model.ComboState: int getCount()
+androidx.compose.ui.autofill.AutofillApi26Helper: android.view.autofill.AutofillId getAutofillId(android.view.ViewStructure)
+androidx.activity.OnBackPressedDispatcher$Api33Impl: void unregisterOnBackInvokedCallback(java.lang.Object,java.lang.Object)
+androidx.compose.ui.platform.ComposeView: void setContent(kotlin.jvm.functions.Function2)
+androidx.compose.ui.platform.ViewLayer$UniqueDrawingIdApi29: long getUniqueDrawingId(android.view.View)
+androidx.compose.ui.text.android.StaticLayoutFactory33: void setLineBreakConfig(android.text.StaticLayout$Builder,int,int)
+com.spaceshooter.domain.entity.Enemy: int hashCode()
+androidx.core.app.RemoteActionCompatParcelizer: androidx.core.app.RemoteActionCompat read(androidx.versionedparcelable.VersionedParcel)
+androidx.compose.ui.platform.AbstractComposeView: boolean getHasComposition()
+androidx.compose.ui.viewinterop.AndroidViewHolder: void setOnModifierChanged$ui_release(kotlin.jvm.functions.Function1)
+androidx.compose.ui.text.android.CanvasCompatQ: void drawColor(android.graphics.Canvas,long)
+androidx.compose.ui.autofill.AutofillType: androidx.compose.ui.autofill.AutofillType[] values()
+com.spaceshooter.domain.model.EnemyType: com.spaceshooter.domain.model.EnemyType[] values()
+androidx.compose.ui.platform.AbstractComposeView: boolean getShouldCreateCompositionOnAttachedToWindow()
+androidx.graphics.path.PathIteratorPreApi34Impl: int internalPathIteratorPeek(long)
+kotlin.random.Random: Random()
+androidx.compose.ui.platform.coreshims.ViewStructureCompat$Api23Impl: void setDimens(android.view.ViewStructure,int,int,int,int,int,int)
+com.spaceshooter.domain.entity.Particle: float component4()
+com.spaceshooter.domain.entity.HomingMissile: float component4()
+com.spaceshooter.domain.entity.Player: float getRadius()
+com.spaceshooter.domain.entity.Bullet: boolean getPiercing()
+androidx.compose.ui.focus.CustomDestinationResult: androidx.compose.ui.focus.CustomDestinationResult valueOf(java.lang.String)
+androidx.compose.ui.autofill.AutofillApi26Helper: java.lang.CharSequence textValue(android.view.autofill.AutofillValue)
+kotlin.DeprecationLevel: kotlin.DeprecationLevel valueOf(java.lang.String)
+androidx.compose.ui.graphics.layer.RenderNodeVerificationHelper28: int getAmbientShadowColor(android.view.RenderNode)
+com.spaceshooter.domain.entity.PowerUp: float component4()
+androidx.compose.ui.viewinterop.FocusGroupPropertiesElement: FocusGroupPropertiesElement()
+com.spaceshooter.domain.entity.Player: float component8()
+com.spaceshooter.domain.entity.Asteroid: float component6()
+androidx.compose.ui.viewinterop.AndroidViewHolder: kotlin.jvm.functions.Function0 getRelease()
+com.spaceshooter.domain.model.EnemyType: kotlin.enums.EnumEntries getEntries()
+com.spaceshooter.domain.model.SpecialAbilityState: float getCooldown()
+androidx.compose.ui.platform.coreshims.ViewCompatShims$Api29Impl: android.view.contentcapture.ContentCaptureSession getContentCaptureSession(android.view.View)
+androidx.compose.ui.platform.AndroidComposeViewVerificationHelperMethodsN: void setPointerIcon(android.view.View,androidx.compose.ui.input.pointer.PointerIcon)
+androidx.compose.ui.autofill.AutofillApi23Helper: void setDimens(android.view.ViewStructure,int,int,int,int,int,int)
+com.spaceshooter.domain.entity.Particle: float getMaxLifetime()
+androidx.compose.ui.text.android.BoringLayoutFactory33: boolean isFallbackLineSpacingEnabled(android.text.BoringLayout)
+androidx.compose.ui.platform.CalculateMatrixToWindowApi29: void calculateMatrixToWindow-EL8BTi8(android.view.View,float[])
+androidx.compose.material3.tokens.ColorSchemeKeyTokens: androidx.compose.material3.tokens.ColorSchemeKeyTokens valueOf(java.lang.String)
+android.support.v4.app.RemoteActionCompatParcelizer: RemoteActionCompatParcelizer()
+com.spaceshooter.domain.entity.Particle: int component6()
+androidx.compose.ui.text.android.CanvasCompatO: boolean clipOutRect(android.graphics.Canvas,float,float,float,float)
+androidx.room.MultiInstanceInvalidationService: MultiInstanceInvalidationService()
+com.spaceshooter.domain.entity.Boss: com.spaceshooter.core.math.Vec2 getVel()
+com.spaceshooter.domain.entity.Boss: float component12()
+com.spaceshooter.domain.model.BossType: int getHp()
+androidx.lifecycle.ProcessLifecycleOwner$attach$1: void onActivityCreated(android.app.Activity,android.os.Bundle)
+androidx.compose.ui.text.android.CanvasCompatQ: void drawDoubleRoundRect(android.graphics.Canvas,android.graphics.RectF,float[],android.graphics.RectF,float[],android.graphics.Paint)
+androidx.activity.EdgeToEdgeApi23: void setUp(androidx.activity.SystemBarStyle,androidx.activity.SystemBarStyle,android.view.Window,android.view.View,boolean,boolean)
+com.spaceshooter.domain.entity.Enemy: int getMaxHp()
+androidx.compose.ui.viewinterop.AndroidViewHolder: androidx.compose.ui.node.OwnerSnapshotObserver getSnapshotObserver()
+com.spaceshooter.domain.model.ComboState: boolean equals(java.lang.Object)
+androidx.compose.animation.core.MutatePriority: androidx.compose.animation.core.MutatePriority[] values()
+kotlinx.coroutines.scheduling.CoroutineScheduler$WorkerState: kotlinx.coroutines.scheduling.CoroutineScheduler$WorkerState valueOf(java.lang.String)
+com.spaceshooter.domain.model.SpecialAbilityState: boolean equals(java.lang.Object)
+androidx.compose.material3.tokens.TypographyKeyTokens: androidx.compose.material3.tokens.TypographyKeyTokens[] values()
+androidx.compose.ui.viewinterop.FocusTargetPropertiesElement: FocusTargetPropertiesElement()
+com.spaceshooter.domain.entity.Enemy: com.spaceshooter.domain.entity.Enemy copy$default(com.spaceshooter.domain.entity.Enemy,com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,float,int,int,float,com.spaceshooter.domain.model.EnemyType,int,float,float,float,float,float,float,float,int,java.lang.Object)
+com.spaceshooter.domain.entity.Particle: float component5()
+androidx.compose.ui.autofill.AutofillType: androidx.compose.ui.autofill.AutofillType valueOf(java.lang.String)
+androidx.compose.ui.text.android.CanvasCompatQ: void enableZ(android.graphics.Canvas)
+com.spaceshooter.domain.model.AbilityType: com.spaceshooter.domain.model.AbilityType[] values()
+com.spaceshooter.domain.model.ShipType: int getMaxHp()
+androidx.compose.ui.viewinterop.ViewFactoryHolder: void setUpdateBlock(kotlin.jvm.functions.Function1)
+androidx.compose.ui.node.TraversableNode$Companion$TraverseDescendantsAction: androidx.compose.ui.node.TraversableNode$Companion$TraverseDescendantsAction valueOf(java.lang.String)
+androidx.compose.ui.platform.coreshims.ContentCaptureSessionCompat$Api29Impl: android.view.ViewStructure newViewStructure(android.view.contentcapture.ContentCaptureSession,android.view.View)
+androidx.compose.ui.autofill.AutofillApi26Helper: boolean isDate(android.view.autofill.AutofillValue)
+com.spaceshooter.domain.entity.Boss: com.spaceshooter.domain.model.BossType getType()
+androidx.compose.ui.platform.coreshims.ViewCompatShims$Api30Impl: void setImportantForContentCapture(android.view.View,int)
+androidx.compose.ui.viewinterop.AndroidViewHolder: kotlin.jvm.functions.Function0 getUpdate()
+androidx.compose.ui.autofill.AutofillApi23Helper: int addChildCount(android.view.ViewStructure,int)
+com.spaceshooter.domain.entity.Boss: float getAng()
+androidx.compose.ui.text.AnnotationType: androidx.compose.ui.text.AnnotationType[] values()
+androidx.compose.ui.graphics.layer.RenderNodeVerificationHelper28: void setSpotShadowColor(android.view.RenderNode,int)
+androidx.core.app.CoreComponentFactory: CoreComponentFactory()
+androidx.compose.ui.autofill.AutofillApi23Helper: android.view.ViewStructure newChild(android.view.ViewStructure,int)
+com.spaceshooter.domain.entity.Asteroid: com.spaceshooter.domain.entity.Asteroid copy$default(com.spaceshooter.domain.entity.Asteroid,com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,float,int,float,float,com.spaceshooter.domain.model.AsteroidTier,int,java.lang.Object)
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.contentcapture.AndroidContentCaptureManager getContentCaptureManager$ui_release()
+androidx.compose.ui.text.android.CanvasCompatS: void drawPatch(android.graphics.Canvas,android.graphics.NinePatch,android.graphics.RectF,android.graphics.Paint)
+androidx.core.app.RemoteActionCompat: RemoteActionCompat()
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.layout.Placeable$PlacementScope getPlacementScope()
+androidx.compose.ui.viewinterop.AndroidViewHolder: kotlin.jvm.functions.Function1 getOnModifierChanged$ui_release()
+androidx.compose.ui.platform.AndroidComposeView: void setLayoutDirection(androidx.compose.ui.unit.LayoutDirection)
+androidx.compose.ui.platform.RenderNodeVerificationHelper24: void discardDisplayList(android.view.RenderNode)
+kotlinx.coroutines.selects.TrySelectDetailedResult: kotlinx.coroutines.selects.TrySelectDetailedResult valueOf(java.lang.String)
+androidx.compose.ui.graphics.layer.OutlineVerificationHelper: void setPath(android.graphics.Outline,androidx.compose.ui.graphics.Path)
+com.spaceshooter.domain.entity.Enemy: com.spaceshooter.core.math.Vec2 component2()
+com.spaceshooter.domain.entity.Enemy: Enemy(com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,float,int,int,float,com.spaceshooter.domain.model.EnemyType,int,float,float,float,float,float,float,float,int,kotlin.jvm.internal.DefaultConstructorMarker)
+androidx.compose.ui.viewinterop.AndroidViewHolder: androidx.compose.ui.node.LayoutNode getLayoutNode()
+androidx.lifecycle.ReportFragment$LifecycleCallbacks: void onActivityPreDestroyed(android.app.Activity)
+androidx.compose.runtime.Recomposer$State: androidx.compose.runtime.Recomposer$State[] values()
+com.spaceshooter.domain.entity.Enemy: float getFireCooldown()
+androidx.compose.ui.viewinterop.AndroidViewHolder: void setOnRequestDisallowInterceptTouchEvent$ui_release(kotlin.jvm.functions.Function1)
+com.spaceshooter.domain.entity.Enemy: boolean isStunned()
+androidx.lifecycle.ReportFragment$LifecycleCallbacks: void onActivityPostCreated(android.app.Activity,android.os.Bundle)
+com.spaceshooter.domain.entity.Player: int component5()
+androidx.lifecycle.ReportFragment$LifecycleCallbacks: ReportFragment$LifecycleCallbacks()
+com.spaceshooter.domain.entity.Asteroid: float getRadius()
+com.spaceshooter.domain.model.AsteroidTier: com.spaceshooter.domain.model.AsteroidTier[] $values()
+com.spaceshooter.domain.model.AsteroidTier: com.spaceshooter.domain.model.AsteroidTier[] values()
+androidx.lifecycle.ReportFragment$LifecycleCallbacks: void onActivityCreated(android.app.Activity,android.os.Bundle)
+androidx.compose.ui.text.android.CanvasCompatM: void drawTextRun(android.graphics.Canvas,char[],int,int,int,int,float,float,boolean,android.graphics.Paint)
+kotlinx.coroutines.android.AndroidExceptionPreHandler: void handleException(kotlin.coroutines.CoroutineContext,java.lang.Throwable)
+com.spaceshooter.domain.entity.PowerUp: int hashCode()
+com.spaceshooter.domain.model.PowerUpType: java.lang.String getDisplayName()
+androidx.compose.material3.tokens.ShapeKeyTokens: androidx.compose.material3.tokens.ShapeKeyTokens[] values()
+androidx.compose.ui.platform.AndroidComposeView: void getLastMatrixRecalculationAnimationTime$ui_release$annotations()
+com.spaceshooter.domain.entity.HomingMissile: com.spaceshooter.domain.entity.HomingMissile copy$default(com.spaceshooter.domain.entity.HomingMissile,com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,float,float,float,int,int,java.lang.Object)
+androidx.compose.ui.contentcapture.AndroidContentCaptureManager$TranslateStatus: androidx.compose.ui.contentcapture.AndroidContentCaptureManager$TranslateStatus valueOf(java.lang.String)
+androidx.activity.EdgeToEdgeApi28: void adjustLayoutInDisplayCutoutMode(android.view.Window)
+com.spaceshooter.domain.model.AsteroidTier: com.spaceshooter.domain.model.AsteroidTier valueOf(java.lang.String)
+com.spaceshooter.domain.entity.Player: java.lang.String toString()
+androidx.lifecycle.EmptyActivityLifecycleCallbacks: void onActivityStopped(android.app.Activity)
+androidx.compose.ui.platform.ViewLayer: long getOwnerViewId()
+com.spaceshooter.domain.entity.PowerUp: float component5()
+androidx.compose.ui.node.LayoutNode$UsageByParent: androidx.compose.ui.node.LayoutNode$UsageByParent[] values()
+androidx.lifecycle.ProcessLifecycleOwner$attach$1: void onActivityPreCreated(android.app.Activity,android.os.Bundle)
+androidx.compose.ui.graphics.layer.ViewLayer: void setInvalidated(boolean)
+com.spaceshooter.MainActivity: MainActivity()
+androidx.profileinstaller.ProfileInstallReceiver: ProfileInstallReceiver()
+com.spaceshooter.domain.entity.Enemy: float getAccuracy()
+com.spaceshooter.domain.entity.Boss: float getStunTime()
+androidx.emoji2.text.EmojiExclusions$EmojiExclusions_Api34: java.util.Set getExclusions()
+androidx.compose.ui.platform.ViewLayer: long getLayerId()
+com.spaceshooter.domain.model.BossType: com.spaceshooter.domain.model.BossType[] $values()
+com.spaceshooter.domain.entity.HomingMissile: int hashCode()
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.platform.TextToolbar getTextToolbar()
+kotlin.time.DurationUnit: kotlin.time.DurationUnit[] values()
+androidx.compose.runtime.Recomposer$State: androidx.compose.runtime.Recomposer$State valueOf(java.lang.String)
+androidx.compose.ui.contentcapture.AndroidContentCaptureManager$TranslateStatus: androidx.compose.ui.contentcapture.AndroidContentCaptureManager$TranslateStatus[] values()
+androidx.compose.ui.platform.AndroidComposeView: void setContentCaptureManager$ui_release(androidx.compose.ui.contentcapture.AndroidContentCaptureManager)
+androidx.compose.ui.platform.ViewLayer: androidx.compose.ui.platform.AndroidComposeView getOwnerView()
+com.spaceshooter.domain.model.SpecialAbilityState: java.lang.String toString()
+com.spaceshooter.domain.model.ScreenShake: java.lang.String toString()
+androidx.lifecycle.EmptyActivityLifecycleCallbacks: void onActivityStarted(android.app.Activity)
+androidx.graphics.path.PathIteratorPreApi34Impl: long createInternalPathIterator(android.graphics.Path,int,float)
+androidx.compose.ui.input.pointer.PointerEventPass: androidx.compose.ui.input.pointer.PointerEventPass[] values()
+com.spaceshooter.domain.model.BossType: java.lang.String getDisplayName()
+com.spaceshooter.domain.entity.Boss: int getScore()
+com.spaceshooter.domain.entity.HomingMissile: float getSpeed()
+androidx.compose.ui.text.android.CanvasCompatQ: void drawDoubleRoundRect(android.graphics.Canvas,android.graphics.RectF,float,float,android.graphics.RectF,float,float,android.graphics.Paint)
+com.spaceshooter.domain.model.EnemyType: float getAccuracy()
+com.spaceshooter.domain.entity.Enemy: int getDamage()
+com.spaceshooter.domain.model.BossType: int getPhases()
+androidx.compose.ui.input.pointer.PointerInteropFilter$DispatchToViewState: androidx.compose.ui.input.pointer.PointerInteropFilter$DispatchToViewState[] values()
+com.spaceshooter.domain.entity.PowerUp: PowerUp(com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,com.spaceshooter.domain.model.PowerUpType,float,float,int,kotlin.jvm.internal.DefaultConstructorMarker)
+androidx.compose.ui.text.android.StaticLayoutFactoryImpl: android.text.StaticLayout create(androidx.compose.ui.text.android.StaticLayoutParams)
+androidx.compose.ui.platform.AbstractComposeView: void setTransitionGroup(boolean)
+com.spaceshooter.domain.entity.PowerUp: com.spaceshooter.core.math.Vec2 component1()
+androidx.activity.ComponentActivity: void setContentView(android.view.View)
+com.spaceshooter.domain.entity.Boss: float component6()
+androidx.core.graphics.drawable.IconCompatParcelizer: void write(androidx.core.graphics.drawable.IconCompat,androidx.versionedparcelable.VersionedParcel)
+com.spaceshooter.domain.entity.Asteroid: int hashCode()
+com.spaceshooter.domain.model.AsteroidTier: float getRadius()
+com.spaceshooter.domain.entity.Boss: float getFirePatternTimer()
+androidx.compose.ui.graphics.layer.ViewLayer: void setCanUseCompositingLayer$ui_graphics_release(boolean)
+com.spaceshooter.domain.model.AbilityType: AbilityType(java.lang.String,int,java.lang.String,float)
+com.spaceshooter.domain.entity.Player: boolean equals(java.lang.Object)
+androidx.compose.ui.text.AnnotationType: androidx.compose.ui.text.AnnotationType valueOf(java.lang.String)
+androidx.compose.ui.autofill.AutofillApi26Helper: void setAutofillHints(android.view.ViewStructure,java.lang.String[])
+androidx.compose.animation.core.AnimationEndReason: androidx.compose.animation.core.AnimationEndReason[] values()
+com.spaceshooter.domain.entity.Boss: int hashCode()
+com.spaceshooter.domain.entity.Player: com.spaceshooter.domain.model.SpecialAbilityState component10()
+com.spaceshooter.domain.entity.Bullet: int getDamage()
+com.spaceshooter.domain.model.SpecialAbilityState: com.spaceshooter.domain.model.AbilityType component1()
+androidx.compose.ui.viewinterop.AndroidViewHolder: android.view.ViewGroup$LayoutParams getLayoutParams()
+androidx.compose.ui.viewinterop.AndroidViewHolder: void setLifecycleOwner(androidx.lifecycle.LifecycleOwner)
+com.spaceshooter.domain.model.SpecialAbilityState: boolean isActive()
+com.spaceshooter.domain.model.ComboState: int component1()
+androidx.graphics.path.PathIteratorPreApi34Impl: void destroyInternalPathIterator(long)
+com.spaceshooter.domain.entity.Bullet: Bullet(com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,boolean,int,float,boolean,int,kotlin.jvm.internal.DefaultConstructorMarker)
+androidx.core.view.ViewCompat$Api28Impl: boolean isAccessibilityHeading(android.view.View)
+androidx.compose.runtime.InvalidationResult: androidx.compose.runtime.InvalidationResult valueOf(java.lang.String)
+androidx.compose.ui.viewinterop.ViewFactoryHolder: androidx.compose.ui.input.nestedscroll.NestedScrollDispatcher getDispatcher()
+androidx.compose.material3.tokens.ColorSchemeKeyTokens: androidx.compose.material3.tokens.ColorSchemeKeyTokens[] values()
+androidx.lifecycle.ReportFragment$LifecycleCallbacks: void onActivityDestroyed(android.app.Activity)
+androidx.lifecycle.ProcessLifecycleOwner$attach$1$onActivityPreCreated$1: void onActivityPostResumed(android.app.Activity)
+com.spaceshooter.domain.model.EnemyType: com.spaceshooter.domain.model.EnemyType valueOf(java.lang.String)
+kotlinx.coroutines.channels.BufferOverflow: kotlinx.coroutines.channels.BufferOverflow valueOf(java.lang.String)
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.platform.SoftwareKeyboardController getSoftwareKeyboardController()
+androidx.compose.ui.platform.coreshims.ViewStructureCompat$Api23Impl: void setText(android.view.ViewStructure,java.lang.CharSequence)
+androidx.compose.ui.viewinterop.AndroidViewHolder: void setReset(kotlin.jvm.functions.Function0)
+androidx.compose.ui.text.font.FontWeightAdjustmentHelperApi31: int fontWeightAdjustment(android.content.Context)
+androidx.compose.ui.platform.AbstractComposeView: boolean getShowLayoutBounds()
+androidx.compose.ui.graphics.layer.RenderNodeVerificationHelper23: void destroyDisplayListData(android.view.RenderNode)
+androidx.compose.ui.state.ToggleableState: androidx.compose.ui.state.ToggleableState[] values()
+com.spaceshooter.domain.entity.Player: float getFireCooldown()
+com.spaceshooter.domain.model.ActivePowerUp: com.spaceshooter.domain.model.ActivePowerUp copy$default(com.spaceshooter.domain.model.ActivePowerUp,com.spaceshooter.domain.model.PowerUpType,float,int,java.lang.Object)
+androidx.compose.ui.platform.AbstractComposeView: void setShowLayoutBounds(boolean)
+com.spaceshooter.domain.model.PowerUpType: com.spaceshooter.domain.model.PowerUpType valueOf(java.lang.String)
+com.spaceshooter.domain.entity.Enemy: boolean equals(java.lang.Object)
+com.spaceshooter.domain.model.AbilityType: java.lang.String getDisplayName()
+kotlinx.coroutines.android.AndroidDispatcherFactory: int getLoadPriority()
+com.spaceshooter.domain.entity.Boss: float component13()
+androidx.compose.ui.platform.AndroidComposeView: android.view.View getView()
+androidx.lifecycle.Lifecycle$State: androidx.lifecycle.Lifecycle$State valueOf(java.lang.String)
+com.spaceshooter.domain.model.PowerUpType: kotlin.enums.EnumEntries getEntries()
+androidx.compose.ui.graphics.Path$Direction: androidx.compose.ui.graphics.Path$Direction[] values()
+androidx.compose.ui.platform.coreshims.ContentCaptureSessionCompat$Api29Impl: void notifyViewAppeared(android.view.contentcapture.ContentCaptureSession,android.view.ViewStructure)
+com.spaceshooter.domain.model.ComboState: int component3()
+androidx.compose.ui.platform.coreshims.ViewStructureCompat$Api23Impl: void setClassName(android.view.ViewStructure,java.lang.String)
+androidx.lifecycle.ProcessLifecycleOwner$Api29Impl: void registerActivityLifecycleCallbacks(android.app.Activity,android.app.Application$ActivityLifecycleCallbacks)
+androidx.compose.runtime.InvalidationResult: androidx.compose.runtime.InvalidationResult[] values()
+kotlin.time.DurationUnit: kotlin.time.DurationUnit valueOf(java.lang.String)
+androidx.compose.ui.platform.AndroidComposeView: androidx.compose.ui.platform.AndroidComposeView$ViewTreeOwners get_viewTreeOwners()
+androidx.compose.ui.graphics.CanvasZHelper: void enableZ(android.graphics.Canvas,boolean)
+com.spaceshooter.domain.entity.PowerUp: com.spaceshooter.core.math.Vec2 component2()
+androidx.compose.ui.platform.AndroidComposeViewForceDarkModeQ: void disallowForceDark(android.view.View)
+androidx.compose.ui.viewinterop.ViewFactoryHolder: void setReleaseBlock(kotlin.jvm.functions.Function1)
+androidx.compose.ui.platform.coreshims.ContentCaptureSessionCompat$Api34Impl: void notifyViewsAppeared(android.view.contentcapture.ContentCaptureSession,java.util.List)
+androidx.compose.ui.platform.coreshims.ContentCaptureSessionCompat$Api29Impl: void notifyViewTextChanged(android.view.contentcapture.ContentCaptureSession,android.view.autofill.AutofillId,java.lang.CharSequence)
+com.spaceshooter.domain.entity.PowerUp: float getLifetime()
+com.spaceshooter.domain.entity.PowerUp: com.spaceshooter.domain.model.PowerUpType getType()
+androidx.compose.ui.autofill.AutofillApi26Helper: void setAutofillId(android.view.ViewStructure,android.view.autofill.AutofillId,int)
+androidx.compose.ui.contentcapture.AndroidContentCaptureManager$ViewTranslationHelperMethods: void onCreateVirtualViewTranslationRequests(androidx.compose.ui.contentcapture.AndroidContentCaptureManager,long[],int[],java.util.function.Consumer)
+androidx.compose.ui.platform.AndroidComposeViewStartDragAndDropN: boolean startDragAndDrop(android.view.View,androidx.compose.ui.draganddrop.DragAndDropTransferData,androidx.compose.ui.draganddrop.ComposeDragShadowBuilder)
+androidx.lifecycle.ProcessLifecycleInitializer: ProcessLifecycleInitializer()
+com.spaceshooter.domain.model.ScreenShake: ScreenShake()
+android.support.v4.app.RemoteActionCompatParcelizer: androidx.core.app.RemoteActionCompat read(androidx.versionedparcelable.VersionedParcel)
+androidx.compose.ui.text.style.ResolvedTextDirection: androidx.compose.ui.text.style.ResolvedTextDirection[] values()
+androidx.compose.ui.text.android.CanvasCompatR: boolean quickReject(android.graphics.Canvas,float,float,float,float)
+androidx.compose.ui.platform.AndroidComposeViewVerificationHelperMethodsO: void focusable(android.view.View,int,boolean)
+androidx.compose.material.ripple.UnprojectedRipple$MRadiusHelper: void setRadius(android.graphics.drawable.RippleDrawable,int)
+com.spaceshooter.domain.entity.HomingMissile: HomingMissile(com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,float,float,float,int,int,kotlin.jvm.internal.DefaultConstructorMarker)
+com.spaceshooter.domain.entity.Enemy: com.spaceshooter.core.math.Vec2 getPos()
+androidx.compose.ui.graphics.layer.RenderNodeVerificationHelper: void setRenderEffect(android.graphics.RenderNode,androidx.compose.ui.graphics.RenderEffect)
+androidx.compose.ui.viewinterop.ViewFactoryHolder: android.view.View getViewRoot()
+androidx.compose.ui.platform.ViewLayerVerificationHelper28: void setOutlineSpotShadowColor(android.view.View,int)
+com.spaceshooter.domain.entity.Enemy: float component10()
+com.spaceshooter.domain.entity.PowerUp: float getRadius()
+com.spaceshooter.domain.entity.PowerUp: com.spaceshooter.domain.entity.PowerUp copy$default(com.spaceshooter.domain.entity.PowerUp,com.spaceshooter.core.math.Vec2,com.spaceshooter.core.math.Vec2,com.spaceshooter.domain.model.PowerUpType,float,float,int,java.lang.Object)
