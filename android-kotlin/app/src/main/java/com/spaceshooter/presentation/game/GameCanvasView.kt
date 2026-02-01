@@ -322,7 +322,7 @@ class GameRenderer {
             when (enemy.type) {
                 EnemyType.SCOUT -> drawScoutEnemy(canvas, color, healthPercent)
                 EnemyType.TANK -> drawTankEnemy(canvas, color, healthPercent)
-                EnemyType.SNIPER -> drawSniperEnemy(canvas, color, 0f, state.time)
+                EnemyType.SNIPER -> drawSniperEnemy(canvas, color, 0f, state.time, healthPercent)
                 EnemyType.BOMBER -> drawBomberEnemy(canvas, color, healthPercent)
             }
 
