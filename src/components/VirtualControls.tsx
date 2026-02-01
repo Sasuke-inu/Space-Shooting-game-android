@@ -217,6 +217,11 @@ const VirtualControlsComponent: React.FC<VirtualControlsProps> = ({
           ]}
           onPress={player.specialReady ? onAbilityPress : undefined}
           disabled={!player.specialReady}
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel={`Special ability: ${SHIP_STATS[player.shipType].special}`}
+          accessibilityHint="Activate ship special ability"
+          accessibilityState={{ disabled: !player.specialReady }}
         >
           <Text style={[styles.abilityText, dynamicStyles.abilityText]}>
             {SHIP_STATS[player.shipType].special}
