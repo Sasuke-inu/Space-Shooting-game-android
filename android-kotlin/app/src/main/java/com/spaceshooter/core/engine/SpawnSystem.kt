@@ -196,21 +196,6 @@ object SpawnSystem {
         )
     }
 
-    data class BossStats(
-        val hp: Int,
-        val radius: Float,
-        val maxPhase: Int,
-        val score: Int
-    )
-
-    fun getBossStats(type: BossType): BossStats {
-        return when (type) {
-            BossType.DESTROYER -> BossStats(hp = 500, radius = 50f, maxPhase = 2, score = 1000)
-            BossType.CARRIER -> BossStats(hp = 750, radius = 60f, maxPhase = 3, score = 1500)
-            BossType.DREADNOUGHT -> BossStats(hp = 1000, radius = 70f, maxPhase = 3, score = 2500)
-        }
-    }
-
     /**
      * Spawn a power-up at position.
      */
