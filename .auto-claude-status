@@ -1,25 +1,25 @@
 {
   "active": true,
   "spec": "023-eliminate-duplicated-enemy-boss-stat-definitions",
-  "state": "planning",
+  "state": "building",
   "subtasks": {
-    "completed": 0,
-    "total": 0,
+    "completed": 4,
+    "total": 9,
     "in_progress": 1,
     "failed": 0
   },
   "phase": {
-    "current": "Extend Enums with Complete Stats",
+    "current": "Remove Duplicate Definitions",
     "id": null,
-    "total": 2
+    "total": 3
   },
   "workers": {
     "active": 0,
     "max": 1
   },
   "session": {
-    "number": 3,
+    "number": 7,
     "started_at": "2026-02-01T19:02:37.964597"
   },
-  "last_update": "2026-02-01T19:10:50.953576"
+  "last_update": "2026-02-01T19:19:18.214265"
 }

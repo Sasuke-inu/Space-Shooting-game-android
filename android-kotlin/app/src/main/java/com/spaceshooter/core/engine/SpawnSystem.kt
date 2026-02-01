@@ -168,55 +168,6 @@ object SpawnSystem {
     }
 
     /**
-     * Get enemy stats by type.
-     */
-    data class EnemyStats(
-        val hp: Int,
-        val radius: Float,
-        val damage: Int,
-        val fireRate: Float,
-        val speed: Float,
-        val accuracy: Float
-    )
-
-    fun getEnemyStats(type: EnemyType): EnemyStats {
-        return when (type) {
-            EnemyType.SCOUT -> EnemyStats(
-                hp = 30,
-                radius = 15f,
-                damage = 10,
-                fireRate = 1.5f,
-                speed = 80f,
-                accuracy = 0.6f
-            )
-            EnemyType.TANK -> EnemyStats(
-                hp = 150,
-                radius = 25f,
-                damage = 25,
-                fireRate = 2.5f,
-                speed = 40f,
-                accuracy = 0.4f
-            )
-            EnemyType.SNIPER -> EnemyStats(
-                hp = 50,
-                radius = 18f,
-                damage = 35,
-                fireRate = 3f,
-                speed = 20f,
-                accuracy = 0.9f
-            )
-            EnemyType.BOMBER -> EnemyStats(
-                hp = 80,
-                radius = 22f,
-                damage = 40,
-                fireRate = 2f,
-                speed = 50f,
-                accuracy = 0.5f
-            )
-        }
-    }
-
-    /**
      * Spawn a boss.
      */
     fun spawnBoss(
