@@ -830,8 +830,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   spawnBoss: (type) =>
     set((state) => {
-      const bossTypes: BossType[] = ['destroyer', 'carrier', 'dreadnought']
-      const waveBasedIndex = Math.min(Math.floor(state.wave / 10), 2)
+      const bossTypes: BossType[] = ['destroyer', 'carrier', 'dreadnought', 'mothership']
+      const waveBasedIndex = state.wave >= 25 ? 3 : Math.min(Math.floor(state.wave / 10), 2)
       const bossType = type ?? bossTypes[waveBasedIndex]
       const stats = BOSS_STATS[bossType]
 
@@ -867,7 +867,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
   damageBoss: (damage) =>
     set((state) => {
       if (!state.boss) return state
-      const newHp = state.boss.hp - damage
+      // Mothership shield: 75% damage reduction when active
+      const effectiveDamage = (state.boss.type === 'mothership' && state.boss.shieldActive)
+        ? Math.ceil(damage * 0.25)
+        : damage
+      const newHp = state.boss.hp - effectiveDamage
       const stats = BOSS_STATS[state.boss.type]
 
       // Check for phase transition

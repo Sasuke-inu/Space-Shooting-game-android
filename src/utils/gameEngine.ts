@@ -719,7 +719,11 @@ export const useGameEngine = () => {
           if (dist2(b.pos, updatedBoss.pos) < bossHitRadius * bossHitRadius) {
             // Store boss position before potentially defeating it
             const bossPos = { ...updatedBoss.pos }
-            const bossDamage = 25
+            let bossDamage = 25
+            // Mothership shield reduces damage by 75%
+            if (updatedBoss.type === 'mothership' && updatedBoss.shieldActive) {
+              bossDamage = Math.ceil(bossDamage * (1 - MOTHERSHIP_SHIELD_REDUCTION))
+            }
             const newBossHp = updatedBoss.hp - bossDamage
             const stats = BOSS_STATS[updatedBoss.type]
 
@@ -961,7 +965,12 @@ export const useGameEngine = () => {
       updatedEnemies = damagedEnemies
     }
     if (homingMissileUpdates.bossDamage > 0 && updatedBoss) {
-      const newBossHp = updatedBoss.hp - homingMissileUpdates.bossDamage
+      // Mothership shield reduces damage by 75%
+      let effectiveBossDamage = homingMissileUpdates.bossDamage
+      if (updatedBoss.type === 'mothership' && updatedBoss.shieldActive) {
+        effectiveBossDamage = Math.ceil(effectiveBossDamage * (1 - MOTHERSHIP_SHIELD_REDUCTION))
+      }
+      const newBossHp = updatedBoss.hp - effectiveBossDamage
       const stats = BOSS_STATS[updatedBoss.type]
       const hpPercent = newBossHp / updatedBoss.maxHp
       let newPhase = updatedBoss.phase
@@ -979,8 +988,8 @@ export const useGameEngine = () => {
 
     // Spawn boss if needed
     if (shouldSpawnBoss) {
-      const bossTypes: BossType[] = ['destroyer', 'carrier', 'dreadnought']
-      const waveBasedIndex = Math.min(Math.floor(wave / 10), 2)
+      const bossTypes: BossType[] = ['destroyer', 'carrier', 'dreadnought', 'mothership']
+      const waveBasedIndex = wave >= 25 ? 3 : Math.min(Math.floor(wave / 10), 2)
       const bossType = bossTypes[waveBasedIndex]
       const stats = BOSS_STATS[bossType]
       updatedBoss = {
@@ -1952,9 +1961,59 @@ function updateBossBehaviorBatched(
         }
         playSfx('shoot_enemy')
         break
+
+      case 'mothership': {
+        // Targeted bullet fan (width depends on phase)
+        const toP2 = sub(state.player.pos, boss.pos)
+        const baseAngle = Math.atan2(toP2.y, toP2.x)
+        const fanCount = boss.phase >= 2 ? 5 : 3
+        const fanSpread = 0.2
+        for (let i = 0; i < fanCount; i++) {
+          const offset = (i - (fanCount - 1) / 2) * fanSpread
+          bullets.push({
+            pos: add(boss.pos, fromAngle(baseAngle + offset, 40)),
+            vel: fromAngle(baseAngle + offset, BULLET_SPEED_ENEMY * 0.7),
+            life: BULLET_LIFE_ENEMY * 1.3,
+            friendly: false,
+          })
+        }
+        // Phase 3: Add expanding ring pattern (8 bullets)
+        if (boss.phase >= 3) {
+          for (let i = 0; i < 8; i++) {
+            const angle = (i / 8) * Math.PI * 2
+            bullets.push({
+              pos: add(boss.pos, fromAngle(angle, 45)),
+              vel: fromAngle(angle, BULLET_SPEED_ENEMY * 0.6),
+              life: BULLET_LIFE_ENEMY * 1.6,
+              friendly: false,
+            })
+          }
+        }
+        playSfx('shoot_enemy')
+        break
+      }
     }
 
     newSpecialCooldown = 5 - boss.phase * 0.5
+  }
+
+  // Mothership shield management (phase 2+) for batched path
+  let newShieldActive = boss.shieldActive ?? false
+  let newShieldCooldown = boss.shieldCooldown ?? MOTHERSHIP_SHIELD_COOLDOWN
+
+  if (boss.type === 'mothership' && boss.phase >= 2) {
+    newShieldCooldown -= dt
+    if (newShieldActive) {
+      if (newShieldCooldown <= 0) {
+        newShieldActive = false
+        newShieldCooldown = MOTHERSHIP_SHIELD_COOLDOWN
+      }
+    } else {
+      if (newShieldCooldown <= 0) {
+        newShieldActive = true
+        newShieldCooldown = MOTHERSHIP_SHIELD_DURATION
+      }
+    }
   }
 
   // Create updated boss - mutate properties
@@ -1970,6 +2029,9 @@ function updateBossBehaviorBatched(
     specialCooldown: newSpecialCooldown,
     aiTimer: boss.aiTimer + dt,
     isActive: boss.isActive,
+    spawnedEnemiesCount: boss.spawnedEnemiesCount,
+    shieldActive: newShieldActive,
+    shieldCooldown: newShieldCooldown,
   }
 
   return {
@@ -1986,6 +2048,13 @@ function updateBossBehaviorBatched(
 const BOSS_SPECIAL_CHARGE_TIME = 1.0 // Wind-up time before special attacks (visual tell)
 const BOSS_FIRST_ENCOUNTER_NERF = 0.7 // Reduce difficulty on first boss
 const MAX_CARRIER_SPAWNED_ENEMIES = 12 // Lifetime limit of enemies spawned by carrier
+
+// Mothership boss constants
+const MAX_MOTHERSHIP_SCREEN_ENEMIES = 8 // Max enemies on screen from mothership spawns
+const MAX_MOTHERSHIP_SPAWNED_ENEMIES = 16 // Lifetime limit of enemies spawned by mothership
+const MOTHERSHIP_SHIELD_DURATION = 3 // Shield active duration in seconds
+const MOTHERSHIP_SHIELD_COOLDOWN = 10 // Cooldown between shield activations
+const MOTHERSHIP_SHIELD_REDUCTION = 0.75 // 75% damage reduction when shield active
 
 function updateBossBehavior(
   boss: Boss,
@@ -2042,7 +2111,11 @@ function updateBossBehavior(
     }
 
     // Longer cooldowns for first boss
-    const baseCooldown = 2.2 - boss.phase * 0.25
+    let baseCooldown = 2.2 - boss.phase * 0.25
+    // Mothership phase 3 berserk mode: faster regular attacks
+    if (boss.type === 'mothership' && boss.phase >= 3) {
+      baseCooldown *= 0.5
+    }
     newCooldown = isFirstBoss ? baseCooldown * 1.3 : baseCooldown
   }
 
@@ -2064,8 +2137,33 @@ function updateBossBehavior(
         isCharging = false
         newChargeTime = 0
         // Longer cooldowns between special attacks
-        const baseSpecialCooldown = 6 - boss.phase * 0.4
+        let baseSpecialCooldown = 6 - boss.phase * 0.4
+        // Mothership phase 3: more frequent special attacks
+        if (boss.type === 'mothership' && boss.phase >= 3) {
+          baseSpecialCooldown *= 0.6
+        }
         newSpecialCooldown = isFirstBoss ? baseSpecialCooldown * 1.4 : baseSpecialCooldown
+      }
+    }
+  }
+
+  // Mothership shield management (phase 2+)
+  let newShieldActive = boss.shieldActive ?? false
+  let newShieldCooldown = boss.shieldCooldown ?? MOTHERSHIP_SHIELD_COOLDOWN
+
+  if (boss.type === 'mothership' && boss.phase >= 2) {
+    newShieldCooldown -= dt
+    if (newShieldActive) {
+      // Shield is active, counting down duration
+      if (newShieldCooldown <= 0) {
+        newShieldActive = false
+        newShieldCooldown = MOTHERSHIP_SHIELD_COOLDOWN
+      }
+    } else {
+      // Shield on cooldown, counting down to next activation
+      if (newShieldCooldown <= 0) {
+        newShieldActive = true
+        newShieldCooldown = MOTHERSHIP_SHIELD_DURATION
       }
     }
   }
@@ -2079,6 +2177,8 @@ function updateBossBehavior(
     chargingSpecial: isCharging,
     specialChargeTime: newChargeTime,
     aiTimer: boss.aiTimer + dt,
+    shieldActive: newShieldActive,
+    shieldCooldown: newShieldCooldown,
   })
 }
 
@@ -2163,6 +2263,97 @@ function executeSpecialAttack(
         }
       }
       break
+
+    case 'mothership': {
+      const toPlayer = sub(state.player.pos, boss.pos)
+      const baseAngle = angleOf(toPlayer)
+
+      if (boss.phase >= 3) {
+        // Phase 3: Berserk mode - expanding ring (8 bullets) + wide fan + juggernaut spawn
+        const ringCount = 8
+        if (canSpawnEnemyBullets(state.bullets.length, ringCount, state.w, state.h)) {
+          for (let i = 0; i < ringCount; i++) {
+            const angle = (i / ringCount) * Math.PI * 2
+            state.addBullet({
+              pos: add(boss.pos, fromAngle(angle, 45)),
+              vel: fromAngle(angle, BULLET_SPEED_ENEMY * 0.6 * difficultyMultiplier),
+              life: BULLET_LIFE_ENEMY * 1.6,
+              friendly: false,
+            })
+          }
+        }
+
+        // Wide targeted fan (5 bullets)
+        const fanCount = 5
+        if (canSpawnEnemyBullets(state.bullets.length, fanCount, state.w, state.h)) {
+          for (let i = 0; i < fanCount; i++) {
+            const offset = (i - (fanCount - 1) / 2) * 0.25
+            state.addBullet({
+              pos: add(boss.pos, fromAngle(baseAngle + offset, 40)),
+              vel: fromAngle(baseAngle + offset, BULLET_SPEED_ENEMY * 0.8 * difficultyMultiplier),
+              life: BULLET_LIFE_ENEMY * 1.5,
+              friendly: false,
+            })
+          }
+        }
+
+        // Spawn juggernaut on first phase 3 entry (only if none on screen)
+        if ((boss.spawnedEnemiesCount ?? 0) < MAX_MOTHERSHIP_SPAWNED_ENEMIES) {
+          const hasJuggernaut = state.enemies.some(e => e.type === 'juggernaut')
+          if (!hasJuggernaut) {
+            state.spawnEnemy('juggernaut')
+            state.updateBoss({ spawnedEnemiesCount: (boss.spawnedEnemiesCount ?? 0) + 1 })
+          }
+        }
+      } else if (boss.phase >= 2) {
+        // Phase 2: Wider bullet fans (5 bullets) + spawn healers
+        const fanCount = 5
+        if (canSpawnEnemyBullets(state.bullets.length, fanCount, state.w, state.h)) {
+          for (let i = 0; i < fanCount; i++) {
+            const offset = (i - (fanCount - 1) / 2) * 0.2
+            state.addBullet({
+              pos: add(boss.pos, fromAngle(baseAngle + offset, 40)),
+              vel: fromAngle(baseAngle + offset, BULLET_SPEED_ENEMY * 0.75 * difficultyMultiplier),
+              life: BULLET_LIFE_ENEMY * 1.4,
+              friendly: false,
+            })
+          }
+        }
+
+        // Spawn healers
+        if ((boss.spawnedEnemiesCount ?? 0) < MAX_MOTHERSHIP_SPAWNED_ENEMIES &&
+            state.enemies.length < MAX_MOTHERSHIP_SCREEN_ENEMIES) {
+          state.spawnEnemy('healer')
+          state.updateBoss({ spawnedEnemiesCount: (boss.spawnedEnemiesCount ?? 0) + 1 })
+        }
+      } else {
+        // Phase 1: Spawn scouts (2 per special, max 8 on screen) + targeted 3-bullet fans
+        const remainingLifetimeSpawns = MAX_MOTHERSHIP_SPAWNED_ENEMIES - (boss.spawnedEnemiesCount ?? 0)
+        const spawnCount = Math.min(2, MAX_MOTHERSHIP_SCREEN_ENEMIES - state.enemies.length, remainingLifetimeSpawns)
+        if (spawnCount > 0) {
+          for (let i = 0; i < spawnCount; i++) {
+            state.spawnEnemy('scout')
+          }
+          state.updateBoss({ spawnedEnemiesCount: (boss.spawnedEnemiesCount ?? 0) + spawnCount })
+        }
+
+        // Targeted 3-bullet fan
+        const fanCount = 3
+        if (canSpawnEnemyBullets(state.bullets.length, fanCount, state.w, state.h)) {
+          for (let i = 0; i < fanCount; i++) {
+            const offset = (i - (fanCount - 1) / 2) * 0.2
+            state.addBullet({
+              pos: add(boss.pos, fromAngle(baseAngle + offset, 40)),
+              vel: fromAngle(baseAngle + offset, BULLET_SPEED_ENEMY * 0.7 * difficultyMultiplier),
+              life: BULLET_LIFE_ENEMY * 1.3,
+              friendly: false,
+            })
+          }
+        }
+      }
+      playSfx('shoot_enemy')
+      break
+    }
   }
 }
 
