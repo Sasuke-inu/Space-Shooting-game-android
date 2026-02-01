@@ -22,6 +22,7 @@ import { useWeeklyEventsStore } from '../state/weeklyEventsStore';
 import WeeklyEventModal from '../components/WeeklyEventModal';
 import { EventLeaderboardModal } from '../components/EventLeaderboardModal';
 import type { RootStackParamList } from '../navigation/AppNavigator';
+import { useGameStore } from '../state/gameStore';
 
 type MainMenuNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -32,6 +33,7 @@ export default function MainMenuScreen() {
   const theme = useTheme();
   const { t } = useI18nStore();
   const { getCurrentEvent, checkAndRefreshEvent } = useWeeklyEventsStore();
+  const startEventGame = useGameStore((s) => s.startEventGame);
 
   // Animation time for background
   const [time, setTime] = useState(0);
@@ -131,6 +133,8 @@ export default function MainMenuScreen() {
   }, [checkAndRefreshEvent]);
 
   const handlePlay = () => {
+    // Ensure we're starting a normal game (not event mode)
+    // resetGame() in GameScreen will clear event mode flags
     navigation.navigate('Game');
   };
 
@@ -151,6 +155,11 @@ export default function MainMenuScreen() {
   };
 
   const handlePlayEvent = () => {
+    const event = getCurrentEvent();
+    if (event) {
+      // Start event game with modifiers
+      startEventGame(event.id, event.modifiers);
+    }
     setEventModalVisible(false);
     navigation.navigate('Game');
   };

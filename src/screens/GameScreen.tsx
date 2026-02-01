@@ -21,6 +21,7 @@ import { useSettingsStore, useThemeColors } from "../theme/themeStore"
 import { useAppSettingsStore } from "../state/settingsStore"
 import { useStatisticsStore, useAchievementStore, useUpgradesStore } from "../state/progressStore"
 import { useTutorialStore } from "../state/tutorialStore"
+import { useWeeklyEventsStore } from "../state/weeklyEventsStore"
 import { themeList } from "../theme/themes"
 import type { ShipType } from "../types/game"
 import { ACHIEVEMENTS } from "../types/game"
@@ -78,6 +79,8 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   const time = useGameStore((s) => s.time)
   const bossWarning = useGameStore((s) => s.bossWarning)
   const timeWarpActive = useGameStore((s) => s.timeWarpActive)
+  const eventMode = useGameStore((s) => s.eventMode)
+  const activeEventId = useGameStore((s) => s.activeEventId)
 
   // Game state - objects (use shallow equality)
   const player = useGameStore(useShallow((s) => s.player))
@@ -158,7 +161,11 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   // High scores - actions
   const isTopFive = useHighScoresStore((s) => s.isTopFive)
   const addScore = useHighScoresStore((s) => s.addScore)
-  const highScores = getScores(gameMode)
+  const getScores = useHighScoresStore((s) => s.getScores)
+
+  // Weekly events - actions
+  const submitEventScore = useWeeklyEventsStore((s) => s.submitScore)
+  const isTopTenEvent = useWeeklyEventsStore((s) => s.isTopTen)
 
   // Use custom hooks
   useBackgroundMusic(musicVolume)
@@ -296,7 +303,12 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
       initializedRef.current = true
       const store = useGameStore.getState()
       store.setDimensions(width, height)
-      store.resetGame()
+
+      // Only reset game if not in event mode (event mode is set from MainMenuScreen)
+      if (!store.eventMode) {
+        store.resetGame()
+      }
+
       store.spawnAsteroids(5)
       store.spawnEnemy()
       store.setPaused(true)
@@ -332,7 +344,22 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
     recordGameEndStats()
     setShowNameInput(false)
     const store = useGameStore.getState()
+
+    // Preserve event mode state when restarting
+    const wasEventMode = store.eventMode
+    const eventId = store.activeEventId
+
     store.resetGame()
+
+    // Restore event mode if we were in an event game
+    if (wasEventMode && eventId) {
+      const { useWeeklyEventsStore } = require('../state/weeklyEventsStore')
+      const currentEvent = useWeeklyEventsStore.getState().getCurrentEvent()
+      if (currentEvent && currentEvent.id === eventId) {
+        store.startEventGame(eventId, currentEvent.modifiers)
+      }
+    }
+
     store.spawnAsteroids(5)
     store.spawnEnemy()
     store.setPaused(false)
@@ -367,6 +394,11 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
     const name = playerName.trim() || "Anonymous"
     addScore(score, wave, name, gameMode, gameMode === 'endless' ? time : undefined)
 
+    // Submit to event leaderboard if in event mode
+    if (eventMode && activeEventId) {
+      submitEventScore(activeEventId, score, wave, name, player.shipType)
+    }
+
     recordGameEndStats()
 
     setShowNameInput(false)
@@ -378,14 +410,18 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   // Check for game over and show name input if top 10
   useEffect(() => {
     if (paused && lives <= 0 && !showInstructions && !showNameInput) {
-      if (isTopFive(score, gameMode)) {
+      // Check if score qualifies for high scores or event leaderboard
+      const qualifiesForHighScore = isTopFive(score, gameMode)
+      const qualifiesForEvent = eventMode && activeEventId && isTopTenEvent(activeEventId, score)
+
+      if (qualifiesForHighScore || qualifiesForEvent) {
         const timer = setTimeout(() => {
           setShowNameInput(true)
         }, 500)
         return () => clearTimeout(timer)
       }
     }
-  }, [paused, lives, score, showInstructions, showNameInput, isTopFive, gameMode])
+  }, [paused, lives, score, showInstructions, showNameInput, isTopFive, gameMode, eventMode, activeEventId, isTopTenEvent])
 
   const handleShipSelect = (ship: ShipType) => {
     if (unlockedShips.includes(ship)) {
