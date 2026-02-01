@@ -1,5 +1,6 @@
 package com.spaceshooter.presentation.game
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -7,7 +8,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -123,30 +126,59 @@ private fun FireButton(
     modifier: Modifier = Modifier
 ) {
     var isPressed by remember { mutableStateOf(false) }
+    val size = 80f
+    val radius = size / 2f
 
     Box(
-        modifier = modifier
-            .size(80.dp)
-            .background(
-                color = if (isPressed) colors.buttonPrimary else colors.joystickPad,
-                shape = androidx.compose.foundation.shape.CircleShape
-            )
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onPress = {
-                        isPressed = true
-                        onFireStart()
-                        tryAwaitRelease()
-                        isPressed = false
-                        onFireEnd()
-                    }
-                )
-            },
+        modifier = modifier.size(size.dp),
         contentAlignment = Alignment.Center
     ) {
+        Canvas(
+            modifier = Modifier
+                .size(size.dp)
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onPress = {
+                            isPressed = true
+                            onFireStart()
+                            tryAwaitRelease()
+                            isPressed = false
+                            onFireEnd()
+                        }
+                    )
+                }
+        ) {
+            val center = Offset(size.dp.toPx() / 2f, size.dp.toPx() / 2f)
+            val scale = size.dp.toPx() / size
+
+            // Background circle (distinct from joystick)
+            drawCircle(
+                color = if (isPressed) colors.buttonPrimary else colors.fireButtonPad,
+                radius = radius * scale,
+                center = center
+            )
+
+            // Border ring
+            drawCircle(
+                color = colors.fireButtonBorder,
+                radius = radius * scale,
+                center = center,
+                style = Stroke(width = 2f)
+            )
+
+            // Glow effect (inner ring)
+            drawCircle(
+                color = if (isPressed) colors.buttonText.copy(alpha = 0.3f) else colors.fireButtonGlow,
+                radius = (radius - 8f) * scale,
+                center = center,
+                style = Stroke(width = 4f)
+            )
+        }
+
+        // FIRE text overlay
         Text(
             text = "FIRE",
-            color = if (isPressed) colors.buttonText else colors.joystickStick,
+            color = if (isPressed) colors.buttonText else colors.textPrimary,
             fontSize = 14.sp
         )
     }
