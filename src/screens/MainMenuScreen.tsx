@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
   useWindowDimensions,
+  AppState,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -130,6 +131,19 @@ export default function MainMenuScreen() {
   // Refresh event on mount
   useEffect(() => {
     checkAndRefreshEvent();
+  }, [checkAndRefreshEvent]);
+
+  // Refresh event when app resumes from background
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      if (nextAppState === 'active') {
+        checkAndRefreshEvent();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
   }, [checkAndRefreshEvent]);
 
   const handlePlay = () => {
