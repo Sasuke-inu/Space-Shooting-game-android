@@ -90,6 +90,8 @@ export const getEnemySpawnWeights = (wave: number): Record<EnemyType, number> =>
   sniper: wave >= 5 ? 15 : 0,
   bomber: wave >= 7 ? 15 : 0,
   teleporter: wave >= 9 ? 10 : 0,
+  healer: wave >= 11 ? 10 : 0,
+  juggernaut: wave >= 15 ? 8 : 0,
 })
 
 // ------------------------------------------------------------------ //
@@ -513,6 +515,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
         chargeTime: enemyType === 'sniper' ? 0 : undefined,
         bombCooldown: enemyType === 'bomber' ? 3 : undefined,
         teleportTimer: enemyType === 'teleporter' ? 0 : undefined,
+        healCooldown: enemyType === 'healer' ? 3 : undefined,
+        chargeCooldown: enemyType === 'juggernaut' ? 5 : undefined,
+        isCharging: enemyType === 'juggernaut' ? false : undefined,
       }
       return { enemies: [...state.enemies, newEnemy] }
     }),
@@ -575,6 +580,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
           chargeTime: enemyType === 'sniper' ? 0 : undefined,
           bombCooldown: enemyType === 'bomber' ? 3 : undefined,
           teleportTimer: enemyType === 'teleporter' ? 0 : undefined,
+          healCooldown: enemyType === 'healer' ? 3 : undefined,
+          chargeCooldown: enemyType === 'juggernaut' ? 5 : undefined,
+          isCharging: enemyType === 'juggernaut' ? false : undefined,
         })
       }
 
