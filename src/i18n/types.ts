@@ -72,6 +72,18 @@ export interface Translations {
       name: string;
       description: string;
     };
+    support: {
+      name: string;
+      description: string;
+    };
+    stealth: {
+      name: string;
+      description: string;
+    };
+    heavy: {
+      name: string;
+      description: string;
+    };
   };
   achievements: {
     firstKill: {
@@ -289,6 +301,72 @@ export interface Translations {
       };
     };
     interceptor: {
+      default: {
+        name: string;
+        description: string;
+      };
+      stealth: {
+        name: string;
+        description: string;
+      };
+      neon: {
+        name: string;
+        description: string;
+      };
+      gold: {
+        name: string;
+        description: string;
+      };
+      veteran: {
+        name: string;
+        description: string;
+      };
+    };
+    support: {
+      default: {
+        name: string;
+        description: string;
+      };
+      stealth: {
+        name: string;
+        description: string;
+      };
+      neon: {
+        name: string;
+        description: string;
+      };
+      gold: {
+        name: string;
+        description: string;
+      };
+      veteran: {
+        name: string;
+        description: string;
+      };
+    };
+    stealth: {
+      default: {
+        name: string;
+        description: string;
+      };
+      stealth: {
+        name: string;
+        description: string;
+      };
+      neon: {
+        name: string;
+        description: string;
+      };
+      gold: {
+        name: string;
+        description: string;
+      };
+      veteran: {
+        name: string;
+        description: string;
+      };
+    };
+    heavy: {
       default: {
         name: string;
         description: string;
