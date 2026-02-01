@@ -323,7 +323,7 @@ class GameRenderer {
                 EnemyType.SCOUT -> drawScoutEnemy(canvas, color, healthPercent)
                 EnemyType.TANK -> drawTankEnemy(canvas, color, healthPercent)
                 EnemyType.SNIPER -> drawSniperEnemy(canvas, color, 0f, state.time)
-                EnemyType.BOMBER -> drawBomberEnemy(canvas, color)
+                EnemyType.BOMBER -> drawBomberEnemy(canvas, color, healthPercent)
             }
 
             canvas.restore()
@@ -421,6 +421,15 @@ class GameRenderer {
         // Wings
         canvas.drawLine(-15f, 0f, -8f, 0f, paint)
         canvas.drawLine(8f, 0f, 15f, 0f, paint)
+
+        // Health bar for bombers
+        if (healthPercent < 1f) {
+            paint.style = Paint.Style.FILL
+            paint.color = Color.DKGRAY
+            canvas.drawRect(-15f, 15f, 15f, 18f, paint)
+            paint.color = Color.GREEN
+            canvas.drawRect(-15f, 15f, -15f + 30f * healthPercent, 18f, paint)
+        }
     }
 
     private fun drawBoss(canvas: Canvas, boss: Boss, state: GameState, colors: ThemeColors) {
