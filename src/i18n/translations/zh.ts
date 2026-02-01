@@ -65,6 +65,18 @@ export const zh: Translations = {
       name: '拦截机',
       description: '闪电般快速，具有速射能力',
     },
+    support: {
+      name: '支援舰',
+      description: '治疗飞船，战斗中修复护盾',
+    },
+    stealth: {
+      name: '隐形机',
+      description: '隐身飞船，能穿越敌人',
+    },
+    heavy: {
+      name: '重型机',
+      description: '毁灭性火力，带有蓄力攻击',
+    },
   },
   achievements: {
     firstKill: {
@@ -301,6 +313,72 @@ export const zh: Translations = {
       veteran: {
         name: '老兵',
         description: 'EMP专家配色',
+      },
+    },
+    support: {
+      default: {
+        name: '标准',
+        description: '标准支援舰配色',
+      },
+      stealth: {
+        name: '隐身',
+        description: '隐秘医疗兵方案',
+      },
+      neon: {
+        name: '霓虹',
+        description: '生物发光治疗者风格',
+      },
+      gold: {
+        name: '黄金',
+        description: '神圣守护者饰面',
+      },
+      veteran: {
+        name: '老兵',
+        description: '战地外科医生配色',
+      },
+    },
+    stealth: {
+      default: {
+        name: '标准',
+        description: '标准隐形机配色',
+      },
+      stealth: {
+        name: '隐身',
+        description: '幽灵特工方案',
+      },
+      neon: {
+        name: '霓虹',
+        description: '相位转移风格',
+      },
+      gold: {
+        name: '黄金',
+        description: '幻影精英饰面',
+      },
+      veteran: {
+        name: '老兵',
+        description: '暗影刺客配色',
+      },
+    },
+    heavy: {
+      default: {
+        name: '标准',
+        description: '标准重型机配色',
+      },
+      stealth: {
+        name: '隐身',
+        description: '暗黑毁灭者方案',
+      },
+      neon: {
+        name: '霓虹',
+        description: '等离子炮风格',
+      },
+      gold: {
+        name: '黄金',
+        description: '战舰司令饰面',
+      },
+      veteran: {
+        name: '老兵',
+        description: '攻城破坏者配色',
       },
     },
   },

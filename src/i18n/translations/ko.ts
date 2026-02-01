@@ -65,6 +65,18 @@ export const ko: Translations = {
       name: '요격기',
       description: '번개처럼 빠르고 연사 능력 보유',
     },
+    support: {
+      name: '지원기',
+      description: '전투 중 실드를 수리하는 치유 우주선',
+    },
+    stealth: {
+      name: '스텔스기',
+      description: '적을 통과하는 은폐 우주선',
+    },
+    heavy: {
+      name: '중장갑기',
+      description: '충전 공격으로 파괴적인 화력',
+    },
   },
   achievements: {
     firstKill: {
@@ -301,6 +313,72 @@ export const ko: Translations = {
       veteran: {
         name: '베테랑',
         description: 'EMP 전문가 색상',
+      },
+    },
+    support: {
+      default: {
+        name: '스탠다드',
+        description: '표준 지원기 색상',
+      },
+      stealth: {
+        name: '스텔스',
+        description: '은밀 의료병 도색',
+      },
+      neon: {
+        name: '네온',
+        description: '생체 발광 치유사 스타일',
+      },
+      gold: {
+        name: '골드',
+        description: '성스러운 수호자 마감',
+      },
+      veteran: {
+        name: '베테랑',
+        description: '야전 의무관 색상',
+      },
+    },
+    stealth: {
+      default: {
+        name: '스탠다드',
+        description: '표준 스텔스기 색상',
+      },
+      stealth: {
+        name: '스텔스',
+        description: '고스트 요원 도색',
+      },
+      neon: {
+        name: '네온',
+        description: '위상 변환 스타일',
+      },
+      gold: {
+        name: '골드',
+        description: '팬텀 엘리트 마감',
+      },
+      veteran: {
+        name: '베테랑',
+        description: '그림자 암살자 색상',
+      },
+    },
+    heavy: {
+      default: {
+        name: '스탠다드',
+        description: '표준 중장갑기 색상',
+      },
+      stealth: {
+        name: '스텔스',
+        description: '다크 파괴자 도색',
+      },
+      neon: {
+        name: '네온',
+        description: '플라즈마 캐논 스타일',
+      },
+      gold: {
+        name: '골드',
+        description: '전함 제독 마감',
+      },
+      veteran: {
+        name: '베테랑',
+        description: '공성 돌파자 색상',
       },
     },
   },

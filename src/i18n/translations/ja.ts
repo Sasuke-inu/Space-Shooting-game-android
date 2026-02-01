@@ -65,6 +65,18 @@ export const ja: Translations = {
       name: 'インターセプター',
       description: '超高速で連射能力を持つ',
     },
+    support: {
+      name: 'サポート',
+      description: '戦闘中にシールドを修理する回復機体',
+    },
+    stealth: {
+      name: 'ステルス',
+      description: '敵をすり抜けるクローキング機体',
+    },
+    heavy: {
+      name: 'ヘビー',
+      description: 'チャージ攻撃による圧倒的な火力',
+    },
   },
   achievements: {
     firstKill: {
@@ -301,6 +313,72 @@ export const ja: Translations = {
       veteran: {
         name: 'ベテラン',
         description: 'EMPスペシャリストカラー',
+      },
+    },
+    support: {
+      default: {
+        name: 'スタンダード',
+        description: 'スタンダードサポートカラー',
+      },
+      stealth: {
+        name: 'ステルス',
+        description: 'コバートメディック仕様',
+      },
+      neon: {
+        name: 'ネオン',
+        description: 'バイオルミネセントヒーラースタイル',
+      },
+      gold: {
+        name: 'ゴールド',
+        description: 'セイクリッドガーディアン仕上げ',
+      },
+      veteran: {
+        name: 'ベテラン',
+        description: 'フィールドサージョンカラー',
+      },
+    },
+    stealth: {
+      default: {
+        name: 'スタンダード',
+        description: 'スタンダードステルスカラー',
+      },
+      stealth: {
+        name: 'ステルス',
+        description: 'ゴーストオペレイティブ仕様',
+      },
+      neon: {
+        name: 'ネオン',
+        description: 'フェイズシフトスタイル',
+      },
+      gold: {
+        name: 'ゴールド',
+        description: 'ファントムエリート仕上げ',
+      },
+      veteran: {
+        name: 'ベテラン',
+        description: 'シャドウアサシンカラー',
+      },
+    },
+    heavy: {
+      default: {
+        name: 'スタンダード',
+        description: 'スタンダードヘビーカラー',
+      },
+      stealth: {
+        name: 'ステルス',
+        description: 'ダークデストロイヤー仕様',
+      },
+      neon: {
+        name: 'ネオン',
+        description: 'プラズマキャノンスタイル',
+      },
+      gold: {
+        name: 'ゴールド',
+        description: 'ウォーシップアドミラル仕上げ',
+      },
+      veteran: {
+        name: 'ベテラン',
+        description: 'シージブレイカーカラー',
       },
     },
   },
