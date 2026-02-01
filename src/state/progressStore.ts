@@ -181,7 +181,7 @@ interface StatisticsState {
 }
 
 const initializeShipStats = (): Record<ShipType, { games: number; bestScore: number; bestWave: number }> => {
-  const shipTypes: ShipType[] = ['fighter', 'scout', 'tank', 'interceptor']
+  const shipTypes: ShipType[] = ['fighter', 'scout', 'tank', 'interceptor', 'support', 'stealth', 'heavy']
   const stats: Partial<Record<ShipType, { games: number; bestScore: number; bestWave: number }>> = {}
   for (const ship of shipTypes) {
     stats[ship] = {
@@ -383,6 +383,9 @@ export const SHIP_COSTS: Record<ShipType, number> = {
   scout: 500,
   tank: 750,
   interceptor: 1000,
+  support: 1250,
+  stealth: 1500,
+  heavy: 1750,
 }
 
 export const useUpgradesStore = create<UpgradesState>()(
@@ -396,12 +399,18 @@ export const useUpgradesStore = create<UpgradesState>()(
         scout: ['default'],
         tank: ['default'],
         interceptor: ['default'],
+        support: ['default'],
+        stealth: ['default'],
+        heavy: ['default'],
       },
       selectedSkins: {
         fighter: 'default',
         scout: 'default',
         tank: 'default',
         interceptor: 'default',
+        support: 'default',
+        stealth: 'default',
+        heavy: 'default',
       },
 
       addCredits: (amount) =>
@@ -560,7 +569,7 @@ export const useUpgradesStore = create<UpgradesState>()(
       checkAndUnlockAchievementSkins: () => {
         const state = get()
         const achievementStore = useAchievementStore.getState()
-        const shipTypes: ShipType[] = ['fighter', 'scout', 'tank', 'interceptor']
+        const shipTypes: ShipType[] = ['fighter', 'scout', 'tank', 'interceptor', 'support', 'stealth', 'heavy']
 
         shipTypes.forEach((ship) => {
           const skins = SHIP_SKINS[ship]
@@ -595,12 +604,18 @@ export const useUpgradesStore = create<UpgradesState>()(
             scout: ['default'],
             tank: ['default'],
             interceptor: ['default'],
+            support: ['default'],
+            stealth: ['default'],
+            heavy: ['default'],
           },
           selectedSkins: {
             fighter: 'default',
             scout: 'default',
             tank: 'default',
             interceptor: 'default',
+            support: 'default',
+            stealth: 'default',
+            heavy: 'default',
           },
         }),
 
