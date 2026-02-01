@@ -352,4 +352,48 @@ export const zh: Translations = {
       description: '完成波次而不受伤害',
     },
   },
+  weeklyEvent: {
+    title: '每周活动',
+    activeEvent: '当前活动',
+    noActiveEvent: '暂无活动，敬请期待！',
+    eventModifiers: '活动修改器',
+    rewards: '奖励',
+    playEvent: '开始活动',
+    viewLeaderboard: '查看排行榜',
+    leaderboard: '活动排行榜',
+    timeRemaining: '剩余时间',
+    eventEnded: '活动已结束',
+    remaining: '剩余',
+    participation: '参与奖',
+    firstPlace: '第1名',
+    secondPlace: '第2名',
+    thirdPlace: '第3名',
+    topTen: '前10名',
+    modifiers: {
+      double_speed: {
+        name: '双倍速度',
+        description: '敌人和小行星移动速度加倍',
+      },
+      no_powerups: {
+        name: '无能量道具',
+        description: '不会掉落能量道具',
+      },
+      rapid_bosses: {
+        name: '快速首领',
+        description: '每3波出现一个首领',
+      },
+      bullet_hell: {
+        name: '弹幕地狱',
+        description: '敌人射击速度快3倍',
+      },
+      glass_cannon: {
+        name: '玻璃大炮',
+        description: '只有1点生命值但伤害翻倍',
+      },
+      big_asteroids: {
+        name: '巨大小行星',
+        description: '小行星体积增大1.5倍',
+      },
+    },
+  },
 };

@@ -359,6 +359,50 @@ export interface Translations {
       description: string;
     };
   };
+  weeklyEvent: {
+    title: string;
+    activeEvent: string;
+    noActiveEvent: string;
+    eventModifiers: string;
+    rewards: string;
+    playEvent: string;
+    viewLeaderboard: string;
+    leaderboard: string;
+    timeRemaining: string;
+    eventEnded: string;
+    remaining: string;
+    participation: string;
+    firstPlace: string;
+    secondPlace: string;
+    thirdPlace: string;
+    topTen: string;
+    modifiers: {
+      double_speed: {
+        name: string;
+        description: string;
+      };
+      no_powerups: {
+        name: string;
+        description: string;
+      };
+      rapid_bosses: {
+        name: string;
+        description: string;
+      };
+      bullet_hell: {
+        name: string;
+        description: string;
+      };
+      glass_cannon: {
+        name: string;
+        description: string;
+      };
+      big_asteroids: {
+        name: string;
+        description: string;
+      };
+    };
+  };
 }
 
 export const SUPPORTED_LANGUAGES: LanguageOption[] = [
