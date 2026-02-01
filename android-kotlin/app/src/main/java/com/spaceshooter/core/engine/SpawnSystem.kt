@@ -252,14 +252,44 @@ object SpawnSystem {
         val hp: Int,
         val radius: Float,
         val maxPhase: Int,
-        val score: Int
+        val score: Int,
+        val firePatterns: Map<Int, FirePattern>
     )
 
     fun getBossStats(type: BossType): BossStats {
         return when (type) {
-            BossType.DESTROYER -> BossStats(hp = 500, radius = 50f, maxPhase = 2, score = 1000)
-            BossType.CARRIER -> BossStats(hp = 750, radius = 60f, maxPhase = 3, score = 1500)
-            BossType.DREADNOUGHT -> BossStats(hp = 1000, radius = 70f, maxPhase = 3, score = 2500)
+            BossType.DESTROYER -> BossStats(
+                hp = 500,
+                radius = 50f,
+                maxPhase = 2,
+                score = 1000,
+                firePatterns = mapOf(
+                    1 to FirePattern.Spiral(bulletCount = 6, bulletSpeed = 150f),
+                    2 to FirePattern.Ring(bulletCount = 12, bulletSpeed = 120f)
+                )
+            )
+            BossType.CARRIER -> BossStats(
+                hp = 750,
+                radius = 60f,
+                maxPhase = 3,
+                score = 1500,
+                firePatterns = mapOf(
+                    1 to FirePattern.Spiral(bulletCount = 8, bulletSpeed = 140f),
+                    2 to FirePattern.Aimed(bulletCount = 3, bulletSpeed = 180f, spread = 0.5f),
+                    3 to FirePattern.Burst(bulletCount = 3, bulletSpeed = 160f, directions = 4)
+                )
+            )
+            BossType.DREADNOUGHT -> BossStats(
+                hp = 1000,
+                radius = 70f,
+                maxPhase = 3,
+                score = 2500,
+                firePatterns = mapOf(
+                    1 to FirePattern.Ring(bulletCount = 16, bulletSpeed = 130f),
+                    2 to FirePattern.Spiral(bulletCount = 12, bulletSpeed = 150f),
+                    3 to FirePattern.Burst(bulletCount = 4, bulletSpeed = 170f, directions = 6)
+                )
+            )
         }
     }
 
