@@ -66,6 +66,10 @@ export const TopBar: React.FC<TopBarProps> = ({
           paddingVertical: 8,
         }}
         onPress={onPausePress}
+        accessible={true}
+        accessibilityRole="button"
+        accessibilityLabel={paused ? "Resume" : "Pause"}
+        accessibilityHint="Pauses or resumes the game"
       >
         <Text style={{ color: colors.hudText, fontSize: 14 }}>{paused ? "Resume" : "Pause"}</Text>
       </Pressable>
