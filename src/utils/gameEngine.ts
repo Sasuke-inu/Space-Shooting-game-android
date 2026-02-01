@@ -412,6 +412,7 @@ export const useGameEngine = () => {
         spin: a.spin,
         ang: a.ang + a.spin * effectiveDt * animSpeedMultiplier,
         tier: a.tier,
+        hp: a.hp,
       })
     }
 
@@ -612,22 +613,6 @@ export const useGameEngine = () => {
 
     updatedBullets.forEach((b, bIdx) => {
       if (!b.friendly) return // Skip enemy bullets for asteroid collision
-
-      state.asteroids.forEach((a, aIdx) => {
-        if (!bulletsToRemove.has(bIdx) && !asteroidsToRemove.has(aIdx)) {
-          if (dist2(b.pos, a.pos) < (a.radius + 2) * (a.radius + 2)) {
-            boom(b.pos, themeColors.particleHit, 12, 180)
-            playSfx('explosion_small')
-            state.splitAsteroid(a)
-            asteroidsToRemove.add(aIdx)
-            bulletsToRemove.add(bIdx)
-            state.incrementCombo()
-            const asteroidPoints = 20 * a.tier
-            const asteroidScoreWithMultiplier = state.hasPowerUp('score_multiplier') ? asteroidPoints * 2 : asteroidPoints
-            state.addScore(asteroidScoreWithMultiplier)
-            state.addCredits(a.tier)
-            state.triggerShake(3, 100)
-            hapticMedium()
 
       // Bullets vs asteroids - collect damage to apply after iteration
       updatedAsteroids.forEach((a, aIdx) => {
