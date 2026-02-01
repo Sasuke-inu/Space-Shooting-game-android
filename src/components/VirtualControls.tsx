@@ -194,7 +194,13 @@ const VirtualControlsComponent: React.FC<VirtualControlsProps> = ({
   return (
     <View style={[styles.container, { justifyContent: containerAlignment }]}>
       <GestureDetector gesture={panGesture}>
-        <View style={styles.joystickContainer}>
+        <View
+          style={styles.joystickContainer}
+          accessible={true}
+          accessibilityLabel="Movement joystick"
+          accessibilityHint="Drag to control ship movement"
+          accessibilityRole="adjustable"
+        >
           <View style={[styles.joystickPad, dynamicStyles.joystickPad]}>
             <Animated.View style={[styles.joystickStick, dynamicStyles.joystickStick, stickStyle]} />
           </View>
