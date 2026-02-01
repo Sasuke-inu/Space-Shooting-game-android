@@ -8,6 +8,7 @@ import { QUALITY_PRESETS } from "../types/performance"
 import { fromAngle } from "../utils/vectorMath"
 import { SHIP_SKINS } from "../types/game"
 import { useUpgradesStore } from "../state/progressStore"
+import { COMBO_TIMEOUT } from "../state/gameStore"
 
 interface GameCanvasProps {
   width: number
@@ -831,7 +832,7 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
               />
               {/* Timer bar fill */}
               <Path
-                path={Skia.Path.Make().addRect(Skia.XYWHRect(0, 0, 80 * (combo.timer / 2.0), 4))}
+                path={Skia.Path.Make().addRect(Skia.XYWHRect(0, 0, 80 * (combo.timer / COMBO_TIMEOUT), 4))}
                 color={colors.comboText}
                 style="fill"
               />
