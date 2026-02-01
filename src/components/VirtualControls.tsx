@@ -9,6 +9,7 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated"
 import type { Vec2, Player, ShipType } from "../types/game"
+import { SHIP_STATS } from "../types/game"
 import type { ThemeColors } from "../theme/types"
 import type { JoystickSize, JoystickPosition } from "../theme/themeStore"
 import { hapticLight, hapticSelection } from "../utils/haptics"
@@ -20,6 +21,9 @@ interface VirtualControlsProps {
   size?: JoystickSize
   position?: JoystickPosition
   invertY?: boolean
+  player: Player
+  onAbilityPress: () => void
+  cooldownProgress: Animated.SharedValue<number>
 }
 
 const JOY_DEADZONE = 0.1
@@ -38,6 +42,9 @@ const VirtualControlsComponent: React.FC<VirtualControlsProps> = ({
   size = 'medium',
   position = 'center',
   invertY = false,
+  player,
+  onAbilityPress,
+  cooldownProgress,
 }) => {
   const [joystickActive, setJoystickActive] = useState(false)
   const joystickX = useSharedValue(0)
@@ -175,6 +182,15 @@ const VirtualControlsComponent: React.FC<VirtualControlsProps> = ({
       borderRadius: sizeConfig.stick / 2,
       backgroundColor: colors.joystickStick,
       shadowColor: colors.joystickGlow,
+    },
+    abilityButton: {
+      backgroundColor: colors.buttonPrimary,
+    },
+    abilityText: {
+      color: colors.hudText,
+    },
+    cooldownOverlay: {
+      borderLeftColor: colors.hudAccent,
     },
   }), [colors, sizeConfig])
 
