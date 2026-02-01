@@ -92,6 +92,11 @@ export const getEnemySpawnWeights = (wave: number): Record<EnemyType, number> =>
   teleporter: wave >= 9 ? 10 : 0,
 })
 
+// Asteroid HP by tier
+export const getAsteroidHp = (tier: 1 | 2 | 3): number => {
+  return tier // tier 3 = 3 HP, tier 2 = 2 HP, tier 1 = 1 HP
+}
+
 // ------------------------------------------------------------------ //
 //                         Bullet Pool
 // ------------------------------------------------------------------ //
@@ -424,13 +429,15 @@ export const useGameStore = create<GameStore>((set, get) => ({
           side === 1 ? 0 : side === 3 ? state.h : rand(0, state.h)
         )
         const vel = fromAngle(rand(0, Math.PI * 2), rand(20, 50))
+        const tier = 3
         newAsteroids.push({
           pos,
           vel,
           radius: ASTEROID_BASE_RADIUS,
           spin: rand(-1, 1),
           ang: rand(0, Math.PI * 2),
-          tier: 3,
+          tier,
+          hp: getAsteroidHp(tier),
         })
       }
       return { asteroids: [...state.asteroids, ...newAsteroids] }
@@ -450,6 +457,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
             spin: rand(-2, 2),
             ang: rand(0, Math.PI * 2),
             tier: newTier,
+            hp: getAsteroidHp(newTier),
           })
         }
         return { asteroids: [...state.asteroids, ...newAsteroids] }
