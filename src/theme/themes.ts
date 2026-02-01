@@ -40,6 +40,8 @@ export const neonVoidTheme: GameTheme = {
     enemyTank: '#ff6666',
     enemySniper: '#9966ff',
     enemyBomber: '#ff9933',
+    enemyHealer: '#33cc33',
+    enemyJuggernaut: '#cc3333',
 
     // Objects
     asteroid: '#bdf',
@@ -118,6 +120,8 @@ export const nomadTheme: GameTheme = {
     enemyTank: '#a0522d',
     enemySniper: '#8b4789',
     enemyBomber: '#d2691e',
+    enemyHealer: '#6b8e23',
+    enemyJuggernaut: '#8b2500',
 
     // Objects
     asteroid: '#8b7355',
@@ -196,6 +200,8 @@ export const sakuraTheme: GameTheme = {
     enemyTank: '#ff6b9d',
     enemySniper: '#da70d6',
     enemyBomber: '#ff8c69',
+    enemyHealer: '#66cc99',
+    enemyJuggernaut: '#cc4466',
 
     // Objects
     asteroid: '#cdb4db',
@@ -274,6 +280,8 @@ export const forestMatrixTheme: GameTheme = {
     enemyTank: '#ff5733',
     enemySniper: '#ff1493',
     enemyBomber: '#ff8c00',
+    enemyHealer: '#32cd32',
+    enemyJuggernaut: '#b22222',
 
     // Objects
     asteroid: '#228b22',
@@ -352,6 +360,8 @@ export const infernoTheme: GameTheme = {
     enemyTank: '#b22222',
     enemySniper: '#8b008b',
     enemyBomber: '#ff4500',
+    enemyHealer: '#3cb371',
+    enemyJuggernaut: '#a00000',
 
     // Objects
     asteroid: '#cd5c5c',
@@ -430,6 +440,8 @@ export const arcticTheme: GameTheme = {
     enemyTank: '#5f9ea0',
     enemySniper: '#9370db',
     enemyBomber: '#ff8c69',
+    enemyHealer: '#48d1a0',
+    enemyJuggernaut: '#b03060',
 
     // Objects
     asteroid: '#b0c4de',
@@ -508,6 +520,8 @@ export const halloweenTheme: GameTheme = {
     enemyTank: '#d2691e',
     enemySniper: '#800080',
     enemyBomber: '#ff4500',
+    enemyHealer: '#2e8b57',
+    enemyJuggernaut: '#8b0000',
 
     // Objects
     asteroid: '#4b3a5a',
@@ -586,6 +600,8 @@ export const synthwaveTheme: GameTheme = {
     enemyTank: '#ff006e',
     enemySniper: '#bd00ff',
     enemyBomber: '#ff9e00',
+    enemyHealer: '#00ff66',
+    enemyJuggernaut: '#cc0033',
 
     // Objects
     asteroid: '#a855f7',
@@ -664,6 +680,8 @@ export const winterTheme: GameTheme = {
     enemyTank: '#708090',
     enemySniper: '#9370db',
     enemyBomber: '#ffb6c1',
+    enemyHealer: '#5fad8f',
+    enemyJuggernaut: '#a04050',
 
     // Objects
     asteroid: '#8ba9c0',
