@@ -435,12 +435,24 @@ export const useGameEngine = () => {
     // Add player-fired bullets
     updatedBullets = [...updatedBullets, ...bulletsToAdd]
 
-    // Update asteroids (with increasing animation speed) - mutate during iteration
+    // Update asteroids (with increasing animation speed) - use mutable Vec2 operations
     let updatedAsteroids: Asteroid[] = []
+    // Reusable temp Vec2 for mutable operations
+    const asteroidTempVec = v()
     for (let i = 0; i < state.asteroids.length; i++) {
       const a = state.asteroids[i]
+
+      // Update position using mutable operations
+      // Pattern: asteroidTempVec = a.vel * (effectiveDt * animSpeedMultiplier)
+      asteroidTempVec.x = a.vel.x
+      asteroidTempVec.y = a.vel.y
+      mulTo(asteroidTempVec, effectiveDt * animSpeedMultiplier)
+      // a.pos += asteroidTempVec
+      const newPos = v(a.pos.x, a.pos.y)
+      addTo(newPos, asteroidTempVec)
+
       updatedAsteroids.push({
-        pos: wrap(add(a.pos, mul(a.vel, effectiveDt * animSpeedMultiplier)), state.w, state.h),
+        pos: wrap(newPos, state.w, state.h),
         vel: a.vel,
         radius: a.radius,
         spin: a.spin,
