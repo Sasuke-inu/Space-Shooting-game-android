@@ -1,7 +1,7 @@
 import React, { useMemo } from "react"
 import { Canvas, Group, Path, Circle, Line, Text, Skia, vec, matchFont, Rect } from "@shopify/react-native-skia"
 import { Platform } from "react-native"
-import type { Asteroid, Enemy, Vec2, PowerUp, ActivePowerUp, ComboState, Boss, HomingMissile, EnemyType, AbilityFlash } from "../types/game"
+import type { Asteroid, Enemy, Vec2, PowerUp, ActivePowerUp, ComboState, Boss, HomingMissile, EnemyType, AbilityFlash, Challenge } from "../types/game"
 import type { ThemeColors } from "../theme/types"
 import type { QualityLevel } from "../types/performance"
 import { QUALITY_PRESETS } from "../types/performance"
@@ -36,6 +36,7 @@ interface GameCanvasProps {
   timeWarpActive?: boolean
   abilityFlash?: AbilityFlash | null
   abilityFlashOpacity?: number
+  activeChallenge?: Challenge | null
 }
 
 // Helper to get power-up color from theme
@@ -106,6 +107,7 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
   timeWarpActive = false,
   abilityFlash = null,
   abilityFlashOpacity = 0,
+  activeChallenge = null,
 }) => {
   // Get selected skin for player ship
   const getSelectedSkin = useUpgradesStore((state) => state.getSelectedSkin)
@@ -810,6 +812,20 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
           font={hudFont}
         />
         <Text x={16} y={64} text={`Credits: ${credits}`} color={colors.comboText} font={hudFont} />
+
+        {/* HUD - Active Challenge */}
+        {activeChallenge && !activeChallenge.completed && (
+          <>
+            <Text x={16} y={84} text={activeChallenge.icon} font={hudFont} />
+            <Text
+              x={36}
+              y={84}
+              text={`${activeChallenge.name}: ${activeChallenge.progress}/${activeChallenge.target}`}
+              color={colors.hudText}
+              font={hudFont}
+            />
+          </>
+        )}
 
         {/* HUD - Combo counter */}
         {combo.count > 0 && (

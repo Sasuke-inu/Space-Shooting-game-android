@@ -185,6 +185,7 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   // Challenges
   const challenges = useChallengesStore((s) => s.challenges)
   const activeChallengesCount = challenges.filter((c) => !c.completed).length
+  const activeChallenge = challenges.find((c) => !c.completed) || null
   const recentChallengeCompletion = useChallengesStore((s) => s.recentCompletion)
   const clearRecentChallengeCompletion = useChallengesStore((s) => s.clearRecentCompletion)
   const checkAndRefreshChallenges = useChallengesStore((s) => s.checkAndRefreshChallenges)
@@ -649,6 +650,7 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
             timeWarpActive={timeWarpActive}
             abilityFlash={abilityFlash}
             abilityFlashOpacity={getAbilityFlashOpacity()}
+            activeChallenge={activeChallenge}
           />
         </View>
       </GestureDetector>
