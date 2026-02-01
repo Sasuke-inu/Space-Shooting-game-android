@@ -927,6 +927,8 @@ export const useGameEngine = () => {
             type: enemyType,
             chargeTime: enemyType === 'sniper' ? 0 : undefined,
             bombCooldown: enemyType === 'bomber' ? 3 : undefined,
+            chargeCooldown: enemyType === 'juggernaut' ? 5 : undefined,
+            isCharging: enemyType === 'juggernaut' ? false : undefined,
           })
         }
       }
@@ -1099,6 +1101,9 @@ function updateEnemyBehaviorBatched(
     chargeTime: e.chargeTime,
     bombCooldown: e.bombCooldown,
     stunDuration: e.stunDuration,
+    chargeCooldown: e.chargeCooldown,
+    isCharging: e.isCharging,
+    chargeDirection: e.chargeDirection,
   }
 
   switch (e.type) {
@@ -1398,6 +1403,88 @@ function updateEnemyBehaviorBatched(
       break
     }
 
+    case 'juggernaut': {
+      // Juggernaut: slow heavy approach with periodic charge attacks
+      const chargeTelegraphTime = 0.8
+      const chargeDuration = 1.5
+      const chargeSpeedMultiplier = 3
+
+      newEnemy.chargeCooldown = (e.chargeCooldown ?? 5) - dt
+
+      if (e.isCharging && e.chargeDirection) {
+        // Currently charging: move in locked direction at 3x speed, don't fire
+        const chargeSpeed = stats.speed * chargeSpeedMultiplier
+        const chargeVel = mul(e.chargeDirection, chargeSpeed)
+        newEnemy.vel = chargeVel
+        newEnemy.pos = wrap(add(e.pos, mul(chargeVel, dt * animSpeed)), state.w, state.h)
+        newEnemy.ang = angleOf(e.chargeDirection)
+
+        // Check if charge duration expired (chargeCooldown tracks remaining charge time when negative)
+        // Charge lasts chargeDuration seconds after telegraph (cooldown goes from -telegraph to -(telegraph+duration))
+        if (newEnemy.chargeCooldown <= -(chargeTelegraphTime + chargeDuration)) {
+          // Charge complete, reset
+          newEnemy.isCharging = false
+          newEnemy.chargeDirection = undefined
+          newEnemy.chargeCooldown = 5 // Reset cooldown for next charge
+          newEnemy.vel = mul(e.vel, 0.3) // Slow down after charge
+        }
+      } else if (e.chargeCooldown !== undefined && e.chargeCooldown <= 0) {
+        // Telegraph phase: glowing visual, lock charge direction
+        if (!e.chargeDirection) {
+          // Lock direction toward player at start of telegraph
+          newEnemy.chargeDirection = { x: dir.x, y: dir.y }
+
+          // Emit telegraph particles (glowing effect)
+          state.addParticles(
+            Array.from({ length: 10 }, () => ({
+              pos: { x: e.pos.x, y: e.pos.y },
+              vel: fromAngle(Math.random() * Math.PI * 2, rand(20, 60)),
+              life: rand(0.3, 0.7),
+              color: '#ff4400',
+            }))
+          )
+        }
+
+        // During telegraph: slow down and face player
+        newEnemy.vel = mul(e.vel, 0.9)
+        newEnemy.pos = wrap(add(e.pos, mul(newEnemy.vel, dt * animSpeed * 0.3)), state.w, state.h)
+        newEnemy.ang = angleOf(dir)
+
+        // After telegraph time, start charging
+        if (newEnemy.chargeCooldown <= -chargeTelegraphTime) {
+          newEnemy.isCharging = true
+        }
+      } else {
+        // Normal approach: slow steady movement toward player
+        const juggDesired = mul(dir, 0.8)
+        let juggVel = add(e.vel, mul(nor(juggDesired), stats.speed * dt))
+        juggVel = mul(juggVel, 0.995)
+        newEnemy.vel = juggVel
+        newEnemy.pos = wrap(add(e.pos, mul(juggVel, dt * animSpeed * 0.7)), state.w, state.h)
+        newEnemy.ang = angleOf(toP)
+
+        // Fire heavy spread shots (3 bullets in a fan) when not charging
+        newEnemy.cooldown = e.cooldown - dt
+        if (d < 500 && newEnemy.cooldown <= 0) {
+          const aim = angleOf(sub(state.player.pos, e.pos)) + rand(-aimInaccuracy * 0.5, aimInaccuracy * 0.5)
+          const spreadAngles = [-0.25, 0, 0.25]
+          for (const offset of spreadAngles) {
+            bulletsToAdd.push({
+              pos: add(e.pos, fromAngle(aim + offset, 20)),
+              vel: fromAngle(aim + offset, BULLET_SPEED_ENEMY * 0.65),
+              life: BULLET_LIFE_ENEMY * 1.2,
+              friendly: false,
+              damage: stats.damage,
+            })
+          }
+          playSfx('shoot_enemy')
+          newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.2)
+        }
+      }
+
+      break
+    }
+
     default:
       // Default behavior (legacy)
       const desired = add(dir, fromAngle(context.time * 0.7, 0.4 * (1 - difficulty * 0.5)))
@@ -1647,6 +1734,86 @@ function updateEnemyBehavior(
           damage: stats.damage,
         })
         newEnemy.cooldown = stats.fireRate * 1.2 * earlyGameFireRate
+      }
+
+      break
+    }
+
+    case 'juggernaut': {
+      // Juggernaut: slow heavy approach with periodic charge attacks
+      const juggTelegraphTime = 0.8
+      const juggChargeDuration = 1.5
+      const juggChargeSpeedMultiplier = 3
+
+      newEnemy.chargeCooldown = (e.chargeCooldown ?? 5) - dt
+
+      if (e.isCharging && e.chargeDirection) {
+        // Currently charging: move in locked direction at 3x speed, don't fire
+        const chargeSpeed = stats.speed * juggChargeSpeedMultiplier
+        const chargeVel = mul(e.chargeDirection, chargeSpeed)
+        newEnemy.vel = chargeVel
+        newEnemy.pos = wrap(add(e.pos, mul(chargeVel, dt * animSpeed)), state.w, state.h)
+        newEnemy.ang = angleOf(e.chargeDirection)
+
+        // Check if charge duration expired
+        if (newEnemy.chargeCooldown <= -(juggTelegraphTime + juggChargeDuration)) {
+          // Charge complete, reset
+          newEnemy.isCharging = false
+          newEnemy.chargeDirection = undefined
+          newEnemy.chargeCooldown = 5
+          newEnemy.vel = mul(e.vel, 0.3)
+        }
+      } else if (e.chargeCooldown !== undefined && e.chargeCooldown <= 0) {
+        // Telegraph phase: glowing visual, lock charge direction
+        if (!e.chargeDirection) {
+          newEnemy.chargeDirection = { x: dir.x, y: dir.y }
+
+          // Emit telegraph particles (glowing effect)
+          state.addParticles(
+            Array.from({ length: 10 }, () => ({
+              pos: { x: e.pos.x, y: e.pos.y },
+              vel: fromAngle(Math.random() * Math.PI * 2, rand(20, 60)),
+              life: rand(0.3, 0.7),
+              color: '#ff4400',
+            }))
+          )
+        }
+
+        // During telegraph: slow down and face player
+        newEnemy.vel = mul(e.vel, 0.9)
+        newEnemy.pos = wrap(add(e.pos, mul(newEnemy.vel, dt * animSpeed * 0.3)), state.w, state.h)
+        newEnemy.ang = angleOf(dir)
+
+        // After telegraph time, start charging
+        if (newEnemy.chargeCooldown <= -juggTelegraphTime) {
+          newEnemy.isCharging = true
+        }
+      } else {
+        // Normal approach: slow steady movement toward player
+        const juggDesired2 = mul(dir, 0.8)
+        let juggVel2 = add(e.vel, mul(nor(juggDesired2), stats.speed * dt))
+        juggVel2 = mul(juggVel2, 0.995)
+        newEnemy.vel = juggVel2
+        newEnemy.pos = wrap(add(e.pos, mul(juggVel2, dt * animSpeed * 0.7)), state.w, state.h)
+        newEnemy.ang = angleOf(toP)
+
+        // Fire heavy spread shots (3 bullets in a fan) when not charging (with density cap check)
+        newEnemy.cooldown = e.cooldown - dt
+        if (d < 500 && newEnemy.cooldown <= 0 && canSpawnEnemyBullets(state.bullets.length, 3, state.w, state.h)) {
+          const aim = angleOf(sub(state.player.pos, e.pos)) + rand(-aimInaccuracy * 0.5, aimInaccuracy * 0.5)
+          const spreadAngles = [-0.25, 0, 0.25]
+          for (const offset of spreadAngles) {
+            state.addBullet({
+              pos: add(e.pos, fromAngle(aim + offset, 20)),
+              vel: fromAngle(aim + offset, BULLET_SPEED_ENEMY * 0.65),
+              life: BULLET_LIFE_ENEMY * 1.2,
+              friendly: false,
+              damage: stats.damage,
+            })
+          }
+          playSfx('shoot_enemy')
+          newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.2) * earlyGameFireRate
+        }
       }
 
       break
