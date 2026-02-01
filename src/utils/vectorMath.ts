@@ -31,3 +31,31 @@ export const dist2 = (a: Vec2, b: Vec2) => {
 /** wrap a position at edges so the world is toroidal (Asteroids-like) */
 export const wrap = (p: Vec2, w: number, h: number) =>
   v(((p.x % w) + w) % w, ((p.y % h) + h) % h)
+
+/** mutable ops (modify first argument in-place, reduce GC pressure) */
+export const addTo = (a: Vec2, b: Vec2) => {
+  a.x += b.x
+  a.y += b.y
+  return a
+}
+export const subTo = (a: Vec2, b: Vec2) => {
+  a.x -= b.x
+  a.y -= b.y
+  return a
+}
+export const mulTo = (a: Vec2, s: number) => {
+  a.x *= s
+  a.y *= s
+  return a
+}
+export const norTo = (a: Vec2) => {
+  const L = len(a)
+  if (L === 0) {
+    a.x = 0
+    a.y = 0
+  } else {
+    a.x /= L
+    a.y /= L
+  }
+  return a
+}
