@@ -229,7 +229,7 @@ function validateStatistics(data: unknown): ValidationResult {
   } else if (!isString(stats.favoriteShip)) {
     issues.push('Stats "favoriteShip" must be a string')
   } else {
-    const validShips: ShipType[] = ['fighter', 'scout', 'tank', 'interceptor']
+    const validShips: ShipType[] = ['fighter', 'scout', 'tank', 'interceptor', 'support', 'stealth', 'heavy']
     if (!validShips.includes(stats.favoriteShip as ShipType)) {
       issues.push('Stats "favoriteShip" has invalid value')
     }
@@ -314,7 +314,7 @@ function validateUpgrades(data: unknown): ValidationResult {
     issues.push('"unlockedShips" must be an array')
   } else {
     const ships = data.unlockedShips as unknown[]
-    const validShips: ShipType[] = ['fighter', 'scout', 'tank', 'interceptor']
+    const validShips: ShipType[] = ['fighter', 'scout', 'tank', 'interceptor', 'support', 'stealth', 'heavy']
     for (const ship of ships) {
       if (!isString(ship) || !validShips.includes(ship as ShipType)) {
         issues.push(`Invalid ship in "unlockedShips": ${ship}`)
