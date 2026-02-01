@@ -332,21 +332,29 @@ class GameEngine {
         if (newTimer >= 1f && boss.pos.y >= 100f) {
             newTimer = 0f
 
-            // Fire pattern based on phase
-            val bulletCount = boss.phase * 3
-            for (i in 0 until bulletCount) {
-                val angle = (i.toFloat() / bulletCount) * 2f * PI.toFloat() + state.time
-                val bulletVel = Vec2.fromAngle(angle, GameConstants.BULLET_SPEED_ENEMY * 0.8f)
+            // Execute fire pattern from BossStats
+            val bossStats = SpawnSystem.getBossStats(boss.type)
+            val pattern = bossStats.firePatterns[boss.phase]
 
-                newBullets.add(
-                    Bullet(
-                        pos = boss.pos + Vec2.fromAngle(angle, boss.radius),
-                        vel = bulletVel,
-                        isPlayerBullet = false,
-                        damage = 20,
-                        radius = 6f
-                    )
+            pattern?.let { firePattern ->
+                val bulletSpawns = firePattern.execute(
+                    bossPos = boss.pos,
+                    bossRadius = boss.radius,
+                    time = state.time,
+                    playerPos = state.player.pos
                 )
+
+                bulletSpawns.forEach { spawn ->
+                    newBullets.add(
+                        Bullet(
+                            pos = spawn.position,
+                            vel = spawn.velocity,
+                            isPlayerBullet = false,
+                            damage = 20,
+                            radius = 6f
+                        )
+                    )
+                }
             }
         }
 
