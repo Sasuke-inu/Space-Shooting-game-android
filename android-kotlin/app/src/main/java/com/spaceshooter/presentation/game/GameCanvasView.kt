@@ -320,7 +320,7 @@ class GameRenderer {
 
             // Draw based on type
             when (enemy.type) {
-                EnemyType.SCOUT -> drawScoutEnemy(canvas, color)
+                EnemyType.SCOUT -> drawScoutEnemy(canvas, color, healthPercent)
                 EnemyType.TANK -> drawTankEnemy(canvas, color, healthPercent)
                 EnemyType.SNIPER -> drawSniperEnemy(canvas, color, 0f, state.time)
                 EnemyType.BOMBER -> drawBomberEnemy(canvas, color)
@@ -330,7 +330,7 @@ class GameRenderer {
         }
     }
 
-    private fun drawScoutEnemy(canvas: Canvas, color: Int) {
+    private fun drawScoutEnemy(canvas: Canvas, color: Int, healthPercent: Float) {
         paint.color = color
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 2f
