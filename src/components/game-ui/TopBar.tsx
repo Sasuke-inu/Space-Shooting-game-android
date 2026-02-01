@@ -83,6 +83,10 @@ export const TopBar: React.FC<TopBarProps> = ({
           paddingVertical: 8,
         }}
         onPress={onRestartPress}
+        accessible={true}
+        accessibilityRole="button"
+        accessibilityLabel="Restart"
+        accessibilityHint="Restarts the game"
       >
         <Text style={{ color: colors.hudText, fontSize: 14 }}>Restart</Text>
       </Pressable>
