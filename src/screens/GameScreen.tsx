@@ -78,6 +78,8 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   const time = useGameStore((s) => s.time)
   const bossWarning = useGameStore((s) => s.bossWarning)
   const timeWarpActive = useGameStore((s) => s.timeWarpActive)
+  const playerCloaked = useGameStore((s) => s.playerCloaked)
+  const repairActive = useGameStore((s) => s.repairActive)
 
   // Game state - objects (use shallow equality)
   const player = useGameStore(useShallow((s) => s.player))
@@ -220,6 +222,15 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
           case 'emp_blast':
             // Stun all enemies for 3 seconds
             stunAllEnemies(3)
+            break
+          case 'repair_drone':
+            // Repair drone effect is handled in game engine (HP restoration per tick)
+            break
+          case 'phase_cloak':
+            // Phase cloak is handled in gameStore (playerCloaked flag + invulnerability)
+            break
+          case 'gravity_cannon':
+            // Gravity cannon damage is applied immediately in gameStore.activateSpecialAbility
             break
         }
       }
@@ -615,6 +626,8 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
             timeWarpActive={timeWarpActive}
             abilityFlash={abilityFlash}
             abilityFlashOpacity={getAbilityFlashOpacity()}
+            repairDroneActive={repairActive}
+            phaseCloakActive={playerCloaked}
           />
         </View>
       </GestureDetector>
@@ -699,7 +712,7 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
 
               <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 400 }}>
                 <View style={{ gap: 12 }}>
-                  {(['fighter', 'scout', 'tank', 'interceptor'] as ShipType[]).map((ship) => {
+                  {(['fighter', 'scout', 'tank', 'interceptor', 'support', 'stealth', 'heavy'] as ShipType[]).map((ship) => {
                     const shipStats = SHIP_STATS[ship]
                     const isUnlocked = unlockedShips.includes(ship)
                     const cost = SHIP_COSTS[ship]

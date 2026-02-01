@@ -13,7 +13,7 @@ export interface ShipSelectorProps {
 
 export const ShipSelector: React.FC<ShipSelectorProps> = ({ currentShip, unlockedShips, onShipSelect, colors }) => (
   <View style={{ gap: 12 }}>
-    {(['fighter', 'scout', 'tank', 'interceptor'] as ShipType[]).map((ship) => {
+    {(['fighter', 'scout', 'tank', 'interceptor', 'support', 'stealth', 'heavy'] as ShipType[]).map((ship) => {
       const shipStats = SHIP_STATS[ship]
       const isUnlocked = unlockedShips.includes(ship)
       const isSelected = currentShip === ship

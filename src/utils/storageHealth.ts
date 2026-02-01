@@ -199,7 +199,7 @@ function validateStatistics(data: unknown): ValidationResult {
   } else if (!isObject(stats.killsByEnemyType)) {
     issues.push('Stats "killsByEnemyType" must be an object')
   } else {
-    const enemyTypes: EnemyType[] = ['scout', 'tank', 'sniper', 'bomber']
+    const enemyTypes: EnemyType[] = ['scout', 'tank', 'sniper', 'bomber', 'teleporter']
     const killsByEnemy = stats.killsByEnemyType as Record<string, unknown>
     for (const type of enemyTypes) {
       if (!(type in killsByEnemy) || !isNonNegativeNumber(killsByEnemy[type])) {

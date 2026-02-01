@@ -20,6 +20,9 @@ const getAbilityTypeFromShip = (shipType: ShipType): AbilityType => {
     'Missile Barrage': 'missile_barrage',
     'Time Warp': 'time_warp',
     'Shield Burst': 'shield_burst',
+    'Repair Drone': 'repair_drone',
+    'Phase Cloak': 'phase_cloak',
+    'Gravity Cannon': 'gravity_cannon',
   }
   return abilityMap[specialName] || 'emp_blast'
 }
@@ -54,12 +57,30 @@ describe('Ability Button', () => {
     })
 
     test('all ship types have valid ability mappings', () => {
-      const shipTypes: ShipType[] = ['fighter', 'scout', 'tank', 'interceptor']
+      const shipTypes: ShipType[] = ['fighter', 'scout', 'tank', 'interceptor', 'support', 'stealth', 'heavy']
 
       shipTypes.forEach(shipType => {
         const abilityType = getAbilityTypeFromShip(shipType)
         expect(ABILITY_STATS[abilityType]).toBeDefined()
       })
+    })
+
+    test('Support maps to Repair Drone', () => {
+      const abilityType = getAbilityTypeFromShip('support')
+      expect(abilityType).toBe('repair_drone')
+      expect(SHIP_STATS.support.special).toBe('Repair Drone')
+    })
+
+    test('Stealth maps to Phase Cloak', () => {
+      const abilityType = getAbilityTypeFromShip('stealth')
+      expect(abilityType).toBe('phase_cloak')
+      expect(SHIP_STATS.stealth.special).toBe('Phase Cloak')
+    })
+
+    test('Heavy maps to Gravity Cannon', () => {
+      const abilityType = getAbilityTypeFromShip('heavy')
+      expect(abilityType).toBe('gravity_cannon')
+      expect(SHIP_STATS.heavy.special).toBe('Gravity Cannon')
     })
   })
 
