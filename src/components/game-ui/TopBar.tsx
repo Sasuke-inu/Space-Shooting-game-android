@@ -49,6 +49,10 @@ export const TopBar: React.FC<TopBarProps> = ({
           paddingVertical: 8,
         }}
         onPress={onSettingsPress}
+        accessible={true}
+        accessibilityRole="button"
+        accessibilityLabel="Settings"
+        accessibilityHint="Opens the settings menu"
       >
         <Text style={{ color: colors.hudText, fontSize: 14 }}>⚙️</Text>
       </Pressable>
