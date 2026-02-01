@@ -28,57 +28,29 @@ class GameEngine {
         val builder = state.toBuilder()
         builder.time = state.time + deltaTime
 
-        // Build initial state with updated time, then chain updates
-        var newState = builder.build()
+        // Update all subsystems using builder (modifies in-place)
+        updatePlayer(builder, input, effectiveDt)
+        updateBullets(builder, effectiveDt)
+        updateAsteroids(builder, effectiveDt)
+        updateEnemies(builder, effectiveDt)
+        updateBoss(builder, effectiveDt)
+        updateParticles(builder, effectiveDt)
+        updatePowerUps(builder, effectiveDt)
+        updateHomingMissiles(builder, effectiveDt)
+        checkCollisions(builder)
+        updateCombo(builder, deltaTime)
+        updateScreenShake(builder, deltaTime)
+        updateActivePowerUps(builder, deltaTime)
+        checkWaveCompletion(builder)
+        spawnEnemiesIfNeeded(builder, deltaTime)
 
-        // Update player
-        newState = updatePlayer(newState, input, effectiveDt)
-
-        // Update bullets
-        newState = updateBullets(newState, effectiveDt)
-
-        // Update asteroids
-        newState = updateAsteroids(newState, effectiveDt)
-
-        // Update enemies
-        newState = updateEnemies(newState, effectiveDt)
-
-        // Update boss
-        newState = updateBoss(newState, effectiveDt)
-
-        // Update particles
-        newState = updateParticles(newState, effectiveDt)
-
-        // Update power-ups
-        newState = updatePowerUps(newState, effectiveDt)
-
-        // Update homing missiles
-        newState = updateHomingMissiles(newState, effectiveDt)
-
-        // Check collisions
-        newState = checkCollisions(newState)
-
-        // Update combo timer
-        newState = updateCombo(newState, deltaTime)
-
-        // Update screen shake
-        newState = updateScreenShake(newState, deltaTime)
-
-        // Update power-up durations
-        newState = updateActivePowerUps(newState, deltaTime)
-
-        // Check wave completion
-        newState = checkWaveCompletion(newState)
-
-        // Spawn enemies if needed
-        newState = spawnEnemiesIfNeeded(newState, deltaTime)
-
-        return newState
+        // Build final state (single allocation per frame)
+        return builder.build()
     }
 
-    private fun updatePlayer(state: GameState, input: GameInput, dt: Float): GameState {
-        var player = state.player
-        var newBullets = state.bullets.toMutableList()
+    private fun updatePlayer(builder: GameStateBuilder, input: GameInput, dt: Float) {
+        var player = builder.player
+        val newBullets = builder.bullets.toMutableList()
 
         // Rotation based on joystick
         if (input.joystick.lengthSquared() > 0.01f) {
@@ -106,17 +78,18 @@ class GameEngine {
         var newPos = player.pos + newVel * dt
 
         // Screen wrapping
-        newPos = Vec2.wrap(newPos, state.width, state.height)
+        newPos = Vec2.wrap(newPos, builder.width, builder.height)
 
         // Update invincibility
         val newInv = (player.invincibility - dt).coerceAtLeast(0f)
 
         // Update fire cooldown and shoot
         var newFireCooldown = (player.fireCooldown - dt).coerceAtLeast(0f)
-        var shotsFired = state.sessionStats.shotsFired
+        var shotsFired = builder.sessionStats.shotsFired
 
         if (input.firing && newFireCooldown <= 0f) {
-            val cooldown = if (state.hasRapidFireActive()) {
+            val hasRapidFire = builder.activePowerUps.any { it.type == PowerUpType.RAPID_FIRE }
+            val cooldown = if (hasRapidFire) {
                 GameConstants.FIRE_COOLDOWN_RAPID
             } else {
                 GameConstants.FIRE_COOLDOWN_PLAYER
@@ -124,7 +97,8 @@ class GameEngine {
             newFireCooldown = cooldown
 
             // Spawn bullet(s)
-            val bulletCount = if (state.hasSpreadShotActive()) 3 else 1
+            val hasSpreadShot = builder.activePowerUps.any { it.type == PowerUpType.SPREAD_SHOT }
+            val bulletCount = if (hasSpreadShot) 3 else 1
             val spreadAngle = PI.toFloat() / 12f
 
             for (i in 0 until bulletCount) {
@@ -153,7 +127,7 @@ class GameEngine {
         }
 
         // Update special ability
-        var newAbility = player.specialAbility.copy(
+        val newAbility = player.specialAbility.copy(
             cooldown = (player.specialAbility.cooldown - dt).coerceAtLeast(0f)
         )
 
@@ -165,34 +139,32 @@ class GameEngine {
             specialAbility = newAbility
         )
 
-        return state.copy(
-            player = player,
-            bullets = newBullets,
-            thrusting = input.joystick.lengthSquared() > 0.01f,
-            sessionStats = state.sessionStats.copy(shotsFired = shotsFired)
-        )
+        builder.player = player
+        builder.bullets = newBullets
+        builder.thrusting = input.joystick.lengthSquared() > 0.01f
+        builder.sessionStats = builder.sessionStats.copy(shotsFired = shotsFired)
     }
 
-    private fun updateBullets(state: GameState, dt: Float): GameState {
-        val updatedBullets = state.bullets.mapNotNull { bullet ->
+    private fun updateBullets(builder: GameStateBuilder, dt: Float) {
+        val updatedBullets = builder.bullets.mapNotNull { bullet ->
             val newPos = bullet.pos + bullet.vel * dt
 
             // Remove if out of bounds (with padding)
-            if (newPos.x < -50f || newPos.x > state.width + 50f ||
-                newPos.y < -50f || newPos.y > state.height + 50f) {
+            if (newPos.x < -50f || newPos.x > builder.width + 50f ||
+                newPos.y < -50f || newPos.y > builder.height + 50f) {
                 null
             } else {
                 bullet.copy(pos = newPos)
             }
         }
 
-        return state.copy(bullets = updatedBullets)
+        builder.bullets = updatedBullets
     }
 
-    private fun updateAsteroids(state: GameState, dt: Float): GameState {
-        val updatedAsteroids = state.asteroids.map { asteroid ->
+    private fun updateAsteroids(builder: GameStateBuilder, dt: Float) {
+        val updatedAsteroids = builder.asteroids.map { asteroid ->
             var newPos = asteroid.pos + asteroid.vel * dt
-            newPos = Vec2.wrap(newPos, state.width, state.height)
+            newPos = Vec2.wrap(newPos, builder.width, builder.height)
 
             asteroid.copy(
                 pos = newPos,
@@ -200,19 +172,19 @@ class GameEngine {
             )
         }
 
-        return state.copy(asteroids = updatedAsteroids)
+        builder.asteroids = updatedAsteroids
     }
 
-    private fun updateEnemies(state: GameState, dt: Float): GameState {
-        val updatedEnemies = state.enemies.map { enemy ->
-            updateEnemy(enemy, state, dt)
+    private fun updateEnemies(builder: GameStateBuilder, dt: Float) {
+        val updatedEnemies = builder.enemies.map { enemy ->
+            updateEnemy(enemy, builder, dt)
         }
 
         // Check for enemy bullets
-        var newBullets = state.bullets.toMutableList()
+        val newBullets = builder.bullets.toMutableList()
         updatedEnemies.forEach { enemy ->
-            if (enemy.fireCooldown <= 0f && isOnScreen(enemy.pos, state.width, state.height)) {
-                val bullet = createEnemyBullet(enemy, state.player.pos)
+            if (enemy.fireCooldown <= 0f && isOnScreen(enemy.pos, builder.width, builder.height)) {
+                val bullet = createEnemyBullet(enemy, builder.player.pos)
                 if (bullet != null) {
                     newBullets.add(bullet)
                 }
@@ -221,21 +193,19 @@ class GameEngine {
 
         // Reset fire cooldowns
         val enemiesWithResetCooldown = updatedEnemies.map { enemy ->
-            if (enemy.fireCooldown <= 0f && isOnScreen(enemy.pos, state.width, state.height)) {
+            if (enemy.fireCooldown <= 0f && isOnScreen(enemy.pos, builder.width, builder.height)) {
                 enemy.copy(fireCooldown = enemy.fireRate)
             } else {
                 enemy
             }
         }
 
-        return state.copy(
-            enemies = enemiesWithResetCooldown,
-            bullets = newBullets
-        )
+        builder.enemies = enemiesWithResetCooldown
+        builder.bullets = newBullets
     }
 
-    private fun updateEnemy(enemy: Enemy, state: GameState, dt: Float): Enemy {
-        val toPlayer = state.player.pos - enemy.pos
+    private fun updateEnemy(enemy: Enemy, builder: GameStateBuilder, dt: Float): Enemy {
+        val toPlayer = builder.player.pos - enemy.pos
         val targetAngle = toPlayer.angle()
 
         // Rotate toward player
@@ -277,11 +247,11 @@ class GameEngine {
         if (enemy.type == EnemyType.SNIPER) {
             // Snipers stay on screen
             newPos = Vec2(
-                newPos.x.coerceIn(50f, state.width - 50f),
-                newPos.y.coerceIn(50f, state.height - 50f)
+                newPos.x.coerceIn(50f, builder.width - 50f),
+                newPos.y.coerceIn(50f, builder.height - 50f)
             )
         } else {
-            newPos = Vec2.wrap(newPos, state.width, state.height)
+            newPos = Vec2.wrap(newPos, builder.width, builder.height)
         }
 
         return enemy.copy(
@@ -309,8 +279,8 @@ class GameEngine {
         )
     }
 
-    private fun updateBoss(state: GameState, dt: Float): GameState {
-        val boss = state.boss ?: return state
+    private fun updateBoss(builder: GameStateBuilder, dt: Float) {
+        val boss = builder.boss ?: return
 
         // Move boss to center top if spawning
         var newPos = boss.pos
@@ -321,7 +291,7 @@ class GameEngine {
             newPos = boss.pos + newVel * dt
         } else {
             // Oscillate horizontally
-            val centerX = state.width / 2f
+            val centerX = builder.width / 2f
             val oscillateSpeed = 50f * (1f + (boss.maxPhase - boss.phase) * 0.3f)
             newVel = Vec2(
                 if (boss.pos.x < centerX - 100f) oscillateSpeed
@@ -333,7 +303,7 @@ class GameEngine {
         }
 
         // Boss firing pattern
-        var newBullets = state.bullets.toMutableList()
+        val newBullets = builder.bullets.toMutableList()
         var newTimer = boss.firePatternTimer + dt
 
         if (newTimer >= 1f && boss.pos.y >= 100f) {
@@ -342,7 +312,7 @@ class GameEngine {
             // Fire pattern based on phase
             val bulletCount = boss.phase * 3
             for (i in 0 until bulletCount) {
-                val angle = (i.toFloat() / bulletCount) * 2f * PI.toFloat() + state.time
+                val angle = (i.toFloat() / bulletCount) * 2f * PI.toFloat() + builder.time
                 val bulletVel = Vec2.fromAngle(angle, GameConstants.BULLET_SPEED_ENEMY * 0.8f)
 
                 newBullets.add(
@@ -357,18 +327,16 @@ class GameEngine {
             }
         }
 
-        return state.copy(
-            boss = boss.copy(
-                pos = newPos,
-                vel = newVel,
-                firePatternTimer = newTimer
-            ),
-            bullets = newBullets
+        builder.boss = boss.copy(
+            pos = newPos,
+            vel = newVel,
+            firePatternTimer = newTimer
         )
+        builder.bullets = newBullets
     }
 
-    private fun updateParticles(state: GameState, dt: Float): GameState {
-        val updatedParticles = state.particles.mapNotNull { particle ->
+    private fun updateParticles(builder: GameStateBuilder, dt: Float) {
+        val updatedParticles = builder.particles.mapNotNull { particle ->
             val newLifetime = particle.lifetime - dt
             if (newLifetime <= 0f) {
                 null
@@ -381,11 +349,11 @@ class GameEngine {
             }
         }
 
-        return state.copy(particles = updatedParticles)
+        builder.particles = updatedParticles
     }
 
-    private fun updatePowerUps(state: GameState, dt: Float): GameState {
-        val updatedPowerUps = state.powerUps.mapNotNull { powerUp ->
+    private fun updatePowerUps(builder: GameStateBuilder, dt: Float) {
+        val updatedPowerUps = builder.powerUps.mapNotNull { powerUp ->
             val newLifetime = powerUp.lifetime - dt
             if (newLifetime <= 0f) {
                 null
@@ -393,8 +361,9 @@ class GameEngine {
                 var newPos = powerUp.pos + powerUp.vel * dt
 
                 // Magnet effect
-                if (state.hasMagnetActive()) {
-                    val toPlayer = state.player.pos - powerUp.pos
+                val hasMagnet = builder.activePowerUps.any { it.type == PowerUpType.MAGNET }
+                if (hasMagnet) {
+                    val toPlayer = builder.player.pos - powerUp.pos
                     if (toPlayer.length() < 200f) {
                         val magnetForce = toPlayer.normalized() * 150f * dt
                         newPos = powerUp.pos + magnetForce
@@ -408,17 +377,17 @@ class GameEngine {
             }
         }
 
-        return state.copy(powerUps = updatedPowerUps)
+        builder.powerUps = updatedPowerUps
     }
 
-    private fun updateHomingMissiles(state: GameState, dt: Float): GameState {
-        val updatedMissiles = state.homingMissiles.mapNotNull { missile ->
+    private fun updateHomingMissiles(builder: GameStateBuilder, dt: Float) {
+        val updatedMissiles = builder.homingMissiles.mapNotNull { missile ->
             val newLifetime = missile.lifetime - dt
             if (newLifetime <= 0f) {
                 null
             } else {
                 // Find nearest target
-                val target = findNearestTarget(missile.pos, state.enemies, state.boss)
+                val target = findNearestTarget(missile.pos, builder.enemies, builder.boss)
 
                 var newVel = missile.vel
                 if (target != null) {
@@ -436,7 +405,7 @@ class GameEngine {
             }
         }
 
-        return state.copy(homingMissiles = updatedMissiles)
+        builder.homingMissiles = updatedMissiles
     }
 
     private fun findNearestTarget(pos: Vec2, enemies: List<Enemy>, boss: Boss?): Vec2? {
@@ -461,8 +430,7 @@ class GameEngine {
         return nearest
     }
 
-    private fun checkCollisions(state: GameState): GameState {
-        var newState = state
+    private fun checkCollisions(builder: GameStateBuilder) {
         val bulletsToRemove = mutableSetOf<Int>()
         val asteroidsToRemove = mutableSetOf<Int>()
         val enemiesToRemove = mutableSetOf<Int>()
@@ -470,26 +438,29 @@ class GameEngine {
         val newAsteroids = mutableListOf<Asteroid>()
         val newParticles = mutableListOf<Particle>()
         val newPowerUps = mutableListOf<PowerUp>()
+        val asteroidsWithUpdatedHp = mutableMapOf<Int, Int>()
+        val enemiesWithUpdatedHp = mutableMapOf<Int, Int>()
 
-        var score = state.score
-        var credits = state.credits
-        var combo = state.combo
-        var sessionStats = state.sessionStats
-        var player = state.player
-        var boss = state.boss
-        var screenShake = state.screenShake
+        var score = builder.score
+        var credits = builder.credits
+        var combo = builder.combo
+        var sessionStats = builder.sessionStats
+        var player = builder.player
+        var boss = builder.boss
+        var screenShake = builder.screenShake
 
         // Player bullets vs asteroids
-        state.bullets.forEachIndexed { bulletIdx, bullet ->
+        builder.bullets.forEachIndexed { bulletIdx, bullet ->
             if (!bullet.isPlayerBullet) return@forEachIndexed
 
-            state.asteroids.forEachIndexed { asteroidIdx, asteroid ->
+            builder.asteroids.forEachIndexed { asteroidIdx, asteroid ->
                 if (asteroidIdx in asteroidsToRemove) return@forEachIndexed
 
                 if (CollisionSystem.bulletAsteroidCollision(bullet, asteroid)) {
                     bulletsToRemove.add(bulletIdx)
 
-                    val newHp = asteroid.hp - bullet.damage
+                    val currentHp = asteroidsWithUpdatedHp[asteroidIdx] ?: asteroid.hp
+                    val newHp = currentHp - bullet.damage
                     if (newHp <= 0) {
                         asteroidsToRemove.add(asteroidIdx)
 
@@ -518,12 +489,7 @@ class GameEngine {
                         // Screen shake
                         screenShake = ScreenShake(intensity = 3f, duration = 0.1f)
                     } else {
-                        // Update asteroid HP
-                        newState = newState.copy(
-                            asteroids = newState.asteroids.mapIndexed { idx, a ->
-                                if (idx == asteroidIdx) a.copy(hp = newHp) else a
-                            }
-                        )
+                        asteroidsWithUpdatedHp[asteroidIdx] = newHp
                         sessionStats = sessionStats.copy(shotsHit = sessionStats.shotsHit + 1)
                     }
                     return@forEachIndexed
@@ -532,16 +498,17 @@ class GameEngine {
         }
 
         // Player bullets vs enemies
-        state.bullets.forEachIndexed { bulletIdx, bullet ->
+        builder.bullets.forEachIndexed { bulletIdx, bullet ->
             if (!bullet.isPlayerBullet || bulletIdx in bulletsToRemove) return@forEachIndexed
 
-            state.enemies.forEachIndexed { enemyIdx, enemy ->
+            builder.enemies.forEachIndexed { enemyIdx, enemy ->
                 if (enemyIdx in enemiesToRemove) return@forEachIndexed
 
                 if (CollisionSystem.bulletEnemyCollision(bullet, enemy)) {
                     bulletsToRemove.add(bulletIdx)
 
-                    val newHp = enemy.hp - bullet.damage
+                    val currentHp = enemiesWithUpdatedHp[enemyIdx] ?: enemy.hp
+                    val newHp = currentHp - bullet.damage
                     if (newHp <= 0) {
                         enemiesToRemove.add(enemyIdx)
 
@@ -566,11 +533,7 @@ class GameEngine {
                         // Screen shake
                         screenShake = ScreenShake(intensity = 8f, duration = 0.2f)
                     } else {
-                        newState = newState.copy(
-                            enemies = newState.enemies.mapIndexed { idx, e ->
-                                if (idx == enemyIdx) e.copy(hp = newHp) else e
-                            }
-                        )
+                        enemiesWithUpdatedHp[enemyIdx] = newHp
                         sessionStats = sessionStats.copy(shotsHit = sessionStats.shotsHit + 1)
                     }
                     return@forEachIndexed
@@ -580,7 +543,7 @@ class GameEngine {
 
         // Player bullets vs boss
         boss?.let { currentBoss ->
-            state.bullets.forEachIndexed { bulletIdx, bullet ->
+            builder.bullets.forEachIndexed { bulletIdx, bullet ->
                 if (!bullet.isPlayerBullet || bulletIdx in bulletsToRemove) return@forEachIndexed
                 if (boss == null) return@forEachIndexed // Boss may have been destroyed
 
@@ -614,13 +577,16 @@ class GameEngine {
         }
 
         // Enemy bullets vs player
-        if (player.invincibility <= 0f && !state.hasShieldActive()) {
-            state.bullets.forEachIndexed { bulletIdx, bullet ->
+        val hasShield = builder.activePowerUps.any { it.type == PowerUpType.SHIELD } ||
+                (player.specialAbility.type == AbilityType.SHIELD_BURST && player.specialAbility.isActive)
+
+        if (player.invincibility <= 0f && !hasShield) {
+            builder.bullets.forEachIndexed { bulletIdx, bullet ->
                 if (bullet.isPlayerBullet || bulletIdx in bulletsToRemove) return@forEachIndexed
 
                 if (CollisionSystem.playerBulletCollision(player, bullet)) {
                     bulletsToRemove.add(bulletIdx)
-                    player = damagePlayer(player, bullet.damage, state)
+                    player = damagePlayer(player, bullet.damage)
                     screenShake = ScreenShake(intensity = 10f, duration = 0.15f)
                     newParticles.addAll(
                         SpawnSystem.spawnExplosionParticles(player.pos, 5, 0xFFFF4444.toInt())
@@ -630,12 +596,12 @@ class GameEngine {
         }
 
         // Player vs asteroids
-        if (player.invincibility <= 0f && !state.hasShieldActive()) {
-            state.asteroids.forEachIndexed { asteroidIdx, asteroid ->
+        if (player.invincibility <= 0f && !hasShield) {
+            builder.asteroids.forEachIndexed { asteroidIdx, asteroid ->
                 if (asteroidIdx in asteroidsToRemove) return@forEachIndexed
 
                 if (CollisionSystem.playerAsteroidCollision(player, asteroid)) {
-                    player = damagePlayer(player, 20, state)
+                    player = damagePlayer(player, 20)
                     screenShake = ScreenShake(intensity = 12f, duration = 0.2f)
                     newParticles.addAll(
                         SpawnSystem.spawnExplosionParticles(player.pos, 8, 0xFFAAAACC.toInt())
@@ -645,36 +611,46 @@ class GameEngine {
         }
 
         // Player vs enemies
-        if (player.invincibility <= 0f && !state.hasShieldActive()) {
-            state.enemies.forEachIndexed { enemyIdx, enemy ->
+        if (player.invincibility <= 0f && !hasShield) {
+            builder.enemies.forEachIndexed { enemyIdx, enemy ->
                 if (enemyIdx in enemiesToRemove) return@forEachIndexed
 
                 if (CollisionSystem.playerEnemyCollision(player, enemy)) {
-                    player = damagePlayer(player, enemy.damage, state)
+                    player = damagePlayer(player, enemy.damage)
                     screenShake = ScreenShake(intensity = 12f, duration = 0.2f)
                 }
             }
         }
 
         // Player vs power-ups
-        state.powerUps.forEachIndexed { powerUpIdx, powerUp ->
+        builder.powerUps.forEachIndexed { powerUpIdx, powerUp ->
             if (CollisionSystem.playerPowerUpCollision(player, powerUp)) {
                 powerUpsToRemove.add(powerUpIdx)
-                newState = activatePowerUp(newState, powerUp.type)
+                activatePowerUp(builder, powerUp.type)
                 sessionStats = sessionStats.copy(powerUpsCollected = sessionStats.powerUpsCollected + 1)
             }
         }
 
+        // Apply HP updates to asteroids
+        val finalAsteroids = builder.asteroids.filterIndexed { idx, _ -> idx !in asteroidsToRemove }
+            .mapIndexed { idx, asteroid ->
+                asteroidsWithUpdatedHp[idx]?.let { asteroid.copy(hp = it) } ?: asteroid
+            } + newAsteroids
+
+        // Apply HP updates to enemies
+        val finalEnemies = builder.enemies.filterIndexed { idx, _ -> idx !in enemiesToRemove }
+            .mapIndexed { idx, enemy ->
+                enemiesWithUpdatedHp[idx]?.let { enemy.copy(hp = it) } ?: enemy
+            }
+
         // Apply removals
-        val finalBullets = state.bullets.filterIndexed { idx, _ -> idx !in bulletsToRemove }
-        val finalAsteroids = state.asteroids.filterIndexed { idx, _ -> idx !in asteroidsToRemove } + newAsteroids
-        val finalEnemies = state.enemies.filterIndexed { idx, _ -> idx !in enemiesToRemove }
-        val finalPowerUps = state.powerUps.filterIndexed { idx, _ -> idx !in powerUpsToRemove } + newPowerUps
-        val finalParticles = state.particles + newParticles
+        val finalBullets = builder.bullets.filterIndexed { idx, _ -> idx !in bulletsToRemove }
+        val finalPowerUps = builder.powerUps.filterIndexed { idx, _ -> idx !in powerUpsToRemove } + newPowerUps
+        val finalParticles = builder.particles + newParticles
 
         // Check game over
-        var lives = state.lives
-        var paused = state.paused
+        var lives = builder.lives
+        var paused = builder.paused
         if (player.hp <= 0) {
             lives--
             if (lives <= 0) {
@@ -683,30 +659,28 @@ class GameEngine {
                 player = player.copy(
                     hp = player.maxHp,
                     invincibility = 3f,
-                    pos = Vec2(state.width / 2f, state.height / 2f)
+                    pos = Vec2(builder.width / 2f, builder.height / 2f)
                 )
             }
         }
 
-        return newState.copy(
-            player = player,
-            bullets = finalBullets,
-            asteroids = finalAsteroids,
-            enemies = finalEnemies,
-            powerUps = finalPowerUps,
-            particles = finalParticles,
-            boss = boss,
-            score = score,
-            credits = credits,
-            combo = combo,
-            lives = lives,
-            paused = paused,
-            screenShake = screenShake,
-            sessionStats = sessionStats
-        )
+        builder.player = player
+        builder.bullets = finalBullets
+        builder.asteroids = finalAsteroids
+        builder.enemies = finalEnemies
+        builder.powerUps = finalPowerUps
+        builder.particles = finalParticles
+        builder.boss = boss
+        builder.score = score
+        builder.credits = credits
+        builder.combo = combo
+        builder.lives = lives
+        builder.paused = paused
+        builder.screenShake = screenShake
+        builder.sessionStats = sessionStats
     }
 
-    private fun damagePlayer(player: Player, damage: Int, state: GameState): Player {
+    private fun damagePlayer(player: Player, damage: Int): Player {
         val newHp = player.hp - damage
         return player.copy(
             hp = newHp.coerceAtLeast(0),
@@ -724,100 +698,96 @@ class GameEngine {
         )
     }
 
-    private fun updateCombo(state: GameState, dt: Float): GameState {
-        val combo = state.combo
-        if (combo.count == 0) return state
+    private fun updateCombo(builder: GameStateBuilder, dt: Float) {
+        val combo = builder.combo
+        if (combo.count == 0) return
 
         val newTimer = combo.timer - dt
-        return if (newTimer <= 0f) {
-            state.copy(combo = ComboState())
+        builder.combo = if (newTimer <= 0f) {
+            ComboState()
         } else {
-            state.copy(combo = combo.copy(timer = newTimer))
+            combo.copy(timer = newTimer)
         }
     }
 
-    private fun updateScreenShake(state: GameState, dt: Float): GameState {
-        val shake = state.screenShake ?: return state
-        if (shake.duration <= 0f) return state
+    private fun updateScreenShake(builder: GameStateBuilder, dt: Float) {
+        val shake = builder.screenShake ?: return
+        if (shake.duration <= 0f) return
 
         val newDuration = shake.duration - dt
-        return state.copy(
-            screenShake = if (newDuration <= 0f) {
-                null
-            } else {
-                shake.copy(duration = newDuration)
-            }
-        )
+        builder.screenShake = if (newDuration <= 0f) {
+            null
+        } else {
+            shake.copy(duration = newDuration)
+        }
     }
 
-    private fun updateActivePowerUps(state: GameState, dt: Float): GameState {
-        val updatedPowerUps = state.activePowerUps.mapNotNull { active ->
+    private fun updateActivePowerUps(builder: GameStateBuilder, dt: Float) {
+        val updatedPowerUps = builder.activePowerUps.mapNotNull { active ->
             val newDuration = active.remainingDuration - dt
             if (newDuration <= 0f) null else active.copy(remainingDuration = newDuration)
         }
-        return state.copy(activePowerUps = updatedPowerUps)
+        builder.activePowerUps = updatedPowerUps
     }
 
-    private fun activatePowerUp(state: GameState, type: PowerUpType): GameState {
-        val existing = state.activePowerUps.find { it.type == type }
+    private fun activatePowerUp(builder: GameStateBuilder, type: PowerUpType) {
+        val existing = builder.activePowerUps.find { it.type == type }
         val newActive = if (existing != null) {
-            state.activePowerUps.map {
+            builder.activePowerUps.map {
                 if (it.type == type) it.copy(remainingDuration = GameConstants.POWERUP_DURATION)
                 else it
             }
         } else {
-            state.activePowerUps + ActivePowerUp(type, GameConstants.POWERUP_DURATION)
+            builder.activePowerUps + ActivePowerUp(type, GameConstants.POWERUP_DURATION)
         }
-        return state.copy(activePowerUps = newActive)
+        builder.activePowerUps = newActive
     }
 
-    private fun checkWaveCompletion(state: GameState): GameState {
-        if (state.asteroids.isEmpty() && state.enemies.isEmpty() && state.boss == null) {
-            val newWave = state.wave + 1
+    private fun checkWaveCompletion(builder: GameStateBuilder) {
+        if (builder.asteroids.isEmpty() && builder.enemies.isEmpty() && builder.boss == null) {
+            val newWave = builder.wave + 1
             val asteroidCount = 3 + newWave / 2
 
             val newAsteroids = SpawnSystem.spawnAsteroids(
                 count = asteroidCount.coerceAtMost(10),
-                width = state.width,
-                height = state.height,
-                playerPos = state.player.pos
+                width = builder.width,
+                height = builder.height,
+                playerPos = builder.player.pos
             )
 
             // Spawn boss every 5 waves
             val newBoss = if (newWave % 5 == 0) {
-                SpawnSystem.spawnBoss(state.width, state.height, newWave)
+                SpawnSystem.spawnBoss(builder.width, builder.height, newWave)
             } else {
                 null
             }
 
-            return state.copy(
-                wave = newWave,
-                asteroids = newAsteroids,
-                boss = newBoss,
-                bossWarning = newBoss != null
-            )
+            builder.wave = newWave
+            builder.asteroids = newAsteroids
+            builder.boss = newBoss
+            builder.bossWarning = newBoss != null
         }
-        return state
     }
 
-    private fun spawnEnemiesIfNeeded(state: GameState, dt: Float): GameState {
+    private fun spawnEnemiesIfNeeded(builder: GameStateBuilder, dt: Float) {
         // Spawn enemies every 2 waves after wave 2
-        if (state.wave < 2) return state
+        if (builder.wave < 2) return
 
-        val maxEnemies = 2 + state.wave / 3
-        if (state.enemies.size >= maxEnemies) return state
+        val maxEnemies = 2 + builder.wave / 3
+        if (builder.enemies.size >= maxEnemies) return
 
         // Random spawn chance
-        if (Random.nextFloat() > 0.01f) return state
+        if (Random.nextFloat() > 0.01f) return
 
+        val difficultyProgress = (builder.time / 240f).coerceIn(0f, 1f)
         val newEnemy = SpawnSystem.spawnEnemy(
-            width = state.width,
-            height = state.height,
-            playerPos = state.player.pos,
-            difficulty = state.difficultyProgress
+            width = builder.width,
+            height = builder.height,
+            playerPos = builder.player.pos,
+            difficulty = difficultyProgress
         )
 
-        return state.copy(enemies = state.enemies + newEnemy)
+        builder.enemies = builder.enemies + newEnemy
     }
 
     private fun getEnemyScore(type: EnemyType): Int {
