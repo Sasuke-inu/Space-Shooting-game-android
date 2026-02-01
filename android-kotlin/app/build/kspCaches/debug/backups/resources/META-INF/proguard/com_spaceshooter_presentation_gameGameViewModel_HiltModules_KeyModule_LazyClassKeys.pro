@@ -1,2 +1,0 @@
--keep,allowobfuscation,allowshrinking class com.spaceshooter.presentation.game.GameViewModel
--keep,allowobfuscation,allowshrinking class com.spaceshooter.presentation.game.GameViewModel
