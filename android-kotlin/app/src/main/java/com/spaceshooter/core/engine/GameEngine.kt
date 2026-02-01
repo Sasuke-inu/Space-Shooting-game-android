@@ -16,7 +16,25 @@ class GameEngine {
     /**
      * Update the entire game state for one frame.
      *
-     * Uses GameStateBuilder pattern to reduce allocations from 14+ to 1 per frame.
+     * ## Optimization: Builder Pattern for Structural Sharing
+     * This function uses GameStateBuilder to batch all state modifications into a single
+     * allocation, significantly reducing garbage collection pressure.
+     *
+     * **Before optimization**: Each subsystem update (updatePlayer, updateBullets, etc.)
+     * called state.copy() to create a new GameState, resulting in 14+ allocations per frame.
+     * At 60 FPS, this created 840+ GameState objects per second.
+     *
+     * **After optimization**: All 14 subsystem updates modify a single GameStateBuilder
+     * instance in-place (zero allocations), then builder.build() creates one final immutable
+     * GameState at the end.
+     *
+     * **Performance benefit**: 93% reduction in allocations (14+ → 1 per frame)
+     *
+     * @param state The current immutable game state
+     * @param input Player input from controls
+     * @param deltaTime Time elapsed since last frame in seconds
+     * @return New immutable GameState with all updates applied
+     * @see GameStateBuilder for detailed documentation on the builder pattern
      */
     fun update(state: GameState, input: GameInput, deltaTime: Float): GameState {
         if (state.paused) return state
