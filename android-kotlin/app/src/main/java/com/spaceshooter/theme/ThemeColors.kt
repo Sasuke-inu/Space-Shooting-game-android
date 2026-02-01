@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 
 /**
- * Complete theme color scheme (62 colors).
+ * Complete theme color scheme (65 colors).
  * Matches the React Native theme system.
  */
 data class ThemeColors(
@@ -53,6 +53,9 @@ data class ThemeColors(
     val joystickStick: Color,
     val joystickBorder: Color,
     val joystickGlow: Color,
+    val fireButtonPad: Color,
+    val fireButtonBorder: Color,
+    val fireButtonGlow: Color,
 
     // Power-ups
     val powerUpShield: Color,
@@ -78,6 +81,9 @@ data class ThemeColors(
     val hullBarArgb: Int get() = hullBar.toArgb()
     val hullBarBgArgb: Int get() = hullBarBg.toArgb()
     val hudTextArgb: Int get() = hudText.toArgb()
+    val fireButtonPadArgb: Int get() = fireButtonPad.toArgb()
+    val fireButtonBorderArgb: Int get() = fireButtonBorder.toArgb()
+    val fireButtonGlowArgb: Int get() = fireButtonGlow.toArgb()
 }
 
 /**
@@ -136,6 +142,9 @@ object Themes {
             joystickStick = Color(0xFF88ffff),
             joystickBorder = Color(0x8888ffff),
             joystickGlow = Color(0x4488ffff),
+            fireButtonPad = Color(0x33ff6666),
+            fireButtonBorder = Color(0x88ff6666),
+            fireButtonGlow = Color(0x44ff6666),
             // Power-ups
             powerUpShield = Color(0xFF4da6ff),
             powerUpRapidFire = Color(0xFFff4d4d),
@@ -183,6 +192,9 @@ object Themes {
             joystickStick = Color(0xFFf0c070),
             joystickBorder = Color(0x88f0c070),
             joystickGlow = Color(0x44f0c070),
+            fireButtonPad = Color(0x33ff6633),
+            fireButtonBorder = Color(0x88ff6633),
+            fireButtonGlow = Color(0x44ff6633),
             powerUpShield = Color(0xFF4da6ff),
             powerUpRapidFire = Color(0xFFff4d4d),
             powerUpSpreadShot = Color(0xFFffdd4d),
@@ -228,6 +240,9 @@ object Themes {
             joystickStick = Color(0xFFffb7c5),
             joystickBorder = Color(0x88ffb7c5),
             joystickGlow = Color(0x44ffb7c5),
+            fireButtonPad = Color(0x33ff5577),
+            fireButtonBorder = Color(0x88ff5577),
+            fireButtonGlow = Color(0x44ff5577),
             powerUpShield = Color(0xFF4da6ff),
             powerUpRapidFire = Color(0xFFff4d4d),
             powerUpSpreadShot = Color(0xFFffdd4d),
@@ -273,6 +288,9 @@ object Themes {
             joystickStick = Color(0xFF00ff7f),
             joystickBorder = Color(0x8800ff7f),
             joystickGlow = Color(0x4400ff7f),
+            fireButtonPad = Color(0x33ff4400),
+            fireButtonBorder = Color(0x88ff4400),
+            fireButtonGlow = Color(0x44ff4400),
             powerUpShield = Color(0xFF4da6ff),
             powerUpRapidFire = Color(0xFFff4d4d),
             powerUpSpreadShot = Color(0xFFffdd4d),
@@ -318,6 +336,9 @@ object Themes {
             joystickStick = Color(0xFFffd700),
             joystickBorder = Color(0x88ffd700),
             joystickGlow = Color(0x44ffd700),
+            fireButtonPad = Color(0x33ff4500),
+            fireButtonBorder = Color(0x88ff4500),
+            fireButtonGlow = Color(0x44ff4500),
             powerUpShield = Color(0xFF4da6ff),
             powerUpRapidFire = Color(0xFFff4d4d),
             powerUpSpreadShot = Color(0xFFffdd4d),
@@ -363,6 +384,9 @@ object Themes {
             joystickStick = Color(0xFFe0ffff),
             joystickBorder = Color(0x88e0ffff),
             joystickGlow = Color(0x44e0ffff),
+            fireButtonPad = Color(0x33ff6644),
+            fireButtonBorder = Color(0x88ff6644),
+            fireButtonGlow = Color(0x44ff6644),
             powerUpShield = Color(0xFF4da6ff),
             powerUpRapidFire = Color(0xFFff4d4d),
             powerUpSpreadShot = Color(0xFFffdd4d),
