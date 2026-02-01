@@ -1318,6 +1318,86 @@ function updateEnemyBehaviorBatched(
       break
     }
 
+    case 'healer': {
+      // Range-keeping: stay 250-400px from player (retreat if too close, approach if too far)
+      const healerMinDist = 250
+      const healerMaxDist = 400
+      let healerVel = e.vel
+
+      if (d < healerMinDist) {
+        // Retreat from player
+        healerVel = add(healerVel, mul(nor(sub(e.pos, state.player.pos)), stats.speed * dt * 1.5))
+      } else if (d > healerMaxDist) {
+        // Approach player
+        healerVel = add(healerVel, mul(dir, stats.speed * dt))
+      }
+
+      // Slight weaving movement
+      const healerWeave = Math.sin(e.aiTimer * 1.5) * stats.speed * dt * 0.3
+      const perpDir = { x: -dir.y, y: dir.x }
+      healerVel = add(healerVel, mul(perpDir, healerWeave))
+
+      // Slow movement with friction
+      healerVel = mul(healerVel, 0.97)
+      newEnemy.vel = healerVel
+      newEnemy.pos = wrap(add(e.pos, mul(healerVel, dt * animSpeed * 0.5)), state.w, state.h)
+      newEnemy.ang = angleOf(toP)
+
+      // Healing logic: every 3s, find nearest damaged enemy within 200px and heal for 15 HP
+      newEnemy.healCooldown = (e.healCooldown ?? 3) - dt
+      if (newEnemy.healCooldown <= 0) {
+        let nearestDamaged: Enemy | null = null
+        let nearestDist2 = 200 * 200 // distance squared threshold
+
+        for (const other of state.enemies) {
+          if (other === e) continue // skip self
+          if (other.hp >= other.maxHp) continue // skip undamaged enemies
+          const d2 = dist2(e.pos, other.pos)
+          if (d2 < nearestDist2) {
+            nearestDist2 = d2
+            nearestDamaged = other
+          }
+        }
+
+        if (nearestDamaged) {
+          // Heal target for 15 HP, cap at maxHp
+          nearestDamaged.hp = Math.min(nearestDamaged.hp + 15, nearestDamaged.maxHp)
+
+          // Emit green healing particles at target position
+          state.addParticles(
+            Array.from({ length: 6 }, () => ({
+              pos: { x: nearestDamaged!.pos.x, y: nearestDamaged!.pos.y },
+              vel: fromAngle(Math.random() * Math.PI * 2, rand(30, 80)),
+              life: rand(0.4, 0.8),
+              color: '#44ff44',
+            }))
+          )
+
+          newEnemy.healCooldown = 3
+        } else {
+          // No valid target, try again soon
+          newEnemy.healCooldown = 0.5
+        }
+      }
+
+      // Fire infrequently at player with low accuracy
+      newEnemy.cooldown -= dt
+      if (d < 500 && newEnemy.cooldown <= 0) {
+        const aim = angleOf(toP) + rand(-aimInaccuracy * 1.5, aimInaccuracy * 1.5)
+        bulletsToAdd.push({
+          pos: add(e.pos, fromAngle(aim, 16)),
+          vel: fromAngle(aim, BULLET_SPEED_ENEMY * 0.7),
+          life: BULLET_LIFE_ENEMY,
+          friendly: false,
+          damage: stats.damage,
+        })
+        playSfx('shoot_enemy')
+        newEnemy.cooldown = stats.fireRate * 1.2
+      }
+
+      break
+    }
+
     default:
       // Default behavior (legacy)
       const desired = add(dir, fromAngle(context.time * 0.7, 0.4 * (1 - difficulty * 0.5)))
@@ -1492,6 +1572,85 @@ function updateEnemyBehavior(
         newEnemy.bombCooldown = (4.5 - Math.sqrt(difficulty) * 2) * earlyGameFireRate
       }
       break
+
+    case 'healer': {
+      // Range-keeping: stay 250-400px from player (retreat if too close, approach if too far)
+      const healerMinDist = 250
+      const healerMaxDist = 400
+      let healerVel = e.vel
+
+      if (d < healerMinDist) {
+        // Retreat from player
+        healerVel = add(healerVel, mul(nor(sub(e.pos, state.player.pos)), stats.speed * dt * 1.5))
+      } else if (d > healerMaxDist) {
+        // Approach player
+        healerVel = add(healerVel, mul(dir, stats.speed * dt))
+      }
+
+      // Slight weaving movement
+      const healerWeave = Math.sin(e.aiTimer * 1.5) * stats.speed * dt * 0.3
+      const healerPerpDir = { x: -dir.y, y: dir.x }
+      healerVel = add(healerVel, mul(healerPerpDir, healerWeave))
+
+      // Slow movement with friction
+      healerVel = mul(healerVel, 0.97)
+      newEnemy.vel = healerVel
+      newEnemy.pos = wrap(add(e.pos, mul(healerVel, dt * animSpeed * 0.5)), state.w, state.h)
+      newEnemy.ang = angleOf(toP)
+
+      // Healing logic: every 3s, find nearest damaged enemy within 200px and heal for 15 HP
+      newEnemy.healCooldown = (e.healCooldown ?? 3) - dt
+      if (newEnemy.healCooldown <= 0) {
+        let nearestDamaged: Enemy | null = null
+        let nearestDist2 = 200 * 200 // distance squared threshold
+
+        for (const other of state.enemies) {
+          if (other === e) continue // skip self
+          if (other.hp >= other.maxHp) continue // skip undamaged enemies
+          const d2 = dist2(e.pos, other.pos)
+          if (d2 < nearestDist2) {
+            nearestDist2 = d2
+            nearestDamaged = other
+          }
+        }
+
+        if (nearestDamaged) {
+          // Heal target for 15 HP, cap at maxHp
+          nearestDamaged.hp = Math.min(nearestDamaged.hp + 15, nearestDamaged.maxHp)
+
+          // Emit green healing particles at target position
+          state.addParticles(
+            Array.from({ length: 6 }, () => ({
+              pos: { x: nearestDamaged!.pos.x, y: nearestDamaged!.pos.y },
+              vel: fromAngle(Math.random() * Math.PI * 2, rand(30, 80)),
+              life: rand(0.4, 0.8),
+              color: '#44ff44',
+            }))
+          )
+
+          newEnemy.healCooldown = 3
+        } else {
+          // No valid target, try again soon
+          newEnemy.healCooldown = 0.5
+        }
+      }
+
+      // Fire infrequently at player with low accuracy (with density cap check)
+      newEnemy.cooldown = e.cooldown - dt
+      if (d < 500 && newEnemy.cooldown <= 0 && canSpawnEnemyBullets(state.bullets.length, 1, state.w, state.h)) {
+        const aim = angleOf(toP) + rand(-aimInaccuracy * 1.5, aimInaccuracy * 1.5)
+        state.addBullet({
+          pos: add(e.pos, fromAngle(aim, 16)),
+          vel: fromAngle(aim, BULLET_SPEED_ENEMY * 0.7),
+          life: BULLET_LIFE_ENEMY,
+          friendly: false,
+          damage: stats.damage,
+        })
+        newEnemy.cooldown = stats.fireRate * 1.2 * earlyGameFireRate
+      }
+
+      break
+    }
 
     default:
       // Default behavior (legacy)
