@@ -746,6 +746,67 @@ export const useGameEngine = () => {
       }
     })
 
+    // Homing missiles vs asteroids (using spatial partitioning)
+    const missilesToRemove = new Set<number>()
+    updatedHomingMissiles.forEach((m, mIdx) => {
+      if (missilesToRemove.has(mIdx)) return
+
+      // Query spatial grid for nearby entities
+      const nearby = spatialGrid!.queryNearby(m.pos, 100)
+
+      // Check collisions with asteroids
+      updatedAsteroids.forEach((a, aIdx) => {
+        if (!missilesToRemove.has(mIdx) && !asteroidsToRemove.has(aIdx)) {
+          // Check if asteroid is in nearby entities
+          if (nearby.some(e => e.pos === a.pos)) {
+            if (dist2(m.pos, a.pos) < (a.radius + 10) * (a.radius + 10)) {
+              boom(m.pos, themeColors.particleExplosion, 16, 200)
+              playSfx('explosion_small')
+
+              // Split asteroid inline
+              if (a.tier > 1) {
+                const newTier = (a.tier - 1) as 1 | 2
+                for (let i = 0; i < 2; i++) {
+                  const vel = add(a.vel, fromAngle(rand(0, Math.PI * 2), rand(30, 60)))
+                  updatedAsteroids.push({
+                    pos: { ...a.pos },
+                    vel,
+                    radius: a.radius * 0.65,
+                    spin: rand(-2, 2),
+                    ang: rand(0, Math.PI * 2),
+                    tier: newTier,
+                  })
+                }
+              }
+
+              asteroidsToRemove.add(aIdx)
+              missilesToRemove.add(mIdx)
+
+              // Increment combo
+              comboCount++
+              const multiplierIndex = Math.min(
+                Math.floor(comboCount / 3),
+                COMBO_MULTIPLIERS.length - 1
+              )
+              comboMultiplier = COMBO_MULTIPLIERS[multiplierIndex]
+              comboTimer = COMBO_TIMEOUT
+
+              score += Math.floor(20 * a.tier * comboMultiplier)
+              credits += a.tier
+              newScreenShake = { intensity: 5, duration: 150, elapsed: 0 }
+              hapticMedium()
+
+              // Chance to drop power-up from large asteroids
+              if (a.tier === 3 && Math.random() < POWERUP_DROP_ASTEROID) {
+                newPowerUpsToSpawn.push({ ...a.pos })
+              }
+              sessionShotsHit++ // Record shot hit
+            }
+          }
+        }
+      })
+    })
+
     // Enemy bullets vs player - use spatial grid for player query
     const playerNearby = spatialGrid.queryNearby(newPos, 100)
 
@@ -765,12 +826,15 @@ export const useGameEngine = () => {
       }
     })
 
-    // Remove hit bullets and asteroids
+    // Remove hit bullets, asteroids, and missiles
     if (bulletsToRemove.size > 0) {
       updatedBullets = updatedBullets.filter((_, i) => !bulletsToRemove.has(i))
     }
     if (asteroidsToRemove.size > 0) {
       updatedAsteroids = updatedAsteroids.filter((_, i) => !asteroidsToRemove.has(i))
+    }
+    if (missilesToRemove.size > 0) {
+      updatedHomingMissiles = updatedHomingMissiles.filter((_, i) => !missilesToRemove.has(i))
     }
 
     // Apply enemy damage and removals (deferred to avoid race conditions) - mutate during iteration
