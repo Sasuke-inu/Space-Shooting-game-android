@@ -64,6 +64,10 @@ export default function MainMenuScreen() {
     navigation.navigate('HighScores');
   };
 
+  const handleAchievements = () => {
+    navigation.navigate('Achievements');
+  };
+
   return (
     <View className="flex-1" style={{ backgroundColor: theme.colors.background }}>
       {/* Animated Background */}
@@ -170,6 +174,24 @@ export default function MainMenuScreen() {
               style={{ color: theme.colors.textPrimary }}
             >
               {t('menu.highScores')}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Achievements Button */}
+          <TouchableOpacity
+            className="py-4 px-8 rounded-lg border"
+            style={{
+              backgroundColor: theme.colors.panelBg,
+              borderColor: theme.colors.panelBorder,
+            }}
+            onPress={handleAchievements}
+            activeOpacity={0.8}
+          >
+            <Text
+              className="text-xl font-semibold text-center"
+              style={{ color: theme.colors.textPrimary }}
+            >
+              {t('menu.achievements')}
             </Text>
           </TouchableOpacity>
         </View>

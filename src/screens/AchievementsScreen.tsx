@@ -5,9 +5,12 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useI18nStore } from '../i18n';
 import { useTheme } from '../theme';
 import { useAchievementStore } from '../state/progressStore';
+import type { RootStackParamList } from '../navigation/AppNavigator';
 import {
   type AchievementCategory,
   getAllCategories,
@@ -19,7 +22,10 @@ import {
 } from '../utils/achievementTracker';
 import { ACHIEVEMENTS, type AchievementId } from '../types/game';
 
-export default function AchievementsScreen({ onBack }: { onBack?: () => void }) {
+type AchievementsNavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+export default function AchievementsScreen() {
+  const navigation = useNavigation<AchievementsNavigationProp>();
   const theme = useTheme();
   const { t } = useI18nStore();
   const { achievements } = useAchievementStore();
@@ -225,23 +231,21 @@ export default function AchievementsScreen({ onBack }: { onBack?: () => void }) 
         >
           🏆 Achievements
         </Text>
-        {onBack && (
-          <TouchableOpacity
-            className="absolute left-6 top-12 p-2"
-            onPress={onBack}
-            style={{
-              backgroundColor: theme.colors.buttonSecondary,
-              borderRadius: 8,
-            }}
+        <TouchableOpacity
+          className="absolute left-6 top-12 p-2"
+          onPress={() => navigation.goBack()}
+          style={{
+            backgroundColor: theme.colors.buttonSecondary,
+            borderRadius: 8,
+          }}
+        >
+          <Text
+            className="text-sm font-semibold"
+            style={{ color: theme.colors.textPrimary }}
           >
-            <Text
-              className="text-sm font-semibold"
-              style={{ color: theme.colors.textPrimary }}
-            >
-              {t('general.back')}
-            </Text>
-          </TouchableOpacity>
-        )}
+            {t('general.back')}
+          </Text>
+        </TouchableOpacity>
 
         {/* Summary Stats */}
         <View className="mt-4 flex-row justify-around">

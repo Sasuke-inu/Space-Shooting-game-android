@@ -5,6 +5,7 @@ import GameScreen from "../screens/GameScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import HighScoresScreen from "../screens/HighScoresScreen";
 import ShipSelectionScreen from "../screens/ShipSelectionScreen";
+import AchievementsScreen from "../screens/AchievementsScreen";
 
 export type RootStackParamList = {
   MainMenu: undefined;
@@ -12,6 +13,7 @@ export type RootStackParamList = {
   Settings: undefined;
   HighScores: undefined;
   ShipSelection: undefined;
+  Achievements: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -31,6 +33,7 @@ export function AppNavigator() {
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="HighScores" component={HighScoresScreen} />
       <Stack.Screen name="ShipSelection" component={ShipSelectionScreen} />
+      <Stack.Screen name="Achievements" component={AchievementsScreen} />
     </Stack.Navigator>
   );
 }
