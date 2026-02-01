@@ -68,6 +68,7 @@ export const usePerformanceMonitor = (
     minFps: Infinity,
     maxFps: 0,
     frameDrops: 0,
+    gcPauses: 0,
     warnings: 0,
     avgMemory: 0,
     peakMemory: 0,
@@ -150,25 +151,53 @@ export const usePerformanceMonitor = (
     if (frameTime > thresholds.maxFrameTime && config.enableWarnings) {
       stats.current.frameDrops++
 
-      const warning: PerformanceWarning = {
-        level: frameTime > thresholds.maxFrameTime * 2 ? 'high' : 'medium',
-        type: 'frameTime',
-        message: `Frame took ${frameTime.toFixed(1)}ms (target: ${thresholds.maxFrameTime}ms)`,
-        value: frameTime,
-        threshold: thresholds.maxFrameTime,
-        timestamp: Date.now(),
-      }
+      // Detect potential GC pauses: sudden spike significantly higher than average
+      const avgFrameTime = currentMetrics.current.avgFrameTime
+      const isGCPause = avgFrameTime > 0 && frameTime > avgFrameTime * 2.5 && frameTime > 16
 
-      warnings.current.push(warning)
-      if (warnings.current.length > config.metricsHistorySize) {
-        warnings.current.shift()
-      }
+      if (isGCPause) {
+        stats.current.gcPauses++
 
-      logEvent({
-        type: 'frame_skip',
-        timestamp: Date.now(),
-        data: { frameTime, threshold: thresholds.maxFrameTime },
-      })
+        const warning: PerformanceWarning = {
+          level: frameTime > thresholds.maxFrameTime * 3 ? 'high' : 'medium',
+          type: 'gcPause',
+          message: `Potential GC pause: ${frameTime.toFixed(1)}ms (avg: ${avgFrameTime.toFixed(1)}ms)`,
+          value: frameTime,
+          threshold: avgFrameTime,
+          timestamp: Date.now(),
+        }
+
+        warnings.current.push(warning)
+        if (warnings.current.length > config.metricsHistorySize) {
+          warnings.current.shift()
+        }
+
+        logEvent({
+          type: 'gc_pause',
+          timestamp: Date.now(),
+          data: { frameTime, avgFrameTime, spike: frameTime / avgFrameTime },
+        })
+      } else {
+        const warning: PerformanceWarning = {
+          level: frameTime > thresholds.maxFrameTime * 2 ? 'high' : 'medium',
+          type: 'frameTime',
+          message: `Frame took ${frameTime.toFixed(1)}ms (target: ${thresholds.maxFrameTime}ms)`,
+          value: frameTime,
+          threshold: thresholds.maxFrameTime,
+          timestamp: Date.now(),
+        }
+
+        warnings.current.push(warning)
+        if (warnings.current.length > config.metricsHistorySize) {
+          warnings.current.shift()
+        }
+
+        logEvent({
+          type: 'frame_skip',
+          timestamp: Date.now(),
+          data: { frameTime, threshold: thresholds.maxFrameTime },
+        })
+      }
     }
   }, [config.enabled, config.enableWarnings, config.metricsHistorySize, thresholds.maxFrameTime])
 
@@ -396,6 +425,7 @@ export const usePerformanceMonitor = (
       minFps: Infinity,
       maxFps: 0,
       frameDrops: 0,
+      gcPauses: 0,
       warnings: 0,
       avgMemory: 0,
       peakMemory: 0,
@@ -474,6 +504,7 @@ export class PerformanceMonitor {
     minFps: Infinity,
     maxFps: 0,
     frameDrops: 0,
+    gcPauses: 0,
     warnings: 0,
     avgMemory: 0,
     peakMemory: 0,
@@ -547,25 +578,53 @@ export class PerformanceMonitor {
     if (frameTime > this.thresholds.maxFrameTime && this.config.enableWarnings) {
       this.stats.frameDrops++
 
-      const warning: PerformanceWarning = {
-        level: frameTime > this.thresholds.maxFrameTime * 2 ? 'high' : 'medium',
-        type: 'frameTime',
-        message: `Frame took ${frameTime.toFixed(1)}ms (target: ${this.thresholds.maxFrameTime}ms)`,
-        value: frameTime,
-        threshold: this.thresholds.maxFrameTime,
-        timestamp: Date.now(),
-      }
+      // Detect potential GC pauses: sudden spike significantly higher than average
+      const avgFrameTime = this.currentMetrics.avgFrameTime
+      const isGCPause = avgFrameTime > 0 && frameTime > avgFrameTime * 2.5 && frameTime > 16
 
-      this.warnings.push(warning)
-      if (this.warnings.length > this.config.metricsHistorySize) {
-        this.warnings.shift()
-      }
+      if (isGCPause) {
+        this.stats.gcPauses++
 
-      this.logEvent({
-        type: 'frame_skip',
-        timestamp: Date.now(),
-        data: { frameTime, threshold: this.thresholds.maxFrameTime },
-      })
+        const warning: PerformanceWarning = {
+          level: frameTime > this.thresholds.maxFrameTime * 3 ? 'high' : 'medium',
+          type: 'gcPause',
+          message: `Potential GC pause: ${frameTime.toFixed(1)}ms (avg: ${avgFrameTime.toFixed(1)}ms)`,
+          value: frameTime,
+          threshold: avgFrameTime,
+          timestamp: Date.now(),
+        }
+
+        this.warnings.push(warning)
+        if (this.warnings.length > this.config.metricsHistorySize) {
+          this.warnings.shift()
+        }
+
+        this.logEvent({
+          type: 'gc_pause',
+          timestamp: Date.now(),
+          data: { frameTime, avgFrameTime, spike: frameTime / avgFrameTime },
+        })
+      } else {
+        const warning: PerformanceWarning = {
+          level: frameTime > this.thresholds.maxFrameTime * 2 ? 'high' : 'medium',
+          type: 'frameTime',
+          message: `Frame took ${frameTime.toFixed(1)}ms (target: ${this.thresholds.maxFrameTime}ms)`,
+          value: frameTime,
+          threshold: this.thresholds.maxFrameTime,
+          timestamp: Date.now(),
+        }
+
+        this.warnings.push(warning)
+        if (this.warnings.length > this.config.metricsHistorySize) {
+          this.warnings.shift()
+        }
+
+        this.logEvent({
+          type: 'frame_skip',
+          timestamp: Date.now(),
+          data: { frameTime, threshold: this.thresholds.maxFrameTime },
+        })
+      }
     }
   }
 
@@ -661,6 +720,7 @@ export class PerformanceMonitor {
       minFps: Infinity,
       maxFps: 0,
       frameDrops: 0,
+      gcPauses: 0,
       warnings: 0,
       avgMemory: 0,
       peakMemory: 0,
