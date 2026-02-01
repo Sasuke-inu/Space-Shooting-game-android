@@ -64,6 +64,10 @@ export default function MainMenuScreen() {
     navigation.navigate('HighScores');
   };
 
+  const handleChallenges = () => {
+    navigation.navigate('Challenges');
+  };
+
   return (
     <View className="flex-1" style={{ backgroundColor: theme.colors.background }}>
       {/* Animated Background */}
@@ -152,6 +156,24 @@ export default function MainMenuScreen() {
               style={{ color: theme.colors.textPrimary }}
             >
               {t('menu.ships')}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Daily Challenges Button */}
+          <TouchableOpacity
+            className="py-4 px-8 rounded-lg border"
+            style={{
+              backgroundColor: theme.colors.panelBg,
+              borderColor: theme.colors.panelBorder,
+            }}
+            onPress={handleChallenges}
+            activeOpacity={0.8}
+          >
+            <Text
+              className="text-xl font-semibold text-center"
+              style={{ color: theme.colors.textPrimary }}
+            >
+              {t('menu.challenges')}
             </Text>
           </TouchableOpacity>
 
