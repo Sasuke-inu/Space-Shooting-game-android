@@ -401,6 +401,15 @@ class GameRenderer {
             paint.strokeWidth = 2f
             canvas.drawCircle(0f, 0f, chargeRadius, paint)
         }
+
+        // Health bar for snipers
+        if (healthPercent < 1f) {
+            paint.style = Paint.Style.FILL
+            paint.color = Color.DKGRAY
+            canvas.drawRect(-15f, 15f, 15f, 18f, paint)
+            paint.color = Color.GREEN
+            canvas.drawRect(-15f, 15f, -15f + 30f * healthPercent, 18f, paint)
+        }
     }
 
     private fun drawBomberEnemy(canvas: Canvas, color: Int) {
