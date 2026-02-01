@@ -228,6 +228,9 @@ export const useGameEngine = () => {
   ) => {
     const state = useGameStore.getState()
 
+    // Get event modifiers if in event mode
+    const eventModifiers = state.getEventModifiers()
+
     // Apply time warp effect
     const effectiveDt = dt * state.timeWarpMultiplier
 
@@ -427,6 +430,8 @@ export const useGameEngine = () => {
       animSpeedMultiplier,
       bulletsToAdd: enemyBulletsToAdd,
       time: stateUpdates.time!,
+      enemySpeedMult: eventModifiers?.enemySpeedMultiplier ?? 1,
+      enemyFireRateMult: eventModifiers?.enemyFireRateMultiplier ?? 1,
     }
 
     // Update enemies - mutate during iteration
@@ -666,7 +671,8 @@ export const useGameEngine = () => {
               hapticMedium()
 
               // Chance to drop power-up from large asteroids
-              if (a.tier === 3 && Math.random() < POWERUP_DROP_ASTEROID) {
+              const asteroidDropRate = POWERUP_DROP_ASTEROID * (eventModifiers?.powerUpDropRateMultiplier ?? 1)
+              if (a.tier === 3 && Math.random() < asteroidDropRate) {
                 newPowerUpsToSpawn.push({ ...a.pos })
               }
               sessionShotsHit++ // Record shot hit
@@ -687,10 +693,11 @@ export const useGameEngine = () => {
             if (newHp <= 0) {
               // Enemy destroyed - mark for removal
               enemiesToRemove.add(eIdx)
+              const enemyDropRate = POWERUP_DROP_ENEMY * (eventModifiers?.powerUpDropRateMultiplier ?? 1)
               enemyDeathEffects.push({
                 pos: { ...e.pos },
                 type: e.type,
-                dropPowerUp: Math.random() < POWERUP_DROP_ENEMY,
+                dropPowerUp: Math.random() < enemyDropRate,
               })
               boom(e.pos, themeColors.particleExplosion, 28, 200)
               playSfx('explosion_large')
@@ -872,7 +879,8 @@ export const useGameEngine = () => {
     let bossWarningStartTime = state.bossWarningStartTime
     if (updatedAsteroids.length === 0 && !updatedBoss && !state.bossWarning) {
       wave++
-      const isBossWave = wave % BOSS_WAVE_INTERVAL === 0
+      const bossInterval = eventModifiers?.bossWaveInterval ?? BOSS_WAVE_INTERVAL
+      const isBossWave = wave % bossInterval === 0
       bossWarning = isBossWave
       bossWarningStartTime = isBossWave ? stateUpdates.time : undefined
       sessionDamageTaken = false // Reset for new wave
@@ -884,11 +892,14 @@ export const useGameEngine = () => {
           side === 0 ? 0 : side === 2 ? state.w : rand(0, state.w),
           side === 1 ? 0 : side === 3 ? state.h : rand(0, state.h)
         )
-        const vel = fromAngle(rand(0, Math.PI * 2), rand(20, 50))
+        const baseSpeed = rand(20, 50)
+        const speedMultiplier = eventModifiers?.asteroidSpeedMultiplier ?? 1
+        const sizeMultiplier = eventModifiers?.asteroidSizeMultiplier ?? 1
+        const vel = fromAngle(rand(0, Math.PI * 2), baseSpeed * speedMultiplier)
         updatedAsteroids.push({
           pos,
           vel,
-          radius: ASTEROID_BASE_RADIUS,
+          radius: ASTEROID_BASE_RADIUS * sizeMultiplier,
           spin: rand(-1, 1),
           ang: rand(0, Math.PI * 2),
           tier: 3,
@@ -1074,13 +1085,15 @@ interface EnemyUpdateContext {
   animSpeedMultiplier: number
   bulletsToAdd: Bullet[]
   time: number
+  enemySpeedMult: number
+  enemyFireRateMult: number
 }
 
 function updateEnemyBehaviorBatched(
   e: Enemy,
   context: EnemyUpdateContext
 ): Enemy {
-  const { state, effectiveDt: dt, difficultyProgress: difficulty, aimInaccuracy, animSpeedMultiplier: animSpeed, bulletsToAdd } = context
+  const { state, effectiveDt: dt, difficultyProgress: difficulty, aimInaccuracy, animSpeedMultiplier: animSpeed, bulletsToAdd, enemySpeedMult, enemyFireRateMult } = context
   const stats = ENEMY_STATS[e.type]
   const toP = sub(state.player.pos, e.pos)
   const d = len(toP)
@@ -1105,7 +1118,7 @@ function updateEnemyBehaviorBatched(
     case 'scout':
       // Fast, erratic movement
       const scoutDesired = add(dir, fromAngle(context.time * 2, 0.6))
-      let scoutVel = add(e.vel, mul(nor(scoutDesired), stats.speed * dt))
+      let scoutVel = add(e.vel, mul(nor(scoutDesired), stats.speed * enemySpeedMult * dt))
       scoutVel = mul(scoutVel, 0.99)
       newEnemy.vel = scoutVel
       newEnemy.pos = wrap(add(e.pos, mul(scoutVel, dt * animSpeed)), state.w, state.h)
@@ -1122,14 +1135,14 @@ function updateEnemyBehaviorBatched(
           friendly: false,
         })
         playSfx('shoot_enemy')
-        newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.3)
+        newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.3) / enemyFireRateMult
       }
       break
 
     case 'tank':
       // Slow, steady approach
       const tankDesired = mul(dir, 0.8)
-      let tankVel = add(e.vel, mul(nor(tankDesired), stats.speed * dt))
+      let tankVel = add(e.vel, mul(nor(tankDesired), stats.speed * enemySpeedMult * dt))
       tankVel = mul(tankVel, 0.995)
       newEnemy.vel = tankVel
       newEnemy.pos = wrap(add(e.pos, mul(tankVel, dt * animSpeed * 0.7)), state.w, state.h)
@@ -1149,7 +1162,7 @@ function updateEnemyBehaviorBatched(
           })
         }
         playSfx('shoot_enemy')
-        newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.2)
+        newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.2) / enemyFireRateMult
       }
       break
 
@@ -1159,10 +1172,10 @@ function updateEnemyBehaviorBatched(
       let sniperVel = e.vel
       if (d < preferredDist - 50) {
         // Move away
-        sniperVel = add(sniperVel, mul(nor(sub(e.pos, state.player.pos)), stats.speed * dt))
+        sniperVel = add(sniperVel, mul(nor(sub(e.pos, state.player.pos)), stats.speed * enemySpeedMult * dt))
       } else if (d > preferredDist + 100) {
         // Move closer
-        sniperVel = add(sniperVel, mul(dir, stats.speed * dt))
+        sniperVel = add(sniperVel, mul(dir, stats.speed * enemySpeedMult * dt))
       }
       sniperVel = mul(sniperVel, 0.98)
       newEnemy.vel = sniperVel
@@ -1191,7 +1204,7 @@ function updateEnemyBehaviorBatched(
       // Circles player, drops area attacks
       const circleAngle = Math.atan2(toP.y, toP.x) + Math.PI / 2
       const bomberDesired = fromAngle(circleAngle, 1)
-      let bomberVel = add(e.vel, mul(bomberDesired, stats.speed * dt))
+      let bomberVel = add(e.vel, mul(bomberDesired, stats.speed * enemySpeedMult * dt))
       bomberVel = mul(bomberVel, 0.995)
       newEnemy.vel = bomberVel
       newEnemy.pos = wrap(add(e.pos, mul(bomberVel, dt * animSpeed)), state.w, state.h)
@@ -1208,7 +1221,7 @@ function updateEnemyBehaviorBatched(
           friendly: false,
         })
         playSfx('shoot_enemy')
-        newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.25)
+        newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.25) / enemyFireRateMult
       }
 
       // Bomb attack (spread of bullets)
@@ -1224,7 +1237,7 @@ function updateEnemyBehaviorBatched(
           })
         }
         playSfx('shoot_enemy')
-        newEnemy.bombCooldown = 4 - difficulty
+        newEnemy.bombCooldown = (4 - difficulty) / enemyFireRateMult
       }
       break
 
@@ -1282,7 +1295,7 @@ function updateEnemyBehaviorBatched(
 
       if (timeSinceTeleport > pauseDuration) {
         if (d > 0) {
-          const speed = stats.speed * difficulty * animSpeed
+          const speed = stats.speed * enemySpeedMult * difficulty * animSpeed
           const erraticFactor = Math.sin(e.aiTimer * 5) * 0.3
 
           newEnemy.vel.x += (dir.x) * speed * dt * (1 + erraticFactor)
@@ -1311,7 +1324,7 @@ function updateEnemyBehaviorBatched(
             damage: stats.damage,
           })
 
-          newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.25)
+          newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.25) / enemyFireRateMult
         }
       }
 
@@ -1321,7 +1334,7 @@ function updateEnemyBehaviorBatched(
     default:
       // Default behavior (legacy)
       const desired = add(dir, fromAngle(context.time * 0.7, 0.4 * (1 - difficulty * 0.5)))
-      const accelMultiplier = 1.0 + (difficulty * 0.8)
+      const accelMultiplier = (1.0 + (difficulty * 0.8)) * enemySpeedMult
       let eVel = add(e.vel, mul(nor(desired), 90 * dt * accelMultiplier))
       eVel = mul(eVel, 0.993)
       newEnemy.vel = eVel
@@ -1341,7 +1354,7 @@ function updateEnemyBehaviorBatched(
         })
         playSfx('shoot_enemy')
         const cooldownBase = 1.4 - (difficulty * 0.6)
-        newEnemy.cooldown = rand(0.5, cooldownBase)
+        newEnemy.cooldown = rand(0.5, cooldownBase) / enemyFireRateMult
       }
   }
 
