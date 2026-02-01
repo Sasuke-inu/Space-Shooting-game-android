@@ -1,9 +1,9 @@
-import { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { NavigationContainer } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import GameScreen from "./src/screens/GameScreen";
+import { AppNavigator } from "./src/navigation/AppNavigator";
 import { migrateStorageToSecureStore } from "./src/utils/migrateStorage";
 import { useChallengesStore } from "./src/state/challengesStore";
 
@@ -41,15 +41,9 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        {currentScreen === "menu" ? (
-          <MenuScreen
-            onStartGame={handleStartGame}
-            onShowSettings={handleShowSettings}
-            onShowHighScores={handleShowHighScores}
-          />
-        ) : (
-          <GameScreen onBackToMenu={handleBackToMenu} />
-        )}
+        <NavigationContainer>
+          <AppNavigator />
+        </NavigationContainer>
         <StatusBar style="light" />
       </SafeAreaProvider>
     </GestureHandlerRootView>
