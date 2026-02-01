@@ -3,6 +3,7 @@ package com.spaceshooter.presentation.game
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.spaceshooter.domain.model.PowerUpType
 import com.spaceshooter.presentation.control.VirtualJoystick
 import com.spaceshooter.theme.Themes
 
@@ -216,6 +218,57 @@ private fun GameHUD(
                         color = colors.comboGlow,
                         fontSize = 12.sp
                     )
+                }
+            }
+        }
+
+        // Active Power-Ups Display
+        if (activePowerUps.isNotEmpty()) {
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(bottom = 160.dp, end = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                activePowerUps.forEach { powerUp ->
+                    // Get color based on power-up type
+                    val powerUpColor = when (powerUp.type) {
+                        PowerUpType.SHIELD -> colors.powerUpShield
+                        PowerUpType.RAPID_FIRE -> colors.powerUpRapidFire
+                        PowerUpType.SPREAD_SHOT -> colors.powerUpSpreadShot
+                        PowerUpType.MAGNET -> colors.powerUpMagnet
+                    }
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        // Power-up indicator circle
+                        Box(
+                            modifier = Modifier
+                                .size(16.dp)
+                                .background(
+                                    color = powerUpColor.copy(alpha = 0.8f),
+                                    shape = CircleShape
+                                )
+                        )
+
+                        // Duration progress bar
+                        val progress = powerUp.remainingDuration / 8f  // POWERUP_DURATION = 8s
+                        Box(
+                            modifier = Modifier
+                                .width(60.dp)
+                                .height(8.dp)
+                                .background(colors.panelBorder)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .fillMaxWidth(progress.coerceIn(0f, 1f))
+                                    .background(powerUpColor)
+                            )
+                        }
+                    }
                 }
             }
         }
