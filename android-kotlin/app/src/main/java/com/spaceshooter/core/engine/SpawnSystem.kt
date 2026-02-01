@@ -248,6 +248,15 @@ object SpawnSystem {
         )
     }
 
+    /**
+     * Boss statistics and configuration.
+     *
+     * @param hp Total hit points
+     * @param radius Collision radius
+     * @param maxPhase Maximum phase (boss transitions at 66%, 33% HP)
+     * @param score Points awarded on defeat
+     * @param firePatterns Map of phase number to FirePattern (1-indexed, corresponds to boss.phase)
+     */
     data class BossStats(
         val hp: Int,
         val radius: Float,
@@ -256,6 +265,10 @@ object SpawnSystem {
         val firePatterns: Map<Int, FirePattern>
     )
 
+    /**
+     * Get boss stats and fire patterns by type.
+     * Each boss has unique stats and phase-specific fire patterns.
+     */
     fun getBossStats(type: BossType): BossStats {
         return when (type) {
             BossType.DESTROYER -> BossStats(

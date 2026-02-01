@@ -3,7 +3,7 @@
   "spec": "056-extract-boss-fire-patterns-into-data-driven-sealed",
   "state": "building",
   "subtasks": {
-    "completed": 3,
+    "completed": 4,
     "total": 5,
     "in_progress": 1,
     "failed": 0
@@ -18,8 +18,8 @@
     "max": 1
   },
   "session": {
-    "number": 5,
+    "number": 6,
     "started_at": "2026-02-02T04:36:52.128281"
   },
-  "last_update": "2026-02-02T04:50:43.639783"
+  "last_update": "2026-02-02T04:56:19.681682"
 }

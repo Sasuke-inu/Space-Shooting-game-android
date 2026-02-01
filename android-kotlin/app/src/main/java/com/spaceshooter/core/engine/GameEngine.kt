@@ -325,18 +325,22 @@ class GameEngine {
             newPos = boss.pos + newVel * dt
         }
 
-        // Boss firing pattern
+        // Boss firing pattern - uses data-driven FirePattern system
+        // Each boss type has phase-specific patterns (Spiral, Ring, Aimed, Burst)
         var newBullets = state.bullets.toMutableList()
         var newTimer = boss.firePatternTimer + dt
 
+        // Fire every 1 second when boss is in position
         if (newTimer >= 1f && boss.pos.y >= 100f) {
             newTimer = 0f
 
-            // Execute fire pattern from BossStats
+            // Get boss-specific stats and lookup pattern for current phase
             val bossStats = SpawnSystem.getBossStats(boss.type)
             val pattern = bossStats.firePatterns[boss.phase]
 
+            // Execute pattern if defined (null-safe - some phases might skip firing)
             pattern?.let { firePattern ->
+                // Execute the pattern to get bullet spawn data (positions and velocities)
                 val bulletSpawns = firePattern.execute(
                     bossPos = boss.pos,
                     bossRadius = boss.radius,
@@ -344,6 +348,7 @@ class GameEngine {
                     playerPos = state.player.pos
                 )
 
+                // Create bullets from pattern output
                 bulletSpawns.forEach { spawn ->
                     newBullets.add(
                         Bullet(
