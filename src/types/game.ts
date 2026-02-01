@@ -46,7 +46,7 @@ export const GAME_MODE_CONFIG: Record<GameMode, { name: string; description: str
 //                         Enemy Types
 // ------------------------------------------------------------------ //
 
-export type EnemyType = 'scout' | 'tank' | 'sniper' | 'bomber' | 'teleporter'
+export type EnemyType = 'scout' | 'tank' | 'sniper' | 'bomber' | 'teleporter' | 'healer' | 'juggernaut'
 
 export interface Enemy {
   pos: Vec2
@@ -62,6 +62,10 @@ export interface Enemy {
   bombCooldown?: number  // Bomber bomb cooldown
   stunDuration?: number  // EMP stun duration remaining
   teleportTimer?: number // Teleporter teleport cooldown
+  healCooldown?: number   // Healer heal cooldown
+  chargeCooldown?: number // Juggernaut charge cooldown
+  isCharging?: boolean    // Juggernaut charging state
+  chargeDirection?: Vec2  // Juggernaut charge direction
 }
 
 export const ENEMY_STATS: Record<EnemyType, { hp: number; speed: number; damage: number; fireRate: number; points: number }> = {
@@ -70,13 +74,15 @@ export const ENEMY_STATS: Record<EnemyType, { hp: number; speed: number; damage:
   sniper: { hp: 50, speed: 40, damage: 35, fireRate: 3.0, points: 150 },
   bomber: { hp: 80, speed: 100, damage: 15, fireRate: 1.5, points: 125 },
   teleporter: { hp: 60, speed: 120, damage: 15, fireRate: 1.8, points: 150 },
+  healer: { hp: 45, speed: 70, damage: 10, fireRate: 2.5, points: 175 },
+  juggernaut: { hp: 200, speed: 50, damage: 30, fireRate: 3, points: 300 },
 }
 
 // ------------------------------------------------------------------ //
 //                         Boss Types
 // ------------------------------------------------------------------ //
 
-export type BossType = 'destroyer' | 'carrier' | 'dreadnought'
+export type BossType = 'destroyer' | 'carrier' | 'dreadnought' | 'mothership'
 export type BossPhase = 1 | 2 | 3
 
 export interface Boss {
@@ -95,12 +101,15 @@ export interface Boss {
   chargingSpecial?: boolean
   specialChargeTime?: number
   spawnedEnemiesCount?: number
+  shieldActive?: boolean    // Mothership shield state
+  shieldCooldown?: number   // Mothership shield cooldown
 }
 
 export const BOSS_STATS: Record<BossType, { hp: number; phases: number; points: number }> = {
   destroyer: { hp: 500, phases: 2, points: 1000 },
   carrier: { hp: 750, phases: 3, points: 1500 },
   dreadnought: { hp: 1000, phases: 3, points: 2500 },
+  mothership: { hp: 1250, phases: 3, points: 3000 },
 }
 
 // ------------------------------------------------------------------ //
