@@ -351,6 +351,9 @@ describe('progressStore logic', () => {
       scout: 500,
       tank: 750,
       interceptor: 1000,
+      support: 1250,
+      stealth: 1500,
+      heavy: 1750,
     }
 
     const SKIN_COSTS: Record<SkinId, number> = {
@@ -370,12 +373,18 @@ describe('progressStore logic', () => {
         scout: ['default'],
         tank: ['default'],
         interceptor: ['default'],
+        support: ['default'],
+        stealth: ['default'],
+        heavy: ['default'],
       },
       selectedSkins: {
         fighter: 'default',
         scout: 'default',
         tank: 'default',
         interceptor: 'default',
+        support: 'default',
+        stealth: 'default',
+        heavy: 'default',
       },
 
       addCredits: (amount) => set((s) => ({ credits: s.credits + amount })),
@@ -461,12 +470,18 @@ describe('progressStore logic', () => {
           scout: ['default'],
           tank: ['default'],
           interceptor: ['default'],
+          support: ['default'],
+          stealth: ['default'],
+          heavy: ['default'],
         },
         selectedSkins: {
           fighter: 'default',
           scout: 'default',
           tank: 'default',
           interceptor: 'default',
+          support: 'default',
+          stealth: 'default',
+          heavy: 'default',
         },
       }),
     }))
@@ -540,6 +555,34 @@ describe('progressStore logic', () => {
       expect(store.getState().credits).toBeLessThan(1000)
     })
 
+    test('unlockShip unlocks support ship', () => {
+      store.getState().addCredits(2000)
+      store.getState().unlockShip('support')
+      expect(store.getState().unlockedShips).toContain('support')
+      expect(store.getState().credits).toBe(2000 - 1250)
+    })
+
+    test('unlockShip unlocks stealth ship', () => {
+      store.getState().addCredits(2000)
+      store.getState().unlockShip('stealth')
+      expect(store.getState().unlockedShips).toContain('stealth')
+      expect(store.getState().credits).toBe(2000 - 1500)
+    })
+
+    test('unlockShip unlocks heavy ship', () => {
+      store.getState().addCredits(2000)
+      store.getState().unlockShip('heavy')
+      expect(store.getState().unlockedShips).toContain('heavy')
+      expect(store.getState().credits).toBe(2000 - 1750)
+    })
+
+    test('unlockShip fails with insufficient credits for new ships', () => {
+      store.getState().addCredits(1000)
+      store.getState().unlockShip('support')
+      expect(store.getState().unlockedShips).not.toContain('support')
+      expect(store.getState().credits).toBe(1000)
+    })
+
     test('resetUpgrades clears upgrades', () => {
       store.getState().addCredits(10000)
       store.getState().purchaseUpgrade('damage')
@@ -582,12 +625,18 @@ describe('progressStore logic', () => {
         scout: ['default'],
         tank: ['default'],
         interceptor: ['default'],
+        support: ['default'],
+        stealth: ['default'],
+        heavy: ['default'],
       },
       selectedSkins: {
         fighter: 'default',
         scout: 'default',
         tank: 'default',
         interceptor: 'default',
+        support: 'default',
+        stealth: 'default',
+        heavy: 'default',
       },
 
       addCredits: (amount) => set((s) => ({ credits: s.credits + amount })),
@@ -639,6 +688,9 @@ describe('progressStore logic', () => {
       expect(store.getState().unlockedSkins.scout).toContain('default')
       expect(store.getState().unlockedSkins.tank).toContain('default')
       expect(store.getState().unlockedSkins.interceptor).toContain('default')
+      expect(store.getState().unlockedSkins.support).toContain('default')
+      expect(store.getState().unlockedSkins.stealth).toContain('default')
+      expect(store.getState().unlockedSkins.heavy).toContain('default')
     })
 
     test('all ships start with default skin selected', () => {
@@ -646,6 +698,9 @@ describe('progressStore logic', () => {
       expect(store.getState().selectedSkins.scout).toBe('default')
       expect(store.getState().selectedSkins.tank).toBe('default')
       expect(store.getState().selectedSkins.interceptor).toBe('default')
+      expect(store.getState().selectedSkins.support).toBe('default')
+      expect(store.getState().selectedSkins.stealth).toBe('default')
+      expect(store.getState().selectedSkins.heavy).toBe('default')
     })
 
     test('isSkinUnlocked returns true for default skins', () => {
@@ -726,6 +781,34 @@ describe('progressStore logic', () => {
       expect(store.getState().unlockedSkins.fighter).toContain('stealth')
       expect(store.getState().unlockedSkins.fighter).toContain('neon')
       expect(store.getState().unlockedSkins.fighter).toContain('gold')
+    })
+
+    test('new ships have default skin unlocked', () => {
+      expect(store.getState().isSkinUnlocked('support', 'default')).toBe(true)
+      expect(store.getState().isSkinUnlocked('stealth', 'default')).toBe(true)
+      expect(store.getState().isSkinUnlocked('heavy', 'default')).toBe(true)
+    })
+
+    test('new ships have locked non-default skins', () => {
+      expect(store.getState().isSkinUnlocked('support', 'neon')).toBe(false)
+      expect(store.getState().isSkinUnlocked('stealth', 'gold')).toBe(false)
+      expect(store.getState().isSkinUnlocked('heavy', 'veteran')).toBe(false)
+    })
+
+    test('unlocking skin for new ship types', () => {
+      store.getState().addCredits(2000)
+      store.getState().unlockSkin('support', 'stealth')
+      store.getState().unlockSkin('heavy', 'stealth')
+      expect(store.getState().isSkinUnlocked('support', 'stealth')).toBe(true)
+      expect(store.getState().isSkinUnlocked('heavy', 'stealth')).toBe(true)
+    })
+
+    test('selecting skin for new ship types', () => {
+      store.getState().addCredits(2000)
+      store.getState().unlockSkin('stealth', 'neon')
+      const success = store.getState().selectSkin('stealth', 'neon')
+      expect(success).toBe(true)
+      expect(store.getState().getSelectedSkin('stealth')).toBe('neon')
     })
   })
 })
