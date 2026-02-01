@@ -21,6 +21,9 @@ const SHIP_COSTS: Record<ShipType, number> = {
   scout: 500,
   tank: 750,
   interceptor: 1000,
+  support: 1250,
+  stealth: 1500,
+  heavy: 1750,
 };
 
 const ABILITY_MAP: Record<ShipType, AbilityType> = {
@@ -28,6 +31,9 @@ const ABILITY_MAP: Record<ShipType, AbilityType> = {
   scout: 'time_warp',
   tank: 'shield_burst',
   interceptor: 'emp_blast',
+  support: 'repair_drone',
+  stealth: 'phase_cloak',
+  heavy: 'gravity_cannon',
 };
 
 interface ShipSelectionScreenProps {
@@ -234,7 +240,7 @@ export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSele
               Hull
             </Text>
             <View className="flex-row items-center mt-1">
-              {renderStatBar(stats.hull / 150)}
+              {renderStatBar(stats.hull / 200)}
               <Text
                 className="text-sm ml-2"
                 style={{ color: theme.colors.textSecondary }}
@@ -336,7 +342,7 @@ export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSele
 
       {/* Ship List */}
       <ScrollView className="flex-1 px-6 py-4">
-        {(['fighter', 'scout', 'tank', 'interceptor'] as ShipType[]).map(renderShipCard)}
+        {(['fighter', 'scout', 'tank', 'interceptor', 'support', 'stealth', 'heavy'] as ShipType[]).map(renderShipCard)}
 
         {/* Spacer for bottom button */}
         <View className="h-20" />

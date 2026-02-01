@@ -20,6 +20,9 @@ const SHIP_ICONS: Record<ShipType, string> = {
   scout: "⚡",
   tank: "🛡️",
   interceptor: "✈️",
+  support: "💚",
+  stealth: "👻",
+  heavy: "💀",
 }
 
 // Map ship special abilities to ability types
@@ -28,14 +31,17 @@ const SHIP_ABILITY_MAP: Record<ShipType, keyof typeof ABILITY_STATS> = {
   scout: "time_warp",
   tank: "shield_burst",
   interceptor: "emp_blast",
+  support: "repair_drone",
+  stealth: "phase_cloak",
+  heavy: "gravity_cannon",
 }
 
 // Maximum values for stat normalization (for progress bars)
 const MAX_STATS = {
   speed: 1.4,
   fireRate: 1.5,
-  damage: 1.5,
-  hull: 150,
+  damage: 2.0,
+  hull: 200,
 }
 
 export const ShipCard: React.FC<ShipCardProps> = ({
