@@ -83,7 +83,7 @@ class GameEngine {
         // Acceleration
         var newVel = player.vel
         if (input.joystick.lengthSquared() > 0.01f) {
-            val accel = Vec2.fromAngle(player.ang, GameConstants.PLAYER_ACCEL * dt)
+            val accel = Vec2.fromAngle(player.ang, GameConstants.PLAYER_ACCEL * dt * player.shipType.speedMultiplier)
             newVel = newVel + accel
         }
 
@@ -91,8 +91,9 @@ class GameEngine {
         newVel = newVel * GameConstants.PLAYER_FRICTION
 
         // Speed cap
-        if (newVel.length() > GameConstants.PLAYER_MAX_SPEED) {
-            newVel = newVel.normalized() * GameConstants.PLAYER_MAX_SPEED
+        val maxSpeed = GameConstants.PLAYER_MAX_SPEED * player.shipType.speedMultiplier
+        if (newVel.length() > maxSpeed) {
+            newVel = newVel.normalized() * maxSpeed
         }
 
         // Position update
