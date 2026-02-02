@@ -1,25 +1,25 @@
 {
   "active": true,
-  "spec": "021-sound-effects-system",
+  "spec": "050-add-countdown-timer-when-resuming-or-starting-game",
   "state": "building",
   "subtasks": {
-    "completed": 11,
-    "total": 12,
+    "completed": 2,
+    "total": 5,
     "in_progress": 1,
     "failed": 0
   },
   "phase": {
-    "current": "Testing and Verification",
+    "current": "Integrate Countdown into Game Flow",
     "id": null,
-    "total": 3
+    "total": 2
   },
   "workers": {
     "active": 0,
     "max": 1
   },
   "session": {
-    "number": 13,
-    "started_at": "2026-01-22T09:44:54.986438"
+    "number": 4,
+    "started_at": "2026-02-03T05:39:50.199036"
   },
-  "last_update": "2026-01-22T10:16:59.654663"
+  "last_update": "2026-02-03T05:47:37.067760"
 }

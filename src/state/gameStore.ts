@@ -78,6 +78,10 @@ export const SAFE_SPAWN_DISTANCE = 150    // Minimum distance from player when s
 // Particle pooling constants
 export const PARTICLE_POOL_SIZE = 500
 
+// Countdown constants
+export const COUNTDOWN_DURATION = 3          // Countdown from 3 to 1
+export const COUNTDOWN_INTERVAL = 1          // One second per count
+
 // Pooled particle with active flag
 interface PooledParticle extends Particle {
   active: boolean
@@ -140,6 +144,11 @@ interface GameStore extends GameState {
   // Particle pool
   particlePool: PooledParticle[]
   particlePoolIndex: number  // Circular buffer index for next particle allocation
+
+  // Countdown
+  showCountdown: boolean
+  countdownValue: number
+
   // Actions
   setGameMode: (mode: GameMode) => void
   setPaused: (paused: boolean) => void
@@ -221,6 +230,11 @@ interface GameStore extends GameState {
   acquireParticles: (count: number) => PooledParticle[]
   releaseParticle: (particle: PooledParticle) => void
   updatePooledParticles: (dt: number) => void
+
+  // Countdown actions
+  startCountdown: () => void
+  updateCountdown: (dt: number) => void
+  stopCountdown: () => void
 }
 
 const initialCombo: ComboState = {
@@ -305,6 +319,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
   // Particle pool
   particlePool: createParticlePool(),
   particlePoolIndex: 0,
+
+  // Countdown
+  showCountdown: false,
+  countdownValue: COUNTDOWN_DURATION,
 
   setPaused: (paused) => set({ paused }),
 
@@ -1132,4 +1150,38 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     set({ particles: activeParticles })
   },
+
+  // ------------------------------------------------------------------ //
+  //                         Countdown Actions
+  // ------------------------------------------------------------------ //
+
+  startCountdown: () =>
+    set({
+      showCountdown: true,
+      countdownValue: COUNTDOWN_DURATION,
+      paused: true,
+    }),
+
+  updateCountdown: (dt) =>
+    set((state) => {
+      if (!state.showCountdown) return state
+
+      const newValue = state.countdownValue - dt
+
+      if (newValue <= 0) {
+        return {
+          showCountdown: false,
+          countdownValue: 0,
+          paused: false,
+        }
+      }
+
+      return { countdownValue: newValue }
+    }),
+
+  stopCountdown: () =>
+    set({
+      showCountdown: false,
+      countdownValue: 0,
+    }),
 }))
