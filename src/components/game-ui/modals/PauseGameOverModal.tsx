@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { View, Text, Pressable, Modal } from 'react-native'
 import Animated, {
   useAnimatedStyle,
@@ -41,6 +41,53 @@ export const PauseGameOverModal: React.FC<PauseGameOverModalProps> = ({
   const gameOverScale = useSharedValue(0)
   const gameOverOpacity = useSharedValue(0)
   const gameOverRotation = useSharedValue(-10)
+  const panelScale = useSharedValue(0.7)
+  const panelOpacity = useSharedValue(0)
+
+  // Trigger dramatic entrance animation for game over
+  useEffect(() => {
+    if (visible && isGameOver) {
+      // Dramatic title entrance with rotation and bounce
+      gameOverScale.value = withSpring(1, {
+        damping: 10,
+        stiffness: 100,
+      })
+      gameOverOpacity.value = withTiming(1, { duration: 300 })
+      gameOverRotation.value = withSpring(0, {
+        damping: 12,
+        stiffness: 120,
+      })
+
+      // Panel dramatic entrance with scale bounce
+      panelScale.value = withSpring(1, {
+        damping: 15,
+        stiffness: 150,
+      })
+      panelOpacity.value = withTiming(1, { duration: 250 })
+    } else if (!visible) {
+      // Reset animations when modal closes
+      gameOverScale.value = 0
+      gameOverOpacity.value = 0
+      gameOverRotation.value = -10
+      panelScale.value = 0.7
+      panelOpacity.value = 0
+    }
+  }, [visible, isGameOver])
+
+  // Animated styles for game over title
+  const gameOverTitleStyle = useAnimatedStyle(() => ({
+    opacity: gameOverOpacity.value,
+    transform: [
+      { scale: gameOverScale.value },
+      { rotate: `${gameOverRotation.value}deg` },
+    ],
+  }))
+
+  // Animated styles for game over panel
+  const gameOverPanelStyle = useAnimatedStyle(() => ({
+    opacity: panelOpacity.value,
+    transform: [{ scale: panelScale.value }],
+  }))
 
   return (
     <Modal visible={true} transparent animationType="fade">
@@ -58,23 +105,37 @@ export const PauseGameOverModal: React.FC<PauseGameOverModalProps> = ({
         }}
         onPress={!isGameOver ? onContinue : undefined}
       >
-        <Pressable
-          style={{
-            backgroundColor: colors.panelBg,
-            borderWidth: 2,
-            borderColor: colors.panelBorder,
-            borderRadius: 16,
-            padding: 24,
-            marginHorizontal: 24,
-            width: 340,
-          }}
-          onPress={(e) => e.stopPropagation()}
+        <Animated.View
+          style={[
+            {
+              backgroundColor: colors.panelBg,
+              borderWidth: 2,
+              borderColor: colors.panelBorder,
+              borderRadius: 16,
+              padding: 24,
+              marginHorizontal: 24,
+              width: 340,
+            },
+            isGameOver && gameOverPanelStyle,
+          ]}
         >
-          {isGameOver ? (
-            <>
-              <Text style={{ color: colors.enemyShip, fontSize: 28, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
-                GAME OVER
-              </Text>
+          <Pressable onPress={(e) => e.stopPropagation()}>
+            {isGameOver ? (
+              <>
+                <Animated.Text
+                  style={[
+                    {
+                      color: colors.enemyShip,
+                      fontSize: 28,
+                      fontWeight: 'bold',
+                      marginBottom: 8,
+                      textAlign: 'center',
+                    },
+                    gameOverTitleStyle,
+                  ]}
+                >
+                  GAME OVER
+                </Animated.Text>
               <Text style={{ color: colors.textSecondary, fontSize: 20, fontWeight: '600', marginBottom: 16, textAlign: 'center' }}>
                 Final Score: {score}
               </Text>
@@ -170,7 +231,8 @@ export const PauseGameOverModal: React.FC<PauseGameOverModalProps> = ({
               </Pressable>
             </>
           )}
-        </Pressable>
+          </Pressable>
+        </Animated.View>
       </Pressable>
     </Modal>
   )
