@@ -138,7 +138,7 @@ class GameEngine {
                         pos = bulletPos,
                         vel = bulletVel,
                         isPlayerBullet = true,
-                        damage = GameConstants.BULLET_DAMAGE_PLAYER,
+                        damage = (GameConstants.BULLET_DAMAGE_PLAYER * player.shipType.damageMultiplier).toInt(),
                         radius = GameConstants.BULLET_RADIUS_PLAYER
                     )
                 )
