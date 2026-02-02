@@ -126,7 +126,7 @@ export const PauseGameOverModal: React.FC<PauseGameOverModalProps> = ({
                   style={[
                     {
                       color: colors.enemyShip,
-                      fontSize: 28,
+                      fontSize: 44,
                       fontWeight: 'bold',
                       marginBottom: 8,
                       textAlign: 'center',
@@ -136,9 +136,32 @@ export const PauseGameOverModal: React.FC<PauseGameOverModalProps> = ({
                 >
                   GAME OVER
                 </Animated.Text>
-              <Text style={{ color: colors.textSecondary, fontSize: 20, fontWeight: '600', marginBottom: 16, textAlign: 'center' }}>
-                Final Score: {score}
-              </Text>
+              <View style={{
+                backgroundColor: colors.buttonSecondary,
+                borderWidth: 2,
+                borderColor: colors.comboText,
+                borderRadius: 12,
+                paddingVertical: 12,
+                paddingHorizontal: 20,
+                marginBottom: 16,
+                shadowColor: colors.comboText,
+                shadowOffset: { width: 0, height: 0 },
+                shadowOpacity: 0.8,
+                shadowRadius: 12,
+                elevation: 8,
+              }}>
+                <Text style={{
+                  color: colors.comboText,
+                  fontSize: 24,
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                  textShadowColor: colors.comboText,
+                  textShadowOffset: { width: 0, height: 0 },
+                  textShadowRadius: 10,
+                }}>
+                  Final Score: {score}
+                </Text>
+              </View>
               <Text style={{ color: colors.textMuted, fontSize: 16, marginBottom: 8, textAlign: 'center' }}>
                 Wave {wave} reached
               </Text>
