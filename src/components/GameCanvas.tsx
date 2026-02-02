@@ -710,7 +710,9 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
               text="⚠️ BOSS INCOMING ⚠️"
               color="#ff4444"
               font={bossFont}
-            />
+            >
+              <Shadow dx={0} dy={2} blur={3} color="rgba(0,0,0,0.8)" />
+            </Text>
           </>
         )}
 
