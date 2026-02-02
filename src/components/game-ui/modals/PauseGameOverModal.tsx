@@ -1,5 +1,12 @@
 import React from 'react'
 import { View, Text, Pressable, Modal } from 'react-native'
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+  runOnJS,
+} from 'react-native-reanimated'
 import { ThemeColors } from '../../../theme/types'
 import { HighScore } from '../../../state/highScoresStore'
 
@@ -29,6 +36,11 @@ export const PauseGameOverModal: React.FC<PauseGameOverModalProps> = ({
   if (!visible) return null
 
   const isGameOver = lives <= 0
+
+  // Animation state for game over screen
+  const gameOverScale = useSharedValue(0)
+  const gameOverOpacity = useSharedValue(0)
+  const gameOverRotation = useSharedValue(-10)
 
   return (
     <Modal visible={true} transparent animationType="fade">
