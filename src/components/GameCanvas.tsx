@@ -1,5 +1,5 @@
 import React, { useMemo } from "react"
-import { Canvas, Group, Path, Circle, Line, Text, Skia, vec, matchFont, Rect } from "@shopify/react-native-skia"
+import { Canvas, Group, Path, Circle, Line, Text, Skia, vec, matchFont, Rect, Shadow } from "@shopify/react-native-skia"
 import { Platform } from "react-native"
 import type { Asteroid, Enemy, Vec2, PowerUp, ActivePowerUp, ComboState, Boss, HomingMissile, EnemyType, AbilityFlash } from "../types/game"
 import type { ThemeColors } from "../theme/types"
