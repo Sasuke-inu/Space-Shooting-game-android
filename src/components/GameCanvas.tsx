@@ -798,7 +798,9 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
         })}
 
         {/* HUD - Score and Credits */}
-        <Text x={16} y={24} text={`Score: ${score}`} color={colors.hudText} font={hudFont} />
+        <Text x={16} y={24} text={`Score: ${score}`} color={colors.hudText} font={hudFont}>
+          <Shadow dx={0} dy={1} blur={2} color="rgba(0,0,0,0.8)" />
+        </Text>
         <Text
           x={16}
           y={44}
@@ -808,8 +810,12 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
           }
           color={colors.hudText}
           font={hudFont}
-        />
-        <Text x={16} y={64} text={`Credits: ${credits}`} color={colors.comboText} font={hudFont} />
+        >
+          <Shadow dx={0} dy={1} blur={2} color="rgba(0,0,0,0.8)" />
+        </Text>
+        <Text x={16} y={64} text={`Credits: ${credits}`} color={colors.comboText} font={hudFont}>
+          <Shadow dx={0} dy={1} blur={2} color="rgba(0,0,0,0.8)" />
+        </Text>
 
         {/* HUD - Combo counter */}
         {combo.count > 0 && (
