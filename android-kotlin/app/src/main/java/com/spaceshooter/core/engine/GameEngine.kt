@@ -115,7 +115,7 @@ class GameEngine {
             } else {
                 GameConstants.FIRE_COOLDOWN_PLAYER
             }
-            newFireCooldown = cooldown
+            newFireCooldown = cooldown / player.shipType.fireRateMultiplier
 
             // Spawn bullet(s)
             val bulletCount = if (state.hasSpreadShotActive()) 3 else 1
