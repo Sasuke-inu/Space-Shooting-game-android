@@ -18,8 +18,8 @@ export type { ShipSelectorProps } from './ShipSelector'
 export { StatsDisplay } from './StatsDisplay'
 export type { StatsDisplayProps, GameStatistics } from './StatsDisplay'
 
-export { CountdownOverlay } from './CountdownOverlay'
-export type { CountdownOverlayProps } from './CountdownOverlay'
+export { CountdownOverlay } from './modals/CountdownOverlay'
+export type { CountdownOverlayProps } from './modals/CountdownOverlay'
 
 // Notification Components
 export { AchievementNotification } from './AchievementNotification'

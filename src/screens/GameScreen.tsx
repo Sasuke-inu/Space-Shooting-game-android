@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from "react"
 import { View, useWindowDimensions, Keyboard } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { GestureDetector } from "react-native-gesture-handler"
+import { useShallow } from "zustand/react/shallow"
 import { GameCanvas } from "../components/GameCanvas"
 import { VirtualControls } from "../components/VirtualControls"
 import {
