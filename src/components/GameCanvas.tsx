@@ -962,7 +962,9 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
         )}
 
         {/* HUD - Hull bar */}
-        <Text x={16} y={height - 36} text="Hull" color={colors.hudText} font={hudFont} />
+        <Text x={16} y={height - 36} text="Hull" color={colors.hudText} font={hudFont}>
+          <Shadow dx={0} dy={1} blur={2} color="rgba(0,0,0,0.8)" />
+        </Text>
         <Path
           path={Skia.Path.Make().addRect(Skia.XYWHRect(60, height - 48, 160, 12))}
           color={colors.hullBarBg}
