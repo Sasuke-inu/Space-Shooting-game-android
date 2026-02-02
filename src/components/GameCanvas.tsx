@@ -895,7 +895,9 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
             text={player.specialReady ? "⚡" : `${Math.ceil(player.specialCooldown)}`}
             color={player.specialReady ? colors.buttonPrimary : colors.textMuted}
             font={hudFont}
-          />
+          >
+            <Shadow dx={0} dy={1} blur={2} color="rgba(0,0,0,0.8)" />
+          </Text>
         </Group>
 
         {/* Mini-map / Radar */}
