@@ -826,7 +826,9 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
               text={`${combo.count}x COMBO`}
               color={colors.comboText}
               font={comboFont}
-            />
+            >
+              <Shadow dx={0} dy={2} blur={3} color="rgba(0,0,0,0.8)" />
+            </Text>
             {combo.multiplier > 1 && (
               <Text
                 x={width / 2 - 30}
@@ -834,7 +836,9 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
                 text={`${combo.multiplier}x multiplier`}
                 color={colors.comboText}
                 font={hudFont}
-              />
+              >
+                <Shadow dx={0} dy={2} blur={3} color="rgba(0,0,0,0.8)" />
+              </Text>
             )}
           </>
         )}
