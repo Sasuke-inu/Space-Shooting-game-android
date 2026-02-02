@@ -49,7 +49,7 @@ export const PauseGameOverModal: React.FC<PauseGameOverModalProps> = ({
           flex: 1,
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: colors.modalOverlay,
+          backgroundColor: isGameOver ? 'rgba(40, 0, 0, 0.85)' : colors.modalOverlay,
           position: 'absolute',
           top: 0,
           left: 0,
