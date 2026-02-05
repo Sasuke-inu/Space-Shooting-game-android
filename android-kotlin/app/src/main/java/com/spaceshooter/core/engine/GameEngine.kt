@@ -646,6 +646,7 @@ class GameEngine {
 
                 if (CollisionSystem.playerEnemyCollision(player, enemy)) {
                     player = damagePlayer(player, enemy.damage, state)
+                    sessionStats = sessionStats.copy(damageTaken = sessionStats.damageTaken + enemy.damage)
                     screenShake = ScreenShake(intensity = 12f, duration = 0.2f)
                 }
             }

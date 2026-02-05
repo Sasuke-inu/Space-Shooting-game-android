@@ -3,8 +3,8 @@
 # min_api: 26
 # common_typos_disable
 # {"id":"com.android.tools.r8.mapping","version":"2.2"}
-# pg_map_id: 3fa33ef
-# pg_map_hash: SHA-256 3fa33ef28444cf8d99e06d7a874b669a102c2a2642f25f3fff6c804fa69d272b
+# pg_map_id: 5e9b928
+# pg_map_hash: SHA-256 5e9b928f6cced7d831b2cf2146aec67d3a9fe9c5857c8787389146357a550ad1
 _COROUTINE.ArtificialStackFrames -> R8$$REMOVED$$CLASS$$0:
 # {"id":"sourceFile","fileName":"CoroutineDebugging.kt"}
 _COROUTINE.CoroutineDebuggingKt -> R8$$REMOVED$$CLASS$$1:
@@ -107217,9 +107217,9 @@ com.spaceshooter.core.engine.SpawnSystem -> b1.h:
     22:26:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):463:463 -> a
     27:31:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):464:464 -> a
     32:36:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):465:465 -> a
-    37:85:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):916:916 -> a
+    37:85:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):918:918 -> a
     86:91:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):477:477 -> a
-    92:128:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):918:918 -> a
+    92:128:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):920:920 -> a
     129:138:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):480:480 -> a
     139:141:boolean com.spaceshooter.core.engine.CollisionSystem.bulletAsteroidCollision(com.spaceshooter.domain.entity.Bullet,com.spaceshooter.domain.entity.Asteroid):0:0 -> a
     139:141:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):482 -> a
@@ -107311,11 +107311,11 @@ com.spaceshooter.core.engine.SpawnSystem -> b1.h:
     564:570:int com.spaceshooter.core.engine.CollisionSystem.getAsteroidScore(com.spaceshooter.domain.model.AsteroidTier):107:107 -> a
     564:570:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):503 -> a
     571:578:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):504:504 -> a
-    579:584:com.spaceshooter.domain.model.ComboState com.spaceshooter.core.engine.GameEngine.incrementCombo(com.spaceshooter.domain.model.ComboState):712:712 -> a
+    579:584:com.spaceshooter.domain.model.ComboState com.spaceshooter.core.engine.GameEngine.incrementCombo(com.spaceshooter.domain.model.ComboState):714:714 -> a
     579:584:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):505 -> a
-    585:590:com.spaceshooter.domain.model.ComboState com.spaceshooter.core.engine.GameEngine.incrementCombo(com.spaceshooter.domain.model.ComboState):713:713 -> a
+    585:590:com.spaceshooter.domain.model.ComboState com.spaceshooter.core.engine.GameEngine.incrementCombo(com.spaceshooter.domain.model.ComboState):715:715 -> a
     585:590:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):505 -> a
-    591:597:com.spaceshooter.domain.model.ComboState com.spaceshooter.core.engine.GameEngine.incrementCombo(com.spaceshooter.domain.model.ComboState):714:714 -> a
+    591:597:com.spaceshooter.domain.model.ComboState com.spaceshooter.core.engine.GameEngine.incrementCombo(com.spaceshooter.domain.model.ComboState):716:716 -> a
     591:597:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):505 -> a
     598:602:int com.spaceshooter.core.engine.SessionStats.getAsteroidsDestroyed():17:17 -> a
     598:602:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):507 -> a
@@ -107326,21 +107326,21 @@ com.spaceshooter.core.engine.SpawnSystem -> b1.h:
     653:654:java.util.List com.spaceshooter.core.engine.GameState.getAsteroids():48:48 -> a
     653:654:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):516 -> a
       # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
-    655:663:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):920:920 -> a
-    664:682:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):922:922 -> a
-    683:706:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):923:923 -> a
+    655:663:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):922:922 -> a
+    664:682:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):924:924 -> a
+    683:706:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):925:925 -> a
     707:712:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):517:517 -> a
-    713:771:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):923:923 -> a
+    713:771:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):925:925 -> a
     772:775:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):515:515 -> a
     776:796:int com.spaceshooter.core.engine.SessionStats.getShotsHit():16:16 -> a
     776:796:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):520 -> a
       # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
     797:853:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):520:520 -> a
-    854:915:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):918:918 -> a
-    916:935:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):916:916 -> a
-    936:968:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):928:928 -> a
+    854:915:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):920:920 -> a
+    916:935:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):918:918 -> a
+    936:968:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):930:930 -> a
     969:998:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):529:529 -> a
-    999:1033:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):930:930 -> a
+    999:1033:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):932:932 -> a
     1034:1047:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):532:532 -> a
     1048:1050:boolean com.spaceshooter.core.engine.CollisionSystem.bulletEnemyCollision(com.spaceshooter.domain.entity.Bullet,com.spaceshooter.domain.entity.Enemy):0:0 -> a
     1048:1050:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):534 -> a
@@ -107364,27 +107364,27 @@ com.spaceshooter.core.engine.SpawnSystem -> b1.h:
     1143:1145:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):542:542 -> a
     1146:1158:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):547:547 -> a
     1159:1162:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):550:550 -> a
-    1163:1187:int com.spaceshooter.core.engine.GameEngine.getEnemyScore(com.spaceshooter.domain.model.EnemyType):818:818 -> a
+    1163:1187:int com.spaceshooter.core.engine.GameEngine.getEnemyScore(com.spaceshooter.domain.model.EnemyType):820:820 -> a
     1163:1187:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):550 -> a
     1188:1190:void kotlin.NoWhenBranchMatchedException.<init>():9:9 -> a
-    1188:1190:int com.spaceshooter.core.engine.GameEngine.getEnemyScore(com.spaceshooter.domain.model.EnemyType):818 -> a
+    1188:1190:int com.spaceshooter.core.engine.GameEngine.getEnemyScore(com.spaceshooter.domain.model.EnemyType):820 -> a
     1188:1190:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):550 -> a
-    1191:1200:int com.spaceshooter.core.engine.GameEngine.getEnemyScore(com.spaceshooter.domain.model.EnemyType):818:818 -> a
+    1191:1200:int com.spaceshooter.core.engine.GameEngine.getEnemyScore(com.spaceshooter.domain.model.EnemyType):820:820 -> a
     1191:1200:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):550 -> a
     1201:1207:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):551:551 -> a
     1208:1211:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):552:552 -> a
-    1212:1234:int com.spaceshooter.core.engine.GameEngine.getEnemyCredits(com.spaceshooter.domain.model.EnemyType):827:827 -> a
+    1212:1234:int com.spaceshooter.core.engine.GameEngine.getEnemyCredits(com.spaceshooter.domain.model.EnemyType):829:829 -> a
     1212:1234:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):552 -> a
     1235:1237:void kotlin.NoWhenBranchMatchedException.<init>():9:9 -> a
-    1235:1237:int com.spaceshooter.core.engine.GameEngine.getEnemyCredits(com.spaceshooter.domain.model.EnemyType):827 -> a
+    1235:1237:int com.spaceshooter.core.engine.GameEngine.getEnemyCredits(com.spaceshooter.domain.model.EnemyType):829 -> a
     1235:1237:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):552 -> a
-    1238:1247:int com.spaceshooter.core.engine.GameEngine.getEnemyCredits(com.spaceshooter.domain.model.EnemyType):827:827 -> a
+    1238:1247:int com.spaceshooter.core.engine.GameEngine.getEnemyCredits(com.spaceshooter.domain.model.EnemyType):829:829 -> a
     1238:1247:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):552 -> a
-    1248:1253:com.spaceshooter.domain.model.ComboState com.spaceshooter.core.engine.GameEngine.incrementCombo(com.spaceshooter.domain.model.ComboState):712:712 -> a
+    1248:1253:com.spaceshooter.domain.model.ComboState com.spaceshooter.core.engine.GameEngine.incrementCombo(com.spaceshooter.domain.model.ComboState):714:714 -> a
     1248:1253:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):553 -> a
-    1254:1259:com.spaceshooter.domain.model.ComboState com.spaceshooter.core.engine.GameEngine.incrementCombo(com.spaceshooter.domain.model.ComboState):713:713 -> a
+    1254:1259:com.spaceshooter.domain.model.ComboState com.spaceshooter.core.engine.GameEngine.incrementCombo(com.spaceshooter.domain.model.ComboState):715:715 -> a
     1254:1259:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):553 -> a
-    1260:1266:com.spaceshooter.domain.model.ComboState com.spaceshooter.core.engine.GameEngine.incrementCombo(com.spaceshooter.domain.model.ComboState):714:714 -> a
+    1260:1266:com.spaceshooter.domain.model.ComboState com.spaceshooter.core.engine.GameEngine.incrementCombo(com.spaceshooter.domain.model.ComboState):716:716 -> a
     1260:1266:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):553 -> a
     1267:1271:int com.spaceshooter.core.engine.SessionStats.getEnemiesKilled():18:18 -> a
     1267:1271:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):555 -> a
@@ -107395,20 +107395,20 @@ com.spaceshooter.core.engine.SpawnSystem -> b1.h:
     1309:1310:java.util.List com.spaceshooter.core.engine.GameState.getEnemies():49:49 -> a
     1309:1310:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):563 -> a
       # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
-    1311:1319:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):931:931 -> a
-    1320:1338:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):933:933 -> a
-    1339:1378:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):934:934 -> a
+    1311:1319:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):933:933 -> a
+    1320:1338:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):935:935 -> a
+    1339:1378:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):936:936 -> a
     1379:1384:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):564:564 -> a
-    1385:1444:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):934:934 -> a
+    1385:1444:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):936:936 -> a
     1445:1448:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):562:562 -> a
     1449:1469:int com.spaceshooter.core.engine.SessionStats.getShotsHit():16:16 -> a
     1449:1469:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):567 -> a
       # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
     1470:1502:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):567:567 -> a
-    1503:1553:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):930:930 -> a
-    1554:1569:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):928:928 -> a
+    1503:1553:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):932:932 -> a
+    1554:1569:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):930:930 -> a
     1570:1573:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):575:575 -> a
-    1574:1597:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):939:939 -> a
+    1574:1597:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):941:941 -> a
     1598:1631:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):577:577 -> a
     1632:1653:boolean com.spaceshooter.core.engine.CollisionSystem.bulletBossCollision(com.spaceshooter.domain.entity.Bullet,com.spaceshooter.domain.entity.Boss):62:62 -> a
     1632:1653:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):580 -> a
@@ -107441,9 +107441,9 @@ com.spaceshooter.core.engine.SpawnSystem -> b1.h:
     1870:1891:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):604 -> a
       # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
     1892:1922:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):604:604 -> a
-    1923:1965:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):939:939 -> a
+    1923:1965:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):941:941 -> a
     1966:1984:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):610:610 -> a
-    1985:2007:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):942:942 -> a
+    1985:2007:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):944:944 -> a
     2008:2029:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):612:612 -> a
     2030:2032:boolean com.spaceshooter.core.engine.CollisionSystem.playerBulletCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.Bullet):0:0 -> a
     2030:2032:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):614 -> a
@@ -107469,134 +107469,142 @@ com.spaceshooter.core.engine.SpawnSystem -> b1.h:
     2143:2146:java.util.List spawnExplosionParticles$default(com.spaceshooter.core.engine.SpawnSystem,com.spaceshooter.core.math.Vec2,int,int,float,int,java.lang.Object):287:287 -> a
     2143:2146:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):620 -> a
     2147:2161:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):619:619 -> a
-    2162:2170:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):942:942 -> a
+    2162:2170:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):944:944 -> a
     2171:2185:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):627:627 -> a
-    2186:2206:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):945:945 -> a
-    2207:2218:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):629:629 -> a
-    2219:2226:boolean com.spaceshooter.core.engine.CollisionSystem.playerAsteroidCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.Asteroid):0:0 -> a
-    2219:2226:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):631 -> a
-    2227:2242:boolean com.spaceshooter.core.engine.CollisionSystem.playerAsteroidCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.Asteroid):27:27 -> a
-    2227:2242:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):631 -> a
-    2243:2250:boolean com.spaceshooter.core.engine.CollisionSystem.circlesCollide(com.spaceshooter.core.math.Vec2,float,com.spaceshooter.core.math.Vec2,float):0:0 -> a
-    2243:2250:boolean com.spaceshooter.core.engine.CollisionSystem.playerAsteroidCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.Asteroid):27 -> a
-    2243:2250:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):631 -> a
-    2251:2257:boolean com.spaceshooter.core.engine.CollisionSystem.circlesCollide(com.spaceshooter.core.math.Vec2,float,com.spaceshooter.core.math.Vec2,float):16:16 -> a
-    2251:2257:boolean com.spaceshooter.core.engine.CollisionSystem.playerAsteroidCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.Asteroid):27 -> a
-    2251:2257:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):631 -> a
-    2258:2275:boolean com.spaceshooter.core.engine.CollisionSystem.circlesCollide(com.spaceshooter.core.math.Vec2,float,com.spaceshooter.core.math.Vec2,float):17:17 -> a
-    2258:2275:boolean com.spaceshooter.core.engine.CollisionSystem.playerAsteroidCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.Asteroid):27 -> a
-    2258:2275:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):631 -> a
-    2276:2279:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):632:632 -> a
-    2280:2289:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):633:633 -> a
-    2290:2300:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):635:635 -> a
-    2301:2304:java.util.List spawnExplosionParticles$default(com.spaceshooter.core.engine.SpawnSystem,com.spaceshooter.core.math.Vec2,int,int,float,int,java.lang.Object):287:287 -> a
-    2301:2304:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):635 -> a
-    2305:2330:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):634:634 -> a
-    2331:2339:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):945:945 -> a
-    2340:2354:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):642:642 -> a
-    2355:2375:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):948:948 -> a
-    2376:2387:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):644:644 -> a
-    2388:2395:boolean com.spaceshooter.core.engine.CollisionSystem.playerEnemyCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.Enemy):0:0 -> a
-    2388:2395:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):646 -> a
-    2396:2413:boolean com.spaceshooter.core.engine.CollisionSystem.playerEnemyCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.Enemy):34:34 -> a
-    2396:2413:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):646 -> a
-    2414:2421:boolean com.spaceshooter.core.engine.CollisionSystem.circlesCollide(com.spaceshooter.core.math.Vec2,float,com.spaceshooter.core.math.Vec2,float):0:0 -> a
-    2414:2421:boolean com.spaceshooter.core.engine.CollisionSystem.playerEnemyCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.Enemy):34 -> a
-    2414:2421:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):646 -> a
-    2422:2428:boolean com.spaceshooter.core.engine.CollisionSystem.circlesCollide(com.spaceshooter.core.math.Vec2,float,com.spaceshooter.core.math.Vec2,float):16:16 -> a
-    2422:2428:boolean com.spaceshooter.core.engine.CollisionSystem.playerEnemyCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.Enemy):34 -> a
-    2422:2428:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):646 -> a
-    2429:2444:boolean com.spaceshooter.core.engine.CollisionSystem.circlesCollide(com.spaceshooter.core.math.Vec2,float,com.spaceshooter.core.math.Vec2,float):17:17 -> a
-    2429:2444:boolean com.spaceshooter.core.engine.CollisionSystem.playerEnemyCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.Enemy):34 -> a
-    2429:2444:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):646 -> a
-    2445:2452:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):647:647 -> a
-    2453:2486:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):648:648 -> a
-    2487:2502:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):948:948 -> a
-    2503:2529:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):951:951 -> a
-    2530:2539:boolean com.spaceshooter.core.engine.CollisionSystem.playerPowerUpCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.PowerUp):0:0 -> a
-    2530:2539:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):655 -> a
-    2540:2549:boolean com.spaceshooter.core.engine.CollisionSystem.playerPowerUpCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.PowerUp):70:70 -> a
-    2540:2549:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):655 -> a
-    2550:2563:boolean com.spaceshooter.core.engine.CollisionSystem.playerPowerUpCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.PowerUp):71:71 -> a
-    2550:2563:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):655 -> a
-    2564:2571:boolean com.spaceshooter.core.engine.CollisionSystem.circlesCollide(com.spaceshooter.core.math.Vec2,float,com.spaceshooter.core.math.Vec2,float):0:0 -> a
-    2564:2571:boolean com.spaceshooter.core.engine.CollisionSystem.playerPowerUpCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.PowerUp):71 -> a
-    2564:2571:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):655 -> a
-    2572:2578:boolean com.spaceshooter.core.engine.CollisionSystem.circlesCollide(com.spaceshooter.core.math.Vec2,float,com.spaceshooter.core.math.Vec2,float):16:16 -> a
-    2572:2578:boolean com.spaceshooter.core.engine.CollisionSystem.playerPowerUpCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.PowerUp):71 -> a
-    2572:2578:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):655 -> a
-    2579:2593:boolean com.spaceshooter.core.engine.CollisionSystem.circlesCollide(com.spaceshooter.core.math.Vec2,float,com.spaceshooter.core.math.Vec2,float):17:17 -> a
-    2579:2593:boolean com.spaceshooter.core.engine.CollisionSystem.playerPowerUpCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.PowerUp):71 -> a
-    2579:2593:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):655 -> a
-    2594:2602:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):656:656 -> a
-    2603:2606:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):657:657 -> a
-    2607:2608:java.util.List com.spaceshooter.core.engine.GameState.getActivePowerUps():58:58 -> a
-    2607:2608:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.activatePowerUp(com.spaceshooter.core.engine.GameState,com.spaceshooter.domain.model.PowerUpType):756 -> a
+    2186:2208:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):947:947 -> a
+    2209:2220:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):629:629 -> a
+    2221:2228:boolean com.spaceshooter.core.engine.CollisionSystem.playerAsteroidCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.Asteroid):0:0 -> a
+    2221:2228:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):631 -> a
+    2229:2246:boolean com.spaceshooter.core.engine.CollisionSystem.playerAsteroidCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.Asteroid):27:27 -> a
+    2229:2246:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):631 -> a
+    2247:2254:boolean com.spaceshooter.core.engine.CollisionSystem.circlesCollide(com.spaceshooter.core.math.Vec2,float,com.spaceshooter.core.math.Vec2,float):0:0 -> a
+    2247:2254:boolean com.spaceshooter.core.engine.CollisionSystem.playerAsteroidCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.Asteroid):27 -> a
+    2247:2254:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):631 -> a
+    2255:2261:boolean com.spaceshooter.core.engine.CollisionSystem.circlesCollide(com.spaceshooter.core.math.Vec2,float,com.spaceshooter.core.math.Vec2,float):16:16 -> a
+    2255:2261:boolean com.spaceshooter.core.engine.CollisionSystem.playerAsteroidCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.Asteroid):27 -> a
+    2255:2261:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):631 -> a
+    2262:2279:boolean com.spaceshooter.core.engine.CollisionSystem.circlesCollide(com.spaceshooter.core.math.Vec2,float,com.spaceshooter.core.math.Vec2,float):17:17 -> a
+    2262:2279:boolean com.spaceshooter.core.engine.CollisionSystem.playerAsteroidCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.Asteroid):27 -> a
+    2262:2279:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):631 -> a
+    2280:2283:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):632:632 -> a
+    2284:2303:int com.spaceshooter.core.engine.SessionStats.getDamageTaken():21:21 -> a
+    2284:2303:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):633 -> a
       # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
-    2607:2608:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):657 -> a
-    2609:2635:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.activatePowerUp(com.spaceshooter.core.engine.GameState,com.spaceshooter.domain.model.PowerUpType):756:756 -> a
-    2609:2635:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):657 -> a
-    2636:2639:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.activatePowerUp(com.spaceshooter.core.engine.GameState,com.spaceshooter.domain.model.PowerUpType):757:757 -> a
-    2636:2639:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):657 -> a
-    2640:2648:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.activatePowerUp(com.spaceshooter.core.engine.GameState,com.spaceshooter.domain.model.PowerUpType):999:999 -> a
-    2640:2648:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):657 -> a
-    2649:2662:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.activatePowerUp(com.spaceshooter.core.engine.GameState,com.spaceshooter.domain.model.PowerUpType):1000:1000 -> a
-    2649:2662:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):657 -> a
-    2663:2664:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.activatePowerUp(com.spaceshooter.core.engine.GameState,com.spaceshooter.domain.model.PowerUpType):1001:1001 -> a
-    2663:2664:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):657 -> a
-    2665:2685:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.activatePowerUp(com.spaceshooter.core.engine.GameState,com.spaceshooter.domain.model.PowerUpType):759:759 -> a
-    2665:2685:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):657 -> a
-    2686:2702:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.activatePowerUp(com.spaceshooter.core.engine.GameState,com.spaceshooter.domain.model.PowerUpType):1001:1001 -> a
-    2686:2702:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):657 -> a
-    2703:2760:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.activatePowerUp(com.spaceshooter.core.engine.GameState,com.spaceshooter.domain.model.PowerUpType):763:763 -> a
-    2703:2760:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):657 -> a
-    2761:2764:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.activatePowerUp(com.spaceshooter.core.engine.GameState,com.spaceshooter.domain.model.PowerUpType):765:765 -> a
-    2761:2764:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):657 -> a
-    2765:2785:int com.spaceshooter.core.engine.SessionStats.getPowerUpsCollected():20:20 -> a
-    2765:2785:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):658 -> a
+    2304:2307:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):633:633 -> a
+    2308:2317:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):634:634 -> a
+    2318:2328:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):636:636 -> a
+    2329:2332:java.util.List spawnExplosionParticles$default(com.spaceshooter.core.engine.SpawnSystem,com.spaceshooter.core.math.Vec2,int,int,float,int,java.lang.Object):287:287 -> a
+    2329:2332:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):636 -> a
+    2333:2354:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):635:635 -> a
+    2355:2368:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):947:947 -> a
+    2369:2383:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):643:643 -> a
+    2384:2406:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):950:950 -> a
+    2407:2418:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):645:645 -> a
+    2419:2428:boolean com.spaceshooter.core.engine.CollisionSystem.playerEnemyCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.Enemy):0:0 -> a
+    2419:2428:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):647 -> a
+    2429:2446:boolean com.spaceshooter.core.engine.CollisionSystem.playerEnemyCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.Enemy):34:34 -> a
+    2429:2446:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):647 -> a
+    2447:2454:boolean com.spaceshooter.core.engine.CollisionSystem.circlesCollide(com.spaceshooter.core.math.Vec2,float,com.spaceshooter.core.math.Vec2,float):0:0 -> a
+    2447:2454:boolean com.spaceshooter.core.engine.CollisionSystem.playerEnemyCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.Enemy):34 -> a
+    2447:2454:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):647 -> a
+    2455:2461:boolean com.spaceshooter.core.engine.CollisionSystem.circlesCollide(com.spaceshooter.core.math.Vec2,float,com.spaceshooter.core.math.Vec2,float):16:16 -> a
+    2455:2461:boolean com.spaceshooter.core.engine.CollisionSystem.playerEnemyCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.Enemy):34 -> a
+    2455:2461:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):647 -> a
+    2462:2477:boolean com.spaceshooter.core.engine.CollisionSystem.circlesCollide(com.spaceshooter.core.math.Vec2,float,com.spaceshooter.core.math.Vec2,float):17:17 -> a
+    2462:2477:boolean com.spaceshooter.core.engine.CollisionSystem.playerEnemyCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.Enemy):34 -> a
+    2462:2477:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):647 -> a
+    2478:2485:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):648:648 -> a
+    2486:2487:int com.spaceshooter.core.engine.SessionStats.getDamageTaken():21:21 -> a
+    2486:2487:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):649 -> a
       # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
-    2786:2815:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):658:658 -> a
-    2816:2827:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):951:951 -> a
-    2828:2832:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):953:953 -> a
-    2833:2851:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):956:956 -> a
-    2852:2854:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):957:957 -> a
-    2855:2864:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):663:663 -> a
-    2865:2869:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):957:957 -> a
-    2870:2874:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):956:956 -> a
-    2875:2879:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):961:961 -> a
-    2880:2898:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):964:964 -> a
-    2899:2901:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):965:965 -> a
-    2902:2911:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):664:664 -> a
-    2912:2916:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):965:965 -> a
-    2917:2923:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):964:964 -> a
-    2924:2927:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):664:664 -> a
-    2928:2932:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):969:969 -> a
-    2933:2951:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):972:972 -> a
-    2952:2954:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):973:973 -> a
-    2955:2964:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):665:665 -> a
-    2965:2969:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):973:973 -> a
-    2970:2974:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):972:972 -> a
-    2975:2979:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):977:977 -> a
-    2980:2998:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):980:980 -> a
-    2999:3001:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):981:981 -> a
-    3002:3011:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):666:666 -> a
-    3012:3016:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):981:981 -> a
-    3017:3023:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):980:980 -> a
-    3024:3027:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):666:666 -> a
-    3028:3035:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):667:667 -> a
-    3036:3060:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):672:672 -> a
-    3061:3064:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):678:678 -> a
-    3065:3104:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):680:680 -> a
-    3105:3155:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):677:677 -> a
-    3156:3160:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):685:685 -> a
-    0:30:com.spaceshooter.domain.entity.Player com.spaceshooter.core.engine.GameEngine.damagePlayer(com.spaceshooter.domain.entity.Player,int,com.spaceshooter.core.engine.GameState):704:704 -> b
+    2488:2513:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):649:649 -> a
+    2514:2551:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):650:650 -> a
+    2552:2569:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):950:950 -> a
+    2570:2596:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):953:953 -> a
+    2597:2606:boolean com.spaceshooter.core.engine.CollisionSystem.playerPowerUpCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.PowerUp):0:0 -> a
+    2597:2606:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):657 -> a
+    2607:2616:boolean com.spaceshooter.core.engine.CollisionSystem.playerPowerUpCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.PowerUp):70:70 -> a
+    2607:2616:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):657 -> a
+    2617:2630:boolean com.spaceshooter.core.engine.CollisionSystem.playerPowerUpCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.PowerUp):71:71 -> a
+    2617:2630:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):657 -> a
+    2631:2638:boolean com.spaceshooter.core.engine.CollisionSystem.circlesCollide(com.spaceshooter.core.math.Vec2,float,com.spaceshooter.core.math.Vec2,float):0:0 -> a
+    2631:2638:boolean com.spaceshooter.core.engine.CollisionSystem.playerPowerUpCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.PowerUp):71 -> a
+    2631:2638:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):657 -> a
+    2639:2645:boolean com.spaceshooter.core.engine.CollisionSystem.circlesCollide(com.spaceshooter.core.math.Vec2,float,com.spaceshooter.core.math.Vec2,float):16:16 -> a
+    2639:2645:boolean com.spaceshooter.core.engine.CollisionSystem.playerPowerUpCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.PowerUp):71 -> a
+    2639:2645:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):657 -> a
+    2646:2660:boolean com.spaceshooter.core.engine.CollisionSystem.circlesCollide(com.spaceshooter.core.math.Vec2,float,com.spaceshooter.core.math.Vec2,float):17:17 -> a
+    2646:2660:boolean com.spaceshooter.core.engine.CollisionSystem.playerPowerUpCollision(com.spaceshooter.domain.entity.Player,com.spaceshooter.domain.entity.PowerUp):71 -> a
+    2646:2660:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):657 -> a
+    2661:2669:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):658:658 -> a
+    2670:2673:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):659:659 -> a
+    2674:2675:java.util.List com.spaceshooter.core.engine.GameState.getActivePowerUps():58:58 -> a
+    2674:2675:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.activatePowerUp(com.spaceshooter.core.engine.GameState,com.spaceshooter.domain.model.PowerUpType):758 -> a
+      # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
+    2674:2675:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):659 -> a
+    2676:2702:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.activatePowerUp(com.spaceshooter.core.engine.GameState,com.spaceshooter.domain.model.PowerUpType):758:758 -> a
+    2676:2702:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):659 -> a
+    2703:2706:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.activatePowerUp(com.spaceshooter.core.engine.GameState,com.spaceshooter.domain.model.PowerUpType):759:759 -> a
+    2703:2706:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):659 -> a
+    2707:2715:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.activatePowerUp(com.spaceshooter.core.engine.GameState,com.spaceshooter.domain.model.PowerUpType):1001:1001 -> a
+    2707:2715:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):659 -> a
+    2716:2729:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.activatePowerUp(com.spaceshooter.core.engine.GameState,com.spaceshooter.domain.model.PowerUpType):1002:1002 -> a
+    2716:2729:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):659 -> a
+    2730:2731:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.activatePowerUp(com.spaceshooter.core.engine.GameState,com.spaceshooter.domain.model.PowerUpType):1003:1003 -> a
+    2730:2731:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):659 -> a
+    2732:2752:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.activatePowerUp(com.spaceshooter.core.engine.GameState,com.spaceshooter.domain.model.PowerUpType):761:761 -> a
+    2732:2752:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):659 -> a
+    2753:2769:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.activatePowerUp(com.spaceshooter.core.engine.GameState,com.spaceshooter.domain.model.PowerUpType):1003:1003 -> a
+    2753:2769:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):659 -> a
+    2770:2827:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.activatePowerUp(com.spaceshooter.core.engine.GameState,com.spaceshooter.domain.model.PowerUpType):765:765 -> a
+    2770:2827:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):659 -> a
+    2828:2831:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.activatePowerUp(com.spaceshooter.core.engine.GameState,com.spaceshooter.domain.model.PowerUpType):767:767 -> a
+    2828:2831:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):659 -> a
+    2832:2852:int com.spaceshooter.core.engine.SessionStats.getPowerUpsCollected():20:20 -> a
+    2832:2852:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):660 -> a
+      # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
+    2853:2882:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):660:660 -> a
+    2883:2894:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):953:953 -> a
+    2895:2899:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):955:955 -> a
+    2900:2918:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):958:958 -> a
+    2919:2921:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):959:959 -> a
+    2922:2931:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):665:665 -> a
+    2932:2936:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):959:959 -> a
+    2937:2941:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):958:958 -> a
+    2942:2946:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):963:963 -> a
+    2947:2965:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):966:966 -> a
+    2966:2968:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):967:967 -> a
+    2969:2978:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):666:666 -> a
+    2979:2983:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):967:967 -> a
+    2984:2990:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):966:966 -> a
+    2991:2994:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):666:666 -> a
+    2995:2999:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):971:971 -> a
+    3000:3018:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):974:974 -> a
+    3019:3021:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):975:975 -> a
+    3022:3031:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):667:667 -> a
+    3032:3036:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):975:975 -> a
+    3037:3041:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):974:974 -> a
+    3042:3046:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):979:979 -> a
+    3047:3065:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):982:982 -> a
+    3066:3068:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):983:983 -> a
+    3069:3078:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):668:668 -> a
+    3079:3083:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):983:983 -> a
+    3084:3090:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):982:982 -> a
+    3091:3094:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):668:668 -> a
+    3095:3102:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):669:669 -> a
+    3103:3129:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):674:674 -> a
+    3130:3133:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):680:680 -> a
+    3134:3179:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):682:682 -> a
+    3180:3232:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):679:679 -> a
+    3233:3237:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkCollisions(com.spaceshooter.core.engine.GameState):687:687 -> a
+    0:30:com.spaceshooter.domain.entity.Player com.spaceshooter.core.engine.GameEngine.damagePlayer(com.spaceshooter.domain.entity.Player,int,com.spaceshooter.core.engine.GameState):706:706 -> b
       # {"id":"com.android.tools.r8.residualsignature","signature":"(Lcom/spaceshooter/domain/entity/Player;I)Lcom/spaceshooter/domain/entity/Player;"}
-    31:35:com.spaceshooter.domain.entity.Player com.spaceshooter.core.engine.GameEngine.damagePlayer(com.spaceshooter.domain.entity.Player,int,com.spaceshooter.core.engine.GameState):705:705 -> b
+    31:35:com.spaceshooter.domain.entity.Player com.spaceshooter.core.engine.GameEngine.damagePlayer(com.spaceshooter.domain.entity.Player,int,com.spaceshooter.core.engine.GameState):707:707 -> b
     0:14:float com.spaceshooter.core.math.Vec2.getX():13:13 -> c
-    0:14:boolean com.spaceshooter.core.engine.GameEngine.isOnScreen(com.spaceshooter.core.math.Vec2,float,float):836 -> c
+    0:14:boolean com.spaceshooter.core.engine.GameEngine.isOnScreen(com.spaceshooter.core.math.Vec2,float,float):838 -> c
       # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
       # {"id":"com.android.tools.r8.residualsignature","signature":"(Lc1/a;FF)Z"}
-    15:29:boolean com.spaceshooter.core.engine.GameEngine.isOnScreen(com.spaceshooter.core.math.Vec2,float,float):836:836 -> c
+    15:29:boolean com.spaceshooter.core.engine.GameEngine.isOnScreen(com.spaceshooter.core.math.Vec2,float,float):838:838 -> c
     2:6:java.util.List spawnAsteroids(int,float,float,com.spaceshooter.core.math.Vec2,float):0:0 -> d
     2:6:java.util.List spawnAsteroids$default(com.spaceshooter.core.engine.SpawnSystem,int,float,float,com.spaceshooter.core.math.Vec2,float,int,java.lang.Object):20 -> d
       # {"id":"com.android.tools.r8.residualsignature","signature":"(IFFLc1/a;)Ljava/util/ArrayList;"}
@@ -107642,108 +107650,108 @@ com.spaceshooter.core.engine.SpawnSystem -> b1.h:
     123:133:java.util.List spawnAsteroids$default(com.spaceshooter.core.engine.SpawnSystem,int,float,float,com.spaceshooter.core.math.Vec2,float,int,java.lang.Object):20 -> d
     134:140:java.util.List spawnAsteroids(int,float,float,com.spaceshooter.core.math.Vec2,float):50:50 -> d
     134:140:java.util.List spawnAsteroids$default(com.spaceshooter.core.engine.SpawnSystem,int,float,float,com.spaceshooter.core.math.Vec2,float,int,java.lang.Object):20 -> d
-    2:8:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):799:799 -> e
+    2:8:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):801:801 -> e
       # {"id":"com.android.tools.r8.residualsignature","signature":"(Lb1/c;)Lb1/c;"}
-    9:10:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):801:801 -> e
-    11:19:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):802:802 -> e
-    20:33:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):805:805 -> e
-    34:39:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):810:810 -> e
+    9:10:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):803:803 -> e
+    11:19:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):804:804 -> e
+    20:33:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807:807 -> e
+    34:39:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):812:812 -> e
     40:51:float com.spaceshooter.core.engine.GameState.getDifficultyProgress():76:76 -> e
-    40:51:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):811 -> e
+    40:51:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):813 -> e
     52:56:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):0:0 -> e
-    52:56:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    52:56:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     57:63:int kotlin.random.AbstractPlatformRandom.nextInt(int):42:42 -> e
     57:63:int kotlin.random.Random$Default.nextInt(int):283 -> e
       # {"id":"com.android.tools.r8.rewriteFrame","conditions":["throws(Ljava/lang/NullPointerException;)"],"actions":["removeInnerFrames(1)"]}
     57:63:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):110 -> e
-    57:63:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    57:63:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     64:67:int kotlin.random.AbstractPlatformRandom.nextInt(int):42:42 -> e
     64:67:int kotlin.random.Random$Default.nextInt(int):283 -> e
     64:67:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):110 -> e
-    64:67:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    64:67:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     68:82:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):111:111 -> e
-    68:82:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    68:82:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     83:95:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):115:115 -> e
-    83:95:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    83:95:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     96:106:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):114:114 -> e
-    96:106:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    96:106:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     107:118:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):113:113 -> e
-    107:118:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    107:118:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     119:129:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):112:112 -> e
-    119:129:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    119:129:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     130:139:com.spaceshooter.domain.model.EnemyType chooseEnemyType(float):146:146 -> e
     130:139:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):119 -> e
-    130:139:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    130:139:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     140:155:com.spaceshooter.domain.model.EnemyType chooseEnemyType(float):149:149 -> e
     140:155:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):119 -> e
-    140:155:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    140:155:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     156:174:com.spaceshooter.domain.model.EnemyType chooseEnemyType(float):151:151 -> e
     156:174:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):119 -> e
-    156:174:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    156:174:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     175:181:com.spaceshooter.domain.model.EnemyType chooseEnemyType(float):155:155 -> e
     175:181:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):119 -> e
-    175:181:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    175:181:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     182:184:com.spaceshooter.domain.model.EnemyType chooseEnemyType(float):156:156 -> e
     182:184:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):119 -> e
-    182:184:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    182:184:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     185:191:com.spaceshooter.domain.model.EnemyType chooseEnemyType(float):157:157 -> e
     185:191:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):119 -> e
-    185:191:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    185:191:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     192:198:com.spaceshooter.domain.model.EnemyType chooseEnemyType(float):162:162 -> e
     192:198:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):119 -> e
-    192:198:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    192:198:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     199:205:com.spaceshooter.domain.model.EnemyType chooseEnemyType(float):163:163 -> e
     199:205:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):119 -> e
-    199:205:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    199:205:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     206:208:com.spaceshooter.domain.model.EnemyType chooseEnemyType(float):164:164 -> e
     206:208:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):119 -> e
-    206:208:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    206:208:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     209:210:com.spaceshooter.domain.model.EnemyType chooseEnemyType(float):165:165 -> e
     209:210:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):119 -> e
-    209:210:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    209:210:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     211:215:com.spaceshooter.core.engine.SpawnSystem$EnemyStats getEnemyStats(com.spaceshooter.domain.model.EnemyType):0:0 -> e
     211:215:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):120 -> e
-    211:215:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    211:215:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     216:231:com.spaceshooter.core.engine.SpawnSystem$EnemyStats getEnemyStats(com.spaceshooter.domain.model.EnemyType):184:184 -> e
     216:231:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):120 -> e
-    216:231:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    216:231:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     232:251:com.spaceshooter.core.engine.SpawnSystem$EnemyStats getEnemyStats(com.spaceshooter.domain.model.EnemyType):209:209 -> e
     232:251:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):120 -> e
-    232:251:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    232:251:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     252:253:com.spaceshooter.core.engine.SpawnSystem$EnemyStats getEnemyStats(com.spaceshooter.domain.model.EnemyType):184:184 -> e
     252:253:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):120 -> e
-    252:253:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    252:253:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     254:256:void kotlin.NoWhenBranchMatchedException.<init>():9:9 -> e
     254:256:com.spaceshooter.core.engine.SpawnSystem$EnemyStats getEnemyStats(com.spaceshooter.domain.model.EnemyType):184 -> e
     254:256:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):120 -> e
-    254:256:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    254:256:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     257:257:com.spaceshooter.core.engine.SpawnSystem$EnemyStats getEnemyStats(com.spaceshooter.domain.model.EnemyType):184:184 -> e
     257:257:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):120 -> e
-    257:257:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    257:257:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     258:278:com.spaceshooter.core.engine.SpawnSystem$EnemyStats getEnemyStats(com.spaceshooter.domain.model.EnemyType):201:201 -> e
     258:278:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):120 -> e
-    258:278:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    258:278:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     279:299:com.spaceshooter.core.engine.SpawnSystem$EnemyStats getEnemyStats(com.spaceshooter.domain.model.EnemyType):193:193 -> e
     279:299:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):120 -> e
-    279:299:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    279:299:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     300:319:com.spaceshooter.core.engine.SpawnSystem$EnemyStats getEnemyStats(com.spaceshooter.domain.model.EnemyType):185:185 -> e
     300:319:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):120 -> e
-    300:319:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    300:319:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     320:332:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):123:123 -> e
-    320:332:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    320:332:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     333:335:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):124:124 -> e
-    333:335:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    333:335:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     336:339:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):128:128 -> e
-    336:339:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    336:339:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     340:343:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):129:129 -> e
-    340:343:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    340:343:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     344:355:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):136:136 -> e
-    344:355:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    344:355:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     356:359:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):138:138 -> e
-    356:359:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
+    356:359:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
     360:395:com.spaceshooter.domain.entity.Enemy spawnEnemy(float,float,com.spaceshooter.core.math.Vec2,float):126:126 -> e
-    360:395:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):807 -> e
-    396:437:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):814:814 -> e
+    360:395:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):809 -> e
+    396:437:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.spawnEnemiesIfNeeded(com.spaceshooter.core.engine.GameState,float):816:816 -> e
     7:15:java.util.List spawnExplosionParticles(com.spaceshooter.core.math.Vec2,int,int,float):293:293 -> f
       # {"id":"com.android.tools.r8.residualsignature","signature":"(Lc1/a;IIF)Ljava/util/ArrayList;"}
     16:28:java.util.List spawnExplosionParticles(com.spaceshooter.core.math.Vec2,int,int,float):294:294 -> f
@@ -110195,17 +110203,17 @@ com.spaceshooter.presentation.game.GameViewModel$startGameLoop$1 -> e1.p:
     764:767:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     764:767:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     764:767:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    768:772:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateBullets(com.spaceshooter.core.engine.GameState,float):847:847 -> j
+    768:772:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateBullets(com.spaceshooter.core.engine.GameState,float):849:849 -> j
     768:772:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):31 -> j
     768:772:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     768:772:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     768:772:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    773:790:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateBullets(com.spaceshooter.core.engine.GameState,float):856:856 -> j
+    773:790:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateBullets(com.spaceshooter.core.engine.GameState,float):858:858 -> j
     773:790:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):31 -> j
     773:790:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     773:790:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     773:790:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    791:794:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateBullets(com.spaceshooter.core.engine.GameState,float):855:855 -> j
+    791:794:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateBullets(com.spaceshooter.core.engine.GameState,float):857:857 -> j
     791:794:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):31 -> j
     791:794:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     791:794:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
@@ -110230,7 +110238,7 @@ com.spaceshooter.presentation.game.GameViewModel$startGameLoop$1 -> e1.p:
     856:863:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     856:863:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     856:863:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    864:916:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateBullets(com.spaceshooter.core.engine.GameState,float):855:855 -> j
+    864:916:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateBullets(com.spaceshooter.core.engine.GameState,float):857:857 -> j
     864:916:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):31 -> j
     864:916:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     864:916:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
@@ -110240,17 +110248,17 @@ com.spaceshooter.presentation.game.GameViewModel$startGameLoop$1 -> e1.p:
     917:920:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     917:920:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     917:920:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    921:931:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateAsteroids(com.spaceshooter.core.engine.GameState,float):860:860 -> j
+    921:931:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateAsteroids(com.spaceshooter.core.engine.GameState,float):862:862 -> j
     921:931:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):34 -> j
     921:931:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     921:931:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     921:931:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    932:945:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateAsteroids(com.spaceshooter.core.engine.GameState,float):861:861 -> j
+    932:945:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateAsteroids(com.spaceshooter.core.engine.GameState,float):863:863 -> j
     932:945:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):34 -> j
     932:945:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     932:945:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     932:945:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    946:949:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateAsteroids(com.spaceshooter.core.engine.GameState,float):862:862 -> j
+    946:949:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateAsteroids(com.spaceshooter.core.engine.GameState,float):864:864 -> j
     946:949:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):34 -> j
     946:949:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     946:949:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
@@ -110294,7 +110302,7 @@ com.spaceshooter.presentation.game.GameViewModel$startGameLoop$1 -> e1.p:
     1012:1015:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     1012:1015:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     1012:1015:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    1016:1068:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateAsteroids(com.spaceshooter.core.engine.GameState,float):862:862 -> j
+    1016:1068:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateAsteroids(com.spaceshooter.core.engine.GameState,float):864:864 -> j
     1016:1068:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):34 -> j
     1016:1068:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     1016:1068:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
@@ -110304,17 +110312,17 @@ com.spaceshooter.presentation.game.GameViewModel$startGameLoop$1 -> e1.p:
     1069:1072:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     1069:1072:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     1069:1072:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    1073:1083:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateEnemies(com.spaceshooter.core.engine.GameState,float):864:864 -> j
+    1073:1083:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateEnemies(com.spaceshooter.core.engine.GameState,float):866:866 -> j
     1073:1083:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):37 -> j
     1073:1083:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     1073:1083:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     1073:1083:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    1084:1111:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateEnemies(com.spaceshooter.core.engine.GameState,float):865:865 -> j
+    1084:1111:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateEnemies(com.spaceshooter.core.engine.GameState,float):867:867 -> j
     1084:1111:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):37 -> j
     1084:1111:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     1084:1111:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     1084:1111:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    1112:1115:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateEnemies(com.spaceshooter.core.engine.GameState,float):866:866 -> j
+    1112:1115:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateEnemies(com.spaceshooter.core.engine.GameState,float):868:868 -> j
     1112:1115:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):37 -> j
     1112:1115:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     1112:1115:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
@@ -110633,7 +110641,7 @@ com.spaceshooter.presentation.game.GameViewModel$startGameLoop$1 -> e1.p:
     1443:1446:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     1443:1446:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     1443:1446:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    1447:1453:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateEnemies(com.spaceshooter.core.engine.GameState,float):866:866 -> j
+    1447:1453:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateEnemies(com.spaceshooter.core.engine.GameState,float):868:868 -> j
     1447:1453:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):37 -> j
     1447:1453:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     1447:1453:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
@@ -110643,7 +110651,7 @@ com.spaceshooter.presentation.game.GameViewModel$startGameLoop$1 -> e1.p:
     1454:1459:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     1454:1459:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     1454:1459:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    1460:1477:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateEnemies(com.spaceshooter.core.engine.GameState,float):868:868 -> j
+    1460:1477:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateEnemies(com.spaceshooter.core.engine.GameState,float):870:870 -> j
     1460:1477:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):37 -> j
     1460:1477:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     1460:1477:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
@@ -110769,17 +110777,17 @@ com.spaceshooter.presentation.game.GameViewModel$startGameLoop$1 -> e1.p:
     1624:1649:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     1624:1649:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     1624:1649:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    1650:1658:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateEnemies(com.spaceshooter.core.engine.GameState,float):870:870 -> j
+    1650:1658:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateEnemies(com.spaceshooter.core.engine.GameState,float):872:872 -> j
     1650:1658:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):37 -> j
     1650:1658:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     1650:1658:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     1650:1658:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    1659:1672:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateEnemies(com.spaceshooter.core.engine.GameState,float):871:871 -> j
+    1659:1672:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateEnemies(com.spaceshooter.core.engine.GameState,float):873:873 -> j
     1659:1672:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):37 -> j
     1659:1672:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     1659:1672:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     1659:1672:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    1673:1676:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateEnemies(com.spaceshooter.core.engine.GameState,float):872:872 -> j
+    1673:1676:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateEnemies(com.spaceshooter.core.engine.GameState,float):874:874 -> j
     1673:1676:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):37 -> j
     1673:1676:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     1673:1676:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
@@ -110794,7 +110802,7 @@ com.spaceshooter.presentation.game.GameViewModel$startGameLoop$1 -> e1.p:
     1696:1737:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     1696:1737:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     1696:1737:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    1738:1790:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateEnemies(com.spaceshooter.core.engine.GameState,float):872:872 -> j
+    1738:1790:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateEnemies(com.spaceshooter.core.engine.GameState,float):874:874 -> j
     1738:1790:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):37 -> j
     1738:1790:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     1738:1790:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
@@ -111019,17 +111027,17 @@ com.spaceshooter.presentation.game.GameViewModel$startGameLoop$1 -> e1.p:
     2127:2130:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2127:2130:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2127:2130:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2131:2135:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateParticles(com.spaceshooter.core.engine.GameState,float):874:874 -> j
+    2131:2135:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateParticles(com.spaceshooter.core.engine.GameState,float):876:876 -> j
     2131:2135:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):43 -> j
     2131:2135:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2131:2135:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2131:2135:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2136:2151:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateParticles(com.spaceshooter.core.engine.GameState,float):883:883 -> j
+    2136:2151:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateParticles(com.spaceshooter.core.engine.GameState,float):885:885 -> j
     2136:2151:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):43 -> j
     2136:2151:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2136:2151:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2136:2151:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2152:2155:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateParticles(com.spaceshooter.core.engine.GameState,float):882:882 -> j
+    2152:2155:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateParticles(com.spaceshooter.core.engine.GameState,float):884:884 -> j
     2152:2155:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):43 -> j
     2152:2155:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2152:2155:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
@@ -111054,7 +111062,7 @@ com.spaceshooter.presentation.game.GameViewModel$startGameLoop$1 -> e1.p:
     2206:2211:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2206:2211:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2206:2211:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2212:2264:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateParticles(com.spaceshooter.core.engine.GameState,float):882:882 -> j
+    2212:2264:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateParticles(com.spaceshooter.core.engine.GameState,float):884:884 -> j
     2212:2264:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):43 -> j
     2212:2264:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2212:2264:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
@@ -111064,17 +111072,17 @@ com.spaceshooter.presentation.game.GameViewModel$startGameLoop$1 -> e1.p:
     2265:2268:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2265:2268:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2265:2268:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2269:2273:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updatePowerUps(com.spaceshooter.core.engine.GameState,float):887:887 -> j
+    2269:2273:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updatePowerUps(com.spaceshooter.core.engine.GameState,float):889:889 -> j
     2269:2273:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):46 -> j
     2269:2273:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2269:2273:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2269:2273:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2274:2289:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updatePowerUps(com.spaceshooter.core.engine.GameState,float):896:896 -> j
+    2274:2289:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updatePowerUps(com.spaceshooter.core.engine.GameState,float):898:898 -> j
     2274:2289:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):46 -> j
     2274:2289:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2274:2289:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2274:2289:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2290:2293:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updatePowerUps(com.spaceshooter.core.engine.GameState,float):895:895 -> j
+    2290:2293:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updatePowerUps(com.spaceshooter.core.engine.GameState,float):897:897 -> j
     2290:2293:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):46 -> j
     2290:2293:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2290:2293:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
@@ -111120,7 +111128,7 @@ com.spaceshooter.presentation.game.GameViewModel$startGameLoop$1 -> e1.p:
     2395:2400:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2395:2400:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2395:2400:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2401:2453:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updatePowerUps(com.spaceshooter.core.engine.GameState,float):895:895 -> j
+    2401:2453:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updatePowerUps(com.spaceshooter.core.engine.GameState,float):897:897 -> j
     2401:2453:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):46 -> j
     2401:2453:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2401:2453:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
@@ -111130,17 +111138,17 @@ com.spaceshooter.presentation.game.GameViewModel$startGameLoop$1 -> e1.p:
     2454:2457:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2454:2457:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2454:2457:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2458:2462:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateHomingMissiles(com.spaceshooter.core.engine.GameState,float):900:900 -> j
+    2458:2462:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateHomingMissiles(com.spaceshooter.core.engine.GameState,float):902:902 -> j
     2458:2462:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):49 -> j
     2458:2462:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2458:2462:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2458:2462:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2463:2478:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateHomingMissiles(com.spaceshooter.core.engine.GameState,float):909:909 -> j
+    2463:2478:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateHomingMissiles(com.spaceshooter.core.engine.GameState,float):911:911 -> j
     2463:2478:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):49 -> j
     2463:2478:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2463:2478:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2463:2478:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2479:2482:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateHomingMissiles(com.spaceshooter.core.engine.GameState,float):908:908 -> j
+    2479:2482:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateHomingMissiles(com.spaceshooter.core.engine.GameState,float):910:910 -> j
     2479:2482:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):49 -> j
     2479:2482:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2479:2482:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
@@ -111155,7 +111163,7 @@ com.spaceshooter.presentation.game.GameViewModel$startGameLoop$1 -> e1.p:
     2497:2500:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2497:2500:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2497:2500:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2501:2522:com.spaceshooter.core.math.Vec2 com.spaceshooter.core.engine.GameEngine.findNearestTarget(com.spaceshooter.core.math.Vec2,java.util.List,com.spaceshooter.domain.entity.Boss):913:913 -> j
+    2501:2522:com.spaceshooter.core.math.Vec2 com.spaceshooter.core.engine.GameEngine.findNearestTarget(com.spaceshooter.core.math.Vec2,java.util.List,com.spaceshooter.domain.entity.Boss):915:915 -> j
     2501:2522:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateHomingMissiles(com.spaceshooter.core.engine.GameState,float):414 -> j
     2501:2522:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):49 -> j
     2501:2522:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
@@ -111226,7 +111234,7 @@ com.spaceshooter.presentation.game.GameViewModel$startGameLoop$1 -> e1.p:
     2650:2655:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2650:2655:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2650:2655:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2656:2709:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateHomingMissiles(com.spaceshooter.core.engine.GameState,float):908:908 -> j
+    2656:2709:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateHomingMissiles(com.spaceshooter.core.engine.GameState,float):910:910 -> j
     2656:2709:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):49 -> j
     2656:2709:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2656:2709:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
@@ -111240,158 +111248,158 @@ com.spaceshooter.presentation.game.GameViewModel$startGameLoop$1 -> e1.p:
     2714:2717:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2714:2717:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2714:2717:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2718:2727:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateCombo(com.spaceshooter.core.engine.GameState,float):723:723 -> j
+    2718:2727:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateCombo(com.spaceshooter.core.engine.GameState,float):725:725 -> j
     2718:2727:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):55 -> j
     2718:2727:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2718:2727:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2718:2727:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2728:2738:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateCombo(com.spaceshooter.core.engine.GameState,float):725:725 -> j
+    2728:2738:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateCombo(com.spaceshooter.core.engine.GameState,float):727:727 -> j
     2728:2738:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):55 -> j
     2728:2738:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2728:2738:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2728:2738:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2739:2806:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateCombo(com.spaceshooter.core.engine.GameState,float):727:727 -> j
+    2739:2806:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateCombo(com.spaceshooter.core.engine.GameState,float):729:729 -> j
     2739:2806:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):55 -> j
     2739:2806:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2739:2806:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2739:2806:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2807:2861:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateCombo(com.spaceshooter.core.engine.GameState,float):729:729 -> j
+    2807:2861:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateCombo(com.spaceshooter.core.engine.GameState,float):731:731 -> j
     2807:2861:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):55 -> j
     2807:2861:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2807:2861:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2807:2861:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2862:2867:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateScreenShake(com.spaceshooter.core.engine.GameState,float):734:734 -> j
+    2862:2867:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateScreenShake(com.spaceshooter.core.engine.GameState,float):736:736 -> j
     2862:2867:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):58 -> j
     2862:2867:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2862:2867:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2862:2867:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2868:2877:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateScreenShake(com.spaceshooter.core.engine.GameState,float):735:735 -> j
+    2868:2877:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateScreenShake(com.spaceshooter.core.engine.GameState,float):737:737 -> j
     2868:2877:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):58 -> j
     2868:2877:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2868:2877:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2868:2877:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2878:2893:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateScreenShake(com.spaceshooter.core.engine.GameState,float):737:737 -> j
+    2878:2893:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateScreenShake(com.spaceshooter.core.engine.GameState,float):739:739 -> j
     2878:2893:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):58 -> j
     2878:2893:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2878:2893:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2878:2893:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2894:2946:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateScreenShake(com.spaceshooter.core.engine.GameState,float):742:742 -> j
+    2894:2946:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateScreenShake(com.spaceshooter.core.engine.GameState,float):744:744 -> j
     2894:2946:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):58 -> j
     2894:2946:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2894:2946:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2894:2946:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2947:2950:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateScreenShake(com.spaceshooter.core.engine.GameState,float):738:738 -> j
+    2947:2950:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateScreenShake(com.spaceshooter.core.engine.GameState,float):740:740 -> j
     2947:2950:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):58 -> j
     2947:2950:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2947:2950:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2947:2950:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2951:2955:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateActivePowerUps(com.spaceshooter.core.engine.GameState,float):985:985 -> j
+    2951:2955:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateActivePowerUps(com.spaceshooter.core.engine.GameState,float):987:987 -> j
     2951:2955:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):61 -> j
     2951:2955:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2951:2955:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2951:2955:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2956:2971:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateActivePowerUps(com.spaceshooter.core.engine.GameState,float):994:994 -> j
+    2956:2971:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateActivePowerUps(com.spaceshooter.core.engine.GameState,float):996:996 -> j
     2956:2971:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):61 -> j
     2956:2971:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2956:2971:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2956:2971:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2972:2973:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateActivePowerUps(com.spaceshooter.core.engine.GameState,float):993:993 -> j
+    2972:2973:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateActivePowerUps(com.spaceshooter.core.engine.GameState,float):995:995 -> j
     2972:2973:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):61 -> j
     2972:2973:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2972:2973:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2972:2973:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2974:2987:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateActivePowerUps(com.spaceshooter.core.engine.GameState,float):749:749 -> j
+    2974:2987:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateActivePowerUps(com.spaceshooter.core.engine.GameState,float):751:751 -> j
     2974:2987:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):61 -> j
     2974:2987:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2974:2987:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2974:2987:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2988:2993:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateActivePowerUps(com.spaceshooter.core.engine.GameState,float):750:750 -> j
+    2988:2993:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateActivePowerUps(com.spaceshooter.core.engine.GameState,float):752:752 -> j
     2988:2993:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):61 -> j
     2988:2993:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2988:2993:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2988:2993:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    2994:3046:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateActivePowerUps(com.spaceshooter.core.engine.GameState,float):993:993 -> j
+    2994:3046:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateActivePowerUps(com.spaceshooter.core.engine.GameState,float):995:995 -> j
     2994:3046:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):61 -> j
     2994:3046:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     2994:3046:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     2994:3046:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    3047:3050:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateActivePowerUps(com.spaceshooter.core.engine.GameState,float):752:752 -> j
+    3047:3050:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.updateActivePowerUps(com.spaceshooter.core.engine.GameState,float):754:754 -> j
     3047:3050:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):61 -> j
     3047:3050:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     3047:3050:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     3047:3050:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    3051:3070:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):769:769 -> j
+    3051:3070:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):771:771 -> j
     3051:3070:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):64 -> j
     3051:3070:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     3051:3070:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     3051:3070:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    3071:3074:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):770:770 -> j
+    3071:3074:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):772:772 -> j
     3071:3074:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):64 -> j
     3071:3074:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     3071:3074:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     3071:3074:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    3075:3083:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):771:771 -> j
+    3075:3083:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):773:773 -> j
     3075:3083:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):64 -> j
     3075:3083:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     3075:3083:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     3075:3083:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    3084:3089:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):777:777 -> j
+    3084:3089:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):779:779 -> j
     3084:3089:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):64 -> j
     3084:3089:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     3084:3089:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     3084:3089:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    3090:3097:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):773:773 -> j
+    3090:3097:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):775:775 -> j
     3090:3097:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):64 -> j
     3090:3097:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     3090:3097:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     3090:3097:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    3098:3103:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):781:781 -> j
+    3098:3103:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):783:783 -> j
     3098:3103:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):64 -> j
     3098:3103:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     3098:3103:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     3098:3103:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
     3104:3110:com.spaceshooter.domain.entity.Boss com.spaceshooter.core.engine.SpawnSystem.spawnBoss(float,float,int):229:229 -> j
-    3104:3110:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):782 -> j
+    3104:3110:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):784 -> j
     3104:3110:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):64 -> j
     3104:3110:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     3104:3110:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     3104:3110:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
     3111:3113:com.spaceshooter.domain.entity.Boss com.spaceshooter.core.engine.SpawnSystem.spawnBoss(float,float,int):230:230 -> j
-    3111:3113:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):782 -> j
+    3111:3113:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):784 -> j
     3111:3113:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):64 -> j
     3111:3113:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     3111:3113:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     3111:3113:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
     3114:3115:com.spaceshooter.domain.entity.Boss com.spaceshooter.core.engine.SpawnSystem.spawnBoss(float,float,int):231:231 -> j
-    3114:3115:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):782 -> j
+    3114:3115:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):784 -> j
     3114:3115:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):64 -> j
     3114:3115:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     3114:3115:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     3114:3115:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
     3116:3120:com.spaceshooter.core.engine.SpawnSystem$BossStats com.spaceshooter.core.engine.SpawnSystem.getBossStats(com.spaceshooter.domain.model.BossType):0:0 -> j
     3116:3120:com.spaceshooter.domain.entity.Boss com.spaceshooter.core.engine.SpawnSystem.spawnBoss(float,float,int):234 -> j
-    3116:3120:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):782 -> j
+    3116:3120:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):784 -> j
     3116:3120:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):64 -> j
     3116:3120:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     3116:3120:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     3116:3120:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
     3121:3139:com.spaceshooter.core.engine.SpawnSystem$BossStats com.spaceshooter.core.engine.SpawnSystem.getBossStats(com.spaceshooter.domain.model.BossType):259:259 -> j
     3121:3139:com.spaceshooter.domain.entity.Boss com.spaceshooter.core.engine.SpawnSystem.spawnBoss(float,float,int):234 -> j
-    3121:3139:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):782 -> j
+    3121:3139:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):784 -> j
     3121:3139:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):64 -> j
     3121:3139:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     3121:3139:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     3121:3139:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
     3140:3149:com.spaceshooter.core.engine.SpawnSystem$BossStats com.spaceshooter.core.engine.SpawnSystem.getBossStats(com.spaceshooter.domain.model.BossType):262:262 -> j
     3140:3149:com.spaceshooter.domain.entity.Boss com.spaceshooter.core.engine.SpawnSystem.spawnBoss(float,float,int):234 -> j
-    3140:3149:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):782 -> j
+    3140:3149:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):784 -> j
     3140:3149:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):64 -> j
     3140:3149:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     3140:3149:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     3140:3149:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
     3150:3151:com.spaceshooter.core.engine.SpawnSystem$BossStats com.spaceshooter.core.engine.SpawnSystem.getBossStats(com.spaceshooter.domain.model.BossType):259:259 -> j
     3150:3151:com.spaceshooter.domain.entity.Boss com.spaceshooter.core.engine.SpawnSystem.spawnBoss(float,float,int):234 -> j
-    3150:3151:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):782 -> j
+    3150:3151:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):784 -> j
     3150:3151:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):64 -> j
     3150:3151:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     3150:3151:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
@@ -111399,51 +111407,51 @@ com.spaceshooter.presentation.game.GameViewModel$startGameLoop$1 -> e1.p:
     3152:3154:void kotlin.NoWhenBranchMatchedException.<init>():9:9 -> j
     3152:3154:com.spaceshooter.core.engine.SpawnSystem$BossStats com.spaceshooter.core.engine.SpawnSystem.getBossStats(com.spaceshooter.domain.model.BossType):259 -> j
     3152:3154:com.spaceshooter.domain.entity.Boss com.spaceshooter.core.engine.SpawnSystem.spawnBoss(float,float,int):234 -> j
-    3152:3154:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):782 -> j
+    3152:3154:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):784 -> j
     3152:3154:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):64 -> j
     3152:3154:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     3152:3154:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     3152:3154:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
     3155:3156:com.spaceshooter.core.engine.SpawnSystem$BossStats com.spaceshooter.core.engine.SpawnSystem.getBossStats(com.spaceshooter.domain.model.BossType):259:259 -> j
     3155:3156:com.spaceshooter.domain.entity.Boss com.spaceshooter.core.engine.SpawnSystem.spawnBoss(float,float,int):234 -> j
-    3155:3156:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):782 -> j
+    3155:3156:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):784 -> j
     3155:3156:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):64 -> j
     3155:3156:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     3155:3156:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     3155:3156:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
     3157:3168:com.spaceshooter.core.engine.SpawnSystem$BossStats com.spaceshooter.core.engine.SpawnSystem.getBossStats(com.spaceshooter.domain.model.BossType):261:261 -> j
     3157:3168:com.spaceshooter.domain.entity.Boss com.spaceshooter.core.engine.SpawnSystem.spawnBoss(float,float,int):234 -> j
-    3157:3168:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):782 -> j
+    3157:3168:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):784 -> j
     3157:3168:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):64 -> j
     3157:3168:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     3157:3168:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     3157:3168:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
     3169:3178:com.spaceshooter.core.engine.SpawnSystem$BossStats com.spaceshooter.core.engine.SpawnSystem.getBossStats(com.spaceshooter.domain.model.BossType):260:260 -> j
     3169:3178:com.spaceshooter.domain.entity.Boss com.spaceshooter.core.engine.SpawnSystem.spawnBoss(float,float,int):234 -> j
-    3169:3178:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):782 -> j
+    3169:3178:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):784 -> j
     3169:3178:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):64 -> j
     3169:3178:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     3169:3178:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     3169:3178:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
     3179:3188:com.spaceshooter.domain.entity.Boss com.spaceshooter.core.engine.SpawnSystem.spawnBoss(float,float,int):237:237 -> j
-    3179:3188:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):782 -> j
+    3179:3188:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):784 -> j
     3179:3188:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):64 -> j
     3179:3188:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     3179:3188:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     3179:3188:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
     3189:3196:com.spaceshooter.domain.entity.Boss com.spaceshooter.core.engine.SpawnSystem.spawnBoss(float,float,int):238:238 -> j
-    3189:3196:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):782 -> j
+    3189:3196:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):784 -> j
     3189:3196:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):64 -> j
     3189:3196:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     3189:3196:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     3189:3196:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
     3197:3299:com.spaceshooter.domain.entity.Boss com.spaceshooter.core.engine.SpawnSystem.spawnBoss(float,float,int):236:236 -> j
-    3197:3299:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):782 -> j
+    3197:3299:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):784 -> j
     3197:3299:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):64 -> j
     3197:3299:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     3197:3299:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j
     3197:3299:java.lang.Object invokeSuspend(java.lang.Object):155 -> j
-    3300:3303:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):787:787 -> j
+    3300:3303:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.checkWaveCompletion(com.spaceshooter.core.engine.GameState):789:789 -> j
     3300:3303:com.spaceshooter.core.engine.GameState com.spaceshooter.core.engine.GameEngine.update(com.spaceshooter.core.engine.GameState,com.spaceshooter.core.engine.GameInput,float):64 -> j
     3300:3303:void com.spaceshooter.presentation.game.GameViewModel.updateGame(float):174 -> j
     3300:3303:void com.spaceshooter.presentation.game.GameViewModel.access$updateGame(com.spaceshooter.presentation.game.GameViewModel,float):24 -> j

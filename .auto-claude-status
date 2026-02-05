@@ -1,10 +1,10 @@
 {
   "active": true,
   "spec": "059-track-damagetaken-in-sessionstats-during-player-da",
-  "state": "planning",
+  "state": "building",
   "subtasks": {
-    "completed": 0,
-    "total": 0,
+    "completed": 2,
+    "total": 4,
     "in_progress": 1,
     "failed": 0
   },
@@ -18,8 +18,8 @@
     "max": 1
   },
   "session": {
-    "number": 2,
+    "number": 4,
     "started_at": "2026-02-05T17:33:43.302420"
   },
-  "last_update": "2026-02-05T17:36:59.379325"
+  "last_update": "2026-02-05T17:44:00.019425"
 }
