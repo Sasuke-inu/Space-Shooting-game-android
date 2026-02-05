@@ -70,11 +70,21 @@ class GameCanvasView(context: Context) : SurfaceView(context), SurfaceHolder.Cal
 
         override fun run() {
             while (running) {
+                frameStartTime = System.nanoTime()
+
                 val canvas = holder.lockCanvas() ?: continue
                 try {
                     renderer.draw(canvas)
                 } finally {
                     holder.unlockCanvasAndPost(canvas)
+                }
+
+                frameEndTime = System.nanoTime()
+                val elapsedNanos = frameEndTime - frameStartTime
+                val sleepNanos = targetFrameTimeNanos - elapsedNanos
+
+                if (sleepNanos > 0) {
+                    Thread.sleep(sleepNanos / 1_000_000, (sleepNanos % 1_000_000).toInt())
                 }
             }
         }
