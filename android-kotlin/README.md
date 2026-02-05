@@ -307,19 +307,20 @@ Key tunable values in `GameConstants.kt`:
 // Player
 PLAYER_ACCEL = 180f           // Ship acceleration
 PLAYER_TURN_SPEED = 5.5f      // Rotation speed
-PLAYER_MAX_SPEED = 400f       // Maximum velocity
+PLAYER_MAX_SPEED = 300f       // Maximum velocity
 
 // Weapons
-BULLET_SPEED_PLAYER = 600f    // Player bullet velocity
+BULLET_SPEED_PLAYER = 420f    // Player bullet velocity
 FIRE_COOLDOWN_PLAYER = 0.16f  // Fire rate (seconds)
 
 // Asteroids
-ASTEROID_BASE_RADIUS = 40f    // Starting size
-ASTEROID_SPLIT_COUNT = 2      // Pieces per split
+ASTEROID_LARGE_RADIUS = 80f   // Large asteroid size
+ASTEROID_MEDIUM_RADIUS = 50f  // Medium asteroid size
+ASTEROID_SMALL_RADIUS = 30f   // Small asteroid size
 
 // Controls
 JOY_DEADZONE = 0.1f           // Joystick sensitivity
-JOY_MAX_RADIUS = 100f         // Joystick range
+JOY_MAX_RADIUS = 60f          // Joystick range
 ```
 
 ## 🎨 Customization
