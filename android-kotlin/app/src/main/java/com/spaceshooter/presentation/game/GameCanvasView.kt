@@ -2,6 +2,7 @@ package com.spaceshooter.presentation.game
 
 import android.content.Context
 import android.graphics.*
+import android.os.Process
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import com.spaceshooter.core.engine.GameState
@@ -67,6 +68,9 @@ class GameCanvasView(context: Context) : SurfaceView(context), SurfaceHolder.Cal
         private val targetFrameTimeNanos = 16_666_667L // 16.67ms in nanoseconds
 
         override fun run() {
+            // Set thread priority to THREAD_PRIORITY_DISPLAY for smooth rendering
+            Process.setThreadPriority(Process.THREAD_PRIORITY_DISPLAY)
+
             var lastFrameTime = System.nanoTime()
 
             while (running) {
