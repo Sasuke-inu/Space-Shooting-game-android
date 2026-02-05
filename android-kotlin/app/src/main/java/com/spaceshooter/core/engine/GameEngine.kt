@@ -614,6 +614,7 @@ class GameEngine {
                 if (CollisionSystem.playerBulletCollision(player, bullet)) {
                     bulletsToRemove.add(bulletIdx)
                     player = damagePlayer(player, bullet.damage, state)
+                    sessionStats = sessionStats.copy(damageTaken = sessionStats.damageTaken + bullet.damage)
                     screenShake = ScreenShake(intensity = 10f, duration = 0.15f)
                     newParticles.addAll(
                         SpawnSystem.spawnExplosionParticles(player.pos, 5, 0xFFFF4444.toInt())

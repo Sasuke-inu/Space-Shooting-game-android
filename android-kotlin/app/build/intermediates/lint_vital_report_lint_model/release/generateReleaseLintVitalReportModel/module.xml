@@ -1,0 +1,18 @@
+<lint-module
+    format="1"
+    dir="/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/059-track-damagetaken-in-sessionstats-during-player-da/android-kotlin/app"
+    name=":app"
+    type="APP"
+    maven="SpaceShooter:app:unspecified"
+    agpVersion="8.7.3"
+    buildFolder="build"
+    bootClassPath="/Users/d/Library/Android/sdk/platforms/android-35/android.jar:/Users/d/Library/Android/sdk/build-tools/34.0.0/core-lambda-stubs.jar"
+    javaSourceLevel="17"
+    compileTarget="android-35">
+  <lintOptions
+      abortOnError="true"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="release"/>
+</lint-module>
