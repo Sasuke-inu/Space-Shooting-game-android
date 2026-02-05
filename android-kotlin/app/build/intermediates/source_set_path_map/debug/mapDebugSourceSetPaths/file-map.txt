@@ -58,10 +58,10 @@ com.spaceshooter.app-navigation-runtime-ktx-2.5.1-56 /Users/d/.gradle/caches/8.9
 com.spaceshooter.app-fragment-1.5.1-57 /Users/d/.gradle/caches/8.9/transforms/f77010f824fbf7deb6758f8543ce4217/transformed/fragment-1.5.1/res
 com.spaceshooter.app-lifecycle-viewmodel-compose-release-58 /Users/d/.gradle/caches/8.9/transforms/f9e642ab23fd68859bcf9553d66bd22a/transformed/lifecycle-viewmodel-compose-release/res
 com.spaceshooter.app-sqlite-2.4.0-59 /Users/d/.gradle/caches/8.9/transforms/ff5ad040c9d2151cfdde11f8757ba3a9/transformed/sqlite-2.4.0/res
-com.spaceshooter.app-pngs-60 /Users/d/Developer/Space Shooting game/android-kotlin/app/build/generated/res/pngs/debug
-com.spaceshooter.app-resValues-61 /Users/d/Developer/Space Shooting game/android-kotlin/app/build/generated/res/resValues/debug
-com.spaceshooter.app-packageDebugResources-62 /Users/d/Developer/Space Shooting game/android-kotlin/app/build/intermediates/incremental/debug/packageDebugResources/merged.dir
-com.spaceshooter.app-packageDebugResources-63 /Users/d/Developer/Space Shooting game/android-kotlin/app/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
-com.spaceshooter.app-debug-64 /Users/d/Developer/Space Shooting game/android-kotlin/app/build/intermediates/merged_res/debug/mergeDebugResources
-com.spaceshooter.app-debug-65 /Users/d/Developer/Space Shooting game/android-kotlin/app/src/debug/res
-com.spaceshooter.app-main-66 /Users/d/Developer/Space Shooting game/android-kotlin/app/src/main/res
+com.spaceshooter.app-pngs-60 /Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/062-throttle-render-thread-with-frame-timing-to-preven/android-kotlin/app/build/generated/res/pngs/debug
+com.spaceshooter.app-resValues-61 /Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/062-throttle-render-thread-with-frame-timing-to-preven/android-kotlin/app/build/generated/res/resValues/debug
+com.spaceshooter.app-packageDebugResources-62 /Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/062-throttle-render-thread-with-frame-timing-to-preven/android-kotlin/app/build/intermediates/incremental/debug/packageDebugResources/merged.dir
+com.spaceshooter.app-packageDebugResources-63 /Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/062-throttle-render-thread-with-frame-timing-to-preven/android-kotlin/app/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
+com.spaceshooter.app-debug-64 /Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/062-throttle-render-thread-with-frame-timing-to-preven/android-kotlin/app/build/intermediates/merged_res/debug/mergeDebugResources
+com.spaceshooter.app-debug-65 /Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/062-throttle-render-thread-with-frame-timing-to-preven/android-kotlin/app/src/debug/res
+com.spaceshooter.app-main-66 /Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/062-throttle-render-thread-with-frame-timing-to-preven/android-kotlin/app/src/main/res
