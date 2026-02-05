@@ -630,6 +630,7 @@ class GameEngine {
 
                 if (CollisionSystem.playerAsteroidCollision(player, asteroid)) {
                     player = damagePlayer(player, 20, state)
+                    sessionStats = sessionStats.copy(damageTaken = sessionStats.damageTaken + 20)
                     screenShake = ScreenShake(intensity = 12f, duration = 0.2f)
                     newParticles.addAll(
                         SpawnSystem.spawnExplosionParticles(player.pos, 8, 0xFFAAAACC.toInt())
