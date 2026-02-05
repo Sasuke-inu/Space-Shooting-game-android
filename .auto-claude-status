@@ -3,7 +3,7 @@
   "spec": "059-track-damagetaken-in-sessionstats-during-player-da",
   "state": "building",
   "subtasks": {
-    "completed": 2,
+    "completed": 3,
     "total": 4,
     "in_progress": 1,
     "failed": 0
@@ -18,8 +18,8 @@
     "max": 1
   },
   "session": {
-    "number": 4,
+    "number": 5,
     "started_at": "2026-02-05T17:33:43.302420"
   },
-  "last_update": "2026-02-05T17:44:00.019425"
+  "last_update": "2026-02-05T17:46:43.853274"
 }
