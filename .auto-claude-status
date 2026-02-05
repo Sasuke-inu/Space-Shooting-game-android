@@ -3,23 +3,23 @@
   "spec": "062-throttle-render-thread-with-frame-timing-to-preven",
   "state": "building",
   "subtasks": {
-    "completed": 1,
+    "completed": 2,
     "total": 3,
     "in_progress": 1,
     "failed": 0
   },
   "phase": {
-    "current": "Add Frame Timing to RenderThread",
+    "current": "Verify Performance Improvement",
     "id": null,
-    "total": 2
+    "total": 1
   },
   "workers": {
     "active": 0,
     "max": 1
   },
   "session": {
-    "number": 3,
+    "number": 4,
     "started_at": "2026-02-05T17:33:36.837554"
   },
-  "last_update": "2026-02-05T17:39:59.628400"
+  "last_update": "2026-02-05T17:42:05.629906"
 }
