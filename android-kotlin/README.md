@@ -30,7 +30,8 @@ For complete game features and mechanics, see the [main project README](../READM
 - **Android Studio**: Ladybug 2024.2.1 or later
 - **JDK**: Version 17 (Amazon Corretto or OpenJDK recommended)
 - **Android SDK**: API Level 35 (Android 15)
-- **Gradle**: 8.7.3 (via wrapper - no manual installation needed)
+- **Gradle**: 8.9 (via wrapper - no manual installation needed)
+- **Android Gradle Plugin (AGP)**: 8.7.3
 - **Kotlin**: 2.0.21 (managed by Gradle)
 
 ### SDK Components
