@@ -1,10 +1,10 @@
 {
   "active": true,
   "spec": "068-add-frame-pacing-to-renderthread-to-prevent-cpu-ba",
-  "state": "planning",
+  "state": "building",
   "subtasks": {
-    "completed": 0,
-    "total": 0,
+    "completed": 2,
+    "total": 5,
     "in_progress": 1,
     "failed": 0
   },
@@ -18,8 +18,8 @@
     "max": 1
   },
   "session": {
-    "number": 2,
+    "number": 4,
     "started_at": "2026-02-05T16:01:53.244239"
   },
-  "last_update": "2026-02-05T16:06:21.982201"
+  "last_update": "2026-02-05T16:09:59.766218"
 }

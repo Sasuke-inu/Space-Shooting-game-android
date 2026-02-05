@@ -109,7 +109,9 @@ class GameCanvasView(context: Context) : SurfaceView(context), SurfaceHolder.Cal
  * Game renderer handling all drawing operations.
  */
 class GameRenderer {
+    @Volatile
     private var state: GameState? = null
+    @Volatile
     private var colors: ThemeColors? = null
     private var width = 0f
     private var height = 0f
