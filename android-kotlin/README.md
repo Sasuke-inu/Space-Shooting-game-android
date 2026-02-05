@@ -69,7 +69,7 @@ Google Play Services
 3. **Verify Gradle**:
    ```bash
    cd android-kotlin
-   ./gradlew --version  # Should show Gradle 8.7.3
+   ./gradlew --version  # Should show Gradle 8.9
    ```
 
 ## 🚀 Quick Start
