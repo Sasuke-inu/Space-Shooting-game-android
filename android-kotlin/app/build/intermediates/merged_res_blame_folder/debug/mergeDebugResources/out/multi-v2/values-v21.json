@@ -4,7 +4,7 @@
             "outputFile": "com.spaceshooter.app-mergeDebugResources-62:/values-v21/values-v21.xml",
             "map": [
                 {
-                    "source": "/Users/d/.gradle/caches/8.9/transforms/b97685b428f86a876b08519ad3e0d6d0/transformed/core-1.15.0/res/values-v21/values-v21.xml",
+                    "source": "/Users/d/.gradle/caches/8.9/transforms/fc17ee88d5c19cf58cb3d74643fbc152/transformed/core-1.15.0/res/values-v21/values-v21.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,13",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4",
