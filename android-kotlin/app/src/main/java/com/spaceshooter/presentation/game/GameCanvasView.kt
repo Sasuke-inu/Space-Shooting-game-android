@@ -363,14 +363,8 @@ class GameRenderer {
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 2f
 
-        val path = Path().apply {
-            moveTo(0f, -12f)
-            lineTo(8f, 10f)
-            lineTo(0f, 6f)
-            lineTo(-8f, 10f)
-            close()
-        }
-        canvas.drawPath(path, paint)
+        createScoutPath()
+        canvas.drawPath(scoutPath, paint)
     }
 
     private fun drawTankEnemy(canvas: Canvas, color: Int, healthPercent: Float) {
