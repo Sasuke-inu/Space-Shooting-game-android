@@ -390,13 +390,8 @@ class GameRenderer {
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 2f
 
-        val path = Path().apply {
-            moveTo(0f, -16f)
-            lineTo(6f, 12f)
-            lineTo(-6f, 12f)
-            close()
-        }
-        canvas.drawPath(path, paint)
+        createSniperPath()
+        canvas.drawPath(sniperPath, paint)
 
         // Charge indicator
         if (chargeTime > 0f) {
