@@ -304,6 +304,31 @@ class GameRenderer {
         asteroidPath.close()
     }
 
+    private fun createScoutPath() {
+        scoutPath.reset()
+        scoutPath.moveTo(0f, -12f)
+        scoutPath.lineTo(8f, 10f)
+        scoutPath.lineTo(0f, 6f)
+        scoutPath.lineTo(-8f, 10f)
+        scoutPath.close()
+    }
+
+    private fun createTankPath() {
+        tankPath.reset()
+        tankPath.moveTo(0f, -14f)
+        tankPath.lineTo(10f, 10f)
+        tankPath.lineTo(-10f, 10f)
+        tankPath.close()
+    }
+
+    private fun createSniperPath() {
+        sniperPath.reset()
+        sniperPath.moveTo(0f, -16f)
+        sniperPath.lineTo(6f, 12f)
+        sniperPath.lineTo(-6f, 12f)
+        sniperPath.close()
+    }
+
     private fun drawEnemies(canvas: Canvas, state: GameState, colors: ThemeColors) {
         for (enemy in state.enemies) {
             canvas.save()
