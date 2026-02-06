@@ -1,15 +1,15 @@
 {
   "active": true,
-  "spec": "021-sound-effects-system",
+  "spec": "074-add-radial-cooldown-progress-ring-for-special-abil",
   "state": "building",
   "subtasks": {
-    "completed": 11,
-    "total": 12,
+    "completed": 2,
+    "total": 3,
     "in_progress": 1,
     "failed": 0
   },
   "phase": {
-    "current": "Testing and Verification",
+    "current": "Add Radial Progress Indicator",
     "id": null,
     "total": 3
   },
@@ -18,8 +18,8 @@
     "max": 1
   },
   "session": {
-    "number": 13,
-    "started_at": "2026-01-22T09:44:54.986438"
+    "number": 4,
+    "started_at": "2026-02-07T02:02:54.816697"
   },
-  "last_update": "2026-01-22T10:16:59.654663"
+  "last_update": "2026-02-07T02:12:31.511278"
 }
