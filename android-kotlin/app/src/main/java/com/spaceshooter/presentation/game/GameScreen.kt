@@ -275,23 +275,32 @@ private fun GameHUD(
 
             // Pause button (only visible when not paused)
             if (!paused) {
+                var isPausePressed by remember { mutableStateOf(false) }
+                val pauseScale by animateFloatAsState(targetValue = if (isPausePressed) 0.9f else 1.0f)
+
                 Box(
                     modifier = Modifier
                         .size(48.dp)
+                        .scale(pauseScale)
                         .background(
-                            color = colors.joystickPad,
+                            color = if (isPausePressed) colors.buttonPrimary else colors.joystickPad,
                             shape = androidx.compose.foundation.shape.CircleShape
                         )
                         .pointerInput(Unit) {
                             detectTapGestures(
-                                onTap = { onPause() }
+                                onPress = {
+                                    isPausePressed = true
+                                    tryAwaitRelease()
+                                    isPausePressed = false
+                                    onPause()
+                                }
                             )
                         },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "||",
-                        color = colors.joystickStick,
+                        color = if (isPausePressed) colors.buttonText else colors.joystickStick,
                         fontSize = 16.sp
                     )
                 }
