@@ -372,13 +372,8 @@ class GameRenderer {
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 3f
 
-        val path = Path().apply {
-            moveTo(0f, -14f)
-            lineTo(10f, 10f)
-            lineTo(-10f, 10f)
-            close()
-        }
-        canvas.drawPath(path, paint)
+        createTankPath()
+        canvas.drawPath(tankPath, paint)
 
         // Health bar for tanks
         if (healthPercent < 1f) {
