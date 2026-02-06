@@ -1,15 +1,15 @@
-#Fri Jan 23 11:08:51 AEDT 2026
-base.0=/Users/d/Developer/Space Shooting game/android-kotlin/app/build/intermediates/dex/debug/mergeExtDexDebug/classes.dex
-base.1=/Users/d/Developer/Space Shooting game/android-kotlin/app/build/intermediates/dex/debug/mergeProjectDexDebug/0/classes.dex
-base.10=/Users/d/Developer/Space Shooting game/android-kotlin/app/build/intermediates/dex/debug/mergeExtDexDebug/classes2.dex
-base.2=/Users/d/Developer/Space Shooting game/android-kotlin/app/build/intermediates/dex/debug/mergeProjectDexDebug/1/classes.dex
-base.3=/Users/d/Developer/Space Shooting game/android-kotlin/app/build/intermediates/dex/debug/mergeProjectDexDebug/10/classes.dex
-base.4=/Users/d/Developer/Space Shooting game/android-kotlin/app/build/intermediates/dex/debug/mergeProjectDexDebug/11/classes.dex
-base.5=/Users/d/Developer/Space Shooting game/android-kotlin/app/build/intermediates/dex/debug/mergeProjectDexDebug/13/classes.dex
-base.6=/Users/d/Developer/Space Shooting game/android-kotlin/app/build/intermediates/dex/debug/mergeProjectDexDebug/15/classes.dex
-base.7=/Users/d/Developer/Space Shooting game/android-kotlin/app/build/intermediates/dex/debug/mergeProjectDexDebug/4/classes.dex
-base.8=/Users/d/Developer/Space Shooting game/android-kotlin/app/build/intermediates/dex/debug/mergeProjectDexDebug/6/classes.dex
-base.9=/Users/d/Developer/Space Shooting game/android-kotlin/app/build/intermediates/dex/debug/mergeProjectDexDebug/7/classes.dex
+#Fri Feb 06 22:35:52 AEDT 2026
+base.0=/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/071-add-pressed-state-animation-to-pause-button/android-kotlin/app/build/intermediates/dex/debug/mergeExtDexDebug/classes.dex
+base.1=/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/071-add-pressed-state-animation-to-pause-button/android-kotlin/app/build/intermediates/dex/debug/mergeProjectDexDebug/0/classes.dex
+base.10=/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/071-add-pressed-state-animation-to-pause-button/android-kotlin/app/build/intermediates/dex/debug/mergeExtDexDebug/classes2.dex
+base.2=/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/071-add-pressed-state-animation-to-pause-button/android-kotlin/app/build/intermediates/dex/debug/mergeProjectDexDebug/1/classes.dex
+base.3=/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/071-add-pressed-state-animation-to-pause-button/android-kotlin/app/build/intermediates/dex/debug/mergeProjectDexDebug/10/classes.dex
+base.4=/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/071-add-pressed-state-animation-to-pause-button/android-kotlin/app/build/intermediates/dex/debug/mergeProjectDexDebug/11/classes.dex
+base.5=/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/071-add-pressed-state-animation-to-pause-button/android-kotlin/app/build/intermediates/dex/debug/mergeProjectDexDebug/13/classes.dex
+base.6=/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/071-add-pressed-state-animation-to-pause-button/android-kotlin/app/build/intermediates/dex/debug/mergeProjectDexDebug/15/classes.dex
+base.7=/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/071-add-pressed-state-animation-to-pause-button/android-kotlin/app/build/intermediates/dex/debug/mergeProjectDexDebug/4/classes.dex
+base.8=/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/071-add-pressed-state-animation-to-pause-button/android-kotlin/app/build/intermediates/dex/debug/mergeProjectDexDebug/6/classes.dex
+base.9=/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/071-add-pressed-state-animation-to-pause-button/android-kotlin/app/build/intermediates/dex/debug/mergeProjectDexDebug/7/classes.dex
 path.0=classes.dex
 path.1=0/classes.dex
 path.10=classes2.dex
