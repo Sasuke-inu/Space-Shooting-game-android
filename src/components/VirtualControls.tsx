@@ -44,6 +44,7 @@ const VirtualControlsComponent: React.FC<VirtualControlsProps> = ({
   const joystickY = useSharedValue(0)
   const joystickScale = useSharedValue(1)
   const lastHapticMagnitude = useSharedValue(0)
+  const atBoundary = useSharedValue(false)
 
   // Get size configuration
   const sizeConfig = useMemo(() => SIZE_CONFIG[size], [size])
@@ -119,6 +120,15 @@ const VirtualControlsComponent: React.FC<VirtualControlsProps> = ({
         lastHapticMagnitude.value = magnitude
       }
 
+      // Trigger subtle haptic when reaching boundary (98% of max radius)
+      const boundaryThreshold = 0.98
+      if (magnitude >= boundaryThreshold && !atBoundary.value) {
+        runOnJS(handleMoveHaptic)()
+        atBoundary.value = true
+      } else if (magnitude < boundaryThreshold) {
+        atBoundary.value = false
+      }
+
       // Apply dead zone
       if (magnitude < JOY_DEADZONE) {
         runOnJS(handleJoystickMove)({ x: 0, y: 0 })
@@ -140,10 +150,11 @@ const VirtualControlsComponent: React.FC<VirtualControlsProps> = ({
       joystickY.value = withSpring(0, { damping: 15 })
       joystickScale.value = withSpring(1)
       lastHapticMagnitude.value = 0
+      atBoundary.value = false
       runOnJS(handleSetActive)(false)
       runOnJS(handleJoystickMove)({ x: 0, y: 0 })
       runOnJS(handleReleaseHaptic)()
-    }), [handleJoystickMove, handleSetActive, handleTouchHaptic, handleMoveHaptic, handleReleaseHaptic, joystickX, joystickY, joystickScale, lastHapticMagnitude, sensitivity, applySensitivityCurve, invertY])
+    }), [handleJoystickMove, handleSetActive, handleTouchHaptic, handleMoveHaptic, handleReleaseHaptic, joystickX, joystickY, joystickScale, lastHapticMagnitude, atBoundary, sensitivity, applySensitivityCurve, invertY])
 
   const stickStyle = useAnimatedStyle(() => ({
     transform: [
