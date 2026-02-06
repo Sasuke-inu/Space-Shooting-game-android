@@ -615,6 +615,7 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
             timeWarpActive={timeWarpActive}
             abilityFlash={abilityFlash}
             abilityFlashOpacity={getAbilityFlashOpacity()}
+            specialAbility={specialAbility}
           />
         </View>
       </GestureDetector>

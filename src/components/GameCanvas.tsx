@@ -1,7 +1,7 @@
 import React, { useMemo } from "react"
 import { Canvas, Group, Path, Circle, Line, Text, Skia, vec, matchFont, Rect } from "@shopify/react-native-skia"
 import { Platform } from "react-native"
-import type { Asteroid, Enemy, Vec2, PowerUp, ActivePowerUp, ComboState, Boss, HomingMissile, EnemyType, AbilityFlash } from "../types/game"
+import type { Asteroid, Enemy, Vec2, PowerUp, ActivePowerUp, ComboState, Boss, HomingMissile, EnemyType, AbilityFlash, SpecialAbility } from "../types/game"
 import type { ThemeColors } from "../theme/types"
 import type { QualityLevel } from "../types/performance"
 import { QUALITY_PRESETS } from "../types/performance"
@@ -36,6 +36,7 @@ interface GameCanvasProps {
   timeWarpActive?: boolean
   abilityFlash?: AbilityFlash | null
   abilityFlashOpacity?: number
+  specialAbility?: SpecialAbility | null
 }
 
 // Helper to get power-up color from theme
