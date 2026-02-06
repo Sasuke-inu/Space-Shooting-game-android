@@ -95,6 +95,9 @@ class GameRenderer {
     // Cached paths
     private val shipPath = Path()
     private val asteroidPath = Path()
+    private val scoutPath = Path()
+    private val tankPath = Path()
+    private val sniperPath = Path()
 
     // Stars (generated once)
     private var stars: List<Vec2>? = null
