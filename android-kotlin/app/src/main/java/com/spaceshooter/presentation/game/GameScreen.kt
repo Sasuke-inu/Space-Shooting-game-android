@@ -125,10 +125,12 @@ private fun FireButton(
     modifier: Modifier = Modifier
 ) {
     var isPressed by remember { mutableStateOf(false) }
+    val scale by animateFloatAsState(targetValue = if (isPressed) 0.9f else 1.0f)
 
     Box(
         modifier = modifier
             .size(80.dp)
+            .scale(scale)
             .background(
                 color = if (isPressed) colors.buttonPrimary else colors.joystickPad,
                 shape = androidx.compose.foundation.shape.CircleShape
