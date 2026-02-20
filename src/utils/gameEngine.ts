@@ -393,11 +393,9 @@ export const useGameEngine = () => {
         })
       }
 
-        state.updatePlayer({ cooldown })
-        playSfx('shoot_player')
-        hapticLight()
-        playSfx('shoot_player')
-      }
+      state.updatePlayer({ cooldown })
+      playSfx('shoot_player')
+      hapticLight()
     }
 
     // Update asteroids (with increasing animation speed) - mutate during iteration
@@ -625,6 +623,9 @@ export const useGameEngine = () => {
             state.addCredits(a.tier)
             state.triggerShake(3, 100)
             hapticMedium()
+          }
+        }
+      })
 
       // Bullets vs asteroids
       updatedAsteroids.forEach((a, aIdx) => {
@@ -709,6 +710,7 @@ export const useGameEngine = () => {
             }
           }
         }
+        }
       })
 
       // Bullets vs boss
@@ -732,15 +734,31 @@ export const useGameEngine = () => {
               newPhase = 2
             }
 
-          // Check boss death using fresh state
-          const updatedState = useGameStore.getState()
-          if (updatedState.boss && updatedState.boss.hp <= 0) {
-            boom(bossPos, themeColors.particleExplosion, 60, 300)
-            playSfx('explosion_boss')
-            state.defeatBoss()
-            useChallengesStore.getState().recordBossDefeat(1)
-            state.triggerShake(20, 500)
-            hapticHeavy()
+            // Update boss with new HP and phase
+            updatedBoss = {
+              ...updatedBoss,
+              hp: newBossHp,
+              phase: newPhase as 1 | 2 | 3,
+            }
+            bulletsToRemove.add(bIdx)
+            boom(b.pos, themeColors.particleExplosion, 8, 140)
+            state.triggerShake(5, 100)
+            playSfx('explosion_small')
+            state.recordShot(true)
+
+            // Update boss in state
+            state.updateBoss({ hp: newBossHp, phase: newPhase as 1 | 2 | 3 })
+
+            // Check boss death using fresh state
+            const updatedState = useGameStore.getState()
+            if (updatedState.boss && updatedState.boss.hp <= 0) {
+              boom(bossPos, themeColors.particleExplosion, 60, 300)
+              playSfx('explosion_boss')
+              state.defeatBoss()
+              useChallengesStore.getState().recordBossDefeat(1)
+              state.triggerShake(20, 500)
+              hapticHeavy()
+            }
           }
         }
       }

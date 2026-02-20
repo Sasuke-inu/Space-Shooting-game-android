@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import secureStorage from '../utils/secureStorage'
 import type {
   Achievement,
@@ -11,8 +12,10 @@ import type {
   BossType,
   SkinId,
 } from '../types/game'
-import { ACHIEVEMENTS, UPGRADE_COSTS } from '../types/game'
+import { ACHIEVEMENTS, UPGRADE_COSTS, SHIP_SKINS, SKIN_COSTS } from '../types/game'
 import type { ThemeId } from '../theme/types'
+import { playSfx } from '../utils/audioManager'
+import { backupStore, restoreStore } from '../utils/backupManager'
 
 // ------------------------------------------------------------------ //
 //                         Achievement Store
@@ -50,21 +53,20 @@ export const useAchievementStore = create<AchievementState>()(
       achievements: initializeAchievements(),
       recentUnlock: null,
 
-      unlockAchievement: (id) =>
-        set((state) => {
-          if (state.achievements[id].unlocked) return state
+      unlockAchievement: (id) => {
+        const state = get()
+        if (state.achievements[id].unlocked) return
 
-          // Play celebration sound for new achievement
-          playSfx('achievement_unlock')
+        // Play celebration sound for new achievement
+        playSfx('achievement_unlock')
 
-          return {
-            achievements: {
-              ...state.achievements,
-              [id]: {
-                ...state.achievements[id],
-                unlocked: true,
-                unlockedAt: Date.now(),
-              },
+        set({
+          achievements: {
+            ...state.achievements,
+            [id]: {
+              ...state.achievements[id],
+              unlocked: true,
+              unlockedAt: Date.now(),
             },
           },
           recentUnlock: id,
@@ -80,25 +82,13 @@ export const useAchievementStore = create<AchievementState>()(
         const achievement = state.achievements[id]
         if (achievement.unlocked) return
 
-          if (newProgress >= target) {
-            // Play celebration sound for new achievement
-            playSfx('achievement_unlock')
-
-            return {
-              achievements: {
-                ...state.achievements,
-                [id]: {
-                  ...achievement,
-                  progress: newProgress,
-                  unlocked: true,
-                  unlockedAt: Date.now(),
-                },
-              },
-              recentUnlock: id,
-            }
-          }
+        const target = achievement.target || 1
+        const newProgress = Math.min(progress, target)
 
         if (newProgress >= target) {
+          // Play celebration sound for new achievement
+          playSfx('achievement_unlock')
+
           set({
             achievements: {
               ...state.achievements,
@@ -637,6 +627,7 @@ const THEME_UNLOCK_CONDITIONS: Record<ThemeId, ThemeUnlockCondition> = {
   'forest-matrix': { type: 'default' },
   'inferno': { type: 'default' },
   'arctic': { type: 'default' },
+  'deep-space': { type: 'default' },
 
   // New unlockable themes
   'halloween': { type: 'achievement', requirement: 'boss_slayer' },
@@ -660,7 +651,7 @@ interface ThemeUnlockState {
 export const useThemeUnlockStore = create<ThemeUnlockState>()(
   persist(
     (set, get) => ({
-      unlockedThemes: ['neon-void', 'nomad', 'sakura', 'forest-matrix', 'inferno', 'arctic'],
+      unlockedThemes: ['neon-void', 'nomad', 'sakura', 'forest-matrix', 'inferno', 'arctic', 'deep-space'],
       recentThemeUnlock: null,
 
       unlockTheme: (themeId) =>
