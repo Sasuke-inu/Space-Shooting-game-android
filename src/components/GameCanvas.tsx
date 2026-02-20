@@ -69,6 +69,7 @@ const getAbilityFlashColor = (abilityType: string): string => {
     case 'missile_barrage': return '255, 165, 0' // orange
     case 'time_warp': return '100, 150, 255' // blue
     case 'shield_burst': return '0, 255, 100' // green
+    case 'phase_shift': return '200, 100, 255' // purple
     default: return '255, 255, 255' // white fallback
   }
 }
