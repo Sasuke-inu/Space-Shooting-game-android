@@ -295,6 +295,9 @@ export const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
       transparent
       animationType="fade"
       statusBarTranslucent
+      accessible={true}
+      accessibilityViewIsModal={true}
+      accessibilityLabel={t("tutorial.title")}
     >
       <View style={[styles.overlay, dynamicStyles.overlay]} pointerEvents="box-none">
         {/* Visual guidance overlays */}
@@ -305,9 +308,19 @@ export const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
         )}
 
         {/* Tutorial panel */}
-        <View style={[styles.panel, dynamicStyles.panel]} pointerEvents="auto">
+        <View
+          style={[styles.panel, dynamicStyles.panel]}
+          pointerEvents="auto"
+          accessible={true}
+          accessibilityRole="alert"
+          accessibilityLabel={`${t("tutorial.title")}, ${stepContent.text}`}
+        >
           {/* Title */}
-          <Text style={[styles.title, dynamicStyles.title]}>
+          <Text
+            style={[styles.title, dynamicStyles.title]}
+            accessible={true}
+            accessibilityRole="header"
+          >
             {t("tutorial.title")}
           </Text>
 
@@ -319,7 +332,13 @@ export const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
           </View>
 
           {/* Progress Dots */}
-          <View style={styles.progressContainer}>
+          <View
+            style={styles.progressContainer}
+            accessible={true}
+            accessibilityRole="progressbar"
+            accessibilityLabel={`Step ${currentStep + 1} of ${TOTAL_STEPS}`}
+            accessibilityValue={{ min: 0, max: TOTAL_STEPS, now: currentStep + 1 }}
+          >
             {Array.from({ length: TOTAL_STEPS }).map((_, index) => (
               <View
                 key={index}
@@ -329,6 +348,9 @@ export const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
                     ? dynamicStyles.progressDotActive
                     : dynamicStyles.progressDot,
                 ]}
+                accessible={true}
+                accessibilityLabel={`Step ${index + 1}${index === currentStep ? " (current)" : ""}`}
+                accessibilityState={{ selected: index === currentStep }}
               />
             ))}
           </View>
@@ -339,6 +361,10 @@ export const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
               <Pressable
                 style={[styles.button, dynamicStyles.buttonSecondary]}
                 onPress={onSkip}
+                accessible={true}
+                accessibilityRole="button"
+                accessibilityLabel={t("tutorial.skip")}
+                accessibilityHint="Skip the tutorial and start playing"
               >
                 <Text style={[styles.buttonText, dynamicStyles.buttonTextSecondary]}>
                   {t("tutorial.skip")}
@@ -349,6 +375,10 @@ export const TutorialOverlay: React.FC<TutorialOverlayProps> = ({
             <Pressable
               style={[styles.button, dynamicStyles.buttonPrimary]}
               onPress={handleNext}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel={isLastStep ? t("general.confirm") : t("tutorial.next")}
+              accessibilityHint={isLastStep ? "Complete the tutorial" : "Go to the next step"}
             >
               <Text style={[styles.buttonText, dynamicStyles.buttonTextPrimary]}>
                 {isLastStep ? t("general.confirm") : t("tutorial.next")}
