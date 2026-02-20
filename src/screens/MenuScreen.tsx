@@ -79,6 +79,10 @@ export default function MenuScreen({
             }}
             onPress={() => handleModeSelect('campaign')}
             activeOpacity={0.8}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel="Campaign Mode"
+            accessibilityHint="Start campaign mode with waves of enemies and bosses every 5 waves"
           >
             <View className="flex-row items-center justify-between mb-2">
               <Text
@@ -116,6 +120,10 @@ export default function MenuScreen({
             }}
             onPress={() => handleModeSelect('endless')}
             activeOpacity={0.8}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel="Endless Mode"
+            accessibilityHint="Start endless survival mode without boss encounters"
           >
             <View className="flex-row items-center justify-between mb-2">
               <Text
@@ -155,6 +163,10 @@ export default function MenuScreen({
             }}
             onPress={onShowHighScores}
             activeOpacity={0.8}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel="High Scores"
+            accessibilityHint="View high scores leaderboard"
           >
             <Text
               className="text-center text-lg font-semibold"
@@ -172,6 +184,10 @@ export default function MenuScreen({
             }}
             onPress={onShowSettings}
             activeOpacity={0.8}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel="Settings"
+            accessibilityHint="Open settings menu"
           >
             <Text
               className="text-center text-lg font-semibold"
