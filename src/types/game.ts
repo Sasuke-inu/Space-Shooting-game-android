@@ -107,7 +107,7 @@ export const BOSS_STATS: Record<BossType, { hp: number; phases: number; points: 
 //                         Ship Types
 // ------------------------------------------------------------------ //
 
-export type ShipType = 'fighter' | 'scout' | 'tank' | 'interceptor'
+export type ShipType = 'fighter' | 'scout' | 'tank' | 'interceptor' | 'ghost'
 
 export interface ShipStats {
   speed: number       // Movement multiplier
@@ -122,6 +122,7 @@ export const SHIP_STATS: Record<ShipType, ShipStats> = {
   scout: { speed: 1.4, fireRate: 1.2, damage: 0.8, hull: 70, special: 'Time Warp' },
   tank: { speed: 0.7, fireRate: 0.8, damage: 1.5, hull: 150, special: 'Shield Burst' },
   interceptor: { speed: 1.2, fireRate: 1.5, damage: 0.9, hull: 80, special: 'EMP Blast' },
+  ghost: { speed: 1.1, fireRate: 1.0, damage: 1.0, hull: 90, special: 'Phase Shift' },
 }
 
 export interface Player {
