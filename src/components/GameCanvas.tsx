@@ -34,6 +34,7 @@ interface GameCanvasProps {
   homingMissiles?: HomingMissile[]
   showRadar?: boolean
   timeWarpActive?: boolean
+  phaseShiftActive?: boolean
   abilityFlash?: AbilityFlash | null
   abilityFlashOpacity?: number
 }
@@ -104,6 +105,7 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
   homingMissiles = [],
   showRadar = true,
   timeWarpActive = false,
+  phaseShiftActive = false,
   abilityFlash = null,
   abilityFlashOpacity = 0,
 }) => {
@@ -733,7 +735,29 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
               { translateY: player.pos.y },
               { rotate: player.ang },
             ]}
+            opacity={phaseShiftActive ? 0.5 : 1.0}
           >
+            {/* Phase shift ghostly glow effect */}
+            {phaseShiftActive && (
+              <>
+                <Circle
+                  cx={0}
+                  cy={0}
+                  r={35 + Math.sin(time * 6) * 5}
+                  color="rgba(200, 150, 255, 0.4)"
+                  opacity={0.6 + Math.sin(time * 4) * 0.3}
+                />
+                <Circle
+                  cx={0}
+                  cy={0}
+                  r={28 + Math.sin(time * 8) * 3}
+                  color="rgba(200, 150, 255, 0.6)"
+                  style="stroke"
+                  strokeWidth={2}
+                  opacity={0.7 + Math.sin(time * 5) * 0.2}
+                />
+              </>
+            )}
             {/* Shield effect */}
             {hasShield && (
               <Circle
