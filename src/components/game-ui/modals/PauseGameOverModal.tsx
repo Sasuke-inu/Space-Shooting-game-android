@@ -31,7 +31,12 @@ export const PauseGameOverModal: React.FC<PauseGameOverModalProps> = ({
   const isGameOver = lives <= 0
 
   return (
-    <Modal visible={true} transparent animationType="fade">
+    <Modal
+      visible={true}
+      transparent
+      animationType="fade"
+      accessibilityViewIsModal={true}
+    >
       <Pressable
         style={{
           flex: 1,
@@ -45,6 +50,10 @@ export const PauseGameOverModal: React.FC<PauseGameOverModalProps> = ({
           bottom: 0,
         }}
         onPress={!isGameOver ? onContinue : undefined}
+        accessible={!isGameOver}
+        accessibilityLabel={!isGameOver ? "Dismiss pause menu" : undefined}
+        accessibilityRole={!isGameOver ? "button" : undefined}
+        accessibilityHint={!isGameOver ? "Tap outside to continue playing" : undefined}
       >
         <Pressable
           style={{
@@ -57,31 +66,56 @@ export const PauseGameOverModal: React.FC<PauseGameOverModalProps> = ({
             width: 340,
           }}
           onPress={(e) => e.stopPropagation()}
+          accessible={false}
         >
           {isGameOver ? (
             <>
-              <Text style={{ color: colors.enemyShip, fontSize: 28, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
+              <Text
+                style={{ color: colors.enemyShip, fontSize: 28, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}
+                accessibilityRole="header"
+                accessibilityLabel="Game Over"
+              >
                 GAME OVER
               </Text>
-              <Text style={{ color: colors.textSecondary, fontSize: 20, fontWeight: '600', marginBottom: 16, textAlign: 'center' }}>
+              <Text
+                style={{ color: colors.textSecondary, fontSize: 20, fontWeight: '600', marginBottom: 16, textAlign: 'center' }}
+                accessible={true}
+                accessibilityLabel={`Final Score: ${score}`}
+              >
                 Final Score: {score}
               </Text>
-              <Text style={{ color: colors.textMuted, fontSize: 16, marginBottom: 8, textAlign: 'center' }}>
+              <Text
+                style={{ color: colors.textMuted, fontSize: 16, marginBottom: 8, textAlign: 'center' }}
+                accessible={true}
+                accessibilityLabel={`Wave ${wave} reached`}
+              >
                 Wave {wave} reached
               </Text>
-              <Text style={{ color: colors.comboText, fontSize: 14, marginBottom: 16, textAlign: 'center' }}>
+              <Text
+                style={{ color: colors.comboText, fontSize: 14, marginBottom: 16, textAlign: 'center' }}
+                accessible={true}
+                accessibilityLabel={`${credits} Credits Earned`}
+              >
                 +{credits} Credits Earned!
               </Text>
 
               {/* High Scores Leaderboard */}
               {highScores.length > 0 && (
-                <View style={{
-                  backgroundColor: colors.buttonSecondary,
-                  borderRadius: 12,
-                  padding: 16,
-                  marginBottom: 20,
-                }}>
-                  <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: 'bold', marginBottom: 12, textAlign: 'center' }}>
+                <View
+                  style={{
+                    backgroundColor: colors.buttonSecondary,
+                    borderRadius: 12,
+                    padding: 16,
+                    marginBottom: 20,
+                  }}
+                  accessible={true}
+                  accessibilityLabel={`Top ${highScores.length} high scores`}
+                  accessibilityRole="list"
+                >
+                  <Text
+                    style={{ color: colors.textPrimary, fontSize: 16, fontWeight: 'bold', marginBottom: 12, textAlign: 'center' }}
+                    accessibilityRole="header"
+                  >
                     🏆 TOP 5 HIGH SCORES
                   </Text>
                   {highScores.map((hs, index) => (
@@ -95,8 +129,10 @@ export const PauseGameOverModal: React.FC<PauseGameOverModalProps> = ({
                         borderBottomWidth: index < highScores.length - 1 ? 1 : 0,
                         borderBottomColor: colors.panelBorder,
                       }}
+                      accessible={true}
+                      accessibilityLabel={`Rank ${index + 1}: ${hs.name} with ${hs.score} points`}
                     >
-                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} importantForAccessibility="no-hide-descendants">
                         <Text style={{ color: colors.textSecondary, fontSize: 14, fontWeight: 'bold', width: 24 }}>
                           {index + 1}.
                         </Text>
@@ -120,6 +156,10 @@ export const PauseGameOverModal: React.FC<PauseGameOverModalProps> = ({
                   paddingHorizontal: 16,
                 }}
                 onPress={onRestart}
+                accessible={true}
+                accessibilityRole="button"
+                accessibilityLabel="Play Again"
+                accessibilityHint="Start a new game"
               >
                 <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
                   PLAY AGAIN
@@ -128,11 +168,24 @@ export const PauseGameOverModal: React.FC<PauseGameOverModalProps> = ({
             </>
           ) : (
             <>
-              <Text style={{ color: colors.textSecondary, fontSize: 24, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' }}>
+              <Text
+                style={{ color: colors.textSecondary, fontSize: 24, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' }}
+                accessibilityRole="header"
+                accessibilityLabel="Game Paused"
+              >
                 GAME PAUSED
               </Text>
-              <Text style={{ color: colors.textMuted, fontSize: 16, marginBottom: 12, fontWeight: '600' }}>Controls:</Text>
-              <View style={{ marginBottom: 20, gap: 8 }}>
+              <Text
+                style={{ color: colors.textMuted, fontSize: 16, marginBottom: 12, fontWeight: '600' }}
+                accessibilityRole="header"
+              >
+                Controls:
+              </Text>
+              <View
+                style={{ marginBottom: 20, gap: 8 }}
+                accessible={true}
+                accessibilityLabel="Controls: Use joystick to move and steer. Tap to fire weapons. Double-tap for special ability."
+              >
                 <Text style={{ color: colors.textMuted, fontSize: 14, lineHeight: 20 }}>
                   • <Text style={{ fontWeight: 'bold', color: colors.textPrimary }}>Joystick:</Text> Move and steer
                 </Text>
@@ -151,6 +204,10 @@ export const PauseGameOverModal: React.FC<PauseGameOverModalProps> = ({
                   paddingHorizontal: 16,
                 }}
                 onPress={onContinue}
+                accessible={true}
+                accessibilityRole="button"
+                accessibilityLabel="Continue"
+                accessibilityHint="Resume the game"
               >
                 <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
                   CONTINUE
