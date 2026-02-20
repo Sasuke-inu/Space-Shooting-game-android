@@ -289,6 +289,39 @@ export const SHIP_SKINS: Record<ShipType, Record<SkinId, ShipSkin>> = {
       achievementRequired: 'boss_slayer',
     },
   },
+  ghost: {
+    default: {
+      id: 'default',
+      name: 'Standard',
+      description: 'Spectral violet colors',
+      colors: { primary: '#aa44ff', secondary: '#ffffff', fill: '#220044' },
+    },
+    stealth: {
+      id: 'stealth',
+      name: 'Stealth',
+      description: 'Shadow phantom scheme',
+      colors: { primary: '#222222', secondary: '#444444', fill: '#000000' },
+    },
+    neon: {
+      id: 'neon',
+      name: 'Neon',
+      description: 'Ethereal glow style',
+      colors: { primary: '#cc00ff', secondary: '#00ffff', fill: '#330044', glow: '#cc00ff' },
+    },
+    gold: {
+      id: 'gold',
+      name: 'Gold',
+      description: 'Phantom king finish',
+      colors: { primary: '#ffd700', secondary: '#ffcc88', fill: '#443300', glow: '#ffd700' },
+    },
+    veteran: {
+      id: 'veteran',
+      name: 'Veteran',
+      description: 'Intangible master colors',
+      colors: { primary: '#ffffff', secondary: '#ccccff', fill: '#111122', glow: '#ffffff' },
+      achievementRequired: 'pacifist',
+    },
+  },
 }
 
 export const SKIN_COSTS: Record<SkinId, number> = {
