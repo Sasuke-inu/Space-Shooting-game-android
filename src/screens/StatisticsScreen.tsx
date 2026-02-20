@@ -55,16 +55,20 @@ export default function StatisticsScreen({ onBack }: { onBack?: () => void }) {
         borderColor: theme.colors.panelBorder,
         minWidth: '45%',
       }}
+      accessible={true}
+      accessibilityLabel={`${label}: ${value}`}
     >
       <Text
         className="text-sm mb-2"
         style={{ color: theme.colors.textSecondary }}
+        importantForAccessibility="no-hide-descendants"
       >
         {label}
       </Text>
       <Text
         className="text-2xl font-bold"
         style={{ color: color || theme.colors.textPrimary }}
+        importantForAccessibility="no-hide-descendants"
       >
         {value}
       </Text>
@@ -76,6 +80,7 @@ export default function StatisticsScreen({ onBack }: { onBack?: () => void }) {
       <Text
         className="text-lg font-bold"
         style={{ color: theme.colors.textPrimary }}
+        accessibilityRole="header"
       >
         {title}
       </Text>
@@ -106,10 +111,14 @@ export default function StatisticsScreen({ onBack }: { onBack?: () => void }) {
               backgroundColor: theme.colors.buttonSecondary,
               borderRadius: 8,
             }}
+            accessibilityRole="button"
+            accessibilityLabel={t('general.back')}
+            accessibilityHint="Return to previous screen"
           >
             <Text
               className="text-sm font-semibold"
               style={{ color: theme.colors.textPrimary }}
+              importantForAccessibility="no-hide-descendants"
             >
               {t('general.back')}
             </Text>
@@ -117,7 +126,7 @@ export default function StatisticsScreen({ onBack }: { onBack?: () => void }) {
         )}
       </View>
 
-      <ScrollView className="flex-1 px-4 py-4">
+      <ScrollView className="flex-1 px-4 py-4" accessibilityLabel="Statistics content">
         {/* Overview Stats */}
         <SectionHeader title={t('statistics.sectionOverview')} />
         <View className="flex-row flex-wrap justify-between">
@@ -172,8 +181,8 @@ export default function StatisticsScreen({ onBack }: { onBack?: () => void }) {
             />
           </View>
         ) : (
-          <View className="px-2 py-4">
-            <Text style={{ color: theme.colors.textSecondary, textAlign: 'center' }}>
+          <View className="px-2 py-4" accessible={true} accessibilityLabel={t('statistics.noRecentSession')}>
+            <Text style={{ color: theme.colors.textSecondary, textAlign: 'center' }} importantForAccessibility="no-hide-descendants">
               {t('statistics.noRecentSession')}
             </Text>
           </View>
@@ -319,8 +328,10 @@ export default function StatisticsScreen({ onBack }: { onBack?: () => void }) {
                   borderWidth: 1,
                   opacity: achievement.unlocked ? 1 : 0.6,
                 }}
+                accessible={true}
+                accessibilityLabel={`${achievement.name}. ${achievement.description}. ${achievement.unlocked ? `Unlocked on ${achievement.unlockedAt ? new Date(achievement.unlockedAt).toLocaleDateString() : 'unknown date'}` : 'Locked'}`}
               >
-                <Text style={{ fontSize: 24, marginRight: 12 }}>
+                <Text style={{ fontSize: 24, marginRight: 12 }} importantForAccessibility="no-hide-descendants">
                   {achievement.icon}
                 </Text>
                 <View className="flex-1">
@@ -330,6 +341,7 @@ export default function StatisticsScreen({ onBack }: { onBack?: () => void }) {
                       fontWeight: '600',
                       marginBottom: 2
                     }}
+                    importantForAccessibility="no-hide-descendants"
                   >
                     {achievement.name}
                   </Text>
@@ -339,6 +351,7 @@ export default function StatisticsScreen({ onBack }: { onBack?: () => void }) {
                       fontSize: 12,
                       marginBottom: 4
                     }}
+                    importantForAccessibility="no-hide-descendants"
                   >
                     {achievement.description}
                   </Text>
@@ -349,18 +362,19 @@ export default function StatisticsScreen({ onBack }: { onBack?: () => void }) {
                         fontSize: 11,
                         fontStyle: 'italic'
                       }}
+                      importantForAccessibility="no-hide-descendants"
                     >
                       {t('statistics.unlockedOn')}: {new Date(achievement.unlockedAt).toLocaleDateString()}
                     </Text>
                   )}
                 </View>
                 {achievement.unlocked && (
-                  <Text style={{ color: theme.colors.hudAccent, fontSize: 20 }}>
+                  <Text style={{ color: theme.colors.hudAccent, fontSize: 20 }} importantForAccessibility="no-hide-descendants">
                     ✓
                   </Text>
                 )}
                 {!achievement.unlocked && (
-                  <Text style={{ color: theme.colors.textMuted, fontSize: 16 }}>
+                  <Text style={{ color: theme.colors.textMuted, fontSize: 16 }} importantForAccessibility="no-hide-descendants">
                     🔒
                   </Text>
                 )}
