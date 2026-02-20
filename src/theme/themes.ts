@@ -717,6 +717,84 @@ export const winterTheme: GameTheme = {
 }
 
 // ------------------------------------------------------------------ //
+//                         10. Deep Space
+// ------------------------------------------------------------------ //
+export const deepSpaceTheme: GameTheme = {
+  id: 'deep-space',
+  name: 'Deep Space',
+  description: 'Deep purple void with distant stars',
+  icon: '🌌',
+
+  colors: {
+    // Canvas
+    background: '#0a0814',
+    backgroundRgba: 'rgba(10, 8, 20, 1)',
+    stars: 'rgba(100, 120, 200, 0.4)',
+
+    // Player
+    playerShip: '#d0e0ff',
+    playerShipFill: 'rgba(208, 224, 255, 0.15)',
+    playerBullet: '#ffffff',
+    thrusterFlame: '#8099ff',
+
+    // Enemies
+    enemyShip: '#a060ff',
+    enemyShipFill: 'rgba(160, 96, 255, 0.15)',
+    enemyBullet: '#8844ff',
+    enemyTank: '#7744cc',
+    enemySniper: '#c088ff',
+    enemyBomber: '#9955dd',
+
+    // Objects
+    asteroid: '#4a3f6a',
+    particle: '#b0b8ff',
+    particleHit: '#8899ff',
+    particleExplosion: '#a060ff',
+    particleDamage: '#ff6699',
+    particleCollision: '#c0c8ff',
+
+    // HUD
+    hudText: '#c0d0ff',
+    hudAccent: '#8099ff',
+    hullBar: '#8099ff',
+    hullBarBg: '#4a3f6a',
+
+    // UI
+    panelBg: '#0f0d1a',
+    panelBorder: '#2d2648',
+    buttonPrimary: '#8099ff',
+    buttonSecondary: '#1a1828',
+    buttonText: '#0a0814',
+    modalOverlay: 'rgba(0, 0, 0, 0.85)',
+    textPrimary: '#8099ff',
+    textSecondary: '#c0d0ff',
+    textMuted: '#8088b0',
+
+    // Controls
+    joystickPad: 'rgba(26, 24, 40, 0.6)',
+    joystickStick: '#8099ff',
+    joystickBorder: '#2d2648',
+    joystickGlow: 'rgba(128, 153, 255, 0.55)',
+
+    // Power-ups
+    powerUpShield: '#5599ff',
+    powerUpRapidFire: '#ff5588',
+    powerUpSpreadShot: '#ffdd66',
+    powerUpMagnet: '#cc66ff',
+    powerUpScoreMultiplier: '#66ddff',
+
+    // Combo
+    comboText: '#ffdd66',
+    comboGlow: 'rgba(255, 221, 102, 0.6)',
+
+    // Parallax
+    parallaxDistantStars: 'rgba(100, 120, 200, 0.2)',
+    parallaxNebula: 'rgba(128, 153, 255, 0.1)',
+    parallaxDebris: 'rgba(160, 96, 255, 0.18)',
+  },
+}
+
+// ------------------------------------------------------------------ //
 //                         Theme Registry
 // ------------------------------------------------------------------ //
 
