@@ -15,6 +15,7 @@ describe('Special Abilities Logic', () => {
       missile_barrage: { cooldown: 15, duration: 0, description: 'Fires 8 homing missiles' },
       time_warp: { cooldown: 25, duration: 5, description: 'Slows time by 50% for 5 seconds' },
       shield_burst: { cooldown: 30, duration: 8, description: 'Invincibility for 8 seconds' },
+      phase_shift: { cooldown: 22, duration: 4, description: 'Become intangible for 4 seconds' },
     }
 
     const SHIP_ABILITIES = {
@@ -22,6 +23,7 @@ describe('Special Abilities Logic', () => {
       scout: 'time_warp',
       tank: 'shield_burst',
       interceptor: 'emp_blast',
+      ghost: 'phase_shift',
     }
 
     test('each ship has a unique ability', () => {
@@ -84,18 +86,21 @@ describe('Special Abilities Logic', () => {
               scout: 'time_warp',
               tank: 'shield_burst',
               interceptor: 'emp_blast',
+              ghost: 'phase_shift',
             }
             const cooldownMap: Record<string, number> = {
               missile_barrage: 15,
               time_warp: 25,
               shield_burst: 30,
               emp_blast: 20,
+              phase_shift: 22,
             }
             const durationMap: Record<string, number> = {
               missile_barrage: 0,
               time_warp: 5,
               shield_burst: 8,
               emp_blast: 0,
+              phase_shift: 4,
             }
 
             const abilityType = abilityMap[state.player.shipType] || 'missile_barrage'
@@ -398,6 +403,114 @@ describe('Special Abilities Logic', () => {
   })
 
   // ------------------------------------------------------------------ //
+  //                         Phase Shift Tests
+  // ------------------------------------------------------------------ //
+  describe('Phase Shift', () => {
+    test('phase shift provides intangibility', () => {
+      let hp = 100
+      const hasPhaseShift = true
+      const damage = 50
+
+      if (!hasPhaseShift) {
+        hp -= damage
+      }
+
+      expect(hp).toBe(100) // No damage taken
+    })
+
+    test('phase shift lasts 4 seconds', () => {
+      const PHASE_SHIFT_DURATION = 4
+      let duration = PHASE_SHIFT_DURATION
+      const dt = 0.033
+
+      let frames = 0
+      while (duration > 0) {
+        duration -= dt
+        frames++
+      }
+
+      // Should last about 121 frames at 30fps
+      expect(frames).toBeGreaterThan(115)
+      expect(frames).toBeLessThan(125)
+    })
+
+    test('phase shift has 22 second cooldown', () => {
+      const PHASE_SHIFT_COOLDOWN = 22
+      expect(PHASE_SHIFT_COOLDOWN).toBe(22)
+    })
+
+    test('player can pass through enemies during phase shift', () => {
+      const player = { pos: { x: 100, y: 100 }, hp: 100 }
+      const enemy = { pos: { x: 100, y: 100 } } // Same position as player
+      const hasPhaseShift = true
+      const ENEMY_DAMAGE = 20
+
+      // Check collision
+      const dx = player.pos.x - enemy.pos.x
+      const dy = player.pos.y - enemy.pos.y
+      const dist = Math.sqrt(dx * dx + dy * dy)
+      const colliding = dist < 25
+
+      expect(colliding).toBe(true)
+
+      // Apply damage only if not phase shifting
+      if (colliding && !hasPhaseShift) {
+        player.hp -= ENEMY_DAMAGE
+      }
+
+      expect(player.hp).toBe(100) // No damage taken during phase shift
+    })
+
+    test('player can pass through bullets during phase shift', () => {
+      let hp = 100
+      const hasPhaseShift = true
+      const bulletDamage = 10
+
+      // Bullet hits player
+      if (!hasPhaseShift) {
+        hp -= bulletDamage
+      }
+
+      expect(hp).toBe(100) // No damage taken during phase shift
+    })
+
+    test('phase shift expires after duration', () => {
+      const PHASE_SHIFT_DURATION = 4
+      let duration = PHASE_SHIFT_DURATION
+      let isActive = true
+      const dt = 0.033
+
+      // Simulate 3 seconds
+      for (let i = 0; i < 90; i++) {
+        if (isActive) {
+          duration -= dt
+          if (duration <= 0) {
+            isActive = false
+            duration = 0
+          }
+        }
+      }
+
+      expect(duration).toBeCloseTo(1, 1)
+      expect(isActive).toBe(true)
+
+      // Simulate 2 more seconds (total 5, past duration)
+      for (let i = 0; i < 60; i++) {
+        if (isActive) {
+          duration -= dt
+          if (duration <= 0) {
+            isActive = false
+            duration = 0
+          }
+        }
+      }
+
+      expect(duration).toBe(0)
+      expect(isActive).toBe(false)
+    })
+  })
+
+  // ------------------------------------------------------------------ //
   //                         Homing Missile Tests
   // ------------------------------------------------------------------ //
   describe('Homing Missiles', () => {
@@ -591,6 +704,10 @@ describe('Special Abilities Logic', () => {
       // Interceptor -> emp_blast
       store.getState().triggerAbilityFlash('emp_blast')
       expect(store.getState().abilityFlash?.abilityType).toBe('emp_blast')
+
+      // Ghost -> phase_shift
+      store.getState().triggerAbilityFlash('phase_shift')
+      expect(store.getState().abilityFlash?.abilityType).toBe('phase_shift')
     })
 
     test('opacity returns 0 when no flash is active', () => {

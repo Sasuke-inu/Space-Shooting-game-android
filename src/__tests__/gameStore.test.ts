@@ -429,6 +429,11 @@ describe('gameStore', () => {
       // Tank has more HP than fighter
       expect(useGameStore.getState().player.hp).toBeGreaterThan(100)
     })
+
+    test('ghost ship type can be selected', () => {
+      useGameStore.getState().setShipType('ghost')
+      expect(useGameStore.getState().player.shipType).toBe('ghost')
+    })
   })
 
   // ------------------------------------------------------------------ //
