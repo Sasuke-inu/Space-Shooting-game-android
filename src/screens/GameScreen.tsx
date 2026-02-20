@@ -453,21 +453,29 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   const thrusting = joyMag > 0
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
+    <View
+      style={{ flex: 1, backgroundColor: colors.background }}
+      accessible={true}
+      accessibilityLabel="Game screen"
+    >
       {/* Performance FPS Counter */}
       {performanceConfig.showFpsCounter && (
-        <View style={{
-          position: 'absolute',
-          top: insets.top + 60,
-          right: 12,
-          backgroundColor: 'rgba(0, 0, 0, 0.6)',
-          borderWidth: 1,
-          borderColor: colors.hudAccent,
-          borderRadius: 6,
-          padding: 8,
-          zIndex: 100,
-          minWidth: 80,
-        }}>
+        <View
+          style={{
+            position: 'absolute',
+            top: insets.top + 60,
+            right: 12,
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+            borderWidth: 1,
+            borderColor: colors.hudAccent,
+            borderRadius: 6,
+            padding: 8,
+            zIndex: 100,
+            minWidth: 80,
+          }}
+          accessible={true}
+          accessibilityLabel={`Performance counter: ${getMetrics().fps} FPS, average ${getMetrics().avgFps} FPS`}
+        >
           <Text style={{ color: colors.hudAccent, fontSize: 11, fontWeight: 'bold', textAlign: 'center' }}>
             FPS
           </Text>
@@ -489,23 +497,31 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
 
       {/* Purchase feedback notification */}
       {purchaseFeedback && (
-        <View style={{
-          position: 'absolute',
-          top: insets.top + 60,
-          left: 20,
-          right: 20,
-          backgroundColor: colors.panelBg,
-          borderWidth: 2,
-          borderColor: purchaseFeedback.type === 'success' ? colors.comboText : colors.enemyShip,
-          borderRadius: 12,
-          padding: 12,
-          zIndex: 100,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 12,
-        }}>
-          <Text style={{ fontSize: 24 }}>{purchaseFeedback.type === 'success' ? '✓' : '⚠️'}</Text>
-          <View style={{ flex: 1 }}>
+        <View
+          style={{
+            position: 'absolute',
+            top: insets.top + 60,
+            left: 20,
+            right: 20,
+            backgroundColor: colors.panelBg,
+            borderWidth: 2,
+            borderColor: purchaseFeedback.type === 'success' ? colors.comboText : colors.enemyShip,
+            borderRadius: 12,
+            padding: 12,
+            zIndex: 100,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 12,
+          }}
+          accessible={true}
+          accessibilityRole="alert"
+          accessibilityLabel={`${purchaseFeedback.type === 'success' ? 'Success' : 'Error'}: ${purchaseFeedback.message}`}
+          accessibilityLiveRegion="polite"
+        >
+          <Text style={{ fontSize: 24 }} importantForAccessibility="no-hide-descendants">
+            {purchaseFeedback.type === 'success' ? '✓' : '⚠️'}
+          </Text>
+          <View style={{ flex: 1 }} importantForAccessibility="no-hide-descendants">
             <Text style={{
               color: purchaseFeedback.type === 'success' ? colors.comboText : colors.enemyShip,
               fontSize: 12,
@@ -522,23 +538,31 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
 
       {/* Ship purchase notification */}
       {recentShipPurchase && (
-        <View style={{
-          position: 'absolute',
-          top: insets.top + 60,
-          left: 20,
-          right: 20,
-          backgroundColor: colors.panelBg,
-          borderWidth: 2,
-          borderColor: colors.comboText,
-          borderRadius: 12,
-          padding: 12,
-          zIndex: 100,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 12,
-        }}>
-          <Text style={{ fontSize: 32 }}>🚀</Text>
-          <View>
+        <View
+          style={{
+            position: 'absolute',
+            top: insets.top + 60,
+            left: 20,
+            right: 20,
+            backgroundColor: colors.panelBg,
+            borderWidth: 2,
+            borderColor: colors.comboText,
+            borderRadius: 12,
+            padding: 12,
+            zIndex: 100,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 12,
+          }}
+          accessible={true}
+          accessibilityRole="alert"
+          accessibilityLabel={`Ship purchased: ${recentShipPurchase.charAt(0).toUpperCase() + recentShipPurchase.slice(1)}`}
+          accessibilityLiveRegion="polite"
+        >
+          <Text style={{ fontSize: 32 }} importantForAccessibility="no-hide-descendants">
+            🚀
+          </Text>
+          <View importantForAccessibility="no-hide-descendants">
             <Text style={{ color: colors.comboText, fontSize: 12, fontWeight: 'bold' }}>SHIP PURCHASED</Text>
             <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: 'bold' }}>{recentShipPurchase.charAt(0).toUpperCase() + recentShipPurchase.slice(1)}</Text>
           </View>
@@ -549,23 +573,31 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
       {recentChallengeCompletion && (() => {
         const completedChallenge = challenges.find((c) => c.id === recentChallengeCompletion)
         return completedChallenge ? (
-          <View style={{
-            position: 'absolute',
-            top: insets.top + 140,
-            left: 20,
-            right: 20,
-            backgroundColor: colors.panelBg,
-            borderWidth: 2,
-            borderColor: colors.buttonPrimary,
-            borderRadius: 12,
-            padding: 12,
-            zIndex: 100,
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 12,
-          }}>
-            <Text style={{ fontSize: 32 }}>{completedChallenge.icon}</Text>
-            <View style={{ flex: 1 }}>
+          <View
+            style={{
+              position: 'absolute',
+              top: insets.top + 140,
+              left: 20,
+              right: 20,
+              backgroundColor: colors.panelBg,
+              borderWidth: 2,
+              borderColor: colors.buttonPrimary,
+              borderRadius: 12,
+              padding: 12,
+              zIndex: 100,
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 12,
+            }}
+            accessible={true}
+            accessibilityRole="alert"
+            accessibilityLabel={`Challenge complete: ${completedChallenge.name}. Reward: ${completedChallenge.reward} credits`}
+            accessibilityLiveRegion="polite"
+          >
+            <Text style={{ fontSize: 32 }} importantForAccessibility="no-hide-descendants">
+              {completedChallenge.icon}
+            </Text>
+            <View style={{ flex: 1 }} importantForAccessibility="no-hide-descendants">
               <Text style={{ color: colors.buttonPrimary, fontSize: 12, fontWeight: 'bold' }}>CHALLENGE COMPLETE</Text>
               <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: 'bold' }}>{completedChallenge.name}</Text>
               <Text style={{ color: colors.comboText, fontSize: 12, marginTop: 2 }}>+{completedChallenge.reward} Credits</Text>
@@ -587,7 +619,13 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
 
       {/* Game canvas with tap and swipe gestures */}
       <GestureDetector gesture={combinedGesture}>
-        <View style={{ flex: 1 }} pointerEvents="box-none">
+        <View
+          style={{ flex: 1 }}
+          pointerEvents="box-none"
+          accessible={true}
+          accessibilityLabel={`Game area. Score: ${score}, Wave: ${wave}, Lives: ${lives}`}
+          accessibilityHint="Tap to fire, swipe to move ship, double tap for special ability"
+        >
           <GameCanvas
             width={width}
             height={height}
@@ -667,30 +705,42 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
 
       {/* Shop Modal */}
       {showShop && (
-        <Modal visible={true} transparent animationType="fade">
+        <Modal visible={true} transparent animationType="fade" accessibilityViewIsModal={true}>
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.modalOverlay }}>
-            <View style={{
-              backgroundColor: colors.panelBg,
-              borderWidth: 2,
-              borderColor: colors.panelBorder,
-              borderRadius: 16,
-              padding: 20,
-              marginHorizontal: 24,
-              width: 340,
-              maxHeight: '85%',
-            }}>
-              <Text style={{ color: colors.textPrimary, fontSize: 24, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
+            <View
+              style={{
+                backgroundColor: colors.panelBg,
+                borderWidth: 2,
+                borderColor: colors.panelBorder,
+                borderRadius: 16,
+                padding: 20,
+                marginHorizontal: 24,
+                width: 340,
+                maxHeight: '85%',
+              }}
+              accessible={true}
+              accessibilityRole="dialog"
+              accessibilityLabel="Ship shop"
+            >
+              <Text
+                style={{ color: colors.textPrimary, fontSize: 24, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}
+                accessibilityRole="header"
+              >
                 🛒 Ship Shop
               </Text>
 
               {/* Credit Balance */}
-              <View style={{
-                backgroundColor: colors.buttonSecondary,
-                borderRadius: 12,
-                padding: 12,
-                marginBottom: 16,
-                alignItems: 'center',
-              }}>
+              <View
+                style={{
+                  backgroundColor: colors.buttonSecondary,
+                  borderRadius: 12,
+                  padding: 12,
+                  marginBottom: 16,
+                  alignItems: 'center',
+                }}
+                accessible={true}
+                accessibilityLabel={`Your credits: ${upgradesCredits}`}
+              >
                 <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Your Credits</Text>
                 <Text style={{ color: colors.comboText, fontSize: 24, fontWeight: 'bold' }}>
                   {upgradesCredits}
@@ -714,9 +764,11 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
                           borderColor: isUnlocked ? colors.comboText : colors.panelBorder,
                           backgroundColor: isUnlocked ? colors.buttonSecondary : 'transparent',
                         }}
+                        accessible={true}
+                        accessibilityLabel={`${ship} ship. Speed: ${(shipStats.speed * 100).toFixed(0)}%, Fire rate: ${(shipStats.fireRate * 100).toFixed(0)}%, Damage: ${(shipStats.damage * 100).toFixed(0)}%, Hull: ${shipStats.hull}. Special: ${shipStats.special}. ${isUnlocked ? 'Owned' : `Cost: ${cost} credits`}`}
                       >
                         {/* Ship Header */}
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }} importantForAccessibility="no-hide-descendants">
                           <Text style={{ color: colors.textPrimary, fontSize: 18, fontWeight: 'bold', textTransform: 'capitalize' }}>
                             {ship}
                           </Text>
@@ -726,7 +778,7 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
                         </View>
 
                         {/* Ship Stats */}
-                        <View style={{ marginBottom: 12, gap: 4 }}>
+                        <View style={{ marginBottom: 12, gap: 4 }} importantForAccessibility="no-hide-descendants">
                           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                             <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Speed</Text>
                             <Text style={{ color: colors.textPrimary, fontSize: 12 }}>{(shipStats.speed * 100).toFixed(0)}%</Text>
@@ -751,7 +803,7 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
 
                         {/* Price and Purchase Button */}
                         {!isUnlocked && (
-                          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} importantForAccessibility="no-hide-descendants">
                             <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: 'bold' }}>
                               💰 {cost} Credits
                             </Text>
@@ -766,6 +818,10 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
                                 setSelectedShipForPurchase(ship)
                                 setShowPurchaseConfirm(true)
                               }}
+                              accessible={true}
+                              accessibilityRole="button"
+                              accessibilityLabel={`Purchase ${ship} ship for ${cost} credits`}
+                              accessibilityHint="Opens confirmation dialog"
                             >
                               <Text style={{ color: colors.buttonText, fontSize: 14, fontWeight: 'bold' }}>
                                 PURCHASE
@@ -788,6 +844,10 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
                   marginTop: 16,
                 }}
                 onPress={() => setShowShop(false)}
+                accessible={true}
+                accessibilityRole="button"
+                accessibilityLabel="Close shop"
+                accessibilityHint="Returns to game"
               >
                 <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
                   CLOSE
@@ -800,18 +860,26 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
 
       {/* Purchase Confirmation Modal */}
       {showPurchaseConfirm && selectedShipForPurchase && (
-        <Modal visible={true} transparent animationType="fade">
+        <Modal visible={true} transparent animationType="fade" accessibilityViewIsModal={true}>
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.modalOverlay }}>
-            <View style={{
-              backgroundColor: colors.panelBg,
-              borderWidth: 2,
-              borderColor: colors.buttonPrimary,
-              borderRadius: 16,
-              padding: 24,
-              marginHorizontal: 24,
-              width: 340,
-            }}>
-              <Text style={{ color: colors.textPrimary, fontSize: 24, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
+            <View
+              style={{
+                backgroundColor: colors.panelBg,
+                borderWidth: 2,
+                borderColor: colors.buttonPrimary,
+                borderRadius: 16,
+                padding: 24,
+                marginHorizontal: 24,
+                width: 340,
+              }}
+              accessible={true}
+              accessibilityRole="dialog"
+              accessibilityLabel="Purchase confirmation"
+            >
+              <Text
+                style={{ color: colors.textPrimary, fontSize: 24, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}
+                accessibilityRole="header"
+              >
                 Confirm Purchase
               </Text>
 
@@ -820,13 +888,17 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
               </Text>
 
               {/* Ship Stats */}
-              <View style={{
-                backgroundColor: colors.buttonSecondary,
-                borderRadius: 12,
-                padding: 12,
-                marginBottom: 16,
-                gap: 4,
-              }}>
+              <View
+                style={{
+                  backgroundColor: colors.buttonSecondary,
+                  borderRadius: 12,
+                  padding: 12,
+                  marginBottom: 16,
+                  gap: 4,
+                }}
+                accessible={true}
+                accessibilityLabel={`Ship stats: Speed ${(SHIP_STATS[selectedShipForPurchase].speed * 100).toFixed(0)}%, Fire rate ${(SHIP_STATS[selectedShipForPurchase].fireRate * 100).toFixed(0)}%, Damage ${(SHIP_STATS[selectedShipForPurchase].damage * 100).toFixed(0)}%, Hull ${SHIP_STATS[selectedShipForPurchase].hull}, Special ${SHIP_STATS[selectedShipForPurchase].special}`}
+              >
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Text style={{ color: colors.textSecondary, fontSize: 12 }}>Speed</Text>
                   <Text style={{ color: colors.textPrimary, fontSize: 12 }}>{(SHIP_STATS[selectedShipForPurchase].speed * 100).toFixed(0)}%</Text>
@@ -850,28 +922,41 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
               </View>
 
               {/* Price Display */}
-              <View style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginBottom: 16,
-                paddingHorizontal: 8,
-              }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginBottom: 16,
+                  paddingHorizontal: 8,
+                }}
+                accessible={true}
+                accessibilityLabel={`Your credits: ${upgradesCredits}`}
+              >
                 <Text style={{ color: colors.textSecondary, fontSize: 14 }}>Your Credits:</Text>
                 <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: 'bold' }}>{upgradesCredits}</Text>
               </View>
-              <View style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginBottom: 20,
-                paddingHorizontal: 8,
-              }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginBottom: 20,
+                  paddingHorizontal: 8,
+                }}
+                accessible={true}
+                accessibilityLabel={`Cost: ${SHIP_COSTS[selectedShipForPurchase]} credits`}
+              >
                 <Text style={{ color: colors.textSecondary, fontSize: 14 }}>Cost:</Text>
                 <Text style={{ color: colors.comboText, fontSize: 14, fontWeight: 'bold' }}>💰 {SHIP_COSTS[selectedShipForPurchase]}</Text>
               </View>
 
               {/* Insufficient credits warning */}
               {upgradesCredits < SHIP_COSTS[selectedShipForPurchase] && (
-                <Text style={{ color: colors.enemyShip, fontSize: 14, marginBottom: 16, textAlign: 'center', fontWeight: 'bold' }}>
+                <Text
+                  style={{ color: colors.enemyShip, fontSize: 14, marginBottom: 16, textAlign: 'center', fontWeight: 'bold' }}
+                  accessible={true}
+                  accessibilityRole="alert"
+                  accessibilityLabel="Warning: Insufficient credits to purchase this ship"
+                >
                   ⚠️ Insufficient Credits
                 </Text>
               )}
@@ -887,6 +972,10 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
                     paddingHorizontal: 16,
                   }}
                   onPress={handleCancelPurchase}
+                  accessible={true}
+                  accessibilityRole="button"
+                  accessibilityLabel="Cancel purchase"
+                  accessibilityHint="Closes confirmation dialog"
                 >
                   <Text style={{ color: colors.textPrimary, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
                     CANCEL
@@ -903,6 +992,11 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
                   }}
                   onPress={handleConfirmPurchase}
                   disabled={upgradesCredits < SHIP_COSTS[selectedShipForPurchase]}
+                  accessible={true}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Confirm purchase of ${selectedShipForPurchase} ship for ${SHIP_COSTS[selectedShipForPurchase]} credits`}
+                  accessibilityHint={upgradesCredits >= SHIP_COSTS[selectedShipForPurchase] ? "Purchases the ship" : "Disabled due to insufficient credits"}
+                  accessibilityState={{ disabled: upgradesCredits < SHIP_COSTS[selectedShipForPurchase] }}
                 >
                   <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
                     CONFIRM
