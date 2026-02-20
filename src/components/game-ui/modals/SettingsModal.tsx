@@ -61,24 +61,39 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   if (!visible) return null
 
   return (
-    <Modal visible={true} transparent animationType="fade">
+    <Modal
+      visible={true}
+      transparent
+      animationType="fade"
+      accessibilityViewIsModal
+    >
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.modalOverlay }}>
-        <View style={{
-          backgroundColor: colors.panelBg,
-          borderWidth: 2,
-          borderColor: colors.panelBorder,
-          borderRadius: 16,
-          padding: 20,
-          marginHorizontal: 24,
-          width: 340,
-          maxHeight: '85%',
-        }}>
-          <Text style={{ color: colors.textPrimary, fontSize: 24, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' }}>
+        <View
+          style={{
+            backgroundColor: colors.panelBg,
+            borderWidth: 2,
+            borderColor: colors.panelBorder,
+            borderRadius: 16,
+            padding: 20,
+            marginHorizontal: 24,
+            width: 340,
+            maxHeight: '85%',
+          }}
+          accessibilityRole="dialog"
+          accessibilityLabel="Settings dialog"
+        >
+          <Text
+            style={{ color: colors.textPrimary, fontSize: 24, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' }}
+            accessibilityRole="header"
+          >
             ⚙️ Settings
           </Text>
 
           {/* Tab buttons */}
-          <View style={{ flexDirection: 'row', marginBottom: 16, gap: 8 }}>
+          <View
+            style={{ flexDirection: 'row', marginBottom: 16, gap: 8 }}
+            accessibilityRole="tablist"
+          >
             {(['general', 'ship', 'stats'] as const).map((tab) => (
               <Pressable
                 key={tab}
@@ -89,6 +104,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   borderRadius: 8,
                   backgroundColor: activeTab === tab ? colors.buttonPrimary : colors.buttonSecondary,
                 }}
+                accessibilityRole="tab"
+                accessibilityLabel={`${tab.charAt(0).toUpperCase() + tab.slice(1)} tab`}
+                accessibilityState={{ selected: activeTab === tab }}
               >
                 <Text style={{
                   color: activeTab === tab ? colors.buttonText : colors.textSecondary,
@@ -103,24 +121,37 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             ))}
           </View>
 
-          <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 400 }}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={{ maxHeight: 400 }}
+            accessibilityLabel={`${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} settings`}
+          >
             {activeTab === 'general' && (
               <>
                 {/* Theme Section */}
-                <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginBottom: 12 }}>
+                <Text
+                  style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginBottom: 12 }}
+                  accessibilityRole="header"
+                >
                   🎨 Theme
                 </Text>
                 <ThemeSelector themeList={themeList} currentThemeId={currentThemeId} onThemeSelect={onThemeSelect} colors={colors} />
 
                 {/* Audio Section */}
-                <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginTop: 20, marginBottom: 12 }}>
+                <Text
+                  style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginTop: 20, marginBottom: 12 }}
+                  accessibilityRole="header"
+                >
                   🔊 Audio
                 </Text>
                 <Slider value={musicVolume} onValueChange={setMusicVolume} label="Music Volume" colors={colors} />
                 <Slider value={sfxVolume} onValueChange={setSfxVolume} label="SFX Volume" colors={colors} />
 
                 {/* Controls Section */}
-                <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginTop: 8, marginBottom: 12 }}>
+                <Text
+                  style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginTop: 8, marginBottom: 12 }}
+                  accessibilityRole="header"
+                >
                   🎮 Controls
                 </Text>
                 <Slider value={joystickSensitivity} onValueChange={setJoystickSensitivity} label="Joystick Sensitivity" colors={colors} />
@@ -131,7 +162,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
             {activeTab === 'ship' && (
               <>
-                <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginBottom: 12 }}>
+                <Text
+                  style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginBottom: 12 }}
+                  accessibilityRole="header"
+                >
                   🚀 Select Ship
                 </Text>
                 <ShipSelector currentShip={currentShip} unlockedShips={unlockedShips} onShipSelect={onShipSelect} colors={colors} />
@@ -140,10 +174,16 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
             {activeTab === 'stats' && (
               <>
-                <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginBottom: 12 }}>
+                <Text
+                  style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginBottom: 12 }}
+                  accessibilityRole="header"
+                >
                   📊 Statistics
                 </Text>
-                <Text style={{ color: colors.comboText, fontSize: 14, marginBottom: 12 }}>
+                <Text
+                  style={{ color: colors.comboText, fontSize: 14, marginBottom: 12 }}
+                  accessibilityLabel={`Total Credits: ${upgradesCredits}`}
+                >
                   Total Credits: {upgradesCredits}
                 </Text>
                 <StatsDisplay stats={stats} colors={colors} />
@@ -160,6 +200,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               marginTop: 16,
             }}
             onPress={onClose}
+            accessibilityRole="button"
+            accessibilityLabel="Done"
+            accessibilityHint="Close settings dialog"
           >
             <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
               DONE
