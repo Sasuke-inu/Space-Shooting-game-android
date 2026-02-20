@@ -49,6 +49,9 @@ export const TopBar: React.FC<TopBarProps> = ({
           paddingVertical: 8,
         }}
         onPress={onSettingsPress}
+        accessibilityRole="button"
+        accessibilityLabel="Settings"
+        accessibilityHint="Opens settings menu"
       >
         <Text style={{ color: colors.hudText, fontSize: 14 }}>⚙️</Text>
       </Pressable>
@@ -62,6 +65,9 @@ export const TopBar: React.FC<TopBarProps> = ({
           paddingVertical: 8,
         }}
         onPress={onPausePress}
+        accessibilityRole="button"
+        accessibilityLabel={paused ? "Resume" : "Pause"}
+        accessibilityHint={paused ? "Resume the game" : "Pause the game"}
       >
         <Text style={{ color: colors.hudText, fontSize: 14 }}>{paused ? "Resume" : "Pause"}</Text>
       </Pressable>
@@ -75,6 +81,9 @@ export const TopBar: React.FC<TopBarProps> = ({
           paddingVertical: 8,
         }}
         onPress={onRestartPress}
+        accessibilityRole="button"
+        accessibilityLabel="Restart"
+        accessibilityHint="Restart the game"
       >
         <Text style={{ color: colors.hudText, fontSize: 14 }}>Restart</Text>
       </Pressable>
