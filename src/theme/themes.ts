@@ -40,6 +40,7 @@ export const neonVoidTheme: GameTheme = {
     enemyTank: '#ff6666',
     enemySniper: '#9966ff',
     enemyBomber: '#ff9933',
+    enemyTeleporter: '#66ccff',
 
     // Objects
     asteroid: '#bdf',
@@ -118,6 +119,7 @@ export const nomadTheme: GameTheme = {
     enemyTank: '#a0522d',
     enemySniper: '#8b4789',
     enemyBomber: '#d2691e',
+    enemyTeleporter: '#9370db',
 
     // Objects
     asteroid: '#8b7355',
@@ -196,6 +198,7 @@ export const sakuraTheme: GameTheme = {
     enemyTank: '#ff6b9d',
     enemySniper: '#da70d6',
     enemyBomber: '#ff8c69',
+    enemyTeleporter: '#9966ff',
 
     // Objects
     asteroid: '#cdb4db',
@@ -274,6 +277,7 @@ export const forestMatrixTheme: GameTheme = {
     enemyTank: '#ff5733',
     enemySniper: '#ff1493',
     enemyBomber: '#ff8c00',
+    enemyTeleporter: '#cc66ff',
 
     // Objects
     asteroid: '#228b22',
@@ -352,6 +356,7 @@ export const infernoTheme: GameTheme = {
     enemyTank: '#b22222',
     enemySniper: '#8b008b',
     enemyBomber: '#ff4500',
+    enemyTeleporter: '#9932cc',
 
     // Objects
     asteroid: '#cd5c5c',
@@ -430,6 +435,7 @@ export const arcticTheme: GameTheme = {
     enemyTank: '#5f9ea0',
     enemySniper: '#9370db',
     enemyBomber: '#ff8c69',
+    enemyTeleporter: '#7b68ee',
 
     // Objects
     asteroid: '#b0c4de',
@@ -508,6 +514,7 @@ export const halloweenTheme: GameTheme = {
     enemyTank: '#d2691e',
     enemySniper: '#800080',
     enemyBomber: '#ff4500',
+    enemyTeleporter: '#9400d3',
 
     // Objects
     asteroid: '#4b3a5a',
@@ -586,6 +593,7 @@ export const synthwaveTheme: GameTheme = {
     enemyTank: '#ff006e',
     enemySniper: '#bd00ff',
     enemyBomber: '#ff9e00',
+    enemyTeleporter: '#a855f7',
 
     // Objects
     asteroid: '#a855f7',
@@ -664,6 +672,7 @@ export const winterTheme: GameTheme = {
     enemyTank: '#708090',
     enemySniper: '#9370db',
     enemyBomber: '#ffb6c1',
+    enemyTeleporter: '#8a2be2',
 
     // Objects
     asteroid: '#8ba9c0',
