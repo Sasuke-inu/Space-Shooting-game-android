@@ -10,7 +10,12 @@ export interface SliderProps {
 }
 
 export const Slider: React.FC<SliderProps> = ({ value, onValueChange, label, colors }) => (
-  <View style={{ marginBottom: 16 }}>
+  <View
+    style={{ marginBottom: 16 }}
+    accessibilityRole="adjustable"
+    accessibilityLabel={label}
+    accessibilityValue={{ min: 0, max: 100, now: Math.round(value * 100) }}
+  >
     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 }}>
       <Text style={{ color: colors.textSecondary, fontSize: 14 }}>{label}</Text>
       <Text style={{ color: colors.textPrimary, fontSize: 14 }}>{Math.round(value * 100)}%</Text>
@@ -19,6 +24,8 @@ export const Slider: React.FC<SliderProps> = ({ value, onValueChange, label, col
       <Pressable
         onPress={() => onValueChange(Math.max(0, value - 0.1))}
         style={{ backgroundColor: colors.buttonSecondary, padding: 8, borderRadius: 8 }}
+        accessibilityRole="button"
+        accessibilityLabel={`Decrease ${label}`}
       >
         <Text style={{ color: colors.textPrimary, fontSize: 16 }}>−</Text>
       </Pressable>
@@ -28,6 +35,8 @@ export const Slider: React.FC<SliderProps> = ({ value, onValueChange, label, col
       <Pressable
         onPress={() => onValueChange(Math.min(1, value + 0.1))}
         style={{ backgroundColor: colors.buttonSecondary, padding: 8, borderRadius: 8 }}
+        accessibilityRole="button"
+        accessibilityLabel={`Increase ${label}`}
       >
         <Text style={{ color: colors.textPrimary, fontSize: 16 }}>+</Text>
       </Pressable>
