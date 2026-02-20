@@ -194,7 +194,13 @@ const VirtualControlsComponent: React.FC<VirtualControlsProps> = ({
   return (
     <View style={[styles.container, { justifyContent: containerAlignment }]}>
       <GestureDetector gesture={panGesture}>
-        <View style={styles.joystickContainer}>
+        <View
+          style={styles.joystickContainer}
+          accessible={true}
+          accessibilityLabel="Movement joystick"
+          accessibilityHint="Drag to move your ship"
+          accessibilityRole="adjustable"
+        >
           <View style={[styles.joystickPad, dynamicStyles.joystickPad]}>
             <Animated.View style={[styles.joystickStick, dynamicStyles.joystickStick, stickStyle]} />
           </View>
@@ -211,6 +217,11 @@ const VirtualControlsComponent: React.FC<VirtualControlsProps> = ({
           ]}
           onPress={player.specialReady ? onAbilityPress : undefined}
           disabled={!player.specialReady}
+          accessible={true}
+          accessibilityLabel="Special ability"
+          accessibilityHint="Activate your ship's special ability"
+          accessibilityRole="button"
+          accessibilityState={{ disabled: !player.specialReady }}
         >
           <Text style={[styles.abilityText, dynamicStyles.abilityText]}>
             {SHIP_STATS[player.shipType].special}
