@@ -353,7 +353,7 @@ describe('backupManager', () => {
       })
 
       test('returns false on error', async () => {
-        mockAsyncStorage.removeItem.mockRejectedValueOnce(new Error('Storage error'))
+        mockAsyncStorage.removeItem.mockRejectedValue(new Error('Storage error'))
 
         const result = await clearAllBackups()
 
@@ -389,7 +389,8 @@ describe('backupManager', () => {
           issues: ['Corrupted data'],
           canRecover: true,
         })
-        mockAsyncStorage.getItem.mockResolvedValueOnce(JSON.stringify({ data: 'backup' }))
+        // Mock getItem twice: once for hasBackup, once for restoreStore
+        mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify({ data: 'backup' }))
         mockAsyncStorage.setItem.mockResolvedValueOnce()
 
         const result = await recoverStore('achievements')
