@@ -13,6 +13,10 @@ export const Toggle: React.FC<ToggleProps> = ({ value, onValueChange, label, col
   <Pressable
     onPress={() => onValueChange(!value)}
     style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}
+    accessibilityRole="switch"
+    accessibilityLabel={label}
+    accessibilityState={{ checked: value }}
+    accessibilityHint="Double tap to toggle"
   >
     <Text style={{ color: colors.textSecondary, fontSize: 14 }}>{label}</Text>
     <View style={{
