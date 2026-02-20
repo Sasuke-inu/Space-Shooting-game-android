@@ -9,17 +9,28 @@ export interface InstructionsModalProps {
 }
 
 export const InstructionsModal: React.FC<InstructionsModalProps> = ({ visible, onStartGame, colors }) => (
-  <Modal visible={visible} transparent animationType="fade">
+  <Modal
+    visible={visible}
+    transparent
+    animationType="fade"
+    accessible={true}
+    accessibilityViewIsModal={true}
+  >
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.modalOverlay }}>
-      <View style={{
-        backgroundColor: colors.panelBg,
-        borderWidth: 2,
-        borderColor: colors.buttonPrimary,
-        borderRadius: 16,
-        padding: 24,
-        marginHorizontal: 24,
-        width: 340,
-      }}>
+      <View
+        style={{
+          backgroundColor: colors.panelBg,
+          borderWidth: 2,
+          borderColor: colors.buttonPrimary,
+          borderRadius: 16,
+          padding: 24,
+          marginHorizontal: 24,
+          width: 340,
+        }}
+        accessible={true}
+        accessibilityRole="dialog"
+        accessibilityLabel="Game instructions"
+      >
         <Text style={{ color: colors.textPrimary, fontSize: 28, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
           NEON VOID
         </Text>
@@ -66,6 +77,10 @@ export const InstructionsModal: React.FC<InstructionsModalProps> = ({ visible, o
             paddingHorizontal: 16,
           }}
           onPress={onStartGame}
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel="Start mission"
+          accessibilityHint="Begins the game"
         >
           <Text style={{ color: colors.buttonText, textAlign: 'center', fontSize: 18, fontWeight: 'bold' }}>
             START MISSION
