@@ -323,7 +323,7 @@ export const UPGRADE_COSTS: Record<keyof WeaponUpgrades, number[]> = {
 //                         Special Abilities
 // ------------------------------------------------------------------ //
 
-export type AbilityType = 'emp_blast' | 'missile_barrage' | 'time_warp' | 'shield_burst'
+export type AbilityType = 'emp_blast' | 'missile_barrage' | 'time_warp' | 'shield_burst' | 'phase_shift'
 
 export interface SpecialAbility {
   type: AbilityType
@@ -338,6 +338,7 @@ export const ABILITY_STATS: Record<AbilityType, { cooldown: number; duration: nu
   missile_barrage: { cooldown: 15, duration: 0, description: 'Fires 8 homing missiles' },
   time_warp: { cooldown: 25, duration: 5, description: 'Slows time by 50% for 5 seconds' },
   shield_burst: { cooldown: 30, duration: 8, description: 'Invincibility for 8 seconds' },
+  phase_shift: { cooldown: 22, duration: 4, description: 'Become intangible for 4 seconds' },
 }
 
 // ------------------------------------------------------------------ //
