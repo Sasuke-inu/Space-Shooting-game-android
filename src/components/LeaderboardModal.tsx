@@ -16,7 +16,7 @@ export function LeaderboardModal({ visible, onClose }: LeaderboardModalProps) {
   const t = useI18nStore((s) => s.t)
 
   return (
-    <Modal visible={visible} transparent animationType="fade">
+    <Modal visible={visible} transparent animationType="fade" accessibilityViewIsModal>
       <View
         style={{
           flex: 1,
@@ -36,6 +36,8 @@ export function LeaderboardModal({ visible, onClose }: LeaderboardModalProps) {
             width: 380,
             maxHeight: "85%",
           }}
+          accessibilityRole="dialog"
+          accessibilityLabel="Leaderboard dialog"
         >
           {/* Header */}
           <Text
@@ -46,6 +48,7 @@ export function LeaderboardModal({ visible, onClose }: LeaderboardModalProps) {
               marginBottom: 16,
               textAlign: "center",
             }}
+            accessibilityRole="header"
           >
             🏆 {t("leaderboard.title")}
           </Text>
@@ -60,6 +63,7 @@ export function LeaderboardModal({ visible, onClose }: LeaderboardModalProps) {
               borderRadius: 8,
               marginBottom: 8,
             }}
+            accessibilityRole="header"
           >
             <Text
               style={{
@@ -109,6 +113,7 @@ export function LeaderboardModal({ visible, onClose }: LeaderboardModalProps) {
           <ScrollView
             showsVerticalScrollIndicator={false}
             style={{ maxHeight: 400 }}
+            accessibilityLabel="High scores list"
           >
             {scores.length === 0 ? (
               <View
@@ -129,97 +134,106 @@ export function LeaderboardModal({ visible, onClose }: LeaderboardModalProps) {
                 </Text>
               </View>
             ) : (
-              scores.map((score, index) => (
-                <View
-                  key={`${score.date}-${index}`}
-                  style={{
-                    flexDirection: "column",
-                    paddingHorizontal: 12,
-                    paddingVertical: 10,
-                    marginBottom: 4,
-                    backgroundColor:
-                      index === 0
-                        ? `${colors.accent}20`
-                        : colors.buttonSecondary,
-                    borderRadius: 8,
-                    borderWidth: index === 0 ? 2 : 0,
-                    borderColor: index === 0 ? colors.accent : "transparent",
-                  }}
-                >
-                  {/* Top Row: Rank, Name, Score, Wave */}
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <Text
-                      style={{
-                        color: index === 0 ? colors.accent : colors.textPrimary,
-                        fontSize: 16,
-                        fontWeight: "bold",
-                        width: 40,
-                      }}
-                    >
-                      {index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `#${index + 1}`}
-                    </Text>
-                    <Text
-                      style={{
-                        color: colors.textPrimary,
-                        fontSize: 14,
-                        fontWeight: "600",
-                        flex: 1,
-                      }}
-                    >
-                      {score.name}
-                    </Text>
-                    <Text
-                      style={{
-                        color: colors.accent,
-                        fontSize: 16,
-                        fontWeight: "bold",
-                        width: 70,
-                        textAlign: "right",
-                      }}
-                    >
-                      {score.score.toLocaleString()}
-                    </Text>
-                    <Text
-                      style={{
-                        color: colors.textSecondary,
-                        fontSize: 14,
-                        width: 50,
-                        textAlign: "center",
-                      }}
-                    >
-                      {score.wave}
-                    </Text>
-                  </View>
+              scores.map((score, index) => {
+                const rankText = index === 0 ? "First place" : index === 1 ? "Second place" : index === 2 ? "Third place" : `Rank ${index + 1}`
+                const shipName = score.ship.charAt(0).toUpperCase() + score.ship.slice(1)
+                const dateText = format(new Date(score.date), "MMM d, yyyy")
 
-                  {/* Bottom Row: Ship and Date */}
+                return (
                   <View
+                    key={`${score.date}-${index}`}
                     style={{
-                      flexDirection: "row",
-                      marginTop: 4,
-                      marginLeft: 40,
-                      alignItems: "center",
+                      flexDirection: "column",
+                      paddingHorizontal: 12,
+                      paddingVertical: 10,
+                      marginBottom: 4,
+                      backgroundColor:
+                        index === 0
+                          ? `${colors.accent}20`
+                          : colors.buttonSecondary,
+                      borderRadius: 8,
+                      borderWidth: index === 0 ? 2 : 0,
+                      borderColor: index === 0 ? colors.accent : "transparent",
                     }}
+                    accessible={true}
+                    accessibilityLabel={`${rankText}: ${score.name} with ${score.score.toLocaleString()} points, wave ${score.wave}, using ${shipName} ship, achieved on ${dateText}`}
                   >
-                    <Text
+                    {/* Top Row: Rank, Name, Score, Wave */}
+                    <View style={{ flexDirection: "row", alignItems: "center" }} importantForAccessibility="no-hide-descendants">
+                      <Text
+                        style={{
+                          color: index === 0 ? colors.accent : colors.textPrimary,
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          width: 40,
+                        }}
+                      >
+                        {index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `#${index + 1}`}
+                      </Text>
+                      <Text
+                        style={{
+                          color: colors.textPrimary,
+                          fontSize: 14,
+                          fontWeight: "600",
+                          flex: 1,
+                        }}
+                      >
+                        {score.name}
+                      </Text>
+                      <Text
+                        style={{
+                          color: colors.accent,
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          width: 70,
+                          textAlign: "right",
+                        }}
+                      >
+                        {score.score.toLocaleString()}
+                      </Text>
+                      <Text
+                        style={{
+                          color: colors.textSecondary,
+                          fontSize: 14,
+                          width: 50,
+                          textAlign: "center",
+                        }}
+                      >
+                        {score.wave}
+                      </Text>
+                    </View>
+
+                    {/* Bottom Row: Ship and Date */}
+                    <View
                       style={{
-                        color: colors.textSecondary,
-                        fontSize: 11,
-                        flex: 1,
+                        flexDirection: "row",
+                        marginTop: 4,
+                        marginLeft: 40,
+                        alignItems: "center",
                       }}
+                      importantForAccessibility="no-hide-descendants"
                     >
-                      🚀 {score.ship.charAt(0).toUpperCase() + score.ship.slice(1)}
-                    </Text>
-                    <Text
-                      style={{
-                        color: colors.textSecondary,
-                        fontSize: 11,
-                      }}
-                    >
-                      {format(new Date(score.date), "MMM d, yyyy")}
-                    </Text>
+                      <Text
+                        style={{
+                          color: colors.textSecondary,
+                          fontSize: 11,
+                          flex: 1,
+                        }}
+                      >
+                        🚀 {shipName}
+                      </Text>
+                      <Text
+                        style={{
+                          color: colors.textSecondary,
+                          fontSize: 11,
+                        }}
+                      >
+                        {dateText}
+                      </Text>
+                    </View>
                   </View>
-                </View>
-              ))
+                )
+              })
             )}
           </ScrollView>
 
@@ -234,6 +248,9 @@ export function LeaderboardModal({ visible, onClose }: LeaderboardModalProps) {
               marginTop: 16,
               alignItems: "center",
             }}
+            accessibilityRole="button"
+            accessibilityLabel={t("leaderboard.close")}
+            accessibilityHint="Close leaderboard dialog"
           >
             <Text
               style={{
