@@ -353,17 +353,17 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
     // Enemy colors
     enemy: {
       scout: colors.enemyShip,
-      tank: '#ff6666',
-      sniper: '#9966ff',
-      bomber: '#ff9933',
+      tank: colors.enemyTank,
+      sniper: colors.enemySniper,
+      bomber: colors.enemyBomber,
       default: colors.enemyShip,
     },
     // Enemy fill colors with transparency
     enemyFill: {
       scout: colors.enemyShip + '20',
-      tank: '#ff666620',
-      sniper: '#9966ff20',
-      bomber: '#ff993320',
+      tank: colors.enemyTank + '20',
+      sniper: colors.enemySniper + '20',
+      bomber: colors.enemyBomber + '20',
       default: colors.enemyShip + '20',
     },
     // Boss phase colors
