@@ -10,21 +10,19 @@ import {
   Platform,
 } from 'react-native';
 import Slider from '@react-native-community/slider';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useI18nStore, SUPPORTED_LANGUAGES, LanguageCode } from '../i18n';
+import { useI18nStore, SUPPORTED_LANGUAGES } from '../i18n';
 import { useAppSettingsStore, JoystickSize } from '../state/settingsStore';
 import { useSettingsStore, useTheme, themeList, HapticIntensity } from '../theme';
-import { useStatisticsStore, useAchievementStore, useUpgradesStore } from '../state/progressStore';
+import { useStatisticsStore, useAchievementStore, useUpgradesStore, useThemeUnlockStore } from '../state/progressStore';
 import { ThemeId } from '../theme/types';
 import { scheduleDailyChallengeReminder, cancelDailyChallengeReminder } from '../utils/androidFeatures';
+import { playSfx } from '../utils/audioManager';
+import { QualityLevel } from '../types/performance';
 
 type TabType = 'general' | 'controls' | 'account';
-type SettingsNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function SettingsScreen() {
   const theme = useTheme();
-  const navigation = useNavigation<SettingsNavigationProp>();
   const { t, currentLanguage, setLanguage } = useI18nStore();
   const [activeTab, setActiveTab] = useState<TabType>('general');
   const [languageModalVisible, setLanguageModalVisible] = useState(false);
@@ -202,6 +200,7 @@ export default function SettingsScreen() {
       <View
         className="flex-row border-b"
         style={{ borderBottomColor: theme.colors.panelBorder }}
+        accessibilityRole="tablist"
       >
         {(['general', 'controls', 'account'] as TabType[]).map((tab) => (
           <TouchableOpacity
@@ -217,6 +216,10 @@ export default function SettingsScreen() {
               playSfx('button_click');
               setActiveTab(tab);
             }}
+            accessibilityRole="tab"
+            accessibilityLabel={t(`settings.${tab}`)}
+            accessibilityState={{ selected: activeTab === tab }}
+            accessibilityHint={`Switch to ${t(`settings.${tab}`)} settings tab`}
           >
             <Text
               className="text-center text-base font-semibold capitalize"
@@ -226,6 +229,7 @@ export default function SettingsScreen() {
                     ? theme.colors.textPrimary
                     : theme.colors.textMuted,
               }}
+              importantForAccessibility="no-hide-descendants"
             >
               {t(`settings.${tab}`)}
             </Text>
@@ -255,8 +259,11 @@ export default function SettingsScreen() {
                   playSfx('button_click');
                   setLanguageModalVisible(true);
                 }}
+                accessibilityRole="button"
+                accessibilityLabel={`${t('settings.language')}: ${SUPPORTED_LANGUAGES.find((l) => l.code === currentLanguage)?.nativeName}`}
+                accessibilityHint="Open language selection menu"
               >
-                <Text style={{ color: theme.colors.textPrimary }}>
+                <Text style={{ color: theme.colors.textPrimary }} importantForAccessibility="no-hide-descendants">
                   {SUPPORTED_LANGUAGES.find((l) => l.code === currentLanguage)?.flag}{' '}
                   {SUPPORTED_LANGUAGES.find((l) => l.code === currentLanguage)?.nativeName}
                 </Text>
@@ -281,8 +288,11 @@ export default function SettingsScreen() {
                   playSfx('button_click');
                   setThemeModalVisible(true);
                 }}
+                accessibilityRole="button"
+                accessibilityLabel={`${t('settings.theme')}: ${themeList.find((th) => th.id === themeId)?.name}`}
+                accessibilityHint="Open theme selection menu"
               >
-                <Text style={{ color: theme.colors.textPrimary }}>
+                <Text style={{ color: theme.colors.textPrimary }} importantForAccessibility="no-hide-descendants">
                   {themeList.find((th) => th.id === themeId)?.icon}{' '}
                   {themeList.find((th) => th.id === themeId)?.name}
                 </Text>
@@ -304,8 +314,11 @@ export default function SettingsScreen() {
                   borderColor: theme.colors.panelBorder,
                 }}
                 onPress={() => setQualityModalVisible(true)}
+                accessibilityRole="button"
+                accessibilityLabel={`Graphics Quality: ${qualityLevel}`}
+                accessibilityHint="Open graphics quality selection menu"
               >
-                <Text style={{ color: theme.colors.textPrimary }} className="capitalize">
+                <Text style={{ color: theme.colors.textPrimary }} className="capitalize" importantForAccessibility="no-hide-descendants">
                   {qualityLevel}
                 </Text>
               </TouchableOpacity>
@@ -333,6 +346,14 @@ export default function SettingsScreen() {
                 minimumTrackTintColor={theme.colors.buttonPrimary}
                 maximumTrackTintColor={theme.colors.panelBorder}
                 thumbTintColor={theme.colors.buttonPrimary}
+                accessibilityRole="adjustable"
+                accessibilityLabel={`${t('settings.sound')} volume`}
+                accessibilityValue={{
+                  min: 0,
+                  max: 100,
+                  now: Math.round(sfxVolume * 100),
+                  text: `${Math.round(sfxVolume * 100)} percent`,
+                }}
               />
             </View>
 
@@ -358,6 +379,14 @@ export default function SettingsScreen() {
                 minimumTrackTintColor={theme.colors.buttonPrimary}
                 maximumTrackTintColor={theme.colors.panelBorder}
                 thumbTintColor={theme.colors.buttonPrimary}
+                accessibilityRole="adjustable"
+                accessibilityLabel={`${t('settings.music')} volume`}
+                accessibilityValue={{
+                  min: 0,
+                  max: 100,
+                  now: Math.round(musicVolume * 100),
+                  text: `${Math.round(musicVolume * 100)} percent`,
+                }}
               />
             </View>
 
@@ -386,6 +415,10 @@ export default function SettingsScreen() {
                     true: theme.colors.buttonPrimary,
                   }}
                   thumbColor="#ffffff"
+                  accessibilityRole="switch"
+                  accessibilityLabel={t('settings.vibration')}
+                  accessibilityState={{ checked: hapticsEnabled }}
+                  accessibilityHint="Enable or disable haptic feedback"
                 />
               </View>
             </View>
@@ -421,6 +454,10 @@ export default function SettingsScreen() {
                             borderColor: theme.colors.panelBorder,
                           }}
                           onPress={() => setHapticIntensity(intensity)}
+                          accessibilityRole="button"
+                          accessibilityLabel={`${intensity} vibration intensity`}
+                          accessibilityState={{ selected: hapticIntensity === intensity }}
+                          accessibilityHint={`Set vibration intensity to ${intensity}`}
                         >
                           <Text
                             className="text-center text-sm font-semibold capitalize"
@@ -429,6 +466,7 @@ export default function SettingsScreen() {
                                 ? '#ffffff'
                                 : theme.colors.textSecondary,
                             }}
+                            importantForAccessibility="no-hide-descendants"
                           >
                             {intensity}
                           </Text>
@@ -468,6 +506,10 @@ export default function SettingsScreen() {
                       true: theme.colors.buttonPrimary,
                     }}
                     thumbColor="#ffffff"
+                    accessibilityRole="switch"
+                    accessibilityLabel="Keep Screen Awake"
+                    accessibilityState={{ checked: keepScreenAwake }}
+                    accessibilityHint="Prevent screen from sleeping during gameplay"
                   />
                 </View>
 
@@ -501,6 +543,10 @@ export default function SettingsScreen() {
                       true: theme.colors.buttonPrimary,
                     }}
                     thumbColor="#ffffff"
+                    accessibilityRole="switch"
+                    accessibilityLabel="Immersive Mode"
+                    accessibilityState={{ checked: immersiveMode }}
+                    accessibilityHint="Hide navigation bar during gameplay"
                   />
                 </View>
 
@@ -541,6 +587,10 @@ export default function SettingsScreen() {
                       true: theme.colors.buttonPrimary,
                     }}
                     thumbColor="#ffffff"
+                    accessibilityRole="switch"
+                    accessibilityLabel="Daily Challenge Reminder"
+                    accessibilityState={{ checked: notificationsEnabled }}
+                    accessibilityHint="Get notified at 9 AM daily"
                   />
                 </View>
               </View>
@@ -573,6 +623,14 @@ export default function SettingsScreen() {
                 minimumTrackTintColor={theme.colors.buttonPrimary}
                 maximumTrackTintColor={theme.colors.panelBorder}
                 thumbTintColor={theme.colors.buttonPrimary}
+                accessibilityRole="adjustable"
+                accessibilityLabel={t('settings.sensitivity')}
+                accessibilityValue={{
+                  min: 0.5,
+                  max: 2.0,
+                  now: joystickSensitivity,
+                  text: `${joystickSensitivity.toFixed(1)} times`,
+                }}
               />
             </View>
 
@@ -594,8 +652,11 @@ export default function SettingsScreen() {
                   playSfx('button_click');
                   setSizeModalVisible(true);
                 }}
+                accessibilityRole="button"
+                accessibilityLabel={`${t('settings.joystickSize')}: ${t(`settings.${joystickSize}`)}`}
+                accessibilityHint="Open joystick size selection menu"
               >
-                <Text style={{ color: theme.colors.textPrimary }} className="capitalize">
+                <Text style={{ color: theme.colors.textPrimary }} className="capitalize" importantForAccessibility="no-hide-descendants">
                   {t(`settings.${joystickSize}`)}
                 </Text>
               </TouchableOpacity>
@@ -626,6 +687,10 @@ export default function SettingsScreen() {
                     true: theme.colors.buttonPrimary,
                   }}
                   thumbColor="#ffffff"
+                  accessibilityRole="switch"
+                  accessibilityLabel={t('settings.autoFire')}
+                  accessibilityState={{ checked: autoFire }}
+                  accessibilityHint="Enable or disable automatic firing"
                 />
               </View>
             </View>
@@ -655,6 +720,10 @@ export default function SettingsScreen() {
                     true: theme.colors.buttonPrimary,
                   }}
                   thumbColor="#ffffff"
+                  accessibilityRole="switch"
+                  accessibilityLabel={t('settings.invertY')}
+                  accessibilityState={{ checked: invertY }}
+                  accessibilityHint="Invert Y-axis controls for joystick"
                 />
               </View>
             </View>
@@ -724,10 +793,14 @@ export default function SettingsScreen() {
                   playSfx('button_click');
                   handleResetSettings();
                 }}
+                accessibilityRole="button"
+                accessibilityLabel={t('settings.resetSettings')}
+                accessibilityHint="Reset all settings to default values"
               >
                 <Text
                   className="text-center font-semibold"
                   style={{ color: theme.colors.textPrimary }}
+                  importantForAccessibility="no-hide-descendants"
                 >
                   {t('settings.resetSettings')}
                 </Text>
@@ -743,10 +816,14 @@ export default function SettingsScreen() {
                   playSfx('button_click');
                   handleResetProgress();
                 }}
+                accessibilityRole="button"
+                accessibilityLabel={t('settings.resetProgress')}
+                accessibilityHint="Delete all game progress, stats, and achievements"
               >
                 <Text
                   className="text-center font-semibold"
                   style={{ color: '#ff4444' }}
+                  importantForAccessibility="no-hide-descendants"
                 >
                   {t('settings.resetProgress')}
                 </Text>
@@ -762,12 +839,16 @@ export default function SettingsScreen() {
         transparent
         animationType="fade"
         onRequestClose={() => setLanguageModalVisible(false)}
+        accessibilityViewIsModal={true}
       >
         <TouchableOpacity
           className="flex-1 justify-center items-center"
           style={{ backgroundColor: theme.colors.modalOverlay }}
           activeOpacity={1}
           onPress={() => setLanguageModalVisible(false)}
+          accessibilityRole="button"
+          accessibilityLabel="Close language selection"
+          accessibilityHint="Dismiss language selection menu"
         >
           <View
             className="w-4/5 rounded-lg p-4"
@@ -777,10 +858,12 @@ export default function SettingsScreen() {
               borderWidth: 1,
             }}
             onStartShouldSetResponder={() => true}
+            accessibilityRole="dialog"
           >
             <Text
               className="text-xl font-bold mb-4 text-center"
               style={{ color: theme.colors.textPrimary }}
+              accessibilityRole="header"
             >
               {t('settings.language')}
             </Text>
@@ -803,8 +886,12 @@ export default function SettingsScreen() {
                   setLanguage(lang.code);
                   setLanguageModalVisible(false);
                 }}
+                accessibilityRole="button"
+                accessibilityLabel={lang.nativeName}
+                accessibilityState={{ selected: currentLanguage === lang.code }}
+                accessibilityHint={`Select ${lang.nativeName} as app language`}
               >
-                <Text style={{ color: theme.colors.textPrimary }}>
+                <Text style={{ color: theme.colors.textPrimary }} importantForAccessibility="no-hide-descendants">
                   {lang.flag} {lang.nativeName}
                 </Text>
               </TouchableOpacity>
@@ -819,12 +906,16 @@ export default function SettingsScreen() {
         transparent
         animationType="fade"
         onRequestClose={() => setThemeModalVisible(false)}
+        accessibilityViewIsModal={true}
       >
         <TouchableOpacity
           className="flex-1 justify-center items-center"
           style={{ backgroundColor: theme.colors.modalOverlay }}
           activeOpacity={1}
           onPress={() => setThemeModalVisible(false)}
+          accessibilityRole="button"
+          accessibilityLabel="Close theme selection"
+          accessibilityHint="Dismiss theme selection menu"
         >
           <View
             className="w-4/5 rounded-lg p-4 max-h-4/5"
@@ -834,14 +925,16 @@ export default function SettingsScreen() {
               borderWidth: 1,
             }}
             onStartShouldSetResponder={() => true}
+            accessibilityRole="dialog"
           >
             <Text
               className="text-xl font-bold mb-4 text-center"
               style={{ color: theme.colors.textPrimary }}
+              accessibilityRole="header"
             >
               {t('settings.theme')}
             </Text>
-            <ScrollView className="max-h-96">
+            <ScrollView className="max-h-96" accessibilityLabel="Available themes">
               {themeList.map((th) => {
                 const unlocked = isThemeUnlocked(th.id as ThemeId);
                 const unlockDesc = getUnlockDescription(th.id as ThemeId);
@@ -862,15 +955,20 @@ export default function SettingsScreen() {
                       opacity: unlocked ? 1 : 0.6,
                     }}
                     onPress={() => handleThemeSelect(th.id as ThemeId)}
+                    accessibilityRole="button"
+                    accessibilityLabel={`${th.name}. ${th.description}. ${unlocked ? (themeId === th.id ? 'Currently selected' : 'Unlocked') : `Locked. ${unlockDesc}`}`}
+                    accessibilityState={{ selected: themeId === th.id, disabled: !unlocked }}
+                    accessibilityHint={unlocked ? `Select ${th.name} theme` : `Theme locked. ${unlockDesc}`}
                   >
                     <View className="flex-row items-center justify-between">
                       <View className="flex-1">
-                        <Text style={{ color: theme.colors.textPrimary }}>
+                        <Text style={{ color: theme.colors.textPrimary }} importantForAccessibility="no-hide-descendants">
                           {unlocked ? th.icon : '🔒'} {th.name}
                         </Text>
                         <Text
                           className="text-xs mt-1"
                           style={{ color: theme.colors.textMuted }}
+                          importantForAccessibility="no-hide-descendants"
                         >
                           {th.description}
                         </Text>
@@ -878,6 +976,7 @@ export default function SettingsScreen() {
                           <Text
                             className="text-xs mt-1 italic"
                             style={{ color: theme.colors.textSecondary }}
+                            importantForAccessibility="no-hide-descendants"
                           >
                             {unlockDesc}
                           </Text>
@@ -898,12 +997,16 @@ export default function SettingsScreen() {
         transparent
         animationType="fade"
         onRequestClose={() => setSizeModalVisible(false)}
+        accessibilityViewIsModal={true}
       >
         <TouchableOpacity
           className="flex-1 justify-center items-center"
           style={{ backgroundColor: theme.colors.modalOverlay }}
           activeOpacity={1}
           onPress={() => setSizeModalVisible(false)}
+          accessibilityRole="button"
+          accessibilityLabel="Close joystick size selection"
+          accessibilityHint="Dismiss joystick size selection menu"
         >
           <View
             className="w-4/5 rounded-lg p-4"
@@ -913,10 +1016,12 @@ export default function SettingsScreen() {
               borderWidth: 1,
             }}
             onStartShouldSetResponder={() => true}
+            accessibilityRole="dialog"
           >
             <Text
               className="text-xl font-bold mb-4 text-center"
               style={{ color: theme.colors.textPrimary }}
+              accessibilityRole="header"
             >
               {t('settings.joystickSize')}
             </Text>
@@ -939,8 +1044,12 @@ export default function SettingsScreen() {
                   setJoystickSize(size);
                   setSizeModalVisible(false);
                 }}
+                accessibilityRole="button"
+                accessibilityLabel={t(`settings.${size}`)}
+                accessibilityState={{ selected: joystickSize === size }}
+                accessibilityHint={`Set joystick size to ${t(`settings.${size}`)}`}
               >
-                <Text style={{ color: theme.colors.textPrimary }} className="capitalize">
+                <Text style={{ color: theme.colors.textPrimary }} className="capitalize" importantForAccessibility="no-hide-descendants">
                   {t(`settings.${size}`)}
                 </Text>
               </TouchableOpacity>
@@ -955,12 +1064,16 @@ export default function SettingsScreen() {
         transparent
         animationType="fade"
         onRequestClose={() => setQualityModalVisible(false)}
+        accessibilityViewIsModal={true}
       >
         <TouchableOpacity
           className="flex-1 justify-center items-center"
           style={{ backgroundColor: theme.colors.modalOverlay }}
           activeOpacity={1}
           onPress={() => setQualityModalVisible(false)}
+          accessibilityRole="button"
+          accessibilityLabel="Close graphics quality selection"
+          accessibilityHint="Dismiss graphics quality selection menu"
         >
           <View
             className="w-4/5 rounded-lg p-4"
@@ -970,45 +1083,57 @@ export default function SettingsScreen() {
               borderWidth: 1,
             }}
             onStartShouldSetResponder={() => true}
+            accessibilityRole="dialog"
           >
             <Text
               className="text-xl font-bold mb-4 text-center"
               style={{ color: theme.colors.textPrimary }}
+              accessibilityRole="header"
             >
               Graphics Quality
             </Text>
-            {(['low', 'medium', 'high'] as QualityLevel[]).map((quality) => (
-              <TouchableOpacity
-                key={quality}
-                className="p-4 rounded-lg mb-2 border"
-                style={{
-                  backgroundColor:
-                    qualityLevel === quality
-                      ? theme.colors.buttonPrimary + '20'
-                      : theme.colors.background,
-                  borderColor:
-                    qualityLevel === quality
-                      ? theme.colors.buttonPrimary
-                      : theme.colors.panelBorder,
-                }}
-                onPress={() => {
-                  setQualityLevel(quality);
-                  setQualityModalVisible(false);
-                }}
-              >
-                <Text style={{ color: theme.colors.textPrimary }} className="capitalize">
-                  {quality}
-                </Text>
-                <Text
-                  className="text-xs mt-1"
-                  style={{ color: theme.colors.textMuted }}
+            {(['low', 'medium', 'high'] as QualityLevel[]).map((quality) => {
+              const descriptions = {
+                low: 'Reduced particles and effects for better performance',
+                medium: 'Balanced visuals and performance',
+                high: 'Full visual effects with maximum particles',
+              };
+              return (
+                <TouchableOpacity
+                  key={quality}
+                  className="p-4 rounded-lg mb-2 border"
+                  style={{
+                    backgroundColor:
+                      qualityLevel === quality
+                        ? theme.colors.buttonPrimary + '20'
+                        : theme.colors.background,
+                    borderColor:
+                      qualityLevel === quality
+                        ? theme.colors.buttonPrimary
+                        : theme.colors.panelBorder,
+                  }}
+                  onPress={() => {
+                    setQualityLevel(quality);
+                    setQualityModalVisible(false);
+                  }}
+                  accessibilityRole="button"
+                  accessibilityLabel={`${quality} quality. ${descriptions[quality]}`}
+                  accessibilityState={{ selected: qualityLevel === quality }}
+                  accessibilityHint={`Set graphics quality to ${quality}`}
                 >
-                  {quality === 'low' && 'Reduced particles and effects for better performance'}
-                  {quality === 'medium' && 'Balanced visuals and performance'}
-                  {quality === 'high' && 'Full visual effects with maximum particles'}
-                </Text>
-              </TouchableOpacity>
-            ))}
+                  <Text style={{ color: theme.colors.textPrimary }} className="capitalize" importantForAccessibility="no-hide-descendants">
+                    {quality}
+                  </Text>
+                  <Text
+                    className="text-xs mt-1"
+                    style={{ color: theme.colors.textMuted }}
+                    importantForAccessibility="no-hide-descendants"
+                  >
+                    {descriptions[quality]}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </TouchableOpacity>
       </Modal>
@@ -1027,17 +1152,21 @@ function StatRow({
   theme: any;
 }) {
   return (
-    <View className="flex-row justify-between items-center p-3 rounded-lg"
+    <View
+      className="flex-row justify-between items-center p-3 rounded-lg"
       style={{
         backgroundColor: theme.colors.panelBg,
         borderColor: theme.colors.panelBorder,
         borderWidth: 1,
       }}
+      accessible={true}
+      accessibilityLabel={`${label}: ${value}`}
     >
-      <Text style={{ color: theme.colors.textSecondary }}>{label}</Text>
+      <Text style={{ color: theme.colors.textSecondary }} importantForAccessibility="no-hide-descendants">{label}</Text>
       <Text
         className="font-semibold"
         style={{ color: theme.colors.textPrimary }}
+        importantForAccessibility="no-hide-descendants"
       >
         {value}
       </Text>
