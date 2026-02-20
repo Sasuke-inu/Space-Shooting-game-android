@@ -30,6 +30,13 @@ export const ShipSelector: React.FC<ShipSelectorProps> = ({ currentShip, unlocke
             backgroundColor: isSelected ? colors.buttonSecondary : 'transparent',
             opacity: isUnlocked ? 1 : 0.5,
           }}
+          accessibilityRole="radio"
+          accessibilityLabel={`${ship} ship${isSelected ? ', selected' : ''}${!isUnlocked ? ', locked' : ''}. Speed ${(shipStats.speed * 100).toFixed(0)} percent, Fire Rate ${(shipStats.fireRate * 100).toFixed(0)} percent, Hull ${shipStats.hull}, Special ability ${shipStats.special}`}
+          accessibilityHint={isUnlocked ? 'Double tap to select this ship' : 'This ship is locked and cannot be selected'}
+          accessibilityState={{
+            selected: isSelected,
+            disabled: !isUnlocked,
+          }}
         >
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: 'bold', textTransform: 'capitalize' }}>
