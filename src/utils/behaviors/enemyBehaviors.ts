@@ -140,6 +140,41 @@ export function updateEnemyBehavior(
       }
       break
 
+    case 'teleporter':
+      // Moderate speed movement toward player, periodically teleports to random location
+      const teleporterDesired = dir
+      let teleporterVel = add(e.vel, mul(teleporterDesired, stats.speed * dt))
+      teleporterVel = mul(teleporterVel, 0.99)
+      newEnemy.vel = teleporterVel
+      newEnemy.pos = wrap(add(e.pos, mul(teleporterVel, dt * animSpeed)), state.w, state.h)
+      newEnemy.ang = angleOf(toP)
+
+      // Teleport timer
+      newEnemy.teleportTimer = (e.teleportTimer || rand(3, 5)) - dt
+      if (newEnemy.teleportTimer <= 0) {
+        // Teleport to random location
+        newEnemy.pos = {
+          x: rand(50, state.w - 50),
+          y: rand(50, state.h - 50),
+        }
+        newEnemy.vel = { x: 0, y: 0 }
+        newEnemy.teleportTimer = rand(3, 5)
+      }
+
+      // Fire at player with moderate accuracy
+      newEnemy.cooldown = e.cooldown - dt
+      if (d < 500 && newEnemy.cooldown <= 0) {
+        const aim = angleOf(sub(state.player.pos, e.pos)) + rand(-aimInaccuracy, aimInaccuracy)
+        state.addBullet({
+          pos: add(e.pos, fromAngle(aim, 16)),
+          vel: fromAngle(aim, BULLET_SPEED_ENEMY),
+          life: BULLET_LIFE_ENEMY,
+          friendly: false,
+        })
+        newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.25)
+      }
+      break
+
     default:
       // Default behavior (legacy)
       const desired = add(dir, fromAngle(state.time * 0.7, 0.4 * (1 - difficulty * 0.5)))
