@@ -808,6 +808,7 @@ export const themes: Partial<Record<ThemeId, GameTheme>> = {
   'halloween': halloweenTheme,
   'synthwave': synthwaveTheme,
   'winter': winterTheme,
+  'deep-space': deepSpaceTheme,
 }
 
 export const themeList: GameTheme[] = Object.values(themes)
