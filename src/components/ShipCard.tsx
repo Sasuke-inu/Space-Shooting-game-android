@@ -102,12 +102,63 @@ export const ShipCard: React.FC<ShipCardProps> = ({
     [colors, isSelected, isUnlocked, canAfford]
   )
 
+  // Accessibility label with ship details
+  const accessibilityLabel = useMemo(() => {
+    const shipName = t(`ships.${shipType}.name`)
+    const selectedStatus = isSelected ? t("ships.selected") || "Selected" : ""
+    const lockStatus = !isUnlocked ? t("ships.locked") || "Locked" : ""
+
+    const statsSummary = `${t("stats.speed") || "Speed"}: ${stats.speed.toFixed(1)}, ${
+      t("stats.fireRate") || "Fire Rate"
+    }: ${stats.fireRate.toFixed(1)}, ${t("stats.damage") || "Damage"}: ${stats.damage.toFixed(1)}, ${
+      t("stats.hull") || "Hull"
+    }: ${stats.hull}`
+
+    const ability = `${t("ships.specialAbility") || "Special Ability"}: ${stats.special}, ${
+      t("ships.cooldown") || "Cooldown"
+    }: ${abilityInfo.cooldown} seconds`
+
+    let label = `${shipName}. ${statsSummary}. ${ability}`
+
+    if (!isUnlocked) {
+      const cost = `${t("ships.locked") || "Locked"}. ${unlockCost} ${t("general.credits") || "Credits"}`
+      const affordability = !canAfford
+        ? `. ${t("ships.insufficientCredits") || "Insufficient Credits"}`
+        : ""
+      label += `. ${cost}${affordability}`
+    }
+
+    if (isSelected) {
+      label = `${selectedStatus}. ${label}`
+    }
+
+    return label
+  }, [t, shipType, isSelected, isUnlocked, stats, abilityInfo, unlockCost, canAfford])
+
+  // Accessibility hint for what happens on tap
+  const accessibilityHint = useMemo(() => {
+    if (!isUnlocked) {
+      return t("ships.cannotSelectLocked") || "This ship is locked and cannot be selected"
+    }
+    if (isSelected) {
+      return t("ships.alreadySelected") || "This ship is already selected"
+    }
+    return t("ships.tapToSelect") || "Double tap to select this ship"
+  }, [t, isUnlocked, isSelected])
+
   return (
     <TouchableOpacity
       style={[styles.container, dynamicStyles.container]}
       onPress={onSelect}
       activeOpacity={0.7}
       disabled={!isUnlocked}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
+      accessibilityState={{
+        selected: isSelected,
+        disabled: !isUnlocked,
+      }}
     >
       {/* Header with ship icon and name */}
       <View style={[styles.header, dynamicStyles.header]}>
