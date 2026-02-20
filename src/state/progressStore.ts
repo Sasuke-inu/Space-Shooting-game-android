@@ -383,6 +383,7 @@ export const SHIP_COSTS: Record<ShipType, number> = {
   scout: 500,
   tank: 750,
   interceptor: 1000,
+  ghost: 1250,
 }
 
 export const useUpgradesStore = create<UpgradesState>()(
@@ -396,12 +397,14 @@ export const useUpgradesStore = create<UpgradesState>()(
         scout: ['default'],
         tank: ['default'],
         interceptor: ['default'],
+        ghost: ['default'],
       },
       selectedSkins: {
         fighter: 'default',
         scout: 'default',
         tank: 'default',
         interceptor: 'default',
+        ghost: 'default',
       },
 
       addCredits: (amount) =>
