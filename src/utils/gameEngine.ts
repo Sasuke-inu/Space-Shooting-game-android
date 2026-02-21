@@ -613,11 +613,14 @@ export const useGameEngine = () => {
       // Query spatial grid for entities near bullet (search radius = bullet radius + max asteroid radius)
       const nearby = spatialGrid!.queryNearby(b.pos, 50)
 
+      // Create a Set of nearby entity positions for O(1) lookup
+      const nearbyPosSet = new Set(nearby.map(ent => ent.pos))
+
       // Bullets vs asteroids
       updatedAsteroids.forEach((a, aIdx) => {
         if (!bulletsToRemove.has(bIdx) && !asteroidsToRemove.has(aIdx)) {
           // Check if asteroid is in nearby entities
-          if (nearby.some(e => e.pos === a.pos)) {
+          if (nearbyPosSet.has(a.pos)) {
             if (dist2(b.pos, a.pos) < (a.radius + 2) * (a.radius + 2)) {
               boom(b.pos, themeColors.particleHit, 12, 180)
               playSfx('explosion_small')
@@ -666,8 +669,8 @@ export const useGameEngine = () => {
       // Bullets vs enemies - collect damage to apply after iteration
       updatedEnemies.forEach((e, eIdx) => {
         if (b.friendly && !bulletsToRemove.has(bIdx) && !enemiesToRemove.has(eIdx)) {
-          // Check if enemy is in nearby entities
-          if (nearby.some(ent => ent.pos === e.pos)) {
+          // Check if enemy is in nearby entities (O(1) lookup via Set)
+          if (nearbyPosSet.has(e.pos)) {
             if (dist2(b.pos, e.pos) < 18 * 18) {
               const damage = 25
               const newHp = e.hp - damage
@@ -701,8 +704,8 @@ export const useGameEngine = () => {
 
       // Bullets vs boss
       if (updatedBoss && b.friendly && !bulletsToRemove.has(bIdx)) {
-        // Check if boss is in nearby entities
-        if (nearby.some(ent => ent.pos === updatedBoss!.pos)) {
+        // Check if boss is in nearby entities (O(1) lookup via Set)
+        if (nearbyPosSet.has(updatedBoss.pos)) {
           const bossHitRadius = 50
           if (dist2(b.pos, updatedBoss.pos) < bossHitRadius * bossHitRadius) {
             // Store boss position before potentially defeating it
