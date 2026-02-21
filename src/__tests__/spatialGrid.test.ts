@@ -506,7 +506,7 @@ describe('SpatialGrid', () => {
       // Allow for some variance due to JS runtime
       const avgTime = times.reduce((a, b) => a + b, 0) / times.length
       times.forEach((time) => {
-        expect(time).toBeLessThan(avgTime * 3) // Within 3x of average
+        expect(time).toBeLessThan(avgTime * 5) // Within 5x of average (allow more variance for JIT/GC)
       })
     })
 

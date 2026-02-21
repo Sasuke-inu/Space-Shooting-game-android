@@ -691,67 +691,69 @@ export const useGameEngine = () => {
       // Query spatial grid for entities near bullet (search radius = bullet radius + max asteroid radius)
       const nearby = spatialGrid!.queryNearby(b.pos, 50)
 
-      // Create a Set of nearby entity positions for O(1) lookup
-      const nearbyPosSet = new Set(nearby.map(ent => ent.pos))
+      // Bullets vs asteroids - iterate only over nearby entities (O(n) not O(n²))
+      nearby.forEach((nearbyEntity) => {
+        // Find the asteroid that has this position reference
+        const aIdx = updatedAsteroids.findIndex(a => a.pos === nearbyEntity.pos)
 
-      // Bullets vs asteroids
-      updatedAsteroids.forEach((a, aIdx) => {
-        if (!bulletsToRemove.has(bIdx) && !asteroidsToRemove.has(aIdx)) {
-          // Check if asteroid is in nearby entities
-          if (nearbyPosSet.has(a.pos)) {
-            if (dist2(b.pos, a.pos) < (a.radius + 2) * (a.radius + 2)) {
-              boom(b.pos, themeColors.particleHit, 12, 180)
-              playSfx('explosion_small')
-              // Split asteroid inline
-              if (a.tier > 1) {
-                const newTier = (a.tier - 1) as 1 | 2
-                for (let i = 0; i < 2; i++) {
-                  const vel = add(a.vel, fromAngle(rand(0, Math.PI * 2), rand(30, 60)))
-                  updatedAsteroids.push({
-                    pos: { ...a.pos },
-                    vel,
-                    radius: a.radius * 0.65,
-                    spin: rand(-2, 2),
-                    ang: rand(0, Math.PI * 2),
-                    tier: newTier,
-                  })
-                }
+        if (aIdx >= 0 && !bulletsToRemove.has(bIdx) && !asteroidsToRemove.has(aIdx)) {
+          const a = updatedAsteroids[aIdx]
+
+          if (dist2(b.pos, a.pos) < (a.radius + 2) * (a.radius + 2)) {
+            boom(b.pos, themeColors.particleHit, 12, 180)
+            playSfx('explosion_small')
+            // Split asteroid inline
+            if (a.tier > 1) {
+              const newTier = (a.tier - 1) as 1 | 2
+              for (let i = 0; i < 2; i++) {
+                const vel = add(a.vel, fromAngle(rand(0, Math.PI * 2), rand(30, 60)))
+                updatedAsteroids.push({
+                  pos: { ...a.pos },
+                  vel,
+                  radius: a.radius * 0.65,
+                  spin: rand(-2, 2),
+                  ang: rand(0, Math.PI * 2),
+                  tier: newTier,
+                })
               }
-              asteroidsToRemove.add(aIdx)
-              bulletsToRemove.add(bIdx)
-
-              // Increment combo
-              comboCount++
-              const multiplierIndex = Math.min(
-                Math.floor(comboCount / 3),
-                COMBO_MULTIPLIERS.length - 1
-              )
-              comboMultiplier = COMBO_MULTIPLIERS[multiplierIndex]
-              comboTimer = COMBO_TIMEOUT
-
-              score += Math.floor(20 * a.tier * comboMultiplier)
-              credits += a.tier
-              newScreenShake = { intensity: 3, duration: 100, elapsed: 0 }
-              hapticMedium()
-
-              // Chance to drop power-up from large asteroids
-              if (a.tier === 3 && Math.random() < POWERUP_DROP_ASTEROID) {
-                newPowerUpsToSpawn.push({ ...a.pos })
-              }
-              sessionShotsHit++ // Record shot hit
             }
+            asteroidsToRemove.add(aIdx)
+            bulletsToRemove.add(bIdx)
+
+            // Increment combo
+            comboCount++
+            const multiplierIndex = Math.min(
+              Math.floor(comboCount / 3),
+              COMBO_MULTIPLIERS.length - 1
+            )
+            comboMultiplier = COMBO_MULTIPLIERS[multiplierIndex]
+            comboTimer = COMBO_TIMEOUT
+
+            score += Math.floor(20 * a.tier * comboMultiplier)
+            credits += a.tier
+            newScreenShake = { intensity: 3, duration: 100, elapsed: 0 }
+            hapticMedium()
+
+            // Chance to drop power-up from large asteroids
+            if (a.tier === 3 && Math.random() < POWERUP_DROP_ASTEROID) {
+              newPowerUpsToSpawn.push({ ...a.pos })
+            }
+            sessionShotsHit++ // Record shot hit
           }
         }
       })
 
-      // Bullets vs enemies - collect damage to apply after iteration
-      updatedEnemies.forEach((e, eIdx) => {
-        if (b.friendly && !bulletsToRemove.has(bIdx) && !enemiesToRemove.has(eIdx)) {
-          // Check if enemy is in nearby entities (O(1) lookup via Set)
-          if (nearbyPosSet.has(e.pos)) {
-            if (dist2(b.pos, e.pos) < 18 * 18) {
-              const damage = 25
-              const newHp = e.hp - damage
+      // Bullets vs enemies - iterate only over nearby entities (O(n) not O(n²))
+      nearby.forEach((nearbyEntity) => {
+        // Find the enemy that has this position reference
+        const eIdx = updatedEnemies.findIndex(e => e.pos === nearbyEntity.pos)
+
+        if (eIdx >= 0 && b.friendly && !bulletsToRemove.has(bIdx) && !enemiesToRemove.has(eIdx)) {
+          const e = updatedEnemies[eIdx]
+
+          if (dist2(b.pos, e.pos) < 18 * 18) {
+            const damage = 25
+            const newHp = e.hp - damage
 
             if (newHp <= 0) {
               // Enemy destroyed - mark for removal
@@ -782,8 +784,9 @@ export const useGameEngine = () => {
 
       // Bullets vs boss
       if (updatedBoss && b.friendly && !bulletsToRemove.has(bIdx)) {
-        // Check if boss is in nearby entities (O(1) lookup via Set)
-        if (nearbyPosSet.has(updatedBoss.pos)) {
+        // Check if boss is in nearby entities
+        const bossNearby = nearby.find(ent => ent.pos === updatedBoss.pos)
+        if (bossNearby) {
           const bossHitRadius = 50
           if (dist2(b.pos, updatedBoss.pos) < bossHitRadius * bossHitRadius) {
             // Store boss position before potentially defeating it
@@ -870,12 +873,14 @@ export const useGameEngine = () => {
     // Player collisions with asteroids (using spatial grid)
     // Query spatial grid for entities near player (search radius = player radius + max asteroid radius)
     const nearbyPlayer = spatialGrid!.queryNearby(state.player.pos, 50)
-    const nearbyPlayerPosSet = new Set(nearbyPlayer.map(ent => ent.pos))
 
-    updatedAsteroids.forEach((a) => {
-      // Check if asteroid is in nearby entities
-      if (nearbyPlayerPosSet.has(a.pos)) {
-        if (dist2(state.player.pos, a.pos) < (a.radius + 12) * (a.radius + 12)) {
+    // Iterate only over nearby entities (O(n) not O(n²))
+    nearbyPlayer.forEach((nearbyEntity) => {
+      // Find the asteroid that has this position reference
+      const asteroid = updatedAsteroids.find(a => a.pos === nearbyEntity.pos)
+
+      if (asteroid) {
+        if (dist2(state.player.pos, asteroid.pos) < (asteroid.radius + 12) * (asteroid.radius + 12)) {
           if (state.player.inv <= 0 && !hasShield) {
             state.updatePlayer({ hp: state.player.hp - 28, inv: 1.0 })
             state.recordDamage()
@@ -889,10 +894,13 @@ export const useGameEngine = () => {
     })
 
     // Player collisions with enemies (using spatial grid)
-    updatedEnemies.forEach((e) => {
-      // Check if enemy is in nearby entities
-      if (nearbyPlayerPosSet.has(e.pos)) {
-        if (dist2(state.player.pos, e.pos) < 22 * 22) {
+    // Iterate only over nearby entities (O(n) not O(n²))
+    nearbyPlayer.forEach((nearbyEntity) => {
+      // Find the enemy that has this position reference
+      const enemy = updatedEnemies.find(e => e.pos === nearbyEntity.pos)
+
+      if (enemy) {
+        if (dist2(state.player.pos, enemy.pos) < 22 * 22) {
           if (state.player.inv <= 0 && !hasShield) {
             state.updatePlayer({ hp: state.player.hp - 20, inv: 0.9 })
             state.recordDamage()
@@ -908,7 +916,8 @@ export const useGameEngine = () => {
     // Player collision with boss (using spatial grid)
     if (state.boss) {
       // Check if boss is in nearby entities
-      if (nearbyPlayerPosSet.has(state.boss.pos)) {
+      const bossNearby = nearbyPlayer.find(ent => ent.pos === state.boss!.pos)
+      if (bossNearby) {
         if (dist2(state.player.pos, state.boss.pos) < 60 * 60) {
           if (state.player.inv <= 0 && !hasShield) {
             state.updatePlayer({ hp: state.player.hp - 40, inv: 1.5 })
@@ -923,9 +932,13 @@ export const useGameEngine = () => {
     }
 
     // Player collisions with power-ups (using spatial grid)
-    updatedPowerUps.forEach((p, pIdx) => {
-      // Check if power-up is in nearby entities
-      if (nearbyPlayerPosSet.has(p.pos)) {
+    // Iterate only over nearby entities (O(n) not O(n²))
+    nearbyPlayer.forEach((nearbyEntity) => {
+      // Find the power-up that has this position reference
+      const pIdx = updatedPowerUps.findIndex(p => p.pos === nearbyEntity.pos)
+
+      if (pIdx >= 0) {
+        const p = updatedPowerUps[pIdx]
         if (dist2(state.player.pos, p.pos) < 30 * 30) {
           powerUpsCollected.add(pIdx)
           state.collectPowerUp(pIdx)
