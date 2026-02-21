@@ -827,16 +827,19 @@ export const useGameEngine = () => {
       }
     })
 
-    // Player collision with boss
+    // Player collision with boss (using spatial grid)
     if (state.boss) {
-      if (dist2(state.player.pos, state.boss.pos) < 60 * 60) {
-        if (state.player.inv <= 0 && !hasShield) {
-          state.updatePlayer({ hp: state.player.hp - 40, inv: 1.5 })
-          state.recordDamage()
-          boom(state.player.pos, themeColors.particleCollision, 24, 250)
-          state.triggerShake(15, 300)
-          hapticWarning()
-          playSfx('player_damage')
+      // Check if boss is in nearby entities
+      if (nearbyPlayerPosSet.has(state.boss.pos)) {
+        if (dist2(state.player.pos, state.boss.pos) < 60 * 60) {
+          if (state.player.inv <= 0 && !hasShield) {
+            state.updatePlayer({ hp: state.player.hp - 40, inv: 1.5 })
+            state.recordDamage()
+            boom(state.player.pos, themeColors.particleCollision, 24, 250)
+            state.triggerShake(15, 300)
+            hapticWarning()
+            playSfx('player_damage')
+          }
         }
       }
     }
