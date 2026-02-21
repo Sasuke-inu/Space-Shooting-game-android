@@ -587,6 +587,11 @@ export const useGameEngine = () => {
       spatialGrid!.insert({ pos: updatedBoss.pos, radius: 50 })
     }
 
+    // Insert power-ups into spatial grid
+    updatedPowerUps.forEach((p) => {
+      spatialGrid!.insert({ pos: p.pos, radius: 15 })
+    })
+
     // Track collision results
     let score = state.score
     let credits = state.credits
@@ -604,6 +609,7 @@ export const useGameEngine = () => {
     const bulletsToRemove = new Set<number>()
     const asteroidsToRemove = new Set<number>()
     const enemiesToRemove = new Set<number>()
+    const powerUpsCollected = new Set<number>()
     const enemyDamage = new Map<number, number>()
     const enemyDeathEffects: Array<{ pos: Vec2; type: string; dropPowerUp: boolean }> = []
 
@@ -844,14 +850,18 @@ export const useGameEngine = () => {
       }
     }
 
-    // Player collisions with power-ups
-    state.powerUps.forEach((p, pIdx) => {
-      if (dist2(state.player.pos, p.pos) < 30 * 30) {
-        state.collectPowerUp(pIdx)
-        playSfx('powerup_pickup')
-        boom(p.pos, getPowerUpColor(p.type, themeColors), 16, 100)
-        playSfx('powerup_pickup')
-        hapticMedium()
+    // Player collisions with power-ups (using spatial grid)
+    updatedPowerUps.forEach((p, pIdx) => {
+      // Check if power-up is in nearby entities
+      if (nearbyPlayerPosSet.has(p.pos)) {
+        if (dist2(state.player.pos, p.pos) < 30 * 30) {
+          powerUpsCollected.add(pIdx)
+          state.collectPowerUp(pIdx)
+          playSfx('powerup_pickup')
+          boom(p.pos, getPowerUpColor(p.type, themeColors), 16, 100)
+          playSfx('powerup_pickup')
+          hapticMedium()
+        }
       }
     })
     const finalPowerUps = [
