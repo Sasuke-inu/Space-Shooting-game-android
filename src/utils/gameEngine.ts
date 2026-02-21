@@ -44,11 +44,51 @@ import { playSfx } from "./audioManager"
 //                         Spatial Grid for Collision Detection
 // ------------------------------------------------------------------ //
 
+/**
+ * SPATIAL PARTITIONING OVERVIEW:
+ *
+ * Spatial partitioning is a technique that divides the game world into a uniform grid
+ * of cells. Each game entity (asteroid, enemy, bullet, etc.) is placed into the cell(s)
+ * corresponding to its position. This allows us to perform collision detection efficiently
+ * by only checking entities that are in nearby cells, rather than checking every entity
+ * against every other entity.
+ *
+ * PERFORMANCE BENEFITS:
+ *
+ * Without spatial partitioning (naive approach):
+ * - Must check every entity against every other entity
+ * - Time complexity: O(n²) where n is the number of entities
+ * - Example: 100 entities = 10,000 checks per frame
+ * - Example: 200 entities = 40,000 checks per frame
+ *
+ * With spatial partitioning:
+ * - Only check entities in the same or adjacent cells
+ * - Time complexity: O(n) on average, where n is the number of entities
+ * - Example: 100 entities distributed across grid = ~5-10 checks per entity
+ * - Example: 200 entities = still ~5-10 checks per entity
+ *
+ * This improvement is critical for maintaining 60 FPS with hundreds of entities on screen.
+ *
+ * HOW IT WORKS:
+ *
+ * 1. Grid Setup: Divide screen into cells (default 75x75 pixels)
+ * 2. Insert Phase: Each frame, clear grid and insert all entities into their cells
+ * 3. Query Phase: When checking collisions, only retrieve entities from nearby cells
+ * 4. Collision Check: Perform distance checks only on the small subset of nearby entities
+ */
+
 interface Entity {
   pos: Vec2
   radius?: number
 }
 
+/**
+ * SpatialGrid: Efficient collision detection using uniform grid partitioning
+ *
+ * The grid divides the screen into fixed-size cells and tracks which entities
+ * are in each cell. This allows O(1) insertion and O(k) queries where k is the
+ * number of entities in nearby cells (typically much smaller than total entities).
+ */
 class SpatialGrid {
   private cellSize: number
   private cols: number
@@ -80,16 +120,47 @@ class SpatialGrid {
     this.grid.get(key)!.push(entity)
   }
 
+  /**
+   * queryNearby: Efficiently retrieve entities near a given position
+   *
+   * HOW queryNearby() WORKS:
+   *
+   * 1. Calculate Search Area:
+   *    - Given a position (x, y) and radius, determine which cells might contain
+   *      entities within that radius
+   *    - Convert world coordinates to grid cell indices
+   *    - Example: position (150, 200) with radius 50 and cellSize 75
+   *      → checks cells from (1,1) to (2,3)
+   *
+   * 2. Retrieve Candidates:
+   *    - Loop through all cells in the calculated range
+   *    - Collect all entities from those cells into a single array
+   *    - This is the "broad phase" - we get potential collisions
+   *
+   * 3. Return for Distance Check:
+   *    - The caller then performs actual distance checks (narrow phase)
+   *    - Only entities in nearby cells are checked, not all entities
+   *
+   * Example: Checking bullet collision with 200 asteroids
+   * - Without grid: check all 200 asteroids (200 distance calculations)
+   * - With grid: only ~10-15 asteroids in nearby cells (10-15 distance calculations)
+   *
+   * @param pos - The position to search around
+   * @param radius - The search radius (typically entity radius + collision radius)
+   * @returns Array of entities in nearby cells (may include entities outside radius)
+   */
   queryNearby(pos: Vec2, radius: number): Entity[] {
     const nearby: Entity[] = []
 
     // Calculate cell range to check
+    // We convert the circle (pos + radius) into a bounding box in grid coordinates
     const minCol = Math.max(0, Math.floor((pos.x - radius) / this.cellSize))
     const maxCol = Math.min(this.cols - 1, Math.floor((pos.x + radius) / this.cellSize))
     const minRow = Math.max(0, Math.floor((pos.y - radius) / this.cellSize))
     const maxRow = Math.min(this.rows - 1, Math.floor((pos.y + radius) / this.cellSize))
 
     // Collect entities from cells in range
+    // This gathers all potential collision candidates from the calculated cell range
     for (let row = minRow; row <= maxRow; row++) {
       for (let col = minCol; col <= maxCol; col++) {
         const key = row * this.cols + col
