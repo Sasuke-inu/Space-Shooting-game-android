@@ -610,21 +610,8 @@ export const useGameEngine = () => {
     updatedBullets.forEach((b, bIdx) => {
       if (!b.friendly) return // Skip enemy bullets for asteroid collision
 
-      state.asteroids.forEach((a, aIdx) => {
-        if (!bulletsToRemove.has(bIdx) && !asteroidsToRemove.has(aIdx)) {
-          if (dist2(b.pos, a.pos) < (a.radius + 2) * (a.radius + 2)) {
-            boom(b.pos, themeColors.particleHit, 12, 180)
-            playSfx('explosion_small')
-            state.splitAsteroid(a)
-            asteroidsToRemove.add(aIdx)
-            bulletsToRemove.add(bIdx)
-            state.incrementCombo()
-            const asteroidPoints = 20 * a.tier
-            const asteroidScoreWithMultiplier = state.hasPowerUp('score_multiplier') ? asteroidPoints * 2 : asteroidPoints
-            state.addScore(asteroidScoreWithMultiplier)
-            state.addCredits(a.tier)
-            state.triggerShake(3, 100)
-            hapticMedium()
+      // Query spatial grid for entities near bullet (search radius = bullet radius + max asteroid radius)
+      const nearby = spatialGrid!.queryNearby(b.pos, 50)
 
       // Bullets vs asteroids
       updatedAsteroids.forEach((a, aIdx) => {
@@ -633,6 +620,7 @@ export const useGameEngine = () => {
           if (nearby.some(e => e.pos === a.pos)) {
             if (dist2(b.pos, a.pos) < (a.radius + 2) * (a.radius + 2)) {
               boom(b.pos, themeColors.particleHit, 12, 180)
+              playSfx('explosion_small')
               // Split asteroid inline
               if (a.tier > 1) {
                 const newTier = (a.tier - 1) as 1 | 2
