@@ -20,7 +20,7 @@ class SpatialGrid {
   private rows: number
   private grid: Map<number, Entity[]>
 
-  constructor(width: number, height: number, cellSize = 100) {
+  constructor(width: number, height: number, cellSize = 75) {
     this.cellSize = cellSize
     this.cols = Math.ceil(width / cellSize)
     this.rows = Math.ceil(height / cellSize)

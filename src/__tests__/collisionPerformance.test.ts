@@ -20,7 +20,7 @@ class SpatialGrid {
   private rows: number
   private grid: Map<number, Entity[]>
 
-  constructor(width: number, height: number, cellSize = 100) {
+  constructor(width: number, height: number, cellSize = 75) {
     this.cellSize = cellSize
     this.cols = Math.ceil(width / cellSize)
     this.rows = Math.ceil(height / cellSize)
@@ -135,7 +135,7 @@ const collisionDetectionSpatialGrid = (
   width: number,
   height: number
 ): number => {
-  const grid = new SpatialGrid(width, height, 100)
+  const grid = new SpatialGrid(width, height, 75)
   let collisions = 0
 
   // Insert all targets into grid
@@ -382,6 +382,80 @@ describe('Collision Detection Performance', () => {
   //                         Grid Cell Size Optimization
   // ------------------------------------------------------------------ //
   describe('Cell Size Impact on Performance', () => {
+    test('compare cell sizes to find optimal performance', () => {
+      const bullets = generateBullets(30, SCREEN_W, SCREEN_H)
+      const targets = generateEntities(150, SCREEN_W, SCREEN_H)
+      const cellSizes = [50, 75, 100, 150]
+      const results: { cellSize: number; avgTime: number }[] = []
+
+      cellSizes.forEach((cellSize) => {
+        // Create custom collision detection with specific cell size
+        const collisionDetectionWithCellSize = (
+          bullets: Entity[],
+          targets: Entity[],
+          threshold: number,
+          cellSize: number
+        ): number => {
+          const grid = new SpatialGrid(SCREEN_W, SCREEN_H, cellSize)
+          let collisions = 0
+
+          // Insert all targets into grid
+          targets.forEach((target) => grid.insert(target))
+
+          // Build position set for O(1) lookup
+          const targetPosSet = new Set(targets.map((t) => `${t.pos.x},${t.pos.y}`))
+
+          // Check each bullet against nearby entities
+          bullets.forEach((bullet) => {
+            const nearby = grid.queryNearby(bullet.pos, 50)
+            nearby.forEach((target) => {
+              const posKey = `${target.pos.x},${target.pos.y}`
+              if (targetPosSet.has(posKey) && dist2(bullet.pos, target.pos) < threshold) {
+                collisions++
+              }
+            })
+          })
+
+          return collisions
+        }
+
+        // Warm up JIT
+        for (let i = 0; i < 5; i++) {
+          collisionDetectionWithCellSize(bullets, targets, COLLISION_THRESHOLD, cellSize)
+        }
+
+        // Benchmark
+        const start = performance.now()
+        for (let i = 0; i < 20; i++) {
+          collisionDetectionWithCellSize(bullets, targets, COLLISION_THRESHOLD, cellSize)
+        }
+        const end = performance.now()
+
+        const avgTime = (end - start) / 20
+        results.push({ cellSize, avgTime })
+      })
+
+      // Find the optimal cell size (lowest average time)
+      const optimal = results.reduce((best, current) =>
+        current.avgTime < best.avgTime ? current : best
+      )
+
+      // Log results for analysis
+      // console.log('Cell Size Performance Results:')
+      // results.forEach(r => console.log(`  ${r.cellSize}px: ${r.avgTime.toFixed(3)}ms`))
+      // console.log(`Optimal: ${optimal.cellSize}px (${optimal.avgTime.toFixed(3)}ms)`)
+
+      // All cell sizes should be reasonably performant
+      results.forEach(r => {
+        expect(r.avgTime).toBeLessThan(10)
+      })
+
+      // 100px should be within 20% of optimal (validates current choice)
+      const current100px = results.find(r => r.cellSize === 100)!
+      const performanceRatio = current100px.avgTime / optimal.avgTime
+      expect(performanceRatio).toBeLessThan(1.2)
+    })
+
     test('100px cell size is efficient for typical game scenarios', () => {
       const bullets = generateBullets(20, SCREEN_W, SCREEN_H)
       const targets = generateEntities(100, SCREEN_W, SCREEN_H)
