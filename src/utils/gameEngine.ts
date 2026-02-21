@@ -789,16 +789,23 @@ export const useGameEngine = () => {
       }
     }
 
-    // Player collisions with asteroids
-    state.asteroids.forEach((a) => {
-      if (dist2(state.player.pos, a.pos) < (a.radius + 12) * (a.radius + 12)) {
-        if (state.player.inv <= 0 && !hasShield) {
-          state.updatePlayer({ hp: state.player.hp - 28, inv: 1.0 })
-          state.recordDamage()
-          boom(state.player.pos, themeColors.particleCollision, 18, 200)
-          state.triggerShake(12, 200)
-          hapticWarning()
-          playSfx('player_damage')
+    // Player collisions with asteroids (using spatial grid)
+    // Query spatial grid for entities near player (search radius = player radius + max asteroid radius)
+    const nearbyPlayer = spatialGrid!.queryNearby(state.player.pos, 50)
+    const nearbyPlayerPosSet = new Set(nearbyPlayer.map(ent => ent.pos))
+
+    updatedAsteroids.forEach((a) => {
+      // Check if asteroid is in nearby entities
+      if (nearbyPlayerPosSet.has(a.pos)) {
+        if (dist2(state.player.pos, a.pos) < (a.radius + 12) * (a.radius + 12)) {
+          if (state.player.inv <= 0 && !hasShield) {
+            state.updatePlayer({ hp: state.player.hp - 28, inv: 1.0 })
+            state.recordDamage()
+            boom(state.player.pos, themeColors.particleCollision, 18, 200)
+            state.triggerShake(12, 200)
+            hapticWarning()
+            playSfx('player_damage')
+          }
         }
       }
     })
