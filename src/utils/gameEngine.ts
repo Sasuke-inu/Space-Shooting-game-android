@@ -810,16 +810,19 @@ export const useGameEngine = () => {
       }
     })
 
-    // Player collisions with enemies
-    state.enemies.forEach((e) => {
-      if (dist2(state.player.pos, e.pos) < 22 * 22) {
-        if (state.player.inv <= 0 && !hasShield) {
-          state.updatePlayer({ hp: state.player.hp - 20, inv: 0.9 })
-          state.recordDamage()
-          boom(state.player.pos, themeColors.particleCollision, 18, 200)
-          state.triggerShake(12, 200)
-          hapticWarning()
-          playSfx('player_damage')
+    // Player collisions with enemies (using spatial grid)
+    updatedEnemies.forEach((e) => {
+      // Check if enemy is in nearby entities
+      if (nearbyPlayerPosSet.has(e.pos)) {
+        if (dist2(state.player.pos, e.pos) < 22 * 22) {
+          if (state.player.inv <= 0 && !hasShield) {
+            state.updatePlayer({ hp: state.player.hp - 20, inv: 0.9 })
+            state.recordDamage()
+            boom(state.player.pos, themeColors.particleCollision, 18, 200)
+            state.triggerShake(12, 200)
+            hapticWarning()
+            playSfx('player_damage')
+          }
         }
       }
     })
