@@ -2,8 +2,11 @@ package com.spaceshooter.presentation.game
 
 import android.content.Context
 import android.graphics.*
+import android.os.Process
+import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import com.spaceshooter.BuildConfig
 import com.spaceshooter.core.engine.GameState
 import com.spaceshooter.core.math.Vec2
 import com.spaceshooter.domain.entity.*
@@ -63,29 +66,94 @@ class GameCanvasView(context: Context) : SurfaceView(context), SurfaceHolder.Cal
         @Volatile
         var running = false
 
-        // Frame timing
-        private val targetFrameTimeNanos = 16_666_666L // 60 FPS (16.67ms)
-        private var frameStartTime = 0L
-        private var frameEndTime = 0L
+        // Target 60fps = 16.67ms per frame
+        private val targetFrameTimeNanos = 16_666_667L // 16.67ms in nanoseconds
+        private val targetFrameTimeMs = 16.67f
+
+        // Debug logging
+        private val debugLogging = BuildConfig.DEBUG
+        private val logTag = "RenderThread"
+        private val logInterval = 60 // Log stats every 60 frames (1 second at 60fps)
+
+        // Frame time tracking
+        private var frameCount = 0
+        private var totalFrameTime = 0L
+        private var minFrameTime = Long.MAX_VALUE
+        private var maxFrameTime = 0L
+        private var droppedFrames = 0
 
         override fun run() {
+            // Set thread priority to THREAD_PRIORITY_DISPLAY for smooth rendering
+            Process.setThreadPriority(Process.THREAD_PRIORITY_DISPLAY)
+
+            var lastFrameTime = System.nanoTime()
+
             while (running) {
-                frameStartTime = System.nanoTime()
+                val frameStartTime = System.nanoTime()
 
-                val canvas = holder.lockCanvas() ?: continue
-                try {
-                    renderer.draw(canvas)
-                } finally {
-                    holder.unlockCanvasAndPost(canvas)
+                val canvas = holder.lockCanvas()
+                if (canvas != null) {
+                    try {
+                        renderer.draw(canvas)
+                    } finally {
+                        holder.unlockCanvasAndPost(canvas)
+                    }
                 }
 
-                frameEndTime = System.nanoTime()
-                val elapsedNanos = frameEndTime - frameStartTime
-                val sleepNanos = targetFrameTimeNanos - elapsedNanos
+                // Calculate frame time and sleep to maintain 60fps
+                val frameEndTime = System.nanoTime()
+                val frameDuration = frameEndTime - frameStartTime
+                val sleepTime = targetFrameTimeNanos - frameDuration
 
-                if (sleepNanos > 0) {
-                    Thread.sleep(sleepNanos / 1_000_000, (sleepNanos % 1_000_000).toInt())
+                if (sleepTime > 0) {
+                    try {
+                        Thread.sleep(sleepTime / 1_000_000, (sleepTime % 1_000_000).toInt())
+                    } catch (e: InterruptedException) {
+                        // Thread interrupted, exit gracefully
+                        running = false
+                    }
                 }
+
+                // Performance logging
+                if (debugLogging) {
+                    logFrameTime(frameDuration)
+                }
+            }
+        }
+
+        private fun logFrameTime(frameDuration: Long) {
+            val frameTimeMs = frameDuration / 1_000_000f
+
+            // Track stats
+            totalFrameTime += frameDuration
+            minFrameTime = minOf(minFrameTime, frameDuration)
+            maxFrameTime = maxOf(maxFrameTime, frameDuration)
+            frameCount++
+
+            // Log immediately if frame time exceeds target (dropped frame)
+            if (frameTimeMs > targetFrameTimeMs) {
+                droppedFrames++
+                Log.w(logTag, "Dropped frame: ${String.format("%.2f", frameTimeMs)}ms (target: ${String.format("%.2f", targetFrameTimeMs)}ms)")
+            }
+
+            // Log statistics every N frames
+            if (frameCount >= logInterval) {
+                val avgFrameTimeMs = (totalFrameTime / frameCount) / 1_000_000f
+                val minFrameTimeMs = minFrameTime / 1_000_000f
+                val maxFrameTimeMs = maxFrameTime / 1_000_000f
+                val droppedPercent = (droppedFrames.toFloat() / frameCount) * 100f
+
+                Log.d(logTag, String.format(
+                    "Frame stats (%d frames): avg=%.2fms, min=%.2fms, max=%.2fms, dropped=%d (%.1f%%)",
+                    frameCount, avgFrameTimeMs, minFrameTimeMs, maxFrameTimeMs, droppedFrames, droppedPercent
+                ))
+
+                // Reset stats
+                frameCount = 0
+                totalFrameTime = 0
+                minFrameTime = Long.MAX_VALUE
+                maxFrameTime = 0
+                droppedFrames = 0
             }
         }
     }
@@ -95,7 +163,9 @@ class GameCanvasView(context: Context) : SurfaceView(context), SurfaceHolder.Cal
  * Game renderer handling all drawing operations.
  */
 class GameRenderer {
+    @Volatile
     private var state: GameState? = null
+    @Volatile
     private var colors: ThemeColors? = null
     private var width = 0f
     private var height = 0f
