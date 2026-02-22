@@ -1,7 +1,7 @@
 import React, { useMemo } from "react"
 import { Canvas, Group, Path, Circle, Line, Text, Skia, vec, matchFont, Rect, Shadow } from "@shopify/react-native-skia"
 import { Platform } from "react-native"
-import type { Asteroid, Enemy, Vec2, PowerUp, ActivePowerUp, ComboState, Boss, HomingMissile, EnemyType, AbilityFlash } from "../types/game"
+import type { Asteroid, Enemy, Vec2, PowerUp, ActivePowerUp, ComboState, Boss, HomingMissile, EnemyType, AbilityFlash, SpecialAbility } from "../types/game"
 import type { ThemeColors } from "../theme/types"
 import type { QualityLevel } from "../types/performance"
 import { QUALITY_PRESETS } from "../types/performance"
@@ -37,6 +37,7 @@ interface GameCanvasProps {
   timeWarpActive?: boolean
   abilityFlash?: AbilityFlash | null
   abilityFlashOpacity?: number
+  specialAbility?: SpecialAbility | null
 }
 
 // Helper to get power-up color from theme
@@ -907,18 +908,48 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
             style="stroke"
             strokeWidth={3}
           />
-          {!player.specialReady && (
-            <>
-              {/* Cooldown arc */}
-              <Circle
-                cx={0}
-                cy={0}
-                r={16}
-                color={colors.buttonPrimary}
-                opacity={0.3}
-              />
-            </>
-          )}
+          {!player.specialReady && (() => {
+            // Calculate cooldown progress (0 = not ready, 1 = fully ready)
+            const maxCooldown = specialAbility?.maxCooldown || player.specialCooldown || 1
+            const currentCooldown = player.specialCooldown || 0
+            const progress = Math.max(0, Math.min(1, 1 - currentCooldown / maxCooldown))
+
+            // Create radial arc path that fills clockwise from top (12 o'clock)
+            const startAngle = -90 // Start at top (12 o'clock position)
+            const sweepAngle = progress * 360 // Sweep 0-360 degrees based on progress
+
+            const arcPath = Skia.Path.Make()
+            if (progress > 0) {
+              arcPath.addArc(
+                Skia.XYWHRect(-20, -20, 40, 40), // Bounding rect for the arc
+                startAngle,
+                sweepAngle
+              )
+            }
+
+            return (
+              <>
+                {/* Background circle for contrast */}
+                <Circle
+                  cx={0}
+                  cy={0}
+                  r={16}
+                  color={colors.panelBorder}
+                  opacity={0.2}
+                />
+                {/* Radial progress arc */}
+                {progress > 0 && (
+                  <Path
+                    path={arcPath}
+                    color={colors.buttonPrimary}
+                    style="stroke"
+                    strokeWidth={4}
+                    opacity={0.8}
+                  />
+                )}
+              </>
+            )
+          })()}
           <Text
             x={-4}
             y={4}
