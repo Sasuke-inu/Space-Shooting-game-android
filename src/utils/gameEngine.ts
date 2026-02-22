@@ -41,6 +41,7 @@ import {
   v,
   addTo,
   mulTo,
+  norTo,
 } from "./vectorMath"
 import { hapticLight, hapticMedium, hapticHeavy, hapticWarning } from "./haptics"
 import { playSfx } from "./audioManager"
@@ -589,7 +590,7 @@ export const useGameEngine = () => {
 
     // Update bullets - in-place mutation pattern to eliminate allocations
     // Start with shallow copy for Zustand immutability
-    const updatedBullets = state.bullets.slice()
+    let updatedBullets = state.bullets.slice()
 
     // Compact array: filter out dead bullets using write index pattern
     let writeIdx = 0
@@ -631,7 +632,7 @@ export const useGameEngine = () => {
 
     // Update asteroids (with increasing animation speed) - in-place mutation pattern
     // Start with shallow copy for Zustand immutability
-    const updatedAsteroids = state.asteroids.slice()
+    let updatedAsteroids = state.asteroids.slice()
 
     // Reusable temp Vec2 for mutable operations
     const asteroidTempVec = v()
@@ -676,7 +677,7 @@ export const useGameEngine = () => {
 
     // Update enemies - in-place mutation pattern
     // Start with shallow copy for Zustand immutability
-    const updatedEnemies = state.enemies.slice()
+    let updatedEnemies = state.enemies.slice()
 
     for (let i = 0; i < updatedEnemies.length; i++) {
       const e = updatedEnemies[i]
@@ -968,9 +969,7 @@ export const useGameEngine = () => {
               bulletsToRemove.add(bIdx)
               sessionShotsHit++ // Record shot hit
 
-            }
           }
-        }
         }
       })
 
@@ -1961,13 +1960,13 @@ function updateEnemyBehaviorBatched(
 
       // Slow movement with friction
       healerVel = mul(healerVel, 0.97)
-      newEnemy.vel = healerVel
-      newEnemy.pos = wrap(add(e.pos, mul(healerVel, dt * animSpeed * 0.5)), state.w, state.h)
-      newEnemy.ang = angleOf(toP)
+      e.vel = healerVel
+      e.pos = wrap(add(e.pos, mul(healerVel, dt * animSpeed * 0.5)), state.w, state.h)
+      e.ang = angleOf(toP)
 
       // Healing logic: every 3s, find nearest damaged enemy within 200px and heal for 15 HP
-      newEnemy.healCooldown = (e.healCooldown ?? 3) - dt
-      if (newEnemy.healCooldown <= 0) {
+      e.healCooldown = (e.healCooldown ?? 3) - dt
+      if (e.healCooldown <= 0) {
         let nearestDamaged: Enemy | null = null
         let nearestDist2 = 200 * 200 // distance squared threshold
 
@@ -1995,16 +1994,16 @@ function updateEnemyBehaviorBatched(
             }))
           )
 
-          newEnemy.healCooldown = 3
+          e.healCooldown = 3
         } else {
           // No valid target, try again soon
-          newEnemy.healCooldown = 0.5
+          e.healCooldown = 0.5
         }
       }
 
       // Fire infrequently at player with low accuracy
-      newEnemy.cooldown -= dt
-      if (d < 500 && newEnemy.cooldown <= 0) {
+      e.cooldown -= dt
+      if (d < 500 && e.cooldown <= 0) {
         const aim = angleOf(toP) + rand(-aimInaccuracy * 1.5, aimInaccuracy * 1.5)
         bulletsToAdd.push({
           pos: add(e.pos, fromAngle(aim, 16)),
@@ -2014,7 +2013,7 @@ function updateEnemyBehaviorBatched(
           damage: stats.damage,
         })
         playSfx('shoot_enemy')
-        newEnemy.cooldown = stats.fireRate * 1.2
+        e.cooldown = stats.fireRate * 1.2
       }
 
       break
@@ -2026,30 +2025,30 @@ function updateEnemyBehaviorBatched(
       const chargeDuration = 1.5
       const chargeSpeedMultiplier = 3
 
-      newEnemy.chargeCooldown = (e.chargeCooldown ?? 5) - dt
+      e.chargeCooldown = (e.chargeCooldown ?? 5) - dt
 
       if (e.isCharging && e.chargeDirection) {
         // Currently charging: move in locked direction at 3x speed, don't fire
         const chargeSpeed = stats.speed * chargeSpeedMultiplier
         const chargeVel = mul(e.chargeDirection, chargeSpeed)
-        newEnemy.vel = chargeVel
-        newEnemy.pos = wrap(add(e.pos, mul(chargeVel, dt * animSpeed)), state.w, state.h)
-        newEnemy.ang = angleOf(e.chargeDirection)
+        e.vel = chargeVel
+        e.pos = wrap(add(e.pos, mul(chargeVel, dt * animSpeed)), state.w, state.h)
+        e.ang = angleOf(e.chargeDirection)
 
         // Check if charge duration expired (chargeCooldown tracks remaining charge time when negative)
         // Charge lasts chargeDuration seconds after telegraph (cooldown goes from -telegraph to -(telegraph+duration))
-        if (newEnemy.chargeCooldown <= -(chargeTelegraphTime + chargeDuration)) {
+        if (e.chargeCooldown <= -(chargeTelegraphTime + chargeDuration)) {
           // Charge complete, reset
-          newEnemy.isCharging = false
-          newEnemy.chargeDirection = undefined
-          newEnemy.chargeCooldown = 5 // Reset cooldown for next charge
-          newEnemy.vel = mul(e.vel, 0.3) // Slow down after charge
+          e.isCharging = false
+          e.chargeDirection = undefined
+          e.chargeCooldown = 5 // Reset cooldown for next charge
+          e.vel = mul(e.vel, 0.3) // Slow down after charge
         }
       } else if (e.chargeCooldown !== undefined && e.chargeCooldown <= 0) {
         // Telegraph phase: glowing visual, lock charge direction
         if (!e.chargeDirection) {
           // Lock direction toward player at start of telegraph
-          newEnemy.chargeDirection = { x: dir.x, y: dir.y }
+          e.chargeDirection = { x: dir.x, y: dir.y }
 
           // Emit telegraph particles (glowing effect)
           state.addParticles(
@@ -2063,26 +2062,26 @@ function updateEnemyBehaviorBatched(
         }
 
         // During telegraph: slow down and face player
-        newEnemy.vel = mul(e.vel, 0.9)
-        newEnemy.pos = wrap(add(e.pos, mul(newEnemy.vel, dt * animSpeed * 0.3)), state.w, state.h)
-        newEnemy.ang = angleOf(dir)
+        e.vel = mul(e.vel, 0.9)
+        e.pos = wrap(add(e.pos, mul(e.vel, dt * animSpeed * 0.3)), state.w, state.h)
+        e.ang = angleOf(dir)
 
         // After telegraph time, start charging
-        if (newEnemy.chargeCooldown <= -chargeTelegraphTime) {
-          newEnemy.isCharging = true
+        if (e.chargeCooldown <= -chargeTelegraphTime) {
+          e.isCharging = true
         }
       } else {
         // Normal approach: slow steady movement toward player
         const juggDesired = mul(dir, 0.8)
         let juggVel = add(e.vel, mul(nor(juggDesired), stats.speed * dt))
         juggVel = mul(juggVel, 0.995)
-        newEnemy.vel = juggVel
-        newEnemy.pos = wrap(add(e.pos, mul(juggVel, dt * animSpeed * 0.7)), state.w, state.h)
-        newEnemy.ang = angleOf(toP)
+        e.vel = juggVel
+        e.pos = wrap(add(e.pos, mul(juggVel, dt * animSpeed * 0.7)), state.w, state.h)
+        e.ang = angleOf(toP)
 
         // Fire heavy spread shots (3 bullets in a fan) when not charging
-        newEnemy.cooldown = e.cooldown - dt
-        if (d < 500 && newEnemy.cooldown <= 0) {
+        e.cooldown = e.cooldown - dt
+        if (d < 500 && e.cooldown <= 0) {
           const aim = angleOf(sub(state.player.pos, e.pos)) + rand(-aimInaccuracy * 0.5, aimInaccuracy * 0.5)
           const spreadAngles = [-0.25, 0, 0.25]
           for (const offset of spreadAngles) {
@@ -2095,7 +2094,7 @@ function updateEnemyBehaviorBatched(
             })
           }
           playSfx('shoot_enemy')
-          newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.2)
+          e.cooldown = stats.fireRate * (1 - difficulty * 0.2)
         }
       }
 
@@ -2700,7 +2699,7 @@ function updateBossBehavior(
   // Update cooldowns
   let newCooldown = boss.cooldown - dt
   let newSpecialCooldown = boss.specialCooldown - dt
-  let newChargeTime = boss.specialChargeTime
+  let newChargeTime = boss.specialChargeTime ?? 0
   let isCharging = boss.chargingSpecial
 
   // Regular attack pattern (more generous timing, with density cap check)
@@ -2824,9 +2823,9 @@ function executeSpecialAttack(
     case 'carrier':
       // Spawn mini-enemies (limited to avoid overwhelming)
       // Check lifetime spawn limit to prevent unlimited spawns
-      if (boss.spawnedEnemiesCount < MAX_CARRIER_SPAWNED_ENEMIES) {
+      if ((boss.spawnedEnemiesCount ?? 0) < MAX_CARRIER_SPAWNED_ENEMIES) {
         const MAX_CARRIER_ENEMIES = isFirstBoss ? 8 : 10
-        const remainingLifetimeSpawns = MAX_CARRIER_SPAWNED_ENEMIES - boss.spawnedEnemiesCount
+        const remainingLifetimeSpawns = MAX_CARRIER_SPAWNED_ENEMIES - (boss.spawnedEnemiesCount ?? 0)
         const spawnCount = isFirstBoss ? 1 : Math.min(2, MAX_CARRIER_ENEMIES - state.enemies.length, remainingLifetimeSpawns)
 
         if (state.enemies.length < MAX_CARRIER_ENEMIES && spawnCount > 0) {
@@ -2834,7 +2833,7 @@ function executeSpecialAttack(
             state.spawnEnemy('scout')
           }
           // Update boss spawned enemies counter
-          state.updateBoss({ spawnedEnemiesCount: boss.spawnedEnemiesCount + spawnCount })
+          state.updateBoss({ spawnedEnemiesCount: (boss.spawnedEnemiesCount ?? 0) + spawnCount })
         }
       }
       break

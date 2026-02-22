@@ -11,7 +11,8 @@ import type {
   BossType,
   SkinId,
 } from '../types/game'
-import { ACHIEVEMENTS, UPGRADE_COSTS } from '../types/game'
+import { ACHIEVEMENTS, UPGRADE_COSTS, SHIP_SKINS, SKIN_COSTS } from '../types/game'
+import { backupStore, restoreStore } from '../utils/backupManager'
 import type { ThemeId } from '../theme/types'
 import { playSfx } from '../utils/audioManager'
 
@@ -52,21 +53,21 @@ export const useAchievementStore = create<AchievementState>()(
       recentUnlock: null,
 
       unlockAchievement: (id) => {
-        set((state) => {
-          if (state.achievements[id].unlocked) return state
+        const currentState = get()
+        if (currentState.achievements[id].unlocked) return
 
-        const achievement = state.achievements[id]
+        const achievement = currentState.achievements[id]
 
         set({
           achievements: {
-            ...state.achievements,
+            ...currentState.achievements,
             [id]: {
               ...achievement,
               unlocked: true,
               unlockedAt: Date.now(),
             },
-            recentUnlock: id,
-          }
+          },
+          recentUnlock: id,
         })
 
         // Award credits for achievement
@@ -653,6 +654,7 @@ const THEME_UNLOCK_CONDITIONS: Record<ThemeId, ThemeUnlockCondition> = {
   'halloween': { type: 'achievement', requirement: 'boss_slayer' },
   'synthwave': { type: 'purchase', cost: 750 },
   'winter': { type: 'wave', requirement: 15 },
+  'deep-space': { type: 'purchase', cost: 1000 },
 }
 
 interface ThemeUnlockState {
@@ -728,7 +730,7 @@ export const useThemeUnlockStore = create<ThemeUnlockState>()(
     }),
     {
       name: 'space-shooter-theme-unlocks',
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createJSONStorage(() => secureStorage),
     }
   )
 )
