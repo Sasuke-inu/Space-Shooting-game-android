@@ -1,5 +1,6 @@
 package com.spaceshooter.presentation.game
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -9,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -516,23 +518,32 @@ private fun GameHUD(
 
             // Pause button (only visible when not paused)
             if (!paused) {
+                var isPausePressed by remember { mutableStateOf(false) }
+                val pauseScale by animateFloatAsState(targetValue = if (isPausePressed) 0.9f else 1.0f)
+
                 Box(
                     modifier = Modifier
-                        .size(64.dp) // Increased size
+                        .size(64.dp)
+                        .scale(pauseScale)
                         .background(
-                            color = colors.buttonPrimary.copy(alpha = 0.8f),
+                            color = if (isPausePressed) colors.buttonPrimary else colors.buttonPrimary.copy(alpha = 0.8f),
                             shape = androidx.compose.foundation.shape.CircleShape
                         )
                         .pointerInput(Unit) {
                             detectTapGestures(
-                                onTap = { onPause() }
+                                onPress = {
+                                    isPausePressed = true
+                                    tryAwaitRelease()
+                                    isPausePressed = false
+                                    onPause()
+                                }
                             )
                         },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "II", // Standard Pause Icon
-                        color = colors.buttonText,
+                        text = "II",
+                        color = if (isPausePressed) colors.buttonText else colors.buttonText,
                         fontSize = 24.sp,
                         fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                     )
