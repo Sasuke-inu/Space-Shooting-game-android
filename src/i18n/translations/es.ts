@@ -183,6 +183,23 @@ export const es: Translations = {
     sessionAccuracy: 'Precisión',
     sessionTime: 'Tiempo Sobrevivido',
     noRecentSession: 'Sin sesión reciente',
+  },
+  enemyTypes: {
+    scout: 'Explorador',
+    tank: 'Tanque',
+    sniper: 'Francotirador',
+    bomber: 'Bombardero',
+    healer: 'Sanador',
+    juggernaut: 'Juggernaut',
+  },
+  bossTypes: {
+    destroyer: 'Destructor',
+    carrier: 'Portador',
+    dreadnought: 'Acorazado',
+    mothership: 'Nave Nodriza',
+  },
+  statistics: {
+    title: 'Estadísticas',
     tabs: {
       overview: 'Resumen',
       perShip: 'Estadísticas por Nave',

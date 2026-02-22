@@ -241,6 +241,18 @@ export default function StatisticsScreen({ onBack }: { onBack?: () => void }) {
             label={t('enemyTypes.bomber')}
             value={stats.killsByEnemyType.bomber}
           />
+          <StatCard
+            label={t('enemyTypes.teleporter')}
+            value={stats.killsByEnemyType.teleporter}
+          />
+          <StatCard
+            label={t('enemyTypes.healer')}
+            value={stats.killsByEnemyType.healer}
+          />
+          <StatCard
+            label={t('enemyTypes.juggernaut')}
+            value={stats.killsByEnemyType.juggernaut}
+          />
         </View>
 
         {/* Kills by Boss Type */}
@@ -259,6 +271,11 @@ export default function StatisticsScreen({ onBack }: { onBack?: () => void }) {
           <StatCard
             label={t('bossTypes.dreadnought')}
             value={stats.killsByBossType.dreadnought}
+            color={theme.colors.enemyShip}
+          />
+          <StatCard
+            label={t('bossTypes.mothership')}
+            value={stats.killsByBossType.mothership}
             color={theme.colors.enemyShip}
           />
         </View>

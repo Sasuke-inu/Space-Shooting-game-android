@@ -183,6 +183,23 @@ export const ja: Translations = {
     sessionAccuracy: '精度',
     sessionTime: '生存時間',
     noRecentSession: '最近のセッションなし',
+  },
+  enemyTypes: {
+    scout: 'スカウト',
+    tank: 'タンク',
+    sniper: 'スナイパー',
+    bomber: 'ボマー',
+    healer: 'ヒーラー',
+    juggernaut: 'ジャガーノート',
+  },
+  bossTypes: {
+    destroyer: 'デストロイヤー',
+    carrier: 'キャリア',
+    dreadnought: 'ドレッドノート',
+    mothership: 'マザーシップ',
+  },
+  statistics: {
+    title: '統計',
     tabs: {
       overview: '概要',
       perShip: '機体別統計',

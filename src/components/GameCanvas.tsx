@@ -63,6 +63,8 @@ const getEnemyColor = (type: EnemyType, colors: ThemeColors): string => {
     case 'sniper': return colors.enemySniper
     case 'bomber': return colors.enemyBomber
     case 'teleporter': return colors.enemyTeleporter
+    case 'healer': return colors.enemyHealer
+    case 'juggernaut': return colors.enemyJuggernaut
     default: return colors.enemyShip
   }
 }
@@ -242,7 +244,7 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
     return path
   }, [])
 
-  // Memoized support path (cross/plus shape suggesting healing)
+  // Memoized support path (cross/plus shape suggesting healing) - player ship
   const supportPath = useMemo(() => {
     const path = Skia.Path.Make()
     path.moveTo(16, -5)
@@ -261,7 +263,30 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
     return path
   }, [])
 
-  // Memoized stealth path (sleek diamond/arrow shape)
+  // Memoized healer path (medical cross/plus shape) - enemy type
+  const healerPath = useMemo(() => {
+    const path = Skia.Path.Make()
+    // Plus/cross shape - top arm
+    path.moveTo(-5, -16)
+    path.lineTo(5, -16)
+    path.lineTo(5, -5)
+    // Right arm
+    path.lineTo(16, -5)
+    path.lineTo(16, 5)
+    path.lineTo(5, 5)
+    // Bottom arm
+    path.lineTo(5, 16)
+    path.lineTo(-5, 16)
+    path.lineTo(-5, 5)
+    // Left arm
+    path.lineTo(-16, 5)
+    path.lineTo(-16, -5)
+    path.lineTo(-5, -5)
+    path.close()
+    return path
+  }, [])
+
+  // Memoized stealth path (sleek diamond/arrow shape) - player ship
   const stealthPath = useMemo(() => {
     const path = Skia.Path.Make()
     path.moveTo(22, 0)
@@ -274,7 +299,7 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
     return path
   }, [])
 
-  // Memoized heavy path (wide bulky hexagon shape)
+  // Memoized heavy path (wide bulky hexagon shape) - player ship
   const heavyPath = useMemo(() => {
     const path = Skia.Path.Make()
     path.moveTo(16, 0)
@@ -284,6 +309,22 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
     path.lineTo(-20, -8)
     path.lineTo(-10, -18)
     path.lineTo(10, -16)
+    path.close()
+    return path
+  }, [])
+
+  // Memoized juggernaut path (large hexagonal/heavy shape) - enemy type
+  const juggernautPath = useMemo(() => {
+    const path = Skia.Path.Make()
+    // Large heavy hexagonal shape with angular armor plates
+    path.moveTo(24, 0)
+    path.lineTo(16, 18)
+    path.lineTo(-4, 22)
+    path.lineTo(-22, 14)
+    path.lineTo(-24, 0)
+    path.lineTo(-22, -14)
+    path.lineTo(-4, -22)
+    path.lineTo(16, -18)
     path.close()
     return path
   }, [])
@@ -323,6 +364,20 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
       path.lineTo(-45, 55)
       path.lineTo(-70, 10)
       path.lineTo(-50, -30)
+      path.close()
+      return path
+    })(),
+    mothership: (() => {
+      const path = Skia.Path.Make()
+      // Large octagonal shape - biggest boss
+      path.moveTo(0, -80)
+      path.lineTo(56, -56)
+      path.lineTo(80, 0)
+      path.lineTo(56, 56)
+      path.lineTo(0, 80)
+      path.lineTo(-56, 56)
+      path.lineTo(-80, 0)
+      path.lineTo(-56, -56)
       path.close()
       return path
     })(),
@@ -372,6 +427,8 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
       case 'tank': return tankPath
       case 'sniper': return sniperPath
       case 'bomber': return bomberPath
+      case 'healer': return healerPath
+      case 'juggernaut': return juggernautPath
       default: return shipPath
     }
   }
@@ -429,6 +486,9 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
       tank: colors.enemyTank,
       sniper: colors.enemySniper,
       bomber: colors.enemyBomber,
+      teleporter: colors.enemyTeleporter,
+      healer: colors.enemyHealer,
+      juggernaut: colors.enemyJuggernaut,
       default: colors.enemyShip,
     },
     // Enemy fill colors with transparency
@@ -437,6 +497,9 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
       tank: colors.enemyTank + '20',
       sniper: colors.enemySniper + '20',
       bomber: colors.enemyBomber + '20',
+      teleporter: colors.enemyTeleporter + '20',
+      healer: colors.enemyHealer + '20',
+      juggernaut: colors.enemyJuggernaut + '20',
       default: colors.enemyShip + '20',
     },
     // Boss phase colors
@@ -654,6 +717,174 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
             )
           }
 
+          // Healer-specific rendering
+          if (e.type === 'healer') {
+            const healerColor = colorPalette.enemy.healer || colors.enemyHealer
+
+            // Green healing glow when heal cooldown is about to fire (healCooldown < 1s)
+            const isAboutToHeal = e.healCooldown !== undefined && e.healCooldown < 1.0
+            const healGlowIntensity = isAboutToHeal && e.healCooldown !== undefined ? (1 - e.healCooldown) : 0
+
+            return (
+              <Group
+                key={`enemy-${i}`}
+                transform={[{ translateX: e.pos.x }, { translateY: e.pos.y }, { rotate: e.ang }]}
+              >
+                {/* Stun effect */}
+                {isStunned && (
+                  <>
+                    <Circle
+                      cx={0}
+                      cy={0}
+                      r={26 + Math.sin(time * 8) * 3}
+                      color="#00d4ff"
+                      style="stroke"
+                      strokeWidth={2}
+                      opacity={0.7 + Math.sin(time * 6) * 0.2}
+                    />
+                    <Circle
+                      cx={0}
+                      cy={0}
+                      r={30 + Math.sin(time * 8) * 3}
+                      color="#00d4ff"
+                      opacity={0.15}
+                    />
+                  </>
+                )}
+
+                {/* Green healing glow when about to heal */}
+                {isAboutToHeal && (
+                  <Circle
+                    cx={0}
+                    cy={0}
+                    r={22 + healGlowIntensity * 8 + Math.sin(time * 6) * 3}
+                    color={healerColor}
+                    opacity={healGlowIntensity * 0.45}
+                  />
+                )}
+
+                {/* Constant subtle healing aura */}
+                <Circle
+                  cx={0}
+                  cy={0}
+                  r={20 + Math.sin(time * 3) * 2}
+                  color={healerColor}
+                  opacity={0.12}
+                />
+
+                {/* Healer cross shape */}
+                <Path
+                  path={healerPath}
+                  color={colorPalette.enemyFill.healer || colors.enemyHealer + '20'}
+                  style="fill"
+                />
+                <Path
+                  path={healerPath}
+                  color={healerColor}
+                  style="stroke"
+                  strokeWidth={2}
+                />
+
+                {/* Health bar for damaged healers */}
+                {hpPercent < 1 && (
+                  <Group transform={[{ rotate: -e.ang }]}>
+                    <Rect x={-15} y={-25} width={30} height={4} color={colors.panelBorder} />
+                    <Rect x={-15} y={-25} width={30 * hpPercent} height={4} color={healerColor} />
+                  </Group>
+                )}
+              </Group>
+            )
+          }
+
+          // Juggernaut-specific rendering
+          if (e.type === 'juggernaut') {
+            const juggernautColor = colorPalette.enemy.juggernaut || colors.enemyJuggernaut
+
+            // Red glow during charge telegraph (isCharging true but chargeCooldown > 0 means telegraph phase)
+            const isTelegraphing = e.isCharging === true && (e.chargeCooldown ?? 0) > 0
+            const isActiveCharge = e.isCharging === true && (e.chargeCooldown ?? 0) <= 0
+            const telegraphPulse = isTelegraphing ? 0.5 + Math.sin(time * 12) * 0.3 : 0
+
+            return (
+              <Group
+                key={`enemy-${i}`}
+                transform={[{ translateX: e.pos.x }, { translateY: e.pos.y }, { rotate: e.ang }]}
+              >
+                {/* Stun effect */}
+                {isStunned && (
+                  <>
+                    <Circle
+                      cx={0}
+                      cy={0}
+                      r={32 + Math.sin(time * 8) * 3}
+                      color="#00d4ff"
+                      style="stroke"
+                      strokeWidth={2}
+                      opacity={0.7 + Math.sin(time * 6) * 0.2}
+                    />
+                    <Circle
+                      cx={0}
+                      cy={0}
+                      r={36 + Math.sin(time * 8) * 3}
+                      color="#00d4ff"
+                      opacity={0.15}
+                    />
+                  </>
+                )}
+
+                {/* Red glow during charge telegraph */}
+                {isTelegraphing && (
+                  <Circle
+                    cx={0}
+                    cy={0}
+                    r={30 + Math.sin(time * 10) * 5}
+                    color="#ff3333"
+                    opacity={telegraphPulse}
+                  />
+                )}
+
+                {/* Intense red glow during active charge */}
+                {isActiveCharge && (
+                  <Circle
+                    cx={0}
+                    cy={0}
+                    r={35 + Math.sin(time * 15) * 3}
+                    color="#ff0000"
+                    opacity={0.5}
+                  />
+                )}
+
+                {/* Larger hit radius visual indicator */}
+                <Circle
+                  cx={0}
+                  cy={0}
+                  r={26}
+                  color={juggernautColor}
+                  opacity={0.08}
+                />
+
+                {/* Juggernaut heavy shape */}
+                <Path
+                  path={juggernautPath}
+                  color={colorPalette.enemyFill.juggernaut || colors.enemyJuggernaut + '20'}
+                  style="fill"
+                />
+                <Path
+                  path={juggernautPath}
+                  color={juggernautColor}
+                  style="stroke"
+                  strokeWidth={3}
+                />
+
+                {/* Health bar (always shown for juggernaut due to high HP) */}
+                <Group transform={[{ rotate: -e.ang }]}>
+                  <Rect x={-18} y={-30} width={36} height={5} color={colors.panelBorder} />
+                  <Rect x={-18} y={-30} width={36 * hpPercent} height={5} color={juggernautColor} />
+                </Group>
+              </Group>
+            )
+          }
+
           return (
             <Group
               key={`enemy-${i}`}
@@ -752,6 +983,37 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
               strokeWidth={3}
             />
 
+            {/* Mothership shield visual - pulsing outer ring when shield is active */}
+            {boss.type === 'mothership' && boss.shieldActive && (
+              <>
+                <Circle
+                  cx={0}
+                  cy={0}
+                  r={90 + Math.sin(time * 6) * 5}
+                  color="#ff6600"
+                  style="stroke"
+                  strokeWidth={3}
+                  opacity={0.7 + Math.sin(time * 4) * 0.2}
+                />
+                <Circle
+                  cx={0}
+                  cy={0}
+                  r={95 + Math.sin(time * 6) * 5}
+                  color="#ff4400"
+                  style="stroke"
+                  strokeWidth={1.5}
+                  opacity={0.4 + Math.sin(time * 8) * 0.15}
+                />
+                <Circle
+                  cx={0}
+                  cy={0}
+                  r={88 + Math.sin(time * 6) * 5}
+                  color="#ff6600"
+                  opacity={0.1}
+                />
+              </>
+            )}
+
             {/* Boss core - intensifies when charging special */}
             <Circle
               cx={0}
@@ -762,15 +1024,15 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
             />
 
             {/* Boss health bar */}
-            <Rect x={-60} y={-70} width={120} height={8} color={colors.panelBorder} />
-            <Rect x={-60} y={-70} width={120 * (boss.hp / boss.maxHp)} height={8} color="#ff4444" />
+            <Rect x={-60} y={boss.type === 'mothership' ? -95 : -70} width={120} height={8} color={colors.panelBorder} />
+            <Rect x={-60} y={boss.type === 'mothership' ? -95 : -70} width={120 * (boss.hp / boss.maxHp)} height={8} color="#ff4444" />
 
             {/* Phase indicators */}
             {[1, 2, 3].map((phase) => (
               <Circle
                 key={phase}
                 cx={-20 + phase * 20}
-                cy={-80}
+                cy={boss.type === 'mothership' ? -105 : -80}
                 r={4}
                 color={boss.phase >= phase ? '#ff4444' : colors.panelBorder}
               />

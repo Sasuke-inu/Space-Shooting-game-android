@@ -183,6 +183,23 @@ export const ko: Translations = {
     sessionAccuracy: '정확도',
     sessionTime: '생존 시간',
     noRecentSession: '최근 세션 없음',
+  },
+  enemyTypes: {
+    scout: '스카우트',
+    tank: '탱크',
+    sniper: '스나이퍼',
+    bomber: '폭격기',
+    healer: '힐러',
+    juggernaut: '저거너트',
+  },
+  bossTypes: {
+    destroyer: '구축함',
+    carrier: '항공모함',
+    dreadnought: '전함',
+    mothership: '모선',
+  },
+  statistics: {
+    title: '통계',
     tabs: {
       overview: '개요',
       perShip: '우주선별 통계',

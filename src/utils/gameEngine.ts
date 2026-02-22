@@ -1069,6 +1069,7 @@ export const useGameEngine = () => {
           }
         }
       })
+
     })
 
     // Enemy bullets vs player - use spatial grid for player query
@@ -1371,6 +1372,10 @@ export const useGameEngine = () => {
             type: enemyType,
             chargeTime: enemyType === 'sniper' ? 0 : undefined,
             bombCooldown: enemyType === 'bomber' ? 3 : undefined,
+            teleportTimer: enemyType === 'teleporter' ? 0 : undefined,
+            healCooldown: enemyType === 'healer' ? 3 : undefined,
+            chargeCooldown: enemyType === 'juggernaut' ? 5 : undefined,
+            isCharging: enemyType === 'juggernaut' ? false : undefined,
           })
         }
       }
@@ -1406,7 +1411,12 @@ export const useGameEngine = () => {
       updatedEnemies = damagedEnemies
     }
     if (homingMissileUpdates.bossDamage > 0 && updatedBoss) {
-      const newBossHp = updatedBoss.hp - homingMissileUpdates.bossDamage
+      // Mothership shield reduces damage by 75%
+      let effectiveBossDamage = homingMissileUpdates.bossDamage
+      if (updatedBoss.type === 'mothership' && updatedBoss.shieldActive) {
+        effectiveBossDamage = Math.ceil(effectiveBossDamage * (1 - MOTHERSHIP_SHIELD_REDUCTION))
+      }
+      const newBossHp = updatedBoss.hp - effectiveBossDamage
       const stats = BOSS_STATS[updatedBoss.type]
       const hpPercent = newBossHp / updatedBoss.maxHp
       let newPhase = updatedBoss.phase
@@ -1424,8 +1434,8 @@ export const useGameEngine = () => {
 
     // Spawn boss if needed
     if (shouldSpawnBoss) {
-      const bossTypes: BossType[] = ['destroyer', 'carrier', 'dreadnought']
-      const waveBasedIndex = Math.min(Math.floor(wave / 10), 2)
+      const bossTypes: BossType[] = ['destroyer', 'carrier', 'dreadnought', 'mothership']
+      const waveBasedIndex = wave >= 25 ? 3 : Math.min(Math.floor(wave / 10), 2)
       const bossType = bossTypes[waveBasedIndex]
       const stats = BOSS_STATS[bossType]
       updatedBoss = {
@@ -1930,6 +1940,168 @@ function updateEnemyBehaviorBatched(
       break
     }
 
+    case 'healer': {
+      // Range-keeping: stay 250-400px from player (retreat if too close, approach if too far)
+      const healerMinDist = 250
+      const healerMaxDist = 400
+      let healerVel = e.vel
+
+      if (d < healerMinDist) {
+        // Retreat from player
+        healerVel = add(healerVel, mul(nor(sub(e.pos, state.player.pos)), stats.speed * dt * 1.5))
+      } else if (d > healerMaxDist) {
+        // Approach player
+        healerVel = add(healerVel, mul(dir, stats.speed * dt))
+      }
+
+      // Slight weaving movement
+      const healerWeave = Math.sin(e.aiTimer * 1.5) * stats.speed * dt * 0.3
+      const perpDir = { x: -dir.y, y: dir.x }
+      healerVel = add(healerVel, mul(perpDir, healerWeave))
+
+      // Slow movement with friction
+      healerVel = mul(healerVel, 0.97)
+      newEnemy.vel = healerVel
+      newEnemy.pos = wrap(add(e.pos, mul(healerVel, dt * animSpeed * 0.5)), state.w, state.h)
+      newEnemy.ang = angleOf(toP)
+
+      // Healing logic: every 3s, find nearest damaged enemy within 200px and heal for 15 HP
+      newEnemy.healCooldown = (e.healCooldown ?? 3) - dt
+      if (newEnemy.healCooldown <= 0) {
+        let nearestDamaged: Enemy | null = null
+        let nearestDist2 = 200 * 200 // distance squared threshold
+
+        for (const other of state.enemies) {
+          if (other === e) continue // skip self
+          if (other.hp >= other.maxHp) continue // skip undamaged enemies
+          const d2 = dist2(e.pos, other.pos)
+          if (d2 < nearestDist2) {
+            nearestDist2 = d2
+            nearestDamaged = other
+          }
+        }
+
+        if (nearestDamaged) {
+          // Heal target for 15 HP, cap at maxHp
+          nearestDamaged.hp = Math.min(nearestDamaged.hp + 15, nearestDamaged.maxHp)
+
+          // Emit green healing particles at target position
+          state.addParticles(
+            Array.from({ length: 6 }, () => ({
+              pos: { x: nearestDamaged!.pos.x, y: nearestDamaged!.pos.y },
+              vel: fromAngle(Math.random() * Math.PI * 2, rand(30, 80)),
+              life: rand(0.4, 0.8),
+              color: '#44ff44',
+            }))
+          )
+
+          newEnemy.healCooldown = 3
+        } else {
+          // No valid target, try again soon
+          newEnemy.healCooldown = 0.5
+        }
+      }
+
+      // Fire infrequently at player with low accuracy
+      newEnemy.cooldown -= dt
+      if (d < 500 && newEnemy.cooldown <= 0) {
+        const aim = angleOf(toP) + rand(-aimInaccuracy * 1.5, aimInaccuracy * 1.5)
+        bulletsToAdd.push({
+          pos: add(e.pos, fromAngle(aim, 16)),
+          vel: fromAngle(aim, BULLET_SPEED_ENEMY * 0.7),
+          life: BULLET_LIFE_ENEMY,
+          friendly: false,
+          damage: stats.damage,
+        })
+        playSfx('shoot_enemy')
+        newEnemy.cooldown = stats.fireRate * 1.2
+      }
+
+      break
+    }
+
+    case 'juggernaut': {
+      // Juggernaut: slow heavy approach with periodic charge attacks
+      const chargeTelegraphTime = 0.8
+      const chargeDuration = 1.5
+      const chargeSpeedMultiplier = 3
+
+      newEnemy.chargeCooldown = (e.chargeCooldown ?? 5) - dt
+
+      if (e.isCharging && e.chargeDirection) {
+        // Currently charging: move in locked direction at 3x speed, don't fire
+        const chargeSpeed = stats.speed * chargeSpeedMultiplier
+        const chargeVel = mul(e.chargeDirection, chargeSpeed)
+        newEnemy.vel = chargeVel
+        newEnemy.pos = wrap(add(e.pos, mul(chargeVel, dt * animSpeed)), state.w, state.h)
+        newEnemy.ang = angleOf(e.chargeDirection)
+
+        // Check if charge duration expired (chargeCooldown tracks remaining charge time when negative)
+        // Charge lasts chargeDuration seconds after telegraph (cooldown goes from -telegraph to -(telegraph+duration))
+        if (newEnemy.chargeCooldown <= -(chargeTelegraphTime + chargeDuration)) {
+          // Charge complete, reset
+          newEnemy.isCharging = false
+          newEnemy.chargeDirection = undefined
+          newEnemy.chargeCooldown = 5 // Reset cooldown for next charge
+          newEnemy.vel = mul(e.vel, 0.3) // Slow down after charge
+        }
+      } else if (e.chargeCooldown !== undefined && e.chargeCooldown <= 0) {
+        // Telegraph phase: glowing visual, lock charge direction
+        if (!e.chargeDirection) {
+          // Lock direction toward player at start of telegraph
+          newEnemy.chargeDirection = { x: dir.x, y: dir.y }
+
+          // Emit telegraph particles (glowing effect)
+          state.addParticles(
+            Array.from({ length: 10 }, () => ({
+              pos: { x: e.pos.x, y: e.pos.y },
+              vel: fromAngle(Math.random() * Math.PI * 2, rand(20, 60)),
+              life: rand(0.3, 0.7),
+              color: '#ff4400',
+            }))
+          )
+        }
+
+        // During telegraph: slow down and face player
+        newEnemy.vel = mul(e.vel, 0.9)
+        newEnemy.pos = wrap(add(e.pos, mul(newEnemy.vel, dt * animSpeed * 0.3)), state.w, state.h)
+        newEnemy.ang = angleOf(dir)
+
+        // After telegraph time, start charging
+        if (newEnemy.chargeCooldown <= -chargeTelegraphTime) {
+          newEnemy.isCharging = true
+        }
+      } else {
+        // Normal approach: slow steady movement toward player
+        const juggDesired = mul(dir, 0.8)
+        let juggVel = add(e.vel, mul(nor(juggDesired), stats.speed * dt))
+        juggVel = mul(juggVel, 0.995)
+        newEnemy.vel = juggVel
+        newEnemy.pos = wrap(add(e.pos, mul(juggVel, dt * animSpeed * 0.7)), state.w, state.h)
+        newEnemy.ang = angleOf(toP)
+
+        // Fire heavy spread shots (3 bullets in a fan) when not charging
+        newEnemy.cooldown = e.cooldown - dt
+        if (d < 500 && newEnemy.cooldown <= 0) {
+          const aim = angleOf(sub(state.player.pos, e.pos)) + rand(-aimInaccuracy * 0.5, aimInaccuracy * 0.5)
+          const spreadAngles = [-0.25, 0, 0.25]
+          for (const offset of spreadAngles) {
+            bulletsToAdd.push({
+              pos: add(e.pos, fromAngle(aim + offset, 20)),
+              vel: fromAngle(aim + offset, BULLET_SPEED_ENEMY * 0.65),
+              life: BULLET_LIFE_ENEMY * 1.2,
+              friendly: false,
+              damage: stats.damage,
+            })
+          }
+          playSfx('shoot_enemy')
+          newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.2)
+        }
+      }
+
+      break
+    }
+
     default:
       // Default behavior (legacy)
       const desired = add(dir, fromAngle(context.time * 0.7, 0.4 * (1 - difficulty * 0.5)))
@@ -2109,6 +2281,165 @@ function updateEnemyBehavior(
       }
       break
 
+    case 'healer': {
+      // Range-keeping: stay 250-400px from player (retreat if too close, approach if too far)
+      const healerMinDist = 250
+      const healerMaxDist = 400
+      let healerVel = e.vel
+
+      if (d < healerMinDist) {
+        // Retreat from player
+        healerVel = add(healerVel, mul(nor(sub(e.pos, state.player.pos)), stats.speed * dt * 1.5))
+      } else if (d > healerMaxDist) {
+        // Approach player
+        healerVel = add(healerVel, mul(dir, stats.speed * dt))
+      }
+
+      // Slight weaving movement
+      const healerWeave = Math.sin(e.aiTimer * 1.5) * stats.speed * dt * 0.3
+      const healerPerpDir = { x: -dir.y, y: dir.x }
+      healerVel = add(healerVel, mul(healerPerpDir, healerWeave))
+
+      // Slow movement with friction
+      healerVel = mul(healerVel, 0.97)
+      newEnemy.vel = healerVel
+      newEnemy.pos = wrap(add(e.pos, mul(healerVel, dt * animSpeed * 0.5)), state.w, state.h)
+      newEnemy.ang = angleOf(toP)
+
+      // Healing logic: every 3s, find nearest damaged enemy within 200px and heal for 15 HP
+      newEnemy.healCooldown = (e.healCooldown ?? 3) - dt
+      if (newEnemy.healCooldown <= 0) {
+        let nearestDamaged: Enemy | null = null
+        let nearestDist2 = 200 * 200 // distance squared threshold
+
+        for (const other of state.enemies) {
+          if (other === e) continue // skip self
+          if (other.hp >= other.maxHp) continue // skip undamaged enemies
+          const d2 = dist2(e.pos, other.pos)
+          if (d2 < nearestDist2) {
+            nearestDist2 = d2
+            nearestDamaged = other
+          }
+        }
+
+        if (nearestDamaged) {
+          // Heal target for 15 HP, cap at maxHp
+          nearestDamaged.hp = Math.min(nearestDamaged.hp + 15, nearestDamaged.maxHp)
+
+          // Emit green healing particles at target position
+          state.addParticles(
+            Array.from({ length: 6 }, () => ({
+              pos: { x: nearestDamaged!.pos.x, y: nearestDamaged!.pos.y },
+              vel: fromAngle(Math.random() * Math.PI * 2, rand(30, 80)),
+              life: rand(0.4, 0.8),
+              color: '#44ff44',
+            }))
+          )
+
+          newEnemy.healCooldown = 3
+        } else {
+          // No valid target, try again soon
+          newEnemy.healCooldown = 0.5
+        }
+      }
+
+      // Fire infrequently at player with low accuracy (with density cap check)
+      newEnemy.cooldown = e.cooldown - dt
+      if (d < 500 && newEnemy.cooldown <= 0 && canSpawnEnemyBullets(state.bullets.length, 1, state.w, state.h)) {
+        const aim = angleOf(toP) + rand(-aimInaccuracy * 1.5, aimInaccuracy * 1.5)
+        state.addBullet({
+          pos: add(e.pos, fromAngle(aim, 16)),
+          vel: fromAngle(aim, BULLET_SPEED_ENEMY * 0.7),
+          life: BULLET_LIFE_ENEMY,
+          friendly: false,
+          damage: stats.damage,
+        })
+        newEnemy.cooldown = stats.fireRate * 1.2 * earlyGameFireRate
+      }
+
+      break
+    }
+
+    case 'juggernaut': {
+      // Juggernaut: slow heavy approach with periodic charge attacks
+      const juggTelegraphTime = 0.8
+      const juggChargeDuration = 1.5
+      const juggChargeSpeedMultiplier = 3
+
+      newEnemy.chargeCooldown = (e.chargeCooldown ?? 5) - dt
+
+      if (e.isCharging && e.chargeDirection) {
+        // Currently charging: move in locked direction at 3x speed, don't fire
+        const chargeSpeed = stats.speed * juggChargeSpeedMultiplier
+        const chargeVel = mul(e.chargeDirection, chargeSpeed)
+        newEnemy.vel = chargeVel
+        newEnemy.pos = wrap(add(e.pos, mul(chargeVel, dt * animSpeed)), state.w, state.h)
+        newEnemy.ang = angleOf(e.chargeDirection)
+
+        // Check if charge duration expired
+        if (newEnemy.chargeCooldown <= -(juggTelegraphTime + juggChargeDuration)) {
+          // Charge complete, reset
+          newEnemy.isCharging = false
+          newEnemy.chargeDirection = undefined
+          newEnemy.chargeCooldown = 5
+          newEnemy.vel = mul(e.vel, 0.3)
+        }
+      } else if (e.chargeCooldown !== undefined && e.chargeCooldown <= 0) {
+        // Telegraph phase: glowing visual, lock charge direction
+        if (!e.chargeDirection) {
+          newEnemy.chargeDirection = { x: dir.x, y: dir.y }
+
+          // Emit telegraph particles (glowing effect)
+          state.addParticles(
+            Array.from({ length: 10 }, () => ({
+              pos: { x: e.pos.x, y: e.pos.y },
+              vel: fromAngle(Math.random() * Math.PI * 2, rand(20, 60)),
+              life: rand(0.3, 0.7),
+              color: '#ff4400',
+            }))
+          )
+        }
+
+        // During telegraph: slow down and face player
+        newEnemy.vel = mul(e.vel, 0.9)
+        newEnemy.pos = wrap(add(e.pos, mul(newEnemy.vel, dt * animSpeed * 0.3)), state.w, state.h)
+        newEnemy.ang = angleOf(dir)
+
+        // After telegraph time, start charging
+        if (newEnemy.chargeCooldown <= -juggTelegraphTime) {
+          newEnemy.isCharging = true
+        }
+      } else {
+        // Normal approach: slow steady movement toward player
+        const juggDesired2 = mul(dir, 0.8)
+        let juggVel2 = add(e.vel, mul(nor(juggDesired2), stats.speed * dt))
+        juggVel2 = mul(juggVel2, 0.995)
+        newEnemy.vel = juggVel2
+        newEnemy.pos = wrap(add(e.pos, mul(juggVel2, dt * animSpeed * 0.7)), state.w, state.h)
+        newEnemy.ang = angleOf(toP)
+
+        // Fire heavy spread shots (3 bullets in a fan) when not charging (with density cap check)
+        newEnemy.cooldown = e.cooldown - dt
+        if (d < 500 && newEnemy.cooldown <= 0 && canSpawnEnemyBullets(state.bullets.length, 3, state.w, state.h)) {
+          const aim = angleOf(sub(state.player.pos, e.pos)) + rand(-aimInaccuracy * 0.5, aimInaccuracy * 0.5)
+          const spreadAngles = [-0.25, 0, 0.25]
+          for (const offset of spreadAngles) {
+            state.addBullet({
+              pos: add(e.pos, fromAngle(aim + offset, 20)),
+              vel: fromAngle(aim + offset, BULLET_SPEED_ENEMY * 0.65),
+              life: BULLET_LIFE_ENEMY * 1.2,
+              friendly: false,
+              damage: stats.damage,
+            })
+          }
+          playSfx('shoot_enemy')
+          newEnemy.cooldown = stats.fireRate * (1 - difficulty * 0.2) * earlyGameFireRate
+        }
+      }
+
+      break
+    }
+
     default:
       // Default behavior (legacy)
       const desired = add(dir, fromAngle(state.time * 0.7, 0.4 * (1 - difficulty * 0.5)))
@@ -2242,9 +2573,59 @@ function updateBossBehaviorBatched(
         }
         playSfx('shoot_enemy')
         break
+
+      case 'mothership': {
+        // Targeted bullet fan (width depends on phase)
+        const toP2 = sub(state.player.pos, boss.pos)
+        const baseAngle = Math.atan2(toP2.y, toP2.x)
+        const fanCount = boss.phase >= 2 ? 5 : 3
+        const fanSpread = 0.2
+        for (let i = 0; i < fanCount; i++) {
+          const offset = (i - (fanCount - 1) / 2) * fanSpread
+          bullets.push({
+            pos: add(boss.pos, fromAngle(baseAngle + offset, 40)),
+            vel: fromAngle(baseAngle + offset, BULLET_SPEED_ENEMY * 0.7),
+            life: BULLET_LIFE_ENEMY * 1.3,
+            friendly: false,
+          })
+        }
+        // Phase 3: Add expanding ring pattern (8 bullets)
+        if (boss.phase >= 3) {
+          for (let i = 0; i < 8; i++) {
+            const angle = (i / 8) * Math.PI * 2
+            bullets.push({
+              pos: add(boss.pos, fromAngle(angle, 45)),
+              vel: fromAngle(angle, BULLET_SPEED_ENEMY * 0.6),
+              life: BULLET_LIFE_ENEMY * 1.6,
+              friendly: false,
+            })
+          }
+        }
+        playSfx('shoot_enemy')
+        break
+      }
     }
 
     newSpecialCooldown = 5 - boss.phase * 0.5
+  }
+
+  // Mothership shield management (phase 2+) for batched path
+  let newShieldActive = boss.shieldActive ?? false
+  let newShieldCooldown = boss.shieldCooldown ?? MOTHERSHIP_SHIELD_COOLDOWN
+
+  if (boss.type === 'mothership' && boss.phase >= 2) {
+    newShieldCooldown -= dt
+    if (newShieldActive) {
+      if (newShieldCooldown <= 0) {
+        newShieldActive = false
+        newShieldCooldown = MOTHERSHIP_SHIELD_COOLDOWN
+      }
+    } else {
+      if (newShieldCooldown <= 0) {
+        newShieldActive = true
+        newShieldCooldown = MOTHERSHIP_SHIELD_DURATION
+      }
+    }
   }
 
   // Create updated boss - mutate properties
@@ -2260,6 +2641,9 @@ function updateBossBehaviorBatched(
     specialCooldown: newSpecialCooldown,
     aiTimer: boss.aiTimer + dt,
     isActive: boss.isActive,
+    spawnedEnemiesCount: boss.spawnedEnemiesCount,
+    shieldActive: newShieldActive,
+    shieldCooldown: newShieldCooldown,
   }
 
   return {
@@ -2276,6 +2660,13 @@ function updateBossBehaviorBatched(
 const BOSS_SPECIAL_CHARGE_TIME = 1.0 // Wind-up time before special attacks (visual tell)
 const BOSS_FIRST_ENCOUNTER_NERF = 0.7 // Reduce difficulty on first boss
 const MAX_CARRIER_SPAWNED_ENEMIES = 12 // Lifetime limit of enemies spawned by carrier
+
+// Mothership boss constants
+const MAX_MOTHERSHIP_SCREEN_ENEMIES = 8 // Max enemies on screen from mothership spawns
+const MAX_MOTHERSHIP_SPAWNED_ENEMIES = 16 // Lifetime limit of enemies spawned by mothership
+const MOTHERSHIP_SHIELD_DURATION = 3 // Shield active duration in seconds
+const MOTHERSHIP_SHIELD_COOLDOWN = 10 // Cooldown between shield activations
+const MOTHERSHIP_SHIELD_REDUCTION = 0.75 // 75% damage reduction when shield active
 
 function updateBossBehavior(
   boss: Boss,
@@ -2332,7 +2723,11 @@ function updateBossBehavior(
     }
 
     // Longer cooldowns for first boss
-    const baseCooldown = 2.2 - boss.phase * 0.25
+    let baseCooldown = 2.2 - boss.phase * 0.25
+    // Mothership phase 3 berserk mode: faster regular attacks
+    if (boss.type === 'mothership' && boss.phase >= 3) {
+      baseCooldown *= 0.5
+    }
     newCooldown = isFirstBoss ? baseCooldown * 1.3 : baseCooldown
   }
 
@@ -2354,8 +2749,33 @@ function updateBossBehavior(
         isCharging = false
         newChargeTime = 0
         // Longer cooldowns between special attacks
-        const baseSpecialCooldown = 6 - boss.phase * 0.4
+        let baseSpecialCooldown = 6 - boss.phase * 0.4
+        // Mothership phase 3: more frequent special attacks
+        if (boss.type === 'mothership' && boss.phase >= 3) {
+          baseSpecialCooldown *= 0.6
+        }
         newSpecialCooldown = isFirstBoss ? baseSpecialCooldown * 1.4 : baseSpecialCooldown
+      }
+    }
+  }
+
+  // Mothership shield management (phase 2+)
+  let newShieldActive = boss.shieldActive ?? false
+  let newShieldCooldown = boss.shieldCooldown ?? MOTHERSHIP_SHIELD_COOLDOWN
+
+  if (boss.type === 'mothership' && boss.phase >= 2) {
+    newShieldCooldown -= dt
+    if (newShieldActive) {
+      // Shield is active, counting down duration
+      if (newShieldCooldown <= 0) {
+        newShieldActive = false
+        newShieldCooldown = MOTHERSHIP_SHIELD_COOLDOWN
+      }
+    } else {
+      // Shield on cooldown, counting down to next activation
+      if (newShieldCooldown <= 0) {
+        newShieldActive = true
+        newShieldCooldown = MOTHERSHIP_SHIELD_DURATION
       }
     }
   }
@@ -2369,6 +2789,8 @@ function updateBossBehavior(
     chargingSpecial: isCharging,
     specialChargeTime: newChargeTime,
     aiTimer: boss.aiTimer + dt,
+    shieldActive: newShieldActive,
+    shieldCooldown: newShieldCooldown,
   })
 }
 
@@ -2453,6 +2875,97 @@ function executeSpecialAttack(
         }
       }
       break
+
+    case 'mothership': {
+      const toPlayer = sub(state.player.pos, boss.pos)
+      const baseAngle = angleOf(toPlayer)
+
+      if (boss.phase >= 3) {
+        // Phase 3: Berserk mode - expanding ring (8 bullets) + wide fan + juggernaut spawn
+        const ringCount = 8
+        if (canSpawnEnemyBullets(state.bullets.length, ringCount, state.w, state.h)) {
+          for (let i = 0; i < ringCount; i++) {
+            const angle = (i / ringCount) * Math.PI * 2
+            state.addBullet({
+              pos: add(boss.pos, fromAngle(angle, 45)),
+              vel: fromAngle(angle, BULLET_SPEED_ENEMY * 0.6 * difficultyMultiplier),
+              life: BULLET_LIFE_ENEMY * 1.6,
+              friendly: false,
+            })
+          }
+        }
+
+        // Wide targeted fan (5 bullets)
+        const fanCount = 5
+        if (canSpawnEnemyBullets(state.bullets.length, fanCount, state.w, state.h)) {
+          for (let i = 0; i < fanCount; i++) {
+            const offset = (i - (fanCount - 1) / 2) * 0.25
+            state.addBullet({
+              pos: add(boss.pos, fromAngle(baseAngle + offset, 40)),
+              vel: fromAngle(baseAngle + offset, BULLET_SPEED_ENEMY * 0.8 * difficultyMultiplier),
+              life: BULLET_LIFE_ENEMY * 1.5,
+              friendly: false,
+            })
+          }
+        }
+
+        // Spawn juggernaut on first phase 3 entry (only if none on screen)
+        if ((boss.spawnedEnemiesCount ?? 0) < MAX_MOTHERSHIP_SPAWNED_ENEMIES) {
+          const hasJuggernaut = state.enemies.some(e => e.type === 'juggernaut')
+          if (!hasJuggernaut) {
+            state.spawnEnemy('juggernaut')
+            state.updateBoss({ spawnedEnemiesCount: (boss.spawnedEnemiesCount ?? 0) + 1 })
+          }
+        }
+      } else if (boss.phase >= 2) {
+        // Phase 2: Wider bullet fans (5 bullets) + spawn healers
+        const fanCount = 5
+        if (canSpawnEnemyBullets(state.bullets.length, fanCount, state.w, state.h)) {
+          for (let i = 0; i < fanCount; i++) {
+            const offset = (i - (fanCount - 1) / 2) * 0.2
+            state.addBullet({
+              pos: add(boss.pos, fromAngle(baseAngle + offset, 40)),
+              vel: fromAngle(baseAngle + offset, BULLET_SPEED_ENEMY * 0.75 * difficultyMultiplier),
+              life: BULLET_LIFE_ENEMY * 1.4,
+              friendly: false,
+            })
+          }
+        }
+
+        // Spawn healers
+        if ((boss.spawnedEnemiesCount ?? 0) < MAX_MOTHERSHIP_SPAWNED_ENEMIES &&
+            state.enemies.length < MAX_MOTHERSHIP_SCREEN_ENEMIES) {
+          state.spawnEnemy('healer')
+          state.updateBoss({ spawnedEnemiesCount: (boss.spawnedEnemiesCount ?? 0) + 1 })
+        }
+      } else {
+        // Phase 1: Spawn scouts (2 per special, max 8 on screen) + targeted 3-bullet fans
+        const remainingLifetimeSpawns = MAX_MOTHERSHIP_SPAWNED_ENEMIES - (boss.spawnedEnemiesCount ?? 0)
+        const spawnCount = Math.min(2, MAX_MOTHERSHIP_SCREEN_ENEMIES - state.enemies.length, remainingLifetimeSpawns)
+        if (spawnCount > 0) {
+          for (let i = 0; i < spawnCount; i++) {
+            state.spawnEnemy('scout')
+          }
+          state.updateBoss({ spawnedEnemiesCount: (boss.spawnedEnemiesCount ?? 0) + spawnCount })
+        }
+
+        // Targeted 3-bullet fan
+        const fanCount = 3
+        if (canSpawnEnemyBullets(state.bullets.length, fanCount, state.w, state.h)) {
+          for (let i = 0; i < fanCount; i++) {
+            const offset = (i - (fanCount - 1) / 2) * 0.2
+            state.addBullet({
+              pos: add(boss.pos, fromAngle(baseAngle + offset, 40)),
+              vel: fromAngle(baseAngle + offset, BULLET_SPEED_ENEMY * 0.7 * difficultyMultiplier),
+              life: BULLET_LIFE_ENEMY * 1.3,
+              friendly: false,
+            })
+          }
+        }
+      }
+      playSfx('shoot_enemy')
+      break
+    }
   }
 }
 

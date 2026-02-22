@@ -183,6 +183,23 @@ export const zh: Translations = {
     sessionAccuracy: '准确率',
     sessionTime: '生存时间',
     noRecentSession: '无最近会话',
+  },
+  enemyTypes: {
+    scout: '侦察兵',
+    tank: '坦克',
+    sniper: '狙击手',
+    bomber: '轰炸机',
+    healer: '治疗者',
+    juggernaut: '重装兵',
+  },
+  bossTypes: {
+    destroyer: '驱逐舰',
+    carrier: '航母',
+    dreadnought: '无畏舰',
+    mothership: '母舰',
+  },
+  statistics: {
+    title: '统计',
     tabs: {
       overview: '概览',
       perShip: '各飞船统计',

@@ -103,6 +103,8 @@ export const getEnemySpawnWeights = (wave: number): Record<EnemyType, number> =>
   sniper: wave >= 5 ? 15 : 0,
   bomber: wave >= 7 ? 15 : 0,
   teleporter: wave >= 9 ? 10 : 0,
+  healer: wave >= 11 ? 10 : 0,
+  juggernaut: wave >= 15 ? 8 : 0,
 })
 
 // Asteroid HP by tier
@@ -575,6 +577,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
         chargeTime: enemyType === 'sniper' ? 0 : undefined,
         bombCooldown: enemyType === 'bomber' ? 3 : undefined,
         teleportTimer: enemyType === 'teleporter' ? 0 : undefined,
+        healCooldown: enemyType === 'healer' ? 3 : undefined,
+        chargeCooldown: enemyType === 'juggernaut' ? 5 : undefined,
+        isCharging: enemyType === 'juggernaut' ? false : undefined,
       }
       return { enemies: [...state.enemies, newEnemy] }
     }),
@@ -637,6 +642,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
           chargeTime: enemyType === 'sniper' ? 0 : undefined,
           bombCooldown: enemyType === 'bomber' ? 3 : undefined,
           teleportTimer: enemyType === 'teleporter' ? 0 : undefined,
+          healCooldown: enemyType === 'healer' ? 3 : undefined,
+          chargeCooldown: enemyType === 'juggernaut' ? 5 : undefined,
+          isCharging: enemyType === 'juggernaut' ? false : undefined,
         })
       }
 
@@ -884,8 +892,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   spawnBoss: (type) =>
     set((state) => {
-      const bossTypes: BossType[] = ['destroyer', 'carrier', 'dreadnought']
-      const waveBasedIndex = Math.min(Math.floor(state.wave / 10), 2)
+      const bossTypes: BossType[] = ['destroyer', 'carrier', 'dreadnought', 'mothership']
+      const waveBasedIndex = state.wave >= 25 ? 3 : Math.min(Math.floor(state.wave / 10), 2)
       const bossType = type ?? bossTypes[waveBasedIndex]
       const stats = BOSS_STATS[bossType]
 
@@ -921,7 +929,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
   damageBoss: (damage) =>
     set((state) => {
       if (!state.boss) return state
-      const newHp = state.boss.hp - damage
+      // Mothership shield: 75% damage reduction when active
+      const effectiveDamage = (state.boss.type === 'mothership' && state.boss.shieldActive)
+        ? Math.ceil(damage * 0.25)
+        : damage
+      const newHp = state.boss.hp - effectiveDamage
       const stats = BOSS_STATS[state.boss.type]
 
       // Check for phase transition

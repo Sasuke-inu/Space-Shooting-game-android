@@ -22,6 +22,8 @@ export interface ThemeColors {
   enemySniper: string
   enemyBomber: string
   enemyTeleporter: string
+  enemyHealer: string
+  enemyJuggernaut: string
 
   // Objects
   asteroid: string
