@@ -9,6 +9,7 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated"
 import type { Vec2, Player, ShipType } from "../types/game"
+import { SHIP_STATS } from "../types/game"
 import type { ThemeColors } from "../theme/types"
 import type { JoystickSize, JoystickPosition } from "../theme/themeStore"
 import { hapticLight, hapticSelection } from "../utils/haptics"
@@ -20,6 +21,9 @@ interface VirtualControlsProps {
   size?: JoystickSize
   position?: JoystickPosition
   invertY?: boolean
+  player: Player
+  onAbilityPress: () => void
+  cooldownProgress: Animated.SharedValue<number>
 }
 
 const JOY_DEADZONE = 0.1
@@ -38,6 +42,9 @@ const VirtualControlsComponent: React.FC<VirtualControlsProps> = ({
   size = 'medium',
   position = 'center',
   invertY = false,
+  player,
+  onAbilityPress,
+  cooldownProgress,
 }) => {
   const [joystickActive, setJoystickActive] = useState(false)
   const joystickX = useSharedValue(0)
@@ -179,6 +186,15 @@ const VirtualControlsComponent: React.FC<VirtualControlsProps> = ({
       backgroundColor: colors.joystickStick,
       shadowColor: colors.joystickGlow,
     },
+    abilityButton: {
+      backgroundColor: colors.buttonPrimary,
+    },
+    abilityText: {
+      color: colors.hudText,
+    },
+    cooldownOverlay: {
+      borderLeftColor: colors.hudAccent,
+    },
   }), [colors, sizeConfig])
 
   // Map position to justifyContent
@@ -197,12 +213,48 @@ const VirtualControlsComponent: React.FC<VirtualControlsProps> = ({
   return (
     <View style={[styles.container, { justifyContent: containerAlignment }]}>
       <GestureDetector gesture={panGesture}>
-        <View style={styles.joystickContainer}>
+        <View
+          style={styles.joystickContainer}
+          accessible={true}
+          accessibilityLabel="Movement joystick"
+          accessibilityHint="Drag to control ship movement"
+          accessibilityRole="adjustable"
+        >
           <View style={[styles.joystickPad, dynamicStyles.joystickPad]}>
             <Animated.View style={[styles.joystickStick, dynamicStyles.joystickStick, stickStyle]} />
           </View>
         </View>
       </GestureDetector>
+
+      {/* Special ability button */}
+      <View style={styles.abilityButtonContainer}>
+        <Pressable
+          style={[
+            styles.abilityButton,
+            dynamicStyles.abilityButton,
+            !player.specialReady && { opacity: 0.4 }
+          ]}
+          onPress={player.specialReady ? onAbilityPress : undefined}
+          disabled={!player.specialReady}
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel={`Special ability: ${SHIP_STATS[player.shipType].special}`}
+          accessibilityHint="Activate ship special ability"
+          accessibilityState={{ disabled: !player.specialReady }}
+        >
+          <Text style={[styles.abilityText, dynamicStyles.abilityText]}>
+            {SHIP_STATS[player.shipType].special}
+          </Text>
+        </Pressable>
+        <Animated.View
+          style={[
+            styles.cooldownOverlay,
+            dynamicStyles.cooldownOverlay,
+            cooldownOverlayStyle
+          ]}
+          pointerEvents="none"
+        />
+      </View>
     </View>
   )
 }

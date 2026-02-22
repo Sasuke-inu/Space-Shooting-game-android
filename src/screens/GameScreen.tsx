@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from "react"
 import { View, Text, Modal, ScrollView, Pressable, useWindowDimensions, Keyboard } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { GestureDetector } from "react-native-gesture-handler"
+import { useSharedValue } from "react-native-reanimated"
 import { GameCanvas } from "../components/GameCanvas"
 import { VirtualControls } from "../components/VirtualControls"
 import {
@@ -141,6 +142,7 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   const [joystickValue, setJoystickValue] = useState<Vec2>({ x: 0, y: 0 })
   const [swipeImpulse, setSwipeImpulse] = useState<Vec2>({ x: 0, y: 0 })
   const initializedRef = useRef(false)
+  const cooldownProgress = useSharedValue(0)
   const lastAbilityActivationRef = useRef<string | null>(null) // Track last activated ability
   const [showInstructions, setShowInstructions] = useState(true)
   const [showTutorial, setShowTutorial] = useState(false)
@@ -199,6 +201,15 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   const recordWaveChallenge = useChallengesStore((s) => s.recordWave)
   const recordAccuracyChallenge = useChallengesStore((s) => s.recordAccuracy)
   const recordNoDamageWaveChallenge = useChallengesStore((s) => s.recordNoDamageWave)
+
+  // Update cooldown progress for ability button
+  useEffect(() => {
+    if (specialAbility) {
+      cooldownProgress.value = specialAbility.cooldown / specialAbility.maxCooldown
+    } else {
+      cooldownProgress.value = 0
+    }
+  }, [specialAbility?.cooldown, specialAbility?.maxCooldown])
 
   // Handle special ability effects
   useEffect(() => {
@@ -643,6 +654,9 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
         size={joystickSize}
         position={joystickPosition}
         invertY={invertY}
+        player={player}
+        onAbilityPress={activateSpecialAbility}
+        cooldownProgress={cooldownProgress}
       />
 
       {/* Tutorial Overlay */}
