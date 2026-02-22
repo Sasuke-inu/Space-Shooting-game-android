@@ -51,6 +51,19 @@ data class Particle(
 )
 
 /**
+ * Floating text entity (e.g. damage numbers, score).
+ */
+data class FloatingText(
+    val pos: Vec2,
+    val vel: Vec2 = Vec2(0f, -40f), // Float up by default
+    val text: String,
+    val color: Int, // ARGB
+    val scale: Float = 1f,
+    val lifetime: Float = 1.0f,
+    val maxLifetime: Float = 1.0f
+)
+
+/**
  * Asteroid entity.
  */
 data class Asteroid(
@@ -81,7 +94,9 @@ data class Enemy(
     val accuracy: Float = 0.6f,
     val chargeTime: Float = 0f, // For Sniper
     val bombCooldown: Float = 0f, // For Bomber
-    val stunTime: Float = 0f // For EMP stun
+
+    val stunTime: Float = 0f, // For EMP stun
+    val hitFlashTimer: Float = 0f
 ) {
     val isStunned: Boolean get() = stunTime > 0f
     val healthPercent: Float get() = hp.toFloat() / maxHp
@@ -103,8 +118,11 @@ data class Boss(
     val firePatternTimer: Float = 0f,
     val attackCooldown: Float = 0f,
     val specialCooldown: Float = 0f,
+
     val stunTime: Float = 0f,
+    val hitFlashTimer: Float = 0f,
     val score: Int = 1000
+
 ) {
     val currentPhase: Int
         get() {

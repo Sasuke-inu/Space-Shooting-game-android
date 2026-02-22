@@ -147,6 +147,9 @@ class GameRenderer {
         // Draw power-ups
         drawPowerUps(canvas, state, colors)
 
+        // Draw floating texts
+        drawFloatingTexts(canvas, state)
+
         // Draw asteroids
         drawAsteroids(canvas, state, colors)
 
@@ -164,6 +167,11 @@ class GameRenderer {
 
         // Draw bullets
         drawBullets(canvas, state, colors)
+
+        // Draw screen flash
+        state.screenFlash?.let { flash ->
+            drawScreenFlash(canvas, flash)
+        }
 
         // Boss warning
         if (state.bossWarning) {
@@ -318,19 +326,26 @@ class GameRenderer {
             // Health percent for tank health bar
             val healthPercent = enemy.hp.toFloat() / enemy.maxHp
 
+            // Hit flash
+            val finalColor = if (enemy.hitFlashTimer > 0f) {
+                 if ((state.time * 20).toInt() % 2 == 0) Color.WHITE else Color.RED
+            } else {
+                 color
+            }
+
             // Draw based on type
             when (enemy.type) {
-                EnemyType.SCOUT -> drawScoutEnemy(canvas, color)
-                EnemyType.TANK -> drawTankEnemy(canvas, color, healthPercent)
-                EnemyType.SNIPER -> drawSniperEnemy(canvas, color, 0f, state.time)
-                EnemyType.BOMBER -> drawBomberEnemy(canvas, color)
+                EnemyType.SCOUT -> drawScoutEnemy(canvas, finalColor, healthPercent)
+                EnemyType.TANK -> drawTankEnemy(canvas, finalColor, healthPercent)
+                EnemyType.SNIPER -> drawSniperEnemy(canvas, finalColor, 0f, state.time, healthPercent)
+                EnemyType.BOMBER -> drawBomberEnemy(canvas, finalColor, healthPercent)
             }
 
             canvas.restore()
         }
     }
 
-    private fun drawScoutEnemy(canvas: Canvas, color: Int) {
+    private fun drawScoutEnemy(canvas: Canvas, color: Int, healthPercent: Float) {
         paint.color = color
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 2f
@@ -343,6 +358,15 @@ class GameRenderer {
             close()
         }
         canvas.drawPath(path, paint)
+
+        // Health bar
+        if (healthPercent < 1f) {
+            paint.style = Paint.Style.FILL
+            paint.color = Color.DKGRAY
+            canvas.drawRect(-8f, 15f, 8f, 18f, paint)
+            paint.color = Color.GREEN
+            canvas.drawRect(-8f, 15f, -8f + 16f * healthPercent, 18f, paint)
+        }
     }
 
     private fun drawTankEnemy(canvas: Canvas, color: Int, healthPercent: Float) {
@@ -368,7 +392,7 @@ class GameRenderer {
         }
     }
 
-    private fun drawSniperEnemy(canvas: Canvas, color: Int, chargeTime: Float, time: Float) {
+    private fun drawSniperEnemy(canvas: Canvas, color: Int, chargeTime: Float, time: Float, healthPercent: Float) {
         paint.color = color
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 2f
@@ -392,9 +416,18 @@ class GameRenderer {
             paint.strokeWidth = 2f
             canvas.drawCircle(0f, 0f, chargeRadius, paint)
         }
+
+        // Health bar
+        if (healthPercent < 1f) {
+            paint.style = Paint.Style.FILL
+            paint.color = Color.DKGRAY
+            canvas.drawRect(-8f, 18f, 8f, 21f, paint)
+            paint.color = Color.GREEN
+            canvas.drawRect(-8f, 18f, -8f + 16f * healthPercent, 21f, paint)
+        }
     }
 
-    private fun drawBomberEnemy(canvas: Canvas, color: Int) {
+    private fun drawBomberEnemy(canvas: Canvas, color: Int, healthPercent: Float) {
         paint.color = color
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 2f
@@ -403,6 +436,15 @@ class GameRenderer {
         // Wings
         canvas.drawLine(-15f, 0f, -8f, 0f, paint)
         canvas.drawLine(8f, 0f, 15f, 0f, paint)
+
+        // Health bar
+        if (healthPercent < 1f) {
+            paint.style = Paint.Style.FILL
+            paint.color = Color.DKGRAY
+            canvas.drawRect(-12f, 15f, 12f, 18f, paint)
+            paint.color = Color.GREEN
+            canvas.drawRect(-12f, 15f, -12f + 24f * healthPercent, 18f, paint)
+        }
     }
 
     private fun drawBoss(canvas: Canvas, boss: Boss, state: GameState, colors: ThemeColors) {
@@ -425,7 +467,10 @@ class GameRenderer {
         canvas.drawCircle(0f, 0f, radius + 20f, paint)
 
         // Main body
-        paint.color = Color.DKGRAY
+        val isFlashing = boss.hitFlashTimer > 0f
+        val flashColor = if (isFlashing && (state.time * 20).toInt() % 2 == 0) Color.WHITE else Color.RED
+        
+        paint.color = if (isFlashing) flashColor else Color.DKGRAY
         canvas.drawCircle(0f, 0f, radius, paint)
 
         // Core
@@ -484,6 +529,18 @@ class GameRenderer {
         }
     }
 
+    private fun drawFloatingTexts(canvas: Canvas, state: GameState) {
+        textPaint.textAlign = Paint.Align.CENTER
+        
+        for (text in state.floatingTexts) {
+            val alpha = (text.lifetime / text.maxLifetime * 255).toInt().coerceIn(0, 255)
+            textPaint.color = (text.color and 0x00FFFFFF) or (alpha shl 24)
+            textPaint.textSize = 24f * text.scale
+            
+            canvas.drawText(text.text, text.pos.x, text.pos.y, textPaint)
+        }
+    }
+
     private fun drawHomingMissiles(canvas: Canvas, state: GameState, colors: ThemeColors) {
         paint.color = Color.rgb(255, 150, 50)
         paint.style = Paint.Style.FILL
@@ -503,6 +560,17 @@ class GameRenderer {
         textPaint.textSize = 32f
         textPaint.textAlign = Paint.Align.CENTER
         canvas.drawText("⚠️ BOSS INCOMING ⚠️", width / 2, height / 2, textPaint)
+    }
+
+    private fun drawScreenFlash(canvas: Canvas, flash: ScreenFlash) {
+        val baseAlpha = Color.alpha(flash.color)
+        val finalAlpha = (baseAlpha * flash.alpha).toInt().coerceIn(0, 255)
+
+        paint.color = (flash.color and 0x00FFFFFF) or (finalAlpha shl 24)
+        paint.style = Paint.Style.FILL
+
+        // Draw with margin to cover screen shake
+        canvas.drawRect(-100f, -100f, width + 100f, height + 100f, paint)
     }
 
     private fun androidx.compose.ui.graphics.Color.toArgb(): Int {

@@ -205,6 +205,18 @@ data class ScreenShake(
 }
 
 /**
+ * Screen flash effect state.
+ * Overlays a colored tint that fades out.
+ */
+data class ScreenFlash(
+    val color: Int, // ARGB color
+    val duration: Float,
+    val maxDuration: Float
+) {
+    val alpha: Float get() = (duration / maxDuration).coerceIn(0f, 1f)
+}
+
+/**
  * Special ability state.
  */
 data class SpecialAbilityState(
@@ -216,4 +228,12 @@ data class SpecialAbilityState(
 ) {
     val isReady: Boolean get() = cooldown <= 0f && !isActive
     val cooldownProgress: Float get() = if (maxCooldown > 0f) 1f - (cooldown / maxCooldown) else 1f
+}
+
+enum class HapticEvent {
+    PLAYER_FIRE,
+    PLAYER_DAMAGE,
+    ENEMY_EXPLOSION,
+    POWERUP_PICKUP,
+    GAME_OVER
 }

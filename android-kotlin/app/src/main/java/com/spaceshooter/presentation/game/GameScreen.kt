@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
@@ -43,6 +44,21 @@ fun GameScreen(
                 }
             }
     ) {
+        // Haptic Feedback
+        val view = androidx.compose.ui.platform.LocalView.current
+        LaunchedEffect(gameState.hapticEvents) {
+            gameState.hapticEvents.forEach { event ->
+                val feedbackConstant = when (event) {
+                    com.spaceshooter.domain.model.HapticEvent.PLAYER_FIRE -> android.view.HapticFeedbackConstants.TEXT_HANDLE_MOVE
+                    com.spaceshooter.domain.model.HapticEvent.ENEMY_EXPLOSION -> android.view.HapticFeedbackConstants.KEYBOARD_TAP
+                    com.spaceshooter.domain.model.HapticEvent.PLAYER_DAMAGE -> android.view.HapticFeedbackConstants.LONG_PRESS
+                    com.spaceshooter.domain.model.HapticEvent.POWERUP_PICKUP -> android.view.HapticFeedbackConstants.VIRTUAL_KEY
+                    com.spaceshooter.domain.model.HapticEvent.GAME_OVER -> android.view.HapticFeedbackConstants.LONG_PRESS
+                }
+                view.performHapticFeedback(feedbackConstant)
+            }
+        }
+
         // Game Canvas (SurfaceView)
         AndroidView(
             factory = { context ->
@@ -123,9 +139,16 @@ private fun FireButton(
     modifier: Modifier = Modifier
 ) {
     var isPressed by remember { mutableStateOf(false) }
+    
+    // Scale animation
+    val scale by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = if (isPressed) 0.9f else 1.0f,
+        label = "buttonScale"
+    )
 
     Box(
         modifier = modifier
+            .scale(scale)
             .size(80.dp)
             .background(
                 color = if (isPressed) colors.buttonPrimary else colors.joystickPad,
@@ -195,6 +218,44 @@ private fun GameHUD(
                 color = colors.hudAccent,
                 fontSize = 12.sp
             )
+
+            
+            // Active Power-ups
+            if (gameState.activePowerUps.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                gameState.activePowerUps.forEach { powerUp ->
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = powerUp.type.displayName,
+                            color = colors.hudAccent,
+                            fontSize = 10.sp
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        // Tiny progress bar
+                        val progress = (powerUp.remainingDuration / powerUp.type.duration).coerceIn(0f, 1f)
+                        val barColor = when (powerUp.type) {
+                            com.spaceshooter.domain.model.PowerUpType.SHIELD -> colors.powerUpShield
+                            com.spaceshooter.domain.model.PowerUpType.RAPID_FIRE -> colors.powerUpRapidFire
+                            com.spaceshooter.domain.model.PowerUpType.SPREAD_SHOT -> colors.powerUpSpreadShot
+                            com.spaceshooter.domain.model.PowerUpType.MAGNET -> colors.powerUpMagnet
+                        }
+                        
+                        Box(
+                            modifier = Modifier
+                                .width(30.dp)
+                                .height(4.dp)
+                                .background(colors.hullBarBg)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .fillMaxWidth(progress)
+                                    .background(barColor)
+                            )
+                        }
+                    }
+                }
+            }
         }
 
         // Top-center: Combo
@@ -229,6 +290,21 @@ private fun GameHUD(
                 color = colors.hudText,
                 fontSize = 10.sp
             )
+            // Dynamic Hull Bar Color & Pulse
+            val healthPercent = hp.toFloat() / maxHp
+            val barColor = when {
+                healthPercent > 0.5f -> colors.hullBar // Green
+                healthPercent > 0.25f -> Color(0xFFFFD700) // Gold/Yellow
+                else -> Color(0xFFFF4444) // Red
+            }
+
+            // Critical health pulse
+            val alpha = if (healthPercent <= 0.25f) {
+                0.6f + 0.4f * kotlin.math.sin(System.currentTimeMillis() / 100.0).toFloat()
+            } else {
+                1.0f
+            }
+
             Box(
                 modifier = Modifier
                     .width(120.dp)
@@ -238,8 +314,8 @@ private fun GameHUD(
                 Box(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .fillMaxWidth(hp.toFloat() / maxHp)
-                        .background(colors.hullBar)
+                        .fillMaxWidth(healthPercent)
+                        .background(barColor.copy(alpha = alpha.coerceIn(0.2f, 1.0f)))
                 )
             }
         }
@@ -273,9 +349,9 @@ private fun GameHUD(
             if (!paused) {
                 Box(
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(64.dp) // Increased size
                         .background(
-                            color = colors.joystickPad,
+                            color = colors.buttonPrimary.copy(alpha = 0.8f),
                             shape = androidx.compose.foundation.shape.CircleShape
                         )
                         .pointerInput(Unit) {
@@ -286,9 +362,10 @@ private fun GameHUD(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "||",
-                        color = colors.joystickStick,
-                        fontSize = 16.sp
+                        text = "II", // Standard Pause Icon
+                        color = colors.buttonText,
+                        fontSize = 24.sp,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                     )
                 }
             }

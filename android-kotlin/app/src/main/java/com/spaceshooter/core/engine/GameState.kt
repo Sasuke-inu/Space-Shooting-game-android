@@ -45,6 +45,7 @@ data class GameState(
     // Entities
     val bullets: List<Bullet> = emptyList(),
     val particles: List<Particle> = emptyList(),
+    val floatingTexts: List<FloatingText> = emptyList(),
     val asteroids: List<Asteroid> = emptyList(),
     val enemies: List<Enemy> = emptyList(),
 
@@ -60,7 +61,9 @@ data class GameState(
     // Special systems
     val combo: ComboState = ComboState(),
     val screenShake: ScreenShake? = null,
+    val screenFlash: ScreenFlash? = null,
     val homingMissiles: List<HomingMissile> = emptyList(),
+    val hapticEvents: List<HapticEvent> = emptyList(),
 
     // Time warp
     val timeWarpActive: Boolean = false,
