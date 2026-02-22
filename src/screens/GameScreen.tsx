@@ -3,6 +3,7 @@ import { View, Text, Modal, ScrollView, Pressable, useWindowDimensions, Keyboard
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { GestureDetector } from "react-native-gesture-handler"
 import { useSharedValue } from "react-native-reanimated"
+import { useShallow } from "zustand/react/shallow"
 import { GameCanvas } from "../components/GameCanvas"
 import { VirtualControls } from "../components/VirtualControls"
 import {
@@ -14,6 +15,7 @@ import {
   TopBar,
   TutorialOverlay,
   PauseButton,
+  CountdownOverlay,
   useBackgroundMusic,
   useGameGestures,
   useGameLoop,
@@ -81,6 +83,7 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   const time = useGameStore((s) => s.time)
   const bossWarning = useGameStore((s) => s.bossWarning)
   const timeWarpActive = useGameStore((s) => s.timeWarpActive)
+  const showCountdown = useGameStore((s) => s.showCountdown)
 
   // Game state - objects (use shallow equality)
   const player = useGameStore(useShallow((s) => s.player))
@@ -105,6 +108,9 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   const spawnHomingMissiles = useGameStore((s) => s.spawnHomingMissiles)
   const setTimeWarp = useGameStore((s) => s.setTimeWarp)
   const stunAllEnemies = useGameStore((s) => s.stunAllEnemies)
+  const startCountdown = useGameStore((s) => s.startCountdown)
+  const stopCountdown = useGameStore((s) => s.stopCountdown)
+  const setPaused = useGameStore((s) => s.setPaused)
 
   // Progress stores - objects and arrays (use shallow equality)
   const stats = useStatisticsStore(useShallow((s) => s.stats))
@@ -352,7 +358,7 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
     store.resetGame()
     store.spawnAsteroids(5)
     store.spawnEnemy()
-    store.setPaused(false)
+    store.startCountdown()
   }
 
   const handleMainMenu = () => {
@@ -368,7 +374,12 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
 
   const handleStartGame = () => {
     setShowInstructions(false)
-    useGameStore.getState().setPaused(false)
+    startCountdown()
+  }
+
+  const handleCountdownComplete = () => {
+    stopCountdown()
+    setPaused(false)
   }
 
   const recordGameEndStats = () => {
@@ -967,7 +978,14 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
         credits={credits}
         highScores={highScores}
         onRestart={handleRestart}
-        onContinue={() => useGameStore.getState().setPaused(false)}
+        onContinue={() => startCountdown()}
+        colors={colors}
+      />
+
+      {/* Countdown Overlay */}
+      <CountdownOverlay
+        visible={showCountdown}
+        onComplete={handleCountdownComplete}
         colors={colors}
       />
     </View>
