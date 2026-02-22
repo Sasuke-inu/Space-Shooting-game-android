@@ -171,20 +171,6 @@ export const ko: Translations = {
     sessionAccuracy: '정확도',
     sessionTime: '생존 시간',
     noRecentSession: '최근 세션 없음',
-  },
-  enemyTypes: {
-    scout: '스카우트',
-    tank: '탱크',
-    sniper: '스나이퍼',
-    bomber: '폭격기',
-  },
-  bossTypes: {
-    destroyer: '구축함',
-    carrier: '항공모함',
-    dreadnought: '전함',
-  },
-  statistics: {
-    title: '통계',
     tabs: {
       overview: '개요',
       perShip: '우주선별 통계',
@@ -204,6 +190,17 @@ export const ko: Translations = {
       noDataYet: '아직 데이터 없음',
       playToUnlock: '플레이하여 잠금 해제',
     },
+  },
+  enemyTypes: {
+    scout: '스카우트',
+    tank: '탱크',
+    sniper: '스나이퍼',
+    bomber: '폭격기',
+  },
+  bossTypes: {
+    destroyer: '구축함',
+    carrier: '항공모함',
+    dreadnought: '전함',
   },
   general: {
     confirm: '확인',

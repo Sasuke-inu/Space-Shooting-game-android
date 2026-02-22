@@ -171,20 +171,6 @@ export const es: Translations = {
     sessionAccuracy: 'Precisión',
     sessionTime: 'Tiempo Sobrevivido',
     noRecentSession: 'Sin sesión reciente',
-  },
-  enemyTypes: {
-    scout: 'Explorador',
-    tank: 'Tanque',
-    sniper: 'Francotirador',
-    bomber: 'Bombardero',
-  },
-  bossTypes: {
-    destroyer: 'Destructor',
-    carrier: 'Portador',
-    dreadnought: 'Acorazado',
-  },
-  statistics: {
-    title: 'Estadísticas',
     tabs: {
       overview: 'Resumen',
       perShip: 'Estadísticas por Nave',
@@ -204,6 +190,17 @@ export const es: Translations = {
       noDataYet: 'Aún no hay datos',
       playToUnlock: 'Juega para desbloquear',
     },
+  },
+  enemyTypes: {
+    scout: 'Explorador',
+    tank: 'Tanque',
+    sniper: 'Francotirador',
+    bomber: 'Bombardero',
+  },
+  bossTypes: {
+    destroyer: 'Destructor',
+    carrier: 'Portador',
+    dreadnought: 'Acorazado',
   },
   general: {
     confirm: 'Confirmar',
