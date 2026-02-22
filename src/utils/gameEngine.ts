@@ -393,11 +393,9 @@ export const useGameEngine = () => {
         })
       }
 
-        state.updatePlayer({ cooldown })
-        playSfx('shoot_player')
-        hapticLight()
-        playSfx('shoot_player')
-      }
+      state.updatePlayer({ cooldown })
+      hapticLight()
+      playSfx('shoot_player')
     }
 
     // Update asteroids (with increasing animation speed) - mutate during iteration
@@ -626,7 +624,16 @@ export const useGameEngine = () => {
             state.triggerShake(3, 100)
             hapticMedium()
 
-      // Bullets vs asteroids
+            // Chance to drop power-up from large asteroids
+            if (a.tier === 3 && Math.random() < POWERUP_DROP_ASTEROID) {
+              newPowerUpsToSpawn.push({ ...a.pos })
+            }
+            sessionShotsHit++ // Record shot hit
+          }
+        }
+      })
+
+      // Bullets vs asteroids (with spatial grid optimization)
       updatedAsteroids.forEach((a, aIdx) => {
         if (!bulletsToRemove.has(bIdx) && !asteroidsToRemove.has(aIdx)) {
           // Check if asteroid is in nearby entities
@@ -684,28 +691,32 @@ export const useGameEngine = () => {
               const damage = 25
               const newHp = e.hp - damage
 
-            if (newHp <= 0) {
-              // Enemy destroyed - mark for removal
-              enemiesToRemove.add(eIdx)
-              enemyDeathEffects.push({
-                pos: { ...e.pos },
-                type: e.type,
-                dropPowerUp: Math.random() < POWERUP_DROP_ENEMY,
-              })
-              boom(e.pos, themeColors.particleExplosion, 28, 200)
-              playSfx('explosion_large')
-              state.incrementCombo()
-              state.recordKill()
-              const enemyPoints = ENEMY_STATS[e.type].points
-              const enemyScoreWithMultiplier = state.hasPowerUp('score_multiplier') ? enemyPoints * 2 : enemyPoints
-              state.addScore(enemyScoreWithMultiplier)
-              state.addCredits(Math.floor(ENEMY_STATS[e.type].points / 10))
-              state.triggerShake(8, 200)
-              hapticHeavy()
-            } else {
-              // Enemy damaged - track damage to apply
-              enemyDamage.set(eIdx, (enemyDamage.get(eIdx) || 0) + damage)
-              boom(b.pos, themeColors.particleExplosion, 10, 160)
+              if (newHp <= 0) {
+                // Enemy destroyed - mark for removal
+                enemiesToRemove.add(eIdx)
+                enemyDeathEffects.push({
+                  pos: { ...e.pos },
+                  type: e.type,
+                  dropPowerUp: Math.random() < POWERUP_DROP_ENEMY,
+                })
+                boom(e.pos, themeColors.particleExplosion, 28, 200)
+                playSfx('explosion_large')
+                state.incrementCombo()
+                state.recordKill()
+                const enemyPoints = ENEMY_STATS[e.type].points
+                const enemyScoreWithMultiplier = state.hasPowerUp('score_multiplier') ? enemyPoints * 2 : enemyPoints
+                state.addScore(enemyScoreWithMultiplier)
+                state.addCredits(Math.floor(ENEMY_STATS[e.type].points / 10))
+                state.triggerShake(8, 200)
+                hapticHeavy()
+              } else {
+                // Enemy damaged - track damage to apply
+                enemyDamage.set(eIdx, (enemyDamage.get(eIdx) || 0) + damage)
+                boom(b.pos, themeColors.particleExplosion, 10, 160)
+              }
+
+              bulletsToRemove.add(bIdx)
+              sessionShotsHit++ // Record shot hit
             }
           }
         }
@@ -720,27 +731,23 @@ export const useGameEngine = () => {
             // Store boss position before potentially defeating it
             const bossPos = { ...updatedBoss.pos }
             const bossDamage = 25
-            const newBossHp = updatedBoss.hp - bossDamage
-            const stats = BOSS_STATS[updatedBoss.type]
 
-            // Check for phase transition
-            const hpPercent = newBossHp / updatedBoss.maxHp
-            let newPhase = updatedBoss.phase
-            if (stats.phases >= 3 && hpPercent <= 0.33 && updatedBoss.phase < 3) {
-              newPhase = 3
-            } else if (stats.phases >= 2 && hpPercent <= 0.66 && updatedBoss.phase < 2) {
-              newPhase = 2
+            // Apply damage to boss (handles phase transitions automatically)
+            state.damageBoss(bossDamage)
+            bulletsToRemove.add(bIdx)
+            boom(b.pos, themeColors.particleExplosion, 15, 180)
+            sessionShotsHit++ // Record shot hit
+
+            // Check boss death using fresh state
+            const updatedState = useGameStore.getState()
+            if (updatedState.boss && updatedState.boss.hp <= 0) {
+              boom(bossPos, themeColors.particleExplosion, 60, 300)
+              playSfx('explosion_boss')
+              state.defeatBoss()
+              useChallengesStore.getState().recordBossDefeat(1)
+              state.triggerShake(20, 500)
+              hapticHeavy()
             }
-
-          // Check boss death using fresh state
-          const updatedState = useGameStore.getState()
-          if (updatedState.boss && updatedState.boss.hp <= 0) {
-            boom(bossPos, themeColors.particleExplosion, 60, 300)
-            playSfx('explosion_boss')
-            state.defeatBoss()
-            useChallengesStore.getState().recordBossDefeat(1)
-            state.triggerShake(20, 500)
-            hapticHeavy()
           }
         }
       }

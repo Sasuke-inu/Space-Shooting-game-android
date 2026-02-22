@@ -50,7 +50,7 @@ export const useAchievementStore = create<AchievementState>()(
       achievements: initializeAchievements(),
       recentUnlock: null,
 
-      unlockAchievement: (id) =>
+      unlockAchievement: (id) => {
         set((state) => {
           if (state.achievements[id].unlocked) return state
 
@@ -66,8 +66,8 @@ export const useAchievementStore = create<AchievementState>()(
                 unlockedAt: Date.now(),
               },
             },
-          },
-          recentUnlock: id,
+            recentUnlock: id,
+          }
         })
 
         // Check if any skins can be unlocked with this achievement
@@ -76,13 +76,20 @@ export const useAchievementStore = create<AchievementState>()(
       },
 
       updateProgress: (id, progress) => {
-        const state = get()
-        const achievement = state.achievements[id]
-        if (achievement.unlocked) return
+        set((state) => {
+          const achievement = state.achievements[id]
+          if (achievement.unlocked) return state
+
+          const target = achievement.target || 1
+          const newProgress = Math.min(progress, target)
 
           if (newProgress >= target) {
             // Play celebration sound for new achievement
             playSfx('achievement_unlock')
+
+            // Check if any skins can be unlocked with this achievement
+            const upgradesStore = useUpgradesStore.getState()
+            upgradesStore.checkAndUnlockAchievementSkins()
 
             return {
               achievements: {
@@ -98,34 +105,15 @@ export const useAchievementStore = create<AchievementState>()(
             }
           }
 
-        if (newProgress >= target) {
-          set({
+          return {
             achievements: {
               ...state.achievements,
               [id]: {
                 ...achievement,
                 progress: newProgress,
-                unlocked: true,
-                unlockedAt: Date.now(),
               },
             },
-            recentUnlock: id,
-          })
-
-          // Check if any skins can be unlocked with this achievement
-          const upgradesStore = useUpgradesStore.getState()
-          upgradesStore.checkAndUnlockAchievementSkins()
-          return
-        }
-
-        set({
-          achievements: {
-            ...state.achievements,
-            [id]: {
-              ...achievement,
-              progress: newProgress,
-            },
-          },
+          }
         })
       },
 
