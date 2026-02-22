@@ -69,7 +69,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         accessible={true}
         accessibilityRole="button"
         accessibilityLabel={paused ? "Resume" : "Pause"}
-        accessibilityHint="Pauses or resumes the game"
+        accessibilityHint={paused ? "Resume the game" : "Pause the game"}
       >
         <Text style={{ color: colors.hudText, fontSize: 14 }}>{paused ? "Resume" : "Pause"}</Text>
       </Pressable>
@@ -86,7 +86,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         accessible={true}
         accessibilityRole="button"
         accessibilityLabel="Restart"
-        accessibilityHint="Restarts the game"
+        accessibilityHint="Restart the game"
       >
         <Text style={{ color: colors.hudText, fontSize: 14 }}>Restart</Text>
       </Pressable>

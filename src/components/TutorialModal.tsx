@@ -342,6 +342,10 @@ function ComboPracticeStep({ colors }: { colors: ThemeColors }) {
             tutorialStyles.practiceArea,
             dynamicStyles.practiceArea,
           ]}
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel="Combo practice area"
+          accessibilityHint={`Tap to shoot and chain ${COMBO_GOAL} kills to build a ${COMBO_MULTIPLIERS[4]}x combo multiplier`}
         >
           {/* Render enemies */}
           {enemies.map((enemy) => (
@@ -473,7 +477,13 @@ function SpecialAbilitiesPracticeStep({ colors }: { colors: ThemeColors }) {
 
       {/* Practice Area */}
       <GestureDetector gesture={doubleTapGesture}>
-        <View style={[tutorialStyles.practiceArea, dynamicStyles.practiceArea]}>
+        <View
+          style={[tutorialStyles.practiceArea, dynamicStyles.practiceArea]}
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel="Special ability practice area"
+          accessibilityHint="Double-tap to activate the special ability"
+        >
           {/* Ability icon in center */}
           <View
             style={{
@@ -643,6 +653,11 @@ function PowerUpsExplanationStep({ colors }: { colors: ThemeColors }) {
                   tutorialStyles.powerUpCard,
                   dynamicStyles.powerUpCard(powerUp, isSelected),
                 ]}
+                accessible={true}
+                accessibilityRole="button"
+                accessibilityLabel={`${powerUp.name} power-up`}
+                accessibilityHint={`Learn about the ${powerUp.name} power-up. ${powerUp.description}`}
+                accessibilityState={{ selected: isSelected }}
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
                   {/* Power-up icon */}
@@ -834,6 +849,10 @@ function ShootingPracticeStep({ colors }: { colors: ThemeColors }) {
             tutorialStyles.practiceArea,
             dynamicStyles.practiceArea,
           ]}
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel="Shooting practice area"
+          accessibilityHint={`Tap anywhere to shoot and destroy the ${targets.filter((t) => !t.hit).length} remaining targets`}
         >
           {/* Render targets */}
           {targets.map((target) => (
@@ -987,7 +1006,13 @@ function MovementPracticeStep({ colors }: { colors: ThemeColors }) {
       {/* Practice Joystick */}
       <View style={tutorialStyles.joystickArea}>
         <GestureDetector gesture={panGesture}>
-          <View style={tutorialStyles.joystickContainer}>
+          <View
+            style={tutorialStyles.joystickContainer}
+            accessible={true}
+            accessibilityRole="adjustable"
+            accessibilityLabel="Movement joystick"
+            accessibilityHint="Drag to move the ship in any direction"
+          >
             <View style={[tutorialStyles.joystickPad, dynamicStyles.joystickPad]}>
               <Animated.View style={[tutorialStyles.joystickStick, dynamicStyles.joystickStick, stickStyle]} />
             </View>
@@ -1139,6 +1164,10 @@ export function TutorialModal({ visible, onClose }: TutorialModalProps) {
       animationType="fade"
       transparent
       onRequestClose={handleSkip}
+      accessible={true}
+      accessibilityLabel="Tutorial modal"
+      accessibilityRole="none"
+      accessibilityViewIsModal={true}
     >
       <View
         style={{
@@ -1171,6 +1200,10 @@ export function TutorialModal({ visible, onClose }: TutorialModalProps) {
               borderWidth: 1,
               borderColor: colors.panelBorder,
             }}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel="Skip tutorial"
+            accessibilityHint="Skips the entire tutorial and returns to the game"
           >
             <Text style={{ color: colors.textSecondary, fontSize: 14 }}>Skip</Text>
           </Pressable>
@@ -1214,6 +1247,11 @@ export function TutorialModal({ visible, onClose }: TutorialModalProps) {
               borderColor: colors.panelBorder,
               opacity: isFirstStep ? 0.3 : 1,
             }}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel="Back"
+            accessibilityHint="Goes to the previous tutorial step"
+            accessibilityState={{ disabled: isFirstStep }}
           >
             <Text
               style={{
@@ -1238,6 +1276,10 @@ export function TutorialModal({ visible, onClose }: TutorialModalProps) {
               borderWidth: 1,
               borderColor: colors.buttonPrimary,
             }}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel={isLastStep ? 'Finish tutorial' : 'Next step'}
+            accessibilityHint={isLastStep ? 'Completes the tutorial and returns to the game' : 'Advances to the next tutorial step'}
           >
             <Text
               style={{

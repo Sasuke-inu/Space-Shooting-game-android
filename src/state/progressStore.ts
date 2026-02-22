@@ -13,6 +13,7 @@ import type {
 } from '../types/game'
 import { ACHIEVEMENTS, UPGRADE_COSTS } from '../types/game'
 import type { ThemeId } from '../theme/types'
+import { playSfx } from '../utils/audioManager'
 
 // ------------------------------------------------------------------ //
 //                         Achievement Store

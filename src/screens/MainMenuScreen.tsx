@@ -217,12 +217,15 @@ export default function MainMenuScreen() {
           <Text
             className="text-5xl font-bold text-center mb-2"
             style={{ color: theme.colors.textPrimary }}
+            accessibilityRole="header"
+            accessibilityLabel="Space Shooter"
           >
             SPACE SHOOTER
           </Text>
           <Text
             className="text-lg text-center"
             style={{ color: theme.colors.textSecondary }}
+            accessibilityLabel="Defend the Galaxy"
           >
             Defend the Galaxy
           </Text>
@@ -239,6 +242,9 @@ export default function MainMenuScreen() {
             }}
             onPress={handlePlay}
             activeOpacity={0.8}
+            accessibilityRole="button"
+            accessibilityLabel={t('menu.play')}
+            accessibilityHint="Start a new game"
           >
             <Text
               className="text-2xl font-bold text-center"
@@ -292,6 +298,9 @@ export default function MainMenuScreen() {
             }}
             onPress={handleSettings}
             activeOpacity={0.8}
+            accessibilityRole="button"
+            accessibilityLabel={t('menu.settings')}
+            accessibilityHint="Open game settings"
           >
             <Text
               className="text-xl font-semibold text-center"
@@ -310,6 +319,9 @@ export default function MainMenuScreen() {
             }}
             onPress={handleShips}
             activeOpacity={0.8}
+            accessibilityRole="button"
+            accessibilityLabel={t('menu.ships')}
+            accessibilityHint="View and select ships"
           >
             <Text
               className="text-xl font-semibold text-center"
@@ -328,6 +340,9 @@ export default function MainMenuScreen() {
             }}
             onPress={handleHighScores}
             activeOpacity={0.8}
+            accessibilityRole="button"
+            accessibilityLabel={t('menu.highScores')}
+            accessibilityHint="View high scores leaderboard"
           >
             <Text
               className="text-xl font-semibold text-center"
@@ -361,6 +376,7 @@ export default function MainMenuScreen() {
           <Text
             className="text-sm text-center"
             style={{ color: theme.colors.textMuted }}
+            accessibilityLabel="Version 1.0.0"
           >
             v1.0.0
           </Text>

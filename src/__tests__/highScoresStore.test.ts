@@ -345,15 +345,16 @@ describe('highScoresStore logic', () => {
       // Should be sorted highest first
       expect(scores[0].name).toBe('Henry') // 25000
       expect(scores[7].name).toBe('Grace') // 9000
-      expect(scores[9].name).toBe('Iris') // 7000
+      expect(scores[9].name).toBe('Iris') // 7000 (10th place)
 
       // Kate (3000) and Eve (5000) should not be in top 10
       expect(scores.find(s => s.name === 'Kate')).toBeUndefined()
       expect(scores.find(s => s.name === 'Eve')).toBeUndefined()
 
-      // All scores should be from the expected top 10
+      // All scores should be from the expected top 10 and >= 7000
       const expectedNames = ['Henry', 'Diana', 'Frank', 'Leo', 'Alice', 'Charlie', 'Jack', 'Grace', 'Bob', 'Iris']
       expect(scores.map(s => s.name)).toEqual(expectedNames)
+      expect(scores.every(s => s.score >= 7000)).toBe(true)
     })
 
     test('isTopTen correctly identifies qualifying scores in realistic scenario', () => {

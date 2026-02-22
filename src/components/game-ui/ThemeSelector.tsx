@@ -15,6 +15,10 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ themeList, current
       <Pressable
         key={theme.id}
         onPress={() => onThemeSelect(theme.id as ThemeId)}
+        accessibilityRole="button"
+        accessibilityLabel={`${theme.name} theme`}
+        accessibilityState={{ selected: currentThemeId === theme.id }}
+        accessibilityHint={`Select ${theme.name} theme`}
         style={{
           width: 90,
           padding: 8,

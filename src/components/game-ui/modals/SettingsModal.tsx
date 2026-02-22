@@ -139,20 +139,20 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               {activeTab === 'general' && (
                 <>
                   {/* Theme Section */}
-                  <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginBottom: 12 }}>
+                  <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginBottom: 12 }} accessibilityRole="header">
                     🎨 Theme
                   </Text>
                   <ThemeSelector themeList={themeList} currentThemeId={currentThemeId} onThemeSelect={onThemeSelect} colors={colors} />
 
                   {/* Audio Section */}
-                  <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginTop: 20, marginBottom: 12 }}>
+                  <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginTop: 20, marginBottom: 12 }} accessibilityRole="header">
                     🔊 Audio
                   </Text>
                   <Slider value={musicVolume} onValueChange={setMusicVolume} label="Music Volume" colors={colors} />
                   <Slider value={sfxVolume} onValueChange={setSfxVolume} label="SFX Volume" colors={colors} />
 
                   {/* Controls Section */}
-                  <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginTop: 8, marginBottom: 12 }}>
+                  <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginTop: 8, marginBottom: 12 }} accessibilityRole="header">
                     🎮 Controls
                   </Text>
                   <Slider value={joystickSensitivity} onValueChange={setJoystickSensitivity} label="Joystick Sensitivity" colors={colors} />

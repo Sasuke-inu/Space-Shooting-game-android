@@ -47,10 +47,14 @@ export default function ChallengesModal({ visible, onClose }: ChallengesModalPro
     const percentage = Math.min((progress / target) * 100, 100);
 
     return (
-      <View className="mt-2">
+      <View
+        className="mt-2"
+        accessible={false}
+      >
         <View
           className="h-2 rounded-full overflow-hidden"
           style={{ backgroundColor: theme.colors.panelBorder }}
+          accessible={false}
         >
           <View
             className="h-full rounded-full"
@@ -58,11 +62,13 @@ export default function ChallengesModal({ visible, onClose }: ChallengesModalPro
               width: `${percentage}%`,
               backgroundColor: completed ? theme.colors.hudAccent : theme.colors.buttonPrimary,
             }}
+            accessible={false}
           />
         </View>
         <Text
           className="text-xs mt-1"
           style={{ color: theme.colors.textMuted }}
+          accessible={false}
         >
           {progress} / {target}
         </Text>
@@ -76,10 +82,14 @@ export default function ChallengesModal({ visible, onClose }: ChallengesModalPro
       animationType="slide"
       transparent={true}
       onRequestClose={onClose}
+      accessible={true}
+      accessibilityLabel={t('challenges.title')}
+      accessibilityRole="none"
     >
       <View
         className="flex-1 justify-center items-center"
         style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+        accessible={false}
       >
         <View
           className="w-11/12 max-h-5/6 rounded-2xl overflow-hidden"
@@ -88,6 +98,7 @@ export default function ChallengesModal({ visible, onClose }: ChallengesModalPro
             borderColor: theme.colors.panelBorder,
             borderWidth: 2,
           }}
+          accessible={false}
         >
           {/* Header */}
           <View
@@ -120,12 +131,21 @@ export default function ChallengesModal({ visible, onClose }: ChallengesModalPro
           </View>
 
           {/* Challenges List */}
-          <ScrollView className="flex-1 px-6 py-4">
+          <ScrollView
+            className="flex-1 px-6 py-4"
+            accessible={false}
+          >
             {challenges.length === 0 ? (
-              <View className="flex-1 justify-center items-center py-12">
+              <View
+                className="flex-1 justify-center items-center py-12"
+                accessible={true}
+                accessibilityLabel={t('challenges.noActiveChallenges')}
+                accessibilityRole="text"
+              >
                 <Text
                   className="text-base text-center"
                   style={{ color: theme.colors.textMuted }}
+                  accessible={false}
                 >
                   {t('challenges.noActiveChallenges')}
                 </Text>
@@ -144,21 +164,46 @@ export default function ChallengesModal({ visible, onClose }: ChallengesModalPro
                       : theme.colors.panelBorder,
                     opacity: challenge.completed ? 0.7 : 1,
                   }}
+                  accessible={true}
+                  accessibilityLabel={`${challenge.name}. ${challenge.description}. Progress: ${challenge.progress} out of ${challenge.target}. Reward: ${challenge.reward} credits. ${challenge.completed ? 'Completed' : 'In progress'}`}
+                  accessibilityRole="summary"
+                  accessibilityState={{ disabled: challenge.completed }}
+                  accessibilityValue={{
+                    min: 0,
+                    max: challenge.target,
+                    now: challenge.progress,
+                  }}
                 >
                   {/* Challenge Header */}
-                  <View className="flex-row items-start justify-between mb-2">
-                    <View className="flex-row items-center flex-1">
-                      <Text className="text-2xl mr-2">{challenge.icon}</Text>
-                      <View className="flex-1">
+                  <View
+                    className="flex-row items-start justify-between mb-2"
+                    accessible={false}
+                  >
+                    <View
+                      className="flex-row items-center flex-1"
+                      accessible={false}
+                    >
+                      <Text
+                        className="text-2xl mr-2"
+                        accessible={false}
+                      >
+                        {challenge.icon}
+                      </Text>
+                      <View
+                        className="flex-1"
+                        accessible={false}
+                      >
                         <Text
                           className="text-base font-semibold"
                           style={{ color: theme.colors.textPrimary }}
+                          accessible={false}
                         >
                           {challenge.name}
                         </Text>
                         <Text
                           className="text-sm"
                           style={{ color: theme.colors.textSecondary }}
+                          accessible={false}
                         >
                           {challenge.description}
                         </Text>
@@ -168,10 +213,12 @@ export default function ChallengesModal({ visible, onClose }: ChallengesModalPro
                       <View
                         className="px-2 py-1 rounded"
                         style={{ backgroundColor: theme.colors.hudAccent }}
+                        accessible={false}
                       >
                         <Text
                           className="text-xs font-semibold"
                           style={{ color: '#fff' }}
+                          accessible={false}
                         >
                           ✓ {t('challenges.completed')}
                         </Text>
@@ -183,23 +230,32 @@ export default function ChallengesModal({ visible, onClose }: ChallengesModalPro
                   {renderProgressBar(challenge.progress, challenge.target, challenge.completed)}
 
                   {/* Reward */}
-                  <View className="flex-row items-center justify-between mt-3">
+                  <View
+                    className="flex-row items-center justify-between mt-3"
+                    accessible={false}
+                  >
                     <Text
                       className="text-sm font-semibold"
                       style={{ color: theme.colors.textSecondary }}
+                      accessible={false}
                     >
                       {t('challenges.reward')}:
                     </Text>
-                    <View className="flex-row items-center">
+                    <View
+                      className="flex-row items-center"
+                      accessible={false}
+                    >
                       <Text
                         className="text-base font-bold"
                         style={{ color: theme.colors.buttonPrimary }}
+                        accessible={false}
                       >
                         {challenge.reward}
                       </Text>
                       <Text
                         className="text-sm ml-1"
                         style={{ color: theme.colors.textMuted }}
+                        accessible={false}
                       >
                         credits
                       </Text>
@@ -217,15 +273,21 @@ export default function ChallengesModal({ visible, onClose }: ChallengesModalPro
               backgroundColor: theme.colors.panelBg,
               borderTopColor: theme.colors.panelBorder,
             }}
+            accessible={false}
           >
             <TouchableOpacity
               className="py-3 rounded-lg"
               style={{ backgroundColor: theme.colors.buttonPrimary }}
               onPress={onClose}
+              accessible={true}
+              accessibilityLabel={t('general.close')}
+              accessibilityRole="button"
+              accessibilityHint="Closes the challenges modal"
             >
               <Text
                 className="text-center text-base font-semibold"
                 style={{ color: '#fff' }}
+                accessible={false}
               >
                 {t('general.close')}
               </Text>

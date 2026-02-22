@@ -46,7 +46,6 @@ export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSele
   const setShipType = useGameStore((s) => s.setShipType);
 
   const credits = useUpgradesStore((s) => s.credits);
-  const unlockedShips = useUpgradesStore((s) => s.unlockedShips);
   const isShipUnlocked = useUpgradesStore((s) => s.isShipUnlocked);
   const unlockShip = useUpgradesStore((s) => s.unlockShip);
 
@@ -104,6 +103,18 @@ export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSele
     const abilityType = ABILITY_MAP[ship];
     const ability = ABILITY_STATS[abilityType];
 
+    // Build accessibility label
+    const shipName = t(`ships.${ship}.name`);
+    const statusText = isCurrent ? 'Currently equipped' : isUnlocked ? 'Unlocked' : `Locked, costs ${cost} credits`;
+    const statsText = `Speed ${(stats.speed * 100).toFixed(0)}%, Fire Rate ${(stats.fireRate * 100).toFixed(0)}%, Damage ${(stats.damage * 100).toFixed(0)}%, Hull ${stats.hull}`;
+    const abilityText = `Special Ability: ${stats.special}`;
+    const accessibilityLabel = `${shipName}. ${statusText}. ${statsText}. ${abilityText}`;
+
+    // Build accessibility hint
+    const accessibilityHint = isUnlocked
+      ? (isSelected ? 'Already selected' : 'Tap to select this ship')
+      : `Tap to unlock for ${cost} credits`;
+
     return (
       <TouchableOpacity
         key={ship}
@@ -118,6 +129,11 @@ export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSele
           opacity: isUnlocked ? 1 : 0.6,
         }}
         onPress={() => handleShipPress(ship)}
+        accessible={true}
+        accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel}
+        accessibilityHint={accessibilityHint}
+        accessibilityState={{ selected: isSelected, disabled: !isUnlocked && credits < cost }}
       >
         {/* Header */}
         <View className="flex-row items-center justify-between mb-3">
@@ -125,12 +141,14 @@ export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSele
             <Text
               className="text-xl font-bold"
               style={{ color: theme.colors.textPrimary }}
+              importantForAccessibility="no-hide-descendants"
             >
               {t(`ships.${ship}.name`)}
             </Text>
             <Text
               className="text-sm mt-1"
               style={{ color: theme.colors.textMuted }}
+              importantForAccessibility="no-hide-descendants"
             >
               {t(`ships.${ship}.description`)}
             </Text>
@@ -146,6 +164,7 @@ export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSele
                 <Text
                   className="text-xs font-semibold"
                   style={{ color: theme.colors.textPrimary }}
+                  importantForAccessibility="no-hide-descendants"
                 >
                   CURRENT
                 </Text>
@@ -162,6 +181,7 @@ export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSele
                 <Text
                   className="text-xs font-semibold"
                   style={{ color: theme.colors.textSecondary }}
+                  importantForAccessibility="no-hide-descendants"
                 >
                   {cost} 💰
                 </Text>
@@ -176,6 +196,7 @@ export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSele
             <Text
               className="text-xs"
               style={{ color: theme.colors.textMuted }}
+              importantForAccessibility="no-hide-descendants"
             >
               Speed
             </Text>
@@ -184,6 +205,7 @@ export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSele
               <Text
                 className="text-sm ml-2"
                 style={{ color: theme.colors.textSecondary }}
+                importantForAccessibility="no-hide-descendants"
               >
                 {(stats.speed * 100).toFixed(0)}%
               </Text>
@@ -194,6 +216,7 @@ export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSele
             <Text
               className="text-xs"
               style={{ color: theme.colors.textMuted }}
+              importantForAccessibility="no-hide-descendants"
             >
               Fire Rate
             </Text>
@@ -202,6 +225,7 @@ export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSele
               <Text
                 className="text-sm ml-2"
                 style={{ color: theme.colors.textSecondary }}
+                importantForAccessibility="no-hide-descendants"
               >
                 {(stats.fireRate * 100).toFixed(0)}%
               </Text>
@@ -212,6 +236,7 @@ export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSele
             <Text
               className="text-xs"
               style={{ color: theme.colors.textMuted }}
+              importantForAccessibility="no-hide-descendants"
             >
               Damage
             </Text>
@@ -220,6 +245,7 @@ export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSele
               <Text
                 className="text-sm ml-2"
                 style={{ color: theme.colors.textSecondary }}
+                importantForAccessibility="no-hide-descendants"
               >
                 {(stats.damage * 100).toFixed(0)}%
               </Text>
@@ -230,6 +256,7 @@ export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSele
             <Text
               className="text-xs"
               style={{ color: theme.colors.textMuted }}
+              importantForAccessibility="no-hide-descendants"
             >
               Hull
             </Text>
@@ -238,6 +265,7 @@ export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSele
               <Text
                 className="text-sm ml-2"
                 style={{ color: theme.colors.textSecondary }}
+                importantForAccessibility="no-hide-descendants"
               >
                 {stats.hull}
               </Text>
@@ -253,24 +281,28 @@ export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSele
           <Text
             className="text-xs font-semibold mb-1"
             style={{ color: theme.colors.textMuted }}
+            importantForAccessibility="no-hide-descendants"
           >
             SPECIAL ABILITY
           </Text>
           <Text
             className="text-sm font-bold mb-1"
             style={{ color: theme.colors.buttonPrimary }}
+            importantForAccessibility="no-hide-descendants"
           >
             {stats.special}
           </Text>
           <Text
             className="text-xs"
             style={{ color: theme.colors.textSecondary }}
+            importantForAccessibility="no-hide-descendants"
           >
             {ability.description}
           </Text>
           <Text
             className="text-xs mt-1"
             style={{ color: theme.colors.textMuted }}
+            importantForAccessibility="no-hide-descendants"
           >
             Cooldown: {ability.cooldown}s
             {ability.duration > 0 && ` | Duration: ${ability.duration}s`}
@@ -313,21 +345,30 @@ export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSele
         <Text
           className="text-3xl font-bold text-center"
           style={{ color: theme.colors.textPrimary }}
+          accessible={true}
+          accessibilityRole="header"
+          accessibilityLabel={t('menu.ships')}
         >
           {t('menu.ships')}
         </Text>
 
         {/* Credits Display */}
-        <View className="mt-4 flex-row items-center justify-center">
+        <View
+          className="mt-4 flex-row items-center justify-center"
+          accessible={true}
+          accessibilityLabel={`Credits: ${credits}`}
+        >
           <Text
             className="text-lg font-semibold"
             style={{ color: theme.colors.textSecondary }}
+            importantForAccessibility="no-hide-descendants"
           >
             Credits:
           </Text>
           <Text
             className="text-lg font-bold ml-2"
             style={{ color: theme.colors.buttonPrimary }}
+            importantForAccessibility="no-hide-descendants"
           >
             {credits} 💰
           </Text>
@@ -335,7 +376,11 @@ export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSele
       </View>
 
       {/* Ship List */}
-      <ScrollView className="flex-1 px-6 py-4">
+      <ScrollView
+        className="flex-1 px-6 py-4"
+        accessible={true}
+        accessibilityLabel="Ship selection list"
+      >
         {(['fighter', 'scout', 'tank', 'interceptor'] as ShipType[]).map(renderShipCard)}
 
         {/* Spacer for bottom button */}
@@ -356,10 +401,15 @@ export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSele
             className="py-4 rounded-lg"
             style={{ backgroundColor: theme.colors.buttonPrimary }}
             onPress={handleConfirmSelection}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel={`Select ${t(`ships.${selectedShip}.name`)}`}
+            accessibilityHint={`Switch to ${t(`ships.${selectedShip}.name`)} as your active ship`}
           >
             <Text
               className="text-center text-lg font-bold"
               style={{ color: theme.colors.textPrimary }}
+              importantForAccessibility="no-hide-descendants"
             >
               Select {t(`ships.${selectedShip}.name`)}
             </Text>
@@ -377,10 +427,15 @@ export default function ShipSelectionScreen({ onBack, onShipSelected }: ShipSele
             className="py-4 rounded-lg items-center"
             style={{ backgroundColor: theme.colors.buttonSecondary }}
             onPress={onBack || (() => navigation.goBack())}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel={t('general.back')}
+            accessibilityHint="Go back to previous screen"
           >
             <Text
               className="text-lg font-semibold"
               style={{ color: theme.colors.textPrimary }}
+              importantForAccessibility="no-hide-descendants"
             >
               {t('general.back')}
             </Text>
