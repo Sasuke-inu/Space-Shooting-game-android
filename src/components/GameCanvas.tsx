@@ -1,5 +1,5 @@
 import React, { useMemo } from "react"
-import { Canvas, Group, Path, Circle, Line, Text, Skia, vec, matchFont, Rect } from "@shopify/react-native-skia"
+import { Canvas, Group, Path, Circle, Line, Text, Skia, vec, matchFont, Rect, Shadow } from "@shopify/react-native-skia"
 import { Platform } from "react-native"
 import type { Asteroid, Enemy, Vec2, PowerUp, ActivePowerUp, ComboState, Boss, HomingMissile, EnemyType, AbilityFlash } from "../types/game"
 import type { ThemeColors } from "../theme/types"
@@ -711,7 +711,9 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
               text="⚠️ BOSS INCOMING ⚠️"
               color="#ff4444"
               font={bossFont}
-            />
+            >
+              <Shadow dx={0} dy={2} blur={3} color="rgba(0,0,0,0.8)" />
+            </Text>
           </>
         )}
 
@@ -799,7 +801,9 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
         })}
 
         {/* HUD - Score and Credits */}
-        <Text x={16} y={24} text={`Score: ${score}`} color={colors.hudText} font={hudFont} />
+        <Text x={16} y={24} text={`Score: ${score}`} color={colors.hudText} font={hudFont}>
+          <Shadow dx={0} dy={1} blur={2} color="rgba(0,0,0,0.8)" />
+        </Text>
         <Text
           x={16}
           y={44}
@@ -809,8 +813,12 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
           }
           color={colors.hudText}
           font={hudFont}
-        />
-        <Text x={16} y={64} text={`Credits: ${credits}`} color={colors.comboText} font={hudFont} />
+        >
+          <Shadow dx={0} dy={1} blur={2} color="rgba(0,0,0,0.8)" />
+        </Text>
+        <Text x={16} y={64} text={`Credits: ${credits}`} color={colors.comboText} font={hudFont}>
+          <Shadow dx={0} dy={1} blur={2} color="rgba(0,0,0,0.8)" />
+        </Text>
 
         {/* HUD - Combo counter */}
         {combo.count > 0 && (
@@ -821,7 +829,9 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
               text={`${combo.count}x COMBO`}
               color={colors.comboText}
               font={comboFont}
-            />
+            >
+              <Shadow dx={0} dy={2} blur={3} color="rgba(0,0,0,0.8)" />
+            </Text>
             {/* Combo timer progress bar */}
             <Group transform={[{ translateX: width / 2 - 40 }, { translateY: 88 }]}>
               {/* Timer bar background */}
@@ -844,7 +854,9 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
                 text={`${combo.multiplier}x multiplier`}
                 color={colors.comboText}
                 font={hudFont}
-              />
+              >
+                <Shadow dx={0} dy={2} blur={3} color="rgba(0,0,0,0.8)" />
+              </Text>
             )}
           </>
         )}
@@ -901,7 +913,9 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
             text={player.specialReady ? "⚡" : `${Math.ceil(player.specialCooldown)}`}
             color={player.specialReady ? colors.buttonPrimary : colors.textMuted}
             font={hudFont}
-          />
+          >
+            <Shadow dx={0} dy={1} blur={2} color="rgba(0,0,0,0.8)" />
+          </Text>
         </Group>
 
         {/* Mini-map / Radar */}
@@ -966,7 +980,9 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
         )}
 
         {/* HUD - Hull bar */}
-        <Text x={16} y={height - 36} text="Hull" color={colors.hudText} font={hudFont} />
+        <Text x={16} y={height - 36} text="Hull" color={colors.hudText} font={hudFont}>
+          <Shadow dx={0} dy={1} blur={2} color="rgba(0,0,0,0.8)" />
+        </Text>
         <Path
           path={Skia.Path.Make().addRect(Skia.XYWHRect(60, height - 48, 160, 12))}
           color={colors.hullBarBg}
