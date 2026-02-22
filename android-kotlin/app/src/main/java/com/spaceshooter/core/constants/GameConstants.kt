@@ -28,61 +28,6 @@ object GameConstants {
     const val BULLET_RADIUS_PLAYER = 4f     // Player bullet radius
     const val BULLET_RADIUS_ENEMY = 5f      // Enemy bullet radius
 
-    // ============== Enemies ==============
-    object Enemy {
-        // Scout
-        const val SCOUT_HP = 30
-        const val SCOUT_SPEED = 180f
-        const val SCOUT_DAMAGE = 10
-        const val SCOUT_FIRE_RATE = 1.2f
-        const val SCOUT_POINTS = 75
-
-        // Tank
-        const val TANK_HP = 150
-        const val TANK_SPEED = 60f
-        const val TANK_DAMAGE = 25
-        const val TANK_FIRE_RATE = 2.0f
-        const val TANK_POINTS = 200
-
-        // Sniper
-        const val SNIPER_HP = 50
-        const val SNIPER_SPEED = 40f
-        const val SNIPER_DAMAGE = 35
-        const val SNIPER_FIRE_RATE = 3.0f
-        const val SNIPER_POINTS = 150
-        const val SNIPER_CHARGE_TIME = 2.0f
-
-        // Bomber
-        const val BOMBER_HP = 80
-        const val BOMBER_SPEED = 100f
-        const val BOMBER_DAMAGE = 15
-        const val BOMBER_FIRE_RATE = 1.5f
-        const val BOMBER_POINTS = 125
-        const val BOMBER_BOMB_COOLDOWN = 4.0f
-    }
-
-    // ============== Boss ==============
-    object Boss {
-        const val WAVE_INTERVAL = 5         // Boss spawns every 5 waves
-        const val WARNING_TIME = 3.0f       // Warning display duration (seconds)
-
-        // Destroyer
-        const val DESTROYER_HP = 500
-        const val DESTROYER_PHASES = 2
-        const val DESTROYER_POINTS = 1000
-
-        // Carrier
-        const val CARRIER_HP = 750
-        const val CARRIER_PHASES = 3
-        const val CARRIER_POINTS = 1500
-        const val CARRIER_MAX_SPAWNS = 12   // Max enemies on screen
-
-        // Dreadnought
-        const val DREADNOUGHT_HP = 1000
-        const val DREADNOUGHT_PHASES = 3
-        const val DREADNOUGHT_POINTS = 2500
-    }
-
     // ============== Asteroids ==============
     object Asteroid {
         const val LARGE_RADIUS = 80f

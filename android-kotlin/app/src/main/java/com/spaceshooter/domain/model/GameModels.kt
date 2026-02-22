@@ -74,7 +74,9 @@ enum class EnemyType(
     val speed: Float,
     val damage: Int,
     val fireRate: Float,
-    val points: Int
+    val points: Int,
+    val radius: Float,
+    val accuracy: Float
 ) {
     SCOUT(
         displayName = "Scout",
@@ -82,7 +84,9 @@ enum class EnemyType(
         speed = 180f,
         damage = 10,
         fireRate = 1.2f,
-        points = 75
+        points = 75,
+        radius = 15f,
+        accuracy = 0.6f
     ),
     TANK(
         displayName = "Tank",
@@ -90,7 +94,9 @@ enum class EnemyType(
         speed = 60f,
         damage = 25,
         fireRate = 2.0f,
-        points = 200
+        points = 200,
+        radius = 25f,
+        accuracy = 0.4f
     ),
     SNIPER(
         displayName = "Sniper",
@@ -98,7 +104,9 @@ enum class EnemyType(
         speed = 40f,
         damage = 35,
         fireRate = 3.0f,
-        points = 150
+        points = 150,
+        radius = 18f,
+        accuracy = 0.9f
     ),
     BOMBER(
         displayName = "Bomber",
@@ -106,7 +114,9 @@ enum class EnemyType(
         speed = 100f,
         damage = 15,
         fireRate = 1.5f,
-        points = 125
+        points = 125,
+        radius = 22f,
+        accuracy = 0.5f
     )
 }
 
@@ -117,25 +127,29 @@ enum class BossType(
     val displayName: String,
     val hp: Int,
     val phases: Int,
-    val points: Int
+    val points: Int,
+    val radius: Float
 ) {
     DESTROYER(
         displayName = "Destroyer",
         hp = 500,
         phases = 2,
-        points = 1000
+        points = 1000,
+        radius = 50f
     ),
     CARRIER(
         displayName = "Carrier",
         hp = 750,
         phases = 3,
-        points = 1500
+        points = 1500,
+        radius = 60f
     ),
     DREADNOUGHT(
         displayName = "Dreadnought",
         hp = 1000,
         phases = 3,
-        points = 2500
+        points = 2500,
+        radius = 70f
     )
 }
 

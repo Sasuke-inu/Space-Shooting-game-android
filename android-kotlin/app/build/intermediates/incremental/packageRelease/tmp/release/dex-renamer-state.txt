@@ -1,0 +1,4 @@
+#Sun Feb 01 19:28:22 AEDT 2026
+base.0=/Users/d/Developer/Space Shooting game/android-kotlin/.auto-claude/worktrees/tasks/023-eliminate-duplicated-enemy-boss-stat-definitions/android-kotlin/app/build/intermediates/dex/release/minifyReleaseWithR8/classes.dex
+path.0=classes.dex
+renamed.0=classes.dex

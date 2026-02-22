@@ -117,25 +117,24 @@ object SpawnSystem {
 
         // Choose enemy type based on difficulty
         val type = chooseEnemyType(difficulty)
-        val stats = getEnemyStats(type)
 
         // Initial velocity toward player
         val toPlayer = (playerPos - pos).normalized()
-        val speed = stats.speed * (1f + difficulty * 0.3f)
+        val speed = type.speed * (1f + difficulty * 0.3f)
 
         return Enemy(
             pos = pos,
             vel = toPlayer * speed,
             ang = toPlayer.angle(),
             type = type,
-            hp = stats.hp,
-            maxHp = stats.hp,
-            radius = stats.radius,
-            damage = stats.damage,
-            fireRate = stats.fireRate,
-            fireCooldown = Random.nextFloat() * stats.fireRate,
+            hp = type.hp,
+            maxHp = type.hp,
+            radius = type.radius,
+            damage = type.damage,
+            fireRate = type.fireRate,
+            fireCooldown = Random.nextFloat() * type.fireRate,
             speed = speed,
-            accuracy = stats.accuracy + difficulty * 0.2f
+            accuracy = type.accuracy + difficulty * 0.2f
         )
     }
 
@@ -169,55 +168,6 @@ object SpawnSystem {
     }
 
     /**
-     * Get enemy stats by type.
-     */
-    data class EnemyStats(
-        val hp: Int,
-        val radius: Float,
-        val damage: Int,
-        val fireRate: Float,
-        val speed: Float,
-        val accuracy: Float
-    )
-
-    fun getEnemyStats(type: EnemyType): EnemyStats {
-        return when (type) {
-            EnemyType.SCOUT -> EnemyStats(
-                hp = 30,
-                radius = 15f,
-                damage = 10,
-                fireRate = 1.5f,
-                speed = 80f,
-                accuracy = 0.6f
-            )
-            EnemyType.TANK -> EnemyStats(
-                hp = 150,
-                radius = 25f,
-                damage = 25,
-                fireRate = 2.5f,
-                speed = 40f,
-                accuracy = 0.4f
-            )
-            EnemyType.SNIPER -> EnemyStats(
-                hp = 50,
-                radius = 18f,
-                damage = 35,
-                fireRate = 3f,
-                speed = 20f,
-                accuracy = 0.9f
-            )
-            EnemyType.BOMBER -> EnemyStats(
-                hp = 80,
-                radius = 22f,
-                damage = 40,
-                fireRate = 2f,
-                speed = 50f,
-                accuracy = 0.5f
-            )
-        }
-    }
-
-    /**
      * Spawn a boss.
      */
     fun spawnBoss(
@@ -231,36 +181,19 @@ object SpawnSystem {
             else -> BossType.DREADNOUGHT
         }
 
-        val stats = getBossStats(type)
-
         return Boss(
             pos = Vec2(width / 2f, -100f),
             vel = Vec2(0f, 30f),
             ang = PI.toFloat() / 2f,
             type = type,
-            hp = stats.hp,
-            maxHp = stats.hp,
-            radius = stats.radius,
+            hp = type.hp,
+            maxHp = type.hp,
+            radius = type.radius,
             phase = 1,
-            maxPhase = stats.maxPhase,
+            maxPhase = type.phases,
             firePatternTimer = 0f,
-            score = stats.score
+            score = type.points
         )
-    }
-
-    data class BossStats(
-        val hp: Int,
-        val radius: Float,
-        val maxPhase: Int,
-        val score: Int
-    )
-
-    fun getBossStats(type: BossType): BossStats {
-        return when (type) {
-            BossType.DESTROYER -> BossStats(hp = 500, radius = 50f, maxPhase = 2, score = 1000)
-            BossType.CARRIER -> BossStats(hp = 750, radius = 60f, maxPhase = 3, score = 1500)
-            BossType.DREADNOUGHT -> BossStats(hp = 1000, radius = 70f, maxPhase = 3, score = 2500)
-        }
     }
 
     /**

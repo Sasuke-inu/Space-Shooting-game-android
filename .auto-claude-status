@@ -1,25 +1,25 @@
 {
   "active": true,
-  "spec": "067-convert-vec2-data-class-to-kotlin-value-class-to-e",
+  "spec": "023-eliminate-duplicated-enemy-boss-stat-definitions",
   "state": "building",
   "subtasks": {
-    "completed": 2,
-    "total": 5,
+    "completed": 5,
+    "total": 9,
     "in_progress": 1,
     "failed": 0
   },
   "phase": {
-    "current": "Verify Compilation and Tests",
+    "current": "Remove Duplicate Definitions",
     "id": null,
-    "total": 2
+    "total": 3
   },
   "workers": {
     "active": 0,
     "max": 1
   },
   "session": {
-    "number": 4,
-    "started_at": "2026-02-05T16:01:55.759275"
+    "number": 8,
+    "started_at": "2026-02-01T19:02:37.964597"
   },
-  "last_update": "2026-02-05T16:11:34.025156"
+  "last_update": "2026-02-01T19:21:27.590708"
 }
