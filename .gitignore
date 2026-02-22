@@ -42,3 +42,6 @@ expo.log
 
 # Auto Claude data directory
 .auto-claude/
+
+# environment variables
+.env
