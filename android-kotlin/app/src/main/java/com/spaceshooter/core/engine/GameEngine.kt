@@ -80,7 +80,7 @@ class GameEngine {
         // Acceleration
         var newVel = player.vel
         if (input.joystick.lengthSquared() > 0.01f) {
-            val accel = Vec2.fromAngle(player.ang, GameConstants.PLAYER_ACCEL * dt)
+            val accel = Vec2.fromAngle(player.ang, GameConstants.PLAYER_ACCEL * dt * player.shipType.speedMultiplier)
             newVel = newVel + accel
         }
 
@@ -88,8 +88,9 @@ class GameEngine {
         newVel = newVel * GameConstants.PLAYER_FRICTION
 
         // Speed cap
-        if (newVel.length() > GameConstants.PLAYER_MAX_SPEED) {
-            newVel = newVel.normalized() * GameConstants.PLAYER_MAX_SPEED
+        val maxSpeed = GameConstants.PLAYER_MAX_SPEED * player.shipType.speedMultiplier
+        if (newVel.length() > maxSpeed) {
+            newVel = newVel.normalized() * maxSpeed
         }
 
         // Position update
@@ -112,7 +113,7 @@ class GameEngine {
             } else {
                 GameConstants.FIRE_COOLDOWN_PLAYER
             }
-            newFireCooldown = cooldown
+            newFireCooldown = cooldown / player.shipType.fireRateMultiplier
 
             // Spawn bullet(s)
             val hasSpreadShot = builder.activePowerUps.any { it.type == PowerUpType.SPREAD_SHOT }
@@ -136,7 +137,7 @@ class GameEngine {
                         pos = bulletPos,
                         vel = bulletVel,
                         isPlayerBullet = true,
-                        damage = GameConstants.BULLET_DAMAGE_PLAYER,
+                        damage = (GameConstants.BULLET_DAMAGE_PLAYER * player.shipType.damageMultiplier).toInt(),
                         radius = GameConstants.BULLET_RADIUS_PLAYER
                     )
                 )

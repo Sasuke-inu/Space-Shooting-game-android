@@ -11,10 +11,10 @@ data class Player(
     val pos: Vec2 = Vec2.ZERO,
     val vel: Vec2 = Vec2.ZERO,
     val ang: Float = -Math.PI.toFloat() / 2, // Pointing up
-    val hp: Int = 100,
-    val maxHp: Int = 100,
-    val radius: Float = GameConstants.PLAYER_RADIUS,
     val shipType: ShipType = ShipType.FIGHTER,
+    val hp: Int = shipType.maxHp,
+    val maxHp: Int = shipType.maxHp,
+    val radius: Float = GameConstants.PLAYER_RADIUS,
     val invincibility: Float = 0f,
     val fireCooldown: Float = 0f,
     val specialAbility: SpecialAbilityState = SpecialAbilityState(
