@@ -63,13 +63,28 @@ class GameCanvasView(context: Context) : SurfaceView(context), SurfaceHolder.Cal
         @Volatile
         var running = false
 
+        // Frame timing
+        private val targetFrameTimeNanos = 16_666_666L // 60 FPS (16.67ms)
+        private var frameStartTime = 0L
+        private var frameEndTime = 0L
+
         override fun run() {
             while (running) {
+                frameStartTime = System.nanoTime()
+
                 val canvas = holder.lockCanvas() ?: continue
                 try {
                     renderer.draw(canvas)
                 } finally {
                     holder.unlockCanvasAndPost(canvas)
+                }
+
+                frameEndTime = System.nanoTime()
+                val elapsedNanos = frameEndTime - frameStartTime
+                val sleepNanos = targetFrameTimeNanos - elapsedNanos
+
+                if (sleepNanos > 0) {
+                    Thread.sleep(sleepNanos / 1_000_000, (sleepNanos % 1_000_000).toInt())
                 }
             }
         }
