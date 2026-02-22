@@ -349,4 +349,48 @@ export const ja: Translations = {
       description: 'ダメージを受けずにウェーブをクリアする',
     },
   },
+  weeklyEvent: {
+    title: 'ウィークリーイベント',
+    activeEvent: 'アクティブイベント',
+    noActiveEvent: 'アクティブなイベントがありません。またお越しください！',
+    eventModifiers: 'イベント修正',
+    rewards: '報酬',
+    playEvent: 'イベントをプレイ',
+    viewLeaderboard: 'リーダーボードを見る',
+    leaderboard: 'イベントリーダーボード',
+    timeRemaining: '残り時間',
+    eventEnded: 'イベント終了',
+    remaining: '残り',
+    participation: '参加賞',
+    firstPlace: '1位',
+    secondPlace: '2位',
+    thirdPlace: '3位',
+    topTen: 'トップ10',
+    modifiers: {
+      double_speed: {
+        name: 'ダブルスピード',
+        description: '敵と小惑星の移動速度が2倍',
+      },
+      no_powerups: {
+        name: 'パワーアップなし',
+        description: 'パワーアップがドロップしない',
+      },
+      rapid_bosses: {
+        name: 'ラピッドボス',
+        description: '3ウェーブごとにボスが出現',
+      },
+      bullet_hell: {
+        name: '弾幕地獄',
+        description: '敵の射撃速度が3倍',
+      },
+      glass_cannon: {
+        name: 'ガラスの大砲',
+        description: 'HPが1だがダメージが2倍',
+      },
+      big_asteroids: {
+        name: '巨大小惑星',
+        description: '小惑星のサイズが1.5倍',
+      },
+    },
+  },
 };

@@ -349,4 +349,48 @@ export const en: Translations = {
       description: 'Complete waves without taking damage',
     },
   },
+  weeklyEvent: {
+    title: 'Weekly Event',
+    activeEvent: 'Active Event',
+    noActiveEvent: 'No active event. Check back soon!',
+    eventModifiers: 'Event Modifiers',
+    rewards: 'Rewards',
+    playEvent: 'Play Event',
+    viewLeaderboard: 'View Leaderboard',
+    leaderboard: 'Event Leaderboard',
+    timeRemaining: 'Time Remaining',
+    eventEnded: 'Event Ended',
+    remaining: 'remaining',
+    participation: 'Participation',
+    firstPlace: '1st Place',
+    secondPlace: '2nd Place',
+    thirdPlace: '3rd Place',
+    topTen: 'Top 10',
+    modifiers: {
+      double_speed: {
+        name: 'Double Speed',
+        description: 'Enemies and asteroids move twice as fast',
+      },
+      no_powerups: {
+        name: 'No Power-Ups',
+        description: 'Power-ups do not drop',
+      },
+      rapid_bosses: {
+        name: 'Rapid Bosses',
+        description: 'Boss appears every 3 waves',
+      },
+      bullet_hell: {
+        name: 'Bullet Hell',
+        description: 'Enemies fire 3x faster',
+      },
+      glass_cannon: {
+        name: 'Glass Cannon',
+        description: 'You have only 1 HP but deal 2x damage',
+      },
+      big_asteroids: {
+        name: 'Big Asteroids',
+        description: 'Asteroids are 1.5x larger',
+      },
+    },
+  },
 };

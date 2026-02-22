@@ -537,6 +537,10 @@ export interface GameState {
   specialAbility: SpecialAbility | null
   homingMissiles: HomingMissile[]
 
+  // Event mode
+  eventMode: boolean
+  activeEventId: string | null
+
   // Session tracking (for achievements)
   sessionDamageTaken: boolean  // Track if damage taken this wave
   sessionKillsRecent: number   // Kills in last 10 seconds

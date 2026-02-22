@@ -4,14 +4,26 @@ import {
   Text,
   TouchableOpacity,
   useWindowDimensions,
+  AppState,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
 import { AnimatedStarBackground } from '../components/AnimatedStarBackground';
 import { useTheme } from '../theme';
 import { useI18nStore } from '../i18n';
+import { useWeeklyEventsStore } from '../state/weeklyEventsStore';
+import WeeklyEventModal from '../components/WeeklyEventModal';
+import { EventLeaderboardModal } from '../components/EventLeaderboardModal';
 import type { RootStackParamList } from '../navigation/AppNavigator';
+import { useGameStore } from '../state/gameStore';
 
 type MainMenuNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -21,10 +33,22 @@ export default function MainMenuScreen() {
   const navigation = useNavigation<MainMenuNavigationProp>();
   const theme = useTheme();
   const { t } = useI18nStore();
+  const { getCurrentEvent, checkAndRefreshEvent } = useWeeklyEventsStore();
+  const startEventGame = useGameStore((s) => s.startEventGame);
 
   // Animation time for background
   const [time, setTime] = useState(0);
   const rafRef = useRef<number | null>(null);
+
+  // Weekly event state
+  const [eventModalVisible, setEventModalVisible] = useState(false);
+  const [leaderboardModalVisible, setLeaderboardModalVisible] = useState(false);
+  const [eventTimeRemaining, setEventTimeRemaining] = useState('');
+  const currentEvent = getCurrentEvent();
+
+  // Pulse animation for event button
+  const pulseScale = useSharedValue(1);
+  const pulseOpacity = useSharedValue(0.8);
 
   // Animate background
   useEffect(() => {
@@ -48,7 +72,83 @@ export default function MainMenuScreen() {
     };
   }, []);
 
+  // Calculate event time remaining
+  useEffect(() => {
+    const calculateTimeRemaining = () => {
+      if (!currentEvent) {
+        setEventTimeRemaining('');
+        return;
+      }
+
+      const now = Date.now();
+      const diff = currentEvent.endDate - now;
+
+      if (diff <= 0) {
+        setEventTimeRemaining('Event Ended');
+        checkAndRefreshEvent();
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+      if (days > 0) {
+        setEventTimeRemaining(`${days}d ${hours}h`);
+      } else if (hours > 0) {
+        setEventTimeRemaining(`${hours}h`);
+      } else {
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        setEventTimeRemaining(`${minutes}m`);
+      }
+    };
+
+    calculateTimeRemaining();
+    const interval = setInterval(calculateTimeRemaining, 60000); // Update every minute
+    return () => clearInterval(interval);
+  }, [currentEvent, checkAndRefreshEvent]);
+
+  // Pulse animation for event button
+  useEffect(() => {
+    pulseScale.value = withRepeat(
+      withSequence(
+        withTiming(1.05, { duration: 1000 }),
+        withTiming(1, { duration: 1000 })
+      ),
+      -1,
+      false
+    );
+
+    pulseOpacity.value = withRepeat(
+      withSequence(
+        withTiming(1, { duration: 1000 }),
+        withTiming(0.8, { duration: 1000 })
+      ),
+      -1,
+      false
+    );
+  }, [pulseScale, pulseOpacity]);
+
+  // Refresh event on mount
+  useEffect(() => {
+    checkAndRefreshEvent();
+  }, [checkAndRefreshEvent]);
+
+  // Refresh event when app resumes from background
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      if (nextAppState === 'active') {
+        checkAndRefreshEvent();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [checkAndRefreshEvent]);
+
   const handlePlay = () => {
+    // Ensure we're starting a normal game (not event mode)
+    // resetGame() in GameScreen will clear event mode flags
     navigation.navigate('Game');
   };
 
@@ -67,6 +167,31 @@ export default function MainMenuScreen() {
   const handleAchievements = () => {
     navigation.navigate('Achievements');
   };
+
+  const handleWeeklyEvent = () => {
+    setEventModalVisible(true);
+  };
+
+  const handlePlayEvent = () => {
+    const event = getCurrentEvent();
+    if (event) {
+      // Start event game with modifiers
+      startEventGame(event.id, event.modifiers);
+    }
+    setEventModalVisible(false);
+    navigation.navigate('Game');
+  };
+
+  const handleViewLeaderboard = () => {
+    setEventModalVisible(false);
+    setLeaderboardModalVisible(true);
+  };
+
+  const pulseStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: pulseScale.value }],
+    opacity: pulseOpacity.value,
+  }));
+
 
   return (
     <View className="flex-1" style={{ backgroundColor: theme.colors.background }}>
@@ -122,6 +247,41 @@ export default function MainMenuScreen() {
               {t('menu.play')}
             </Text>
           </TouchableOpacity>
+
+          {/* Weekly Event Button */}
+          {currentEvent && (
+            <Animated.View style={pulseStyle}>
+              <TouchableOpacity
+                className="py-4 px-8 rounded-lg border-2"
+                style={{
+                  backgroundColor: theme.colors.hudAccent,
+                  borderColor: theme.colors.textPrimary,
+                }}
+                onPress={handleWeeklyEvent}
+                activeOpacity={0.8}
+              >
+                <View className="flex-row items-center justify-center">
+                  <Text className="text-2xl mr-2">⚡</Text>
+                  <View className="flex-1">
+                    <Text
+                      className="text-xl font-bold text-center"
+                      style={{ color: '#fff' }}
+                    >
+                      Weekly Event
+                    </Text>
+                    {eventTimeRemaining && (
+                      <Text
+                        className="text-xs text-center mt-1"
+                        style={{ color: 'rgba(255, 255, 255, 0.8)' }}
+                      >
+                        ⏱️ {eventTimeRemaining} remaining
+                      </Text>
+                    )}
+                  </View>
+                </View>
+              </TouchableOpacity>
+            </Animated.View>
+          )}
 
           {/* Settings Button */}
           <TouchableOpacity
@@ -206,6 +366,23 @@ export default function MainMenuScreen() {
           </Text>
         </View>
       </View>
+
+      {/* Weekly Event Modal */}
+      <WeeklyEventModal
+        visible={eventModalVisible}
+        onClose={() => setEventModalVisible(false)}
+        onPlayEvent={handlePlayEvent}
+        onViewLeaderboard={handleViewLeaderboard}
+      />
+
+      {/* Event Leaderboard Modal */}
+      {currentEvent && (
+        <EventLeaderboardModal
+          visible={leaderboardModalVisible}
+          onClose={() => setLeaderboardModalVisible(false)}
+          eventId={currentEvent.id}
+        />
+      )}
     </View>
   );
 }

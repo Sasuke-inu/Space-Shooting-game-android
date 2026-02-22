@@ -26,6 +26,8 @@ import { v, add, fromAngle, rand } from "../utils/vectorMath"
 import { playSfx } from "../utils/audioManager"
 import { useChallengesStore } from "./challengesStore"
 import { useSettingsStore } from "../theme/themeStore"
+import type { EventModifierType } from "../types/weeklyEvents"
+import { applyEventModifiers, type ModifiableGameConstants } from "../utils/eventModifiers"
 
 // ------------------------------------------------------------------ //
 //                Gameplay tuning (feel free to tweak)
@@ -231,6 +233,10 @@ interface GameStore extends GameState {
   // EMP blast
   stunAllEnemies: (duration: number) => void
 
+  // Event mode
+  startEventGame: (eventId: string, modifiers: EventModifierType[]) => void
+  getEventModifiers: () => ModifiableGameConstants | null
+
   // Particle pooling methods
   acquireParticles: (count: number) => PooledParticle[]
   releaseParticle: (particle: PooledParticle) => void
@@ -312,6 +318,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
   // Special abilities
   specialAbility: null,
   homingMissiles: [],
+
+  // Event mode
+  eventMode: false,
+  activeEventId: null,
 
   // Session tracking
   sessionDamageTaken: false,
@@ -427,6 +437,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
         timeWarpMultiplier: 1,
         specialAbility: null,
         homingMissiles: [],
+        eventMode: false,
+        activeEventId: null,
         sessionDamageTaken: false,
         sessionKillsRecent: 0,
         sessionKillTimer: 0,
@@ -1192,4 +1204,44 @@ export const useGameStore = create<GameStore>((set, get) => ({
       showCountdown: false,
       countdownValue: 0,
     }),
+
+  // ------------------------------------------------------------------ //
+  //                         Event Mode
+  // ------------------------------------------------------------------ //
+
+  startEventGame: (eventId, modifiers) => {
+    const eventModifiers = applyEventModifiers(modifiers)
+    const state = get()
+
+    // Apply event modifiers to player HP if needed
+    const shipType = state.player.shipType
+    const baseHp = SHIP_STATS[shipType].hull
+    const modifiedHp = eventModifiers.playerMaxHp
+
+    set({
+      eventMode: true,
+      activeEventId: eventId,
+      player: {
+        ...state.player,
+        hp: modifiedHp,
+      },
+    })
+  },
+
+  getEventModifiers: () => {
+    const state = get()
+    if (!state.eventMode || !state.activeEventId) {
+      return null
+    }
+
+    // Get current event and apply its modifiers
+    const { useWeeklyEventsStore } = require('./weeklyEventsStore')
+    const currentEvent = useWeeklyEventsStore.getState().getCurrentEvent()
+
+    if (!currentEvent || currentEvent.id !== state.activeEventId) {
+      return null
+    }
+
+    return applyEventModifiers(currentEvent.modifiers)
+  },
 }))

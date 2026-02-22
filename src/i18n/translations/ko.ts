@@ -349,4 +349,48 @@ export const ko: Translations = {
       description: '피해 없이 웨이브를 완료하세요',
     },
   },
+  weeklyEvent: {
+    title: '주간 이벤트',
+    activeEvent: '활성 이벤트',
+    noActiveEvent: '활성 이벤트가 없습니다. 곧 다시 확인하세요!',
+    eventModifiers: '이벤트 수정자',
+    rewards: '보상',
+    playEvent: '이벤트 플레이',
+    viewLeaderboard: '리더보드 보기',
+    leaderboard: '이벤트 리더보드',
+    timeRemaining: '남은 시간',
+    eventEnded: '이벤트 종료',
+    remaining: '남음',
+    participation: '참가상',
+    firstPlace: '1위',
+    secondPlace: '2위',
+    thirdPlace: '3위',
+    topTen: '상위 10',
+    modifiers: {
+      double_speed: {
+        name: '두 배 속도',
+        description: '적과 소행성이 두 배 빠르게 이동',
+      },
+      no_powerups: {
+        name: '파워업 없음',
+        description: '파워업이 드롭되지 않음',
+      },
+      rapid_bosses: {
+        name: '빠른 보스',
+        description: '3웨이브마다 보스 등장',
+      },
+      bullet_hell: {
+        name: '탄막 지옥',
+        description: '적의 사격 속도 3배',
+      },
+      glass_cannon: {
+        name: '유리 대포',
+        description: 'HP가 1이지만 피해량 2배',
+      },
+      big_asteroids: {
+        name: '큰 소행성',
+        description: '소행성 크기 1.5배',
+      },
+    },
+  },
 };

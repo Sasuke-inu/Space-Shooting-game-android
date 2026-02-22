@@ -349,4 +349,48 @@ export const es: Translations = {
       description: 'Completa oleadas sin recibir daño',
     },
   },
+  weeklyEvent: {
+    title: 'Evento Semanal',
+    activeEvent: 'Evento Activo',
+    noActiveEvent: '¡No hay evento activo. Vuelve pronto!',
+    eventModifiers: 'Modificadores del Evento',
+    rewards: 'Recompensas',
+    playEvent: 'Jugar Evento',
+    viewLeaderboard: 'Ver Clasificación',
+    leaderboard: 'Clasificación del Evento',
+    timeRemaining: 'Tiempo Restante',
+    eventEnded: 'Evento Finalizado',
+    remaining: 'restante',
+    participation: 'Participación',
+    firstPlace: '1er Lugar',
+    secondPlace: '2do Lugar',
+    thirdPlace: '3er Lugar',
+    topTen: 'Top 10',
+    modifiers: {
+      double_speed: {
+        name: 'Doble Velocidad',
+        description: 'Enemigos y asteroides se mueven el doble de rápido',
+      },
+      no_powerups: {
+        name: 'Sin Potenciadores',
+        description: 'Los potenciadores no aparecen',
+      },
+      rapid_bosses: {
+        name: 'Jefes Rápidos',
+        description: 'Aparece un jefe cada 3 oleadas',
+      },
+      bullet_hell: {
+        name: 'Infierno de Balas',
+        description: 'Los enemigos disparan 3 veces más rápido',
+      },
+      glass_cannon: {
+        name: 'Cañón de Cristal',
+        description: 'Tienes solo 1 HP pero infliges el doble de daño',
+      },
+      big_asteroids: {
+        name: 'Asteroides Grandes',
+        description: 'Los asteroides son 1.5 veces más grandes',
+      },
+    },
+  },
 };
