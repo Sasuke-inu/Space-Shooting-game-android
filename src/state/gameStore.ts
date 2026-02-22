@@ -969,6 +969,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       case 'scout': abilityType = 'time_warp'; break
       case 'tank': abilityType = 'shield_burst'; break
       case 'interceptor': abilityType = 'emp_blast'; break
+      case 'ghost': abilityType = 'phase_shift'; break
       default: abilityType = 'missile_barrage'
     }
 

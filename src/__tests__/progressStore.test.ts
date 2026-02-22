@@ -351,6 +351,7 @@ describe('progressStore logic', () => {
       scout: 500,
       tank: 750,
       interceptor: 1000,
+      ghost: 1250,
     }
 
     const SKIN_COSTS: Record<SkinId, number> = {
@@ -370,12 +371,14 @@ describe('progressStore logic', () => {
         scout: ['default'],
         tank: ['default'],
         interceptor: ['default'],
+        ghost: ['default'],
       },
       selectedSkins: {
         fighter: 'default',
         scout: 'default',
         tank: 'default',
         interceptor: 'default',
+        ghost: 'default',
       },
 
       addCredits: (amount) => set((s) => ({ credits: s.credits + amount })),
@@ -461,12 +464,14 @@ describe('progressStore logic', () => {
           scout: ['default'],
           tank: ['default'],
           interceptor: ['default'],
+          ghost: ['default'],
         },
         selectedSkins: {
           fighter: 'default',
           scout: 'default',
           tank: 'default',
           interceptor: 'default',
+          ghost: 'default',
         },
       }),
     }))
@@ -582,12 +587,14 @@ describe('progressStore logic', () => {
         scout: ['default'],
         tank: ['default'],
         interceptor: ['default'],
+        ghost: ['default'],
       },
       selectedSkins: {
         fighter: 'default',
         scout: 'default',
         tank: 'default',
         interceptor: 'default',
+        ghost: 'default',
       },
 
       addCredits: (amount) => set((s) => ({ credits: s.credits + amount })),

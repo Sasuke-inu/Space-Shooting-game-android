@@ -418,6 +418,7 @@ export const useGameEngine = () => {
     // Check for shield power-up or shield burst ability
     const hasShield = updatedActivePowerUps.some((p) => p.type === 'shield') ||
       (updatedSpecialAbility?.type === 'shield_burst' && updatedSpecialAbility.isActive)
+    const hasPhaseShift = updatedSpecialAbility?.type === 'phase_shift' && updatedSpecialAbility.isActive
     const hasMagnet = updatedActivePowerUps.some((p) => p.type === 'magnet')
 
     // Progressive difficulty scaling (0-100% over 4 minutes)
@@ -992,7 +993,7 @@ export const useGameEngine = () => {
 
     updatedBullets.forEach((b, bIdx) => {
       if (!b.friendly && dist2(b.pos, newPos) < 16 * 16) {
-        if (updatedPlayer.inv <= 0 && !hasShield) {
+        if (updatedPlayer.inv <= 0 && !hasShield && !hasPhaseShift) {
           // Mutate player damage directly
           updatedPlayer.hp = updatedPlayer.hp - 18
           updatedPlayer.inv = 0.6
@@ -1129,7 +1130,7 @@ export const useGameEngine = () => {
 
       if (asteroid) {
         if (dist2(state.player.pos, asteroid.pos) < (asteroid.radius + 12) * (asteroid.radius + 12)) {
-          if (state.player.inv <= 0 && !hasShield) {
+          if (state.player.inv <= 0 && !hasShield && !hasPhaseShift) {
             state.updatePlayer({ hp: state.player.hp - 28, inv: 1.0 })
             state.recordDamage()
             boom(state.player.pos, themeColors.particleCollision, 18, 200)
@@ -1149,7 +1150,7 @@ export const useGameEngine = () => {
 
       if (enemy) {
         if (dist2(state.player.pos, enemy.pos) < 22 * 22) {
-          if (state.player.inv <= 0 && !hasShield) {
+          if (state.player.inv <= 0 && !hasShield && !hasPhaseShift) {
             state.updatePlayer({ hp: state.player.hp - 20, inv: 0.9 })
             state.recordDamage()
             boom(state.player.pos, themeColors.particleCollision, 18, 200)
@@ -1167,7 +1168,7 @@ export const useGameEngine = () => {
       const bossNearby = nearbyPlayer.find(ent => ent.pos === state.boss!.pos)
       if (bossNearby) {
         if (dist2(state.player.pos, state.boss.pos) < 60 * 60) {
-          if (state.player.inv <= 0 && !hasShield) {
+          if (state.player.inv <= 0 && !hasShield && !hasPhaseShift) {
             state.updatePlayer({ hp: state.player.hp - 40, inv: 1.5 })
             state.recordDamage()
             boom(state.player.pos, themeColors.particleCollision, 24, 250)

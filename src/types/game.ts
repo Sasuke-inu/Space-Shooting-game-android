@@ -108,7 +108,7 @@ export const BOSS_STATS: Record<BossType, { hp: number; phases: number; points: 
 //                         Ship Types
 // ------------------------------------------------------------------ //
 
-export type ShipType = 'fighter' | 'scout' | 'tank' | 'interceptor'
+export type ShipType = 'fighter' | 'scout' | 'tank' | 'interceptor' | 'ghost'
 
 export interface ShipStats {
   speed: number       // Movement multiplier
@@ -123,6 +123,7 @@ export const SHIP_STATS: Record<ShipType, ShipStats> = {
   scout: { speed: 1.4, fireRate: 1.2, damage: 0.8, hull: 70, special: 'Time Warp' },
   tank: { speed: 0.7, fireRate: 0.8, damage: 1.5, hull: 150, special: 'Shield Burst' },
   interceptor: { speed: 1.2, fireRate: 1.5, damage: 0.9, hull: 80, special: 'EMP Blast' },
+  ghost: { speed: 1.1, fireRate: 1.0, damage: 1.0, hull: 90, special: 'Phase Shift' },
 }
 
 export interface Player {
@@ -289,6 +290,39 @@ export const SHIP_SKINS: Record<ShipType, Record<SkinId, ShipSkin>> = {
       achievementRequired: 'boss_slayer',
     },
   },
+  ghost: {
+    default: {
+      id: 'default',
+      name: 'Standard',
+      description: 'Spectral violet colors',
+      colors: { primary: '#aa44ff', secondary: '#ffffff', fill: '#220044' },
+    },
+    stealth: {
+      id: 'stealth',
+      name: 'Stealth',
+      description: 'Shadow phantom scheme',
+      colors: { primary: '#222222', secondary: '#444444', fill: '#000000' },
+    },
+    neon: {
+      id: 'neon',
+      name: 'Neon',
+      description: 'Ethereal glow style',
+      colors: { primary: '#cc00ff', secondary: '#00ffff', fill: '#330044', glow: '#cc00ff' },
+    },
+    gold: {
+      id: 'gold',
+      name: 'Gold',
+      description: 'Phantom king finish',
+      colors: { primary: '#ffd700', secondary: '#ffcc88', fill: '#443300', glow: '#ffd700' },
+    },
+    veteran: {
+      id: 'veteran',
+      name: 'Veteran',
+      description: 'Intangible master colors',
+      colors: { primary: '#ffffff', secondary: '#ccccff', fill: '#111122', glow: '#ffffff' },
+      achievementRequired: 'pacifist',
+    },
+  },
 }
 
 export const SKIN_COSTS: Record<SkinId, number> = {
@@ -323,7 +357,7 @@ export const UPGRADE_COSTS: Record<keyof WeaponUpgrades, number[]> = {
 //                         Special Abilities
 // ------------------------------------------------------------------ //
 
-export type AbilityType = 'emp_blast' | 'missile_barrage' | 'time_warp' | 'shield_burst'
+export type AbilityType = 'emp_blast' | 'missile_barrage' | 'time_warp' | 'shield_burst' | 'phase_shift'
 
 export interface SpecialAbility {
   type: AbilityType
@@ -338,6 +372,7 @@ export const ABILITY_STATS: Record<AbilityType, { cooldown: number; duration: nu
   missile_barrage: { cooldown: 15, duration: 0, description: 'Fires 8 homing missiles' },
   time_warp: { cooldown: 25, duration: 5, description: 'Slows time by 50% for 5 seconds' },
   shield_burst: { cooldown: 30, duration: 8, description: 'Invincibility for 8 seconds' },
+  phase_shift: { cooldown: 22, duration: 4, description: 'Become intangible for 4 seconds' },
 }
 
 // ------------------------------------------------------------------ //
