@@ -398,6 +398,17 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
           />
         )}
 
+        {/* Ability flash overlay */}
+        {abilityFlash && (
+          <Rect
+            x={0}
+            y={0}
+            width={width}
+            height={height}
+            color={`rgba(${getAbilityFlashColor(abilityFlash.type)}, ${abilityFlashOpacity})`}
+          />
+        )}
+
         {/* Parallax Layer 1: Distant stars (furthest back, slowest 0.25x) */}
         {distantStars.map((star, i) => (
           <Circle

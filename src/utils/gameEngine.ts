@@ -354,6 +354,23 @@ export const useGameEngine = () => {
     }
     stateUpdates.screenShake = updatedScreenShake
 
+    // Update ability flash (mutate local copy)
+    let updatedAbilityFlash = state.abilityFlash
+    if (state.abilityFlash) {
+      const newElapsed = state.abilityFlash.elapsed + dt
+      if (newElapsed >= state.abilityFlash.duration) {
+        updatedAbilityFlash = null
+      } else {
+        updatedAbilityFlash = {
+          intensity: state.abilityFlash.intensity,
+          duration: state.abilityFlash.duration,
+          elapsed: newElapsed,
+          abilityType: state.abilityFlash.abilityType,
+        }
+      }
+    }
+    stateUpdates.abilityFlash = updatedAbilityFlash
+
     // Update special ability (mutate local copy)
     let newCooldown = state.player.specialCooldown - dt
     let specialReady = state.player.specialReady
