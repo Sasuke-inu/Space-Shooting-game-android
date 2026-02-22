@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useCallback } from 'react'
 import { View, Text, Pressable, Modal, ScrollView } from 'react-native'
 import { ThemeColors, ThemeId, GameTheme } from '../../../theme/types'
 import { ShipType, GameStatistics } from '../../../types/game'
@@ -58,6 +58,19 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   stats,
   upgradesCredits,
 }) => {
+  // Scroll state tracking
+  const [canScrollDown, setCanScrollDown] = useState(false)
+  const [canScrollUp, setCanScrollUp] = useState(false)
+
+  const handleScroll = useCallback((event: any) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent
+    const isAtTop = contentOffset.y <= 1
+    const isAtBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - 1
+
+    setCanScrollUp(!isAtTop)
+    setCanScrollDown(!isAtBottom)
+  }, [])
+
   if (!visible) return null
 
   return (
@@ -103,7 +116,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             ))}
           </View>
 
-          <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 400 }}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={{ maxHeight: 400 }}
+            onScroll={handleScroll}
+            scrollEventThrottle={16}
+          >
             {activeTab === 'general' && (
               <>
                 {/* Theme Section */}
