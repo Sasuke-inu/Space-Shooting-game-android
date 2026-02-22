@@ -618,7 +618,8 @@ class GameEngine {
 
                 if (CollisionSystem.playerBulletCollision(player, bullet)) {
                     bulletsToRemove.add(bulletIdx)
-                    player = damagePlayer(player, bullet.damage)
+                    player = damagePlayer(player, bullet.damage, state)
+                    sessionStats = sessionStats.copy(damageTaken = sessionStats.damageTaken + bullet.damage)
                     screenShake = ScreenShake(intensity = 10f, duration = 0.15f)
                     newParticles.addAll(
                         SpawnSystem.spawnExplosionParticles(player.pos, 5, 0xFFFF4444.toInt())
@@ -633,7 +634,8 @@ class GameEngine {
                 if (asteroidIdx in asteroidsToRemove) return@forEachIndexed
 
                 if (CollisionSystem.playerAsteroidCollision(player, asteroid)) {
-                    player = damagePlayer(player, 20)
+                    player = damagePlayer(player, 20, state)
+                    sessionStats = sessionStats.copy(damageTaken = sessionStats.damageTaken + 20)
                     screenShake = ScreenShake(intensity = 12f, duration = 0.2f)
                     newParticles.addAll(
                         SpawnSystem.spawnExplosionParticles(player.pos, 8, 0xFFAAAACC.toInt())
@@ -648,7 +650,8 @@ class GameEngine {
                 if (enemyIdx in enemiesToRemove) return@forEachIndexed
 
                 if (CollisionSystem.playerEnemyCollision(player, enemy)) {
-                    player = damagePlayer(player, enemy.damage)
+                    player = damagePlayer(player, enemy.damage, state)
+                    sessionStats = sessionStats.copy(damageTaken = sessionStats.damageTaken + enemy.damage)
                     screenShake = ScreenShake(intensity = 12f, duration = 0.2f)
                 }
             }
