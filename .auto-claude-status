@@ -1,25 +1,25 @@
 {
   "active": true,
-  "spec": "046-remove-40-unused-dependencies-for-massive-bundle-r",
-  "state": "building",
+  "spec": "001-add-new-power-up-type-score-multiplier",
+  "state": "complete",
   "subtasks": {
     "completed": 8,
-    "total": 10,
-    "in_progress": 1,
+    "total": 8,
+    "in_progress": 0,
     "failed": 0
   },
   "phase": {
-    "current": "Build and Runtime Verification",
+    "current": "Verification",
     "id": null,
-    "total": 4
+    "total": 2
   },
   "workers": {
     "active": 0,
     "max": 1
   },
   "session": {
-    "number": 10,
-    "started_at": "2026-02-22T11:25:27.513392"
+    "number": 8,
+    "started_at": "2026-01-22T04:34:27.627266"
   },
-  "last_update": "2026-02-22T11:59:07.782475"
+  "last_update": "2026-01-22T04:50:03.215702"
 }
