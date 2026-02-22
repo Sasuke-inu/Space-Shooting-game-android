@@ -794,6 +794,9 @@ export const useGameEngine = () => {
             credits += a.tier
             newScreenShake = { intensity: 3, duration: 100, elapsed: 0 }
             hapticMedium()
+          }
+        }
+      })
 
             // Chance to drop power-up from large asteroids
             if (a.tier === 3 && Math.random() < POWERUP_DROP_ASTEROID) {
@@ -846,6 +849,7 @@ export const useGameEngine = () => {
             }
           }
         }
+        }
       })
 
       // Bullets vs boss
@@ -875,6 +879,7 @@ export const useGameEngine = () => {
               state.triggerShake(20, 500)
               hapticHeavy()
             }
+
           }
         }
       }

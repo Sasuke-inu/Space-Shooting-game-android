@@ -90,6 +90,7 @@ export type ThemeId =
   | 'halloween'
   | 'synthwave'
   | 'winter'
+  | 'deep-space'
 
 export type JoystickSize = 'small' | 'medium' | 'large'
 export type JoystickPosition = 'left' | 'right' | 'center' | 'floating'
