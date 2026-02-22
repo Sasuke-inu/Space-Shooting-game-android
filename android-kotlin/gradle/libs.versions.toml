@@ -11,6 +11,7 @@ room = "2.6.1"
 datastore = "1.1.1"
 coroutines = "1.9.0"
 ksp = "2.0.21-1.0.28"
+junit = "4.13.2"
 
 [libraries]
 # Core
@@ -42,6 +43,9 @@ datastore-preferences = { group = "androidx.datastore", name = "datastore-prefer
 
 # Coroutines
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+
+# Testing
+junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
