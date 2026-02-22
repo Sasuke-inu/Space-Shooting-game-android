@@ -385,6 +385,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
       const nextWave = state.wave + 1
       const isBossWave = nextWave % BOSS_WAVE_INTERVAL === 0
 
+      // Track challenge progress
+      useChallengesStore.getState().recordWave(nextWave)
+
+      // Track no-damage wave if player didn't take damage in previous wave
+      if (!state.sessionDamageTaken && state.wave > 0) {
+        useChallengesStore.getState().recordNoDamageWave(1)
+      }
+
       // Play boss warning sound when a boss wave is starting
       if (isBossWave) {
         playSfx('boss_warning')
@@ -771,6 +779,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
         COMBO_MULTIPLIERS.length - 1
       )
       const newMultiplier = COMBO_MULTIPLIERS[multiplierIndex]
+
+      // Track challenge progress
+      useChallengesStore.getState().recordCombo(newCount)
 
       // Play sound when multiplier increases (every 3 kills)
       if (newMultiplier > state.combo.multiplier) {

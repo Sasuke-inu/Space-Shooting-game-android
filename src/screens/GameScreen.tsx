@@ -27,6 +27,7 @@ import { useAppSettingsStore } from "../state/settingsStore"
 import { useStatisticsStore, useAchievementStore, useUpgradesStore } from "../state/progressStore"
 import { useTutorialStore } from "../state/tutorialStore"
 import { useWeeklyEventsStore } from "../state/weeklyEventsStore"
+import { useChallengesStore } from "../state/challengesStore"
 import { themeList } from "../theme/themes"
 import type { ShipType } from "../types/game"
 import { ACHIEVEMENTS, SHIP_STATS } from "../types/game"
@@ -206,6 +207,7 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   // Challenges
   const challenges = useChallengesStore((s) => s.challenges)
   const activeChallengesCount = challenges.filter((c) => !c.completed).length
+  const activeChallenge = challenges.find((c) => !c.completed) || null
   const recentChallengeCompletion = useChallengesStore((s) => s.recentCompletion)
   const clearRecentChallengeCompletion = useChallengesStore((s) => s.clearRecentCompletion)
   const checkAndRefreshChallenges = useChallengesStore((s) => s.checkAndRefreshChallenges)
@@ -314,14 +316,40 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
     prevBossRef.current = boss
   }, [boss])
 
-  // Enhanced haptics for wave completion (Android)
+  // Enhanced haptics for wave completion (Android) + Wave survival tracking
   const prevWaveRef = useRef(wave)
   useEffect(() => {
     if (wave > prevWaveRef.current && wave > 1) {
       hapticWaveComplete()
     }
+
+    // Track wave progress for survival challenges
+    if (wave > 0) {
+      recordWaveChallenge(wave)
+    }
+
     prevWaveRef.current = wave
-  }, [wave])
+  }, [wave, recordWaveChallenge])
+
+  // Track no-damage waves for challenges
+  const waveStartHealthRef = useRef(player.health)
+  const prevWaveForNoDamageRef = useRef(wave)
+  useEffect(() => {
+    // When wave increments, check if player completed previous wave without damage
+    if (wave > prevWaveForNoDamageRef.current && wave > 1) {
+      // If health is the same as at wave start, no damage was taken
+      if (player.health === waveStartHealthRef.current) {
+        recordNoDamageWaveChallenge(1)
+      }
+      // Reset health tracker for new wave
+      waveStartHealthRef.current = player.health
+    } else if (wave === 1 && prevWaveForNoDamageRef.current === 0) {
+      // Initialize health tracker at game start
+      waveStartHealthRef.current = player.health
+    }
+
+    prevWaveForNoDamageRef.current = wave
+  }, [wave, player.health, recordNoDamageWaveChallenge])
 
   // Enhanced haptics for combos (Android)
   const prevComboRef = useRef(combo.count)
@@ -428,6 +456,12 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
 
     // Add credits to upgrade store
     addUpgradeCredits(credits)
+
+    // Record accuracy for accuracy challenges
+    if (state.sessionShotsFired > 0) {
+      const accuracy = (state.sessionShotsHit / state.sessionShotsFired) * 100
+      recordAccuracyChallenge(accuracy)
+    }
   }
 
   const handleSubmitScore = () => {
@@ -742,6 +776,8 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
             specialAbility={specialAbility}
             repairDroneActive={repairActive}
             phaseCloakActive={playerCloaked}
+            activeChallenge={activeChallenge}
+            completedChallenge={recentChallengeCompletion ? challenges.find((c) => c.id === recentChallengeCompletion) || null : null}
           />
         </View>
       </GestureDetector>

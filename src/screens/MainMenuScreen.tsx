@@ -17,6 +17,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { AnimatedStarBackground } from '../components/AnimatedStarBackground';
+import ChallengesModal from '../components/ChallengesModal';
 import { useTheme } from '../theme';
 import { useI18nStore } from '../i18n';
 import { useWeeklyEventsStore } from '../state/weeklyEventsStore';
@@ -49,6 +50,9 @@ export default function MainMenuScreen() {
   // Pulse animation for event button
   const pulseScale = useSharedValue(1);
   const pulseOpacity = useSharedValue(0.8);
+
+  // Challenges modal state
+  const [challengesModalVisible, setChallengesModalVisible] = useState(false);
 
   // Animate background
   useEffect(() => {
@@ -192,6 +196,14 @@ export default function MainMenuScreen() {
     opacity: pulseOpacity.value,
   }));
 
+  const handleChallenges = () => {
+    setChallengesModalVisible(true);
+  };
+
+  const handleCloseChallenges = () => {
+    setChallengesModalVisible(false);
+  };
+
 
   return (
     <View className="flex-1" style={{ backgroundColor: theme.colors.background }}>
@@ -331,6 +343,24 @@ export default function MainMenuScreen() {
             </Text>
           </TouchableOpacity>
 
+          {/* Daily Challenges Button */}
+          <TouchableOpacity
+            className="py-4 px-8 rounded-lg border"
+            style={{
+              backgroundColor: theme.colors.panelBg,
+              borderColor: theme.colors.panelBorder,
+            }}
+            onPress={handleChallenges}
+            activeOpacity={0.8}
+          >
+            <Text
+              className="text-xl font-semibold text-center"
+              style={{ color: theme.colors.textPrimary }}
+            >
+              {t('menu.challenges')}
+            </Text>
+          </TouchableOpacity>
+
           {/* High Scores Button */}
           <TouchableOpacity
             className="py-4 px-8 rounded-lg border"
@@ -399,6 +429,12 @@ export default function MainMenuScreen() {
           eventId={currentEvent.id}
         />
       )}
+
+      {/* Challenges Modal */}
+      <ChallengesModal
+        visible={challengesModalVisible}
+        onClose={handleCloseChallenges}
+      />
     </View>
   );
 }

@@ -1,7 +1,7 @@
 import React, { useMemo } from "react"
 import { Canvas, Group, Path, Circle, Line, Text, Skia, vec, matchFont, Rect, Shadow } from "@shopify/react-native-skia"
 import { Platform } from "react-native"
-import type { Asteroid, Enemy, Vec2, PowerUp, ActivePowerUp, ComboState, Boss, HomingMissile, EnemyType, AbilityFlash, SpecialAbility, ShipType } from "../types/game"
+import type { Asteroid, Enemy, Vec2, PowerUp, ActivePowerUp, ComboState, Boss, HomingMissile, EnemyType, AbilityFlash, SpecialAbility, ShipType, Challenge } from "../types/game"
 import type { ThemeColors } from "../theme/types"
 import type { QualityLevel } from "../types/performance"
 import { QUALITY_PRESETS } from "../types/performance"
@@ -41,6 +41,8 @@ interface GameCanvasProps {
   specialAbility?: SpecialAbility | null
   repairDroneActive?: boolean
   phaseCloakActive?: boolean
+  activeChallenge?: Challenge | null
+  completedChallenge?: Challenge | null
 }
 
 // Helper to get power-up color from theme
@@ -121,6 +123,8 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
   abilityFlashOpacity = 0,
   repairDroneActive = false,
   phaseCloakActive = false,
+  activeChallenge = null,
+  completedChallenge = null,
 }) => {
   // Get selected skin for player ship
   const getSelectedSkin = useUpgradesStore((state) => state.getSelectedSkin)
@@ -1230,6 +1234,75 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
         <Text x={16} y={64} text={`Credits: ${credits}`} color={colors.comboText} font={hudFont}>
           <Shadow dx={0} dy={1} blur={2} color="rgba(0,0,0,0.8)" />
         </Text>
+
+        {/* HUD - Active Challenge */}
+        {activeChallenge && !activeChallenge.completed && (
+          <>
+            <Text x={16} y={84} text={activeChallenge.icon} font={hudFont} />
+            <Text
+              x={36}
+              y={84}
+              text={`${activeChallenge.name}: ${activeChallenge.progress}/${activeChallenge.target}`}
+              color={colors.hudText}
+              font={hudFont}
+            />
+          </>
+        )}
+
+        {/* Challenge completion celebration */}
+        {completedChallenge && (
+          <Group>
+            {/* Background panel */}
+            <Rect
+              x={20}
+              y={140}
+              width={width - 40}
+              height={80}
+              color={colors.panelBg}
+            />
+            {/* Border */}
+            <Rect
+              x={20}
+              y={140}
+              width={width - 40}
+              height={80}
+              color={colors.comboText}
+              style="stroke"
+              strokeWidth={2}
+            />
+            {/* Challenge icon */}
+            <Text
+              x={32}
+              y={166}
+              text={completedChallenge.icon}
+              font={comboFont}
+            />
+            {/* "CHALLENGE COMPLETE" text */}
+            <Text
+              x={62}
+              y={160}
+              text="CHALLENGE COMPLETE"
+              color={colors.buttonPrimary}
+              font={smallFont}
+            />
+            {/* Challenge name */}
+            <Text
+              x={62}
+              y={178}
+              text={completedChallenge.name}
+              color={colors.textPrimary}
+              font={hudFont}
+            />
+            {/* Credit reward */}
+            <Text
+              x={62}
+              y={196}
+              text={`+${completedChallenge.reward} Credits`}
+              color={colors.comboText}
+              font={smallFont}
+            />
+          </Group>
+        )}
 
         {/* HUD - Combo counter */}
         {combo.count > 0 && (
