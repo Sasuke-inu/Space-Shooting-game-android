@@ -359,13 +359,13 @@ class GameRenderer {
         }
         canvas.drawPath(path, paint)
 
-        // Health bar
+        // Health bar for scouts
         if (healthPercent < 1f) {
             paint.style = Paint.Style.FILL
             paint.color = Color.DKGRAY
-            canvas.drawRect(-8f, 15f, 8f, 18f, paint)
+            canvas.drawRect(-15f, 15f, 15f, 18f, paint)
             paint.color = Color.GREEN
-            canvas.drawRect(-8f, 15f, -8f + 16f * healthPercent, 18f, paint)
+            canvas.drawRect(-15f, 15f, -15f + 30f * healthPercent, 18f, paint)
         }
     }
 
@@ -417,13 +417,13 @@ class GameRenderer {
             canvas.drawCircle(0f, 0f, chargeRadius, paint)
         }
 
-        // Health bar
+        // Health bar for snipers
         if (healthPercent < 1f) {
             paint.style = Paint.Style.FILL
             paint.color = Color.DKGRAY
-            canvas.drawRect(-8f, 18f, 8f, 21f, paint)
+            canvas.drawRect(-15f, 15f, 15f, 18f, paint)
             paint.color = Color.GREEN
-            canvas.drawRect(-8f, 18f, -8f + 16f * healthPercent, 21f, paint)
+            canvas.drawRect(-15f, 15f, -15f + 30f * healthPercent, 18f, paint)
         }
     }
 
@@ -437,13 +437,13 @@ class GameRenderer {
         canvas.drawLine(-15f, 0f, -8f, 0f, paint)
         canvas.drawLine(8f, 0f, 15f, 0f, paint)
 
-        // Health bar
+        // Health bar for bombers
         if (healthPercent < 1f) {
             paint.style = Paint.Style.FILL
             paint.color = Color.DKGRAY
-            canvas.drawRect(-12f, 15f, 12f, 18f, paint)
+            canvas.drawRect(-15f, 15f, 15f, 18f, paint)
             paint.color = Color.GREEN
-            canvas.drawRect(-12f, 15f, -12f + 24f * healthPercent, 18f, paint)
+            canvas.drawRect(-15f, 15f, -15f + 30f * healthPercent, 18f, paint)
         }
     }
 
