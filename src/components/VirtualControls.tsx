@@ -44,6 +44,7 @@ const VirtualControlsComponent: React.FC<VirtualControlsProps> = ({
   const joystickY = useSharedValue(0)
   const joystickScale = useSharedValue(1)
   const lastHapticMagnitude = useSharedValue(0)
+  const atBoundary = useSharedValue(false)
 
   // Get size configuration
   const sizeConfig = useMemo(() => SIZE_CONFIG[size], [size])
@@ -119,6 +120,15 @@ const VirtualControlsComponent: React.FC<VirtualControlsProps> = ({
         lastHapticMagnitude.value = magnitude
       }
 
+      // Trigger subtle haptic when reaching boundary (98% of max radius)
+      const boundaryThreshold = 0.98
+      if (magnitude >= boundaryThreshold && !atBoundary.value) {
+        runOnJS(handleMoveHaptic)()
+        atBoundary.value = true
+      } else if (magnitude < boundaryThreshold) {
+        atBoundary.value = false
+      }
+
       // Apply dead zone
       if (magnitude < JOY_DEADZONE) {
         runOnJS(handleJoystickMove)({ x: 0, y: 0 })
@@ -140,10 +150,11 @@ const VirtualControlsComponent: React.FC<VirtualControlsProps> = ({
       joystickY.value = withSpring(0, { damping: 15 })
       joystickScale.value = withSpring(1)
       lastHapticMagnitude.value = 0
+      atBoundary.value = false
       runOnJS(handleSetActive)(false)
       runOnJS(handleJoystickMove)({ x: 0, y: 0 })
       runOnJS(handleReleaseHaptic)()
-    }), [handleJoystickMove, handleSetActive, handleTouchHaptic, handleMoveHaptic, handleReleaseHaptic, joystickX, joystickY, joystickScale, lastHapticMagnitude, sensitivity, applySensitivityCurve, invertY])
+    }), [handleJoystickMove, handleSetActive, handleTouchHaptic, handleMoveHaptic, handleReleaseHaptic, joystickX, joystickY, joystickScale, lastHapticMagnitude, atBoundary, sensitivity, applySensitivityCurve, invertY])
 
   const stickStyle = useAnimatedStyle(() => ({
     transform: [
@@ -152,14 +163,6 @@ const VirtualControlsComponent: React.FC<VirtualControlsProps> = ({
       { scale: joystickScale.value },
     ],
   }))
-
-  const cooldownOverlayStyle = useAnimatedStyle(() => {
-    const rotation = cooldownProgress.value * 360
-    return {
-      transform: [{ rotate: `${rotation}deg` }],
-      opacity: cooldownProgress.value > 0 ? 0.6 : 0,
-    }
-  })
 
   const dynamicStyles = useMemo(() => ({
     joystickPad: {
@@ -200,31 +203,6 @@ const VirtualControlsComponent: React.FC<VirtualControlsProps> = ({
           </View>
         </View>
       </GestureDetector>
-
-      {/* Special ability button */}
-      <View style={styles.abilityButtonContainer}>
-        <Pressable
-          style={[
-            styles.abilityButton,
-            dynamicStyles.abilityButton,
-            !player.specialReady && { opacity: 0.4 }
-          ]}
-          onPress={player.specialReady ? onAbilityPress : undefined}
-          disabled={!player.specialReady}
-        >
-          <Text style={[styles.abilityText, dynamicStyles.abilityText]}>
-            {SHIP_STATS[player.shipType].special}
-          </Text>
-        </Pressable>
-        <Animated.View
-          style={[
-            styles.cooldownOverlay,
-            dynamicStyles.cooldownOverlay,
-            cooldownOverlayStyle
-          ]}
-          pointerEvents="none"
-        />
-      </View>
     </View>
   )
 }
@@ -257,40 +235,5 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 18,
-  },
-  abilityButtonContainer: {
-    position: "absolute",
-    right: 20,
-    bottom: 0,
-    width: 70,
-    height: 70,
-  },
-  abilityButton: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.6,
-    shadowRadius: 10,
-    elevation: 5,
-  },
-  cooldownOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    borderWidth: 4,
-    borderTopColor: "transparent",
-    borderRightColor: "transparent",
-    borderBottomColor: "transparent",
-  },
-  abilityText: {
-    fontSize: 10,
-    fontWeight: "600",
-    textAlign: "center",
   },
 })
