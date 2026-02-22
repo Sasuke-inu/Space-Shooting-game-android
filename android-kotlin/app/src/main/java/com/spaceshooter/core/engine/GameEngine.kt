@@ -320,28 +320,41 @@ class GameEngine {
             newPos = boss.pos + newVel * dt
         }
 
-        // Boss firing pattern
-        val newBullets = builder.bullets.toMutableList()
+        // Boss firing pattern - uses data-driven FirePattern system
+        // Each boss type has phase-specific patterns (Spiral, Ring, Aimed, Burst)
+        var newBullets = builder.bullets.toMutableList()
         var newTimer = boss.firePatternTimer + dt
 
+        // Fire every 1 second when boss is in position
         if (newTimer >= 1f && boss.pos.y >= 100f) {
             newTimer = 0f
 
-            // Fire pattern based on phase
-            val bulletCount = boss.phase * 3
-            for (i in 0 until bulletCount) {
-                val angle = (i.toFloat() / bulletCount) * 2f * PI.toFloat() + builder.time
-                val bulletVel = Vec2.fromAngle(angle, GameConstants.BULLET_SPEED_ENEMY * 0.8f)
+            // Get boss-specific stats and lookup pattern for current phase
+            val bossStats = SpawnSystem.getBossStats(boss.type)
+            val pattern = bossStats.firePatterns[boss.phase]
 
-                newBullets.add(
-                    Bullet(
-                        pos = boss.pos + Vec2.fromAngle(angle, boss.radius),
-                        vel = bulletVel,
-                        isPlayerBullet = false,
-                        damage = 20,
-                        radius = 6f
-                    )
+            // Execute pattern if defined (null-safe - some phases might skip firing)
+            pattern?.let { firePattern ->
+                // Execute the pattern to get bullet spawn data (positions and velocities)
+                val bulletSpawns = firePattern.execute(
+                    bossPos = boss.pos,
+                    bossRadius = boss.radius,
+                    time = state.time,
+                    playerPos = state.player.pos
                 )
+
+                // Create bullets from pattern output
+                bulletSpawns.forEach { spawn ->
+                    newBullets.add(
+                        Bullet(
+                            pos = spawn.position,
+                            vel = spawn.velocity,
+                            isPlayerBullet = false,
+                            damage = 20,
+                            radius = 6f
+                        )
+                    )
+                }
             }
         }
 

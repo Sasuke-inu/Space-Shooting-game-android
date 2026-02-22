@@ -197,6 +197,65 @@ object SpawnSystem {
     }
 
     /**
+     * Boss statistics and configuration.
+     *
+     * @param hp Total hit points
+     * @param radius Collision radius
+     * @param maxPhase Maximum phase (boss transitions at 66%, 33% HP)
+     * @param score Points awarded on defeat
+     * @param firePatterns Map of phase number to FirePattern (1-indexed, corresponds to boss.phase)
+     */
+    data class BossStats(
+        val hp: Int,
+        val radius: Float,
+        val maxPhase: Int,
+        val score: Int,
+        val firePatterns: Map<Int, FirePattern>
+    )
+
+    /**
+     * Get boss stats and fire patterns by type.
+     * Each boss has unique stats and phase-specific fire patterns.
+     */
+    fun getBossStats(type: BossType): BossStats {
+        return when (type) {
+            BossType.DESTROYER -> BossStats(
+                hp = 500,
+                radius = 50f,
+                maxPhase = 2,
+                score = 1000,
+                firePatterns = mapOf(
+                    1 to FirePattern.Spiral(bulletCount = 6, bulletSpeed = 150f),
+                    2 to FirePattern.Ring(bulletCount = 12, bulletSpeed = 120f)
+                )
+            )
+            BossType.CARRIER -> BossStats(
+                hp = 750,
+                radius = 60f,
+                maxPhase = 3,
+                score = 1500,
+                firePatterns = mapOf(
+                    1 to FirePattern.Spiral(bulletCount = 8, bulletSpeed = 140f),
+                    2 to FirePattern.Aimed(bulletCount = 3, bulletSpeed = 180f, spread = 0.5f),
+                    3 to FirePattern.Burst(bulletCount = 3, bulletSpeed = 160f, directions = 4)
+                )
+            )
+            BossType.DREADNOUGHT -> BossStats(
+                hp = 1000,
+                radius = 70f,
+                maxPhase = 3,
+                score = 2500,
+                firePatterns = mapOf(
+                    1 to FirePattern.Ring(bulletCount = 16, bulletSpeed = 130f),
+                    2 to FirePattern.Spiral(bulletCount = 12, bulletSpeed = 150f),
+                    3 to FirePattern.Burst(bulletCount = 4, bulletSpeed = 170f, directions = 6)
+                )
+            )
+        }
+    }
+
+
+    /**
      * Spawn a power-up at position.
      */
     fun spawnPowerUp(pos: Vec2): PowerUp? {
