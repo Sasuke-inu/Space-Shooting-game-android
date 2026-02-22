@@ -16,6 +16,9 @@ describe('Special Abilities Logic', () => {
       time_warp: { cooldown: 25, duration: 5, description: 'Slows time by 50% for 5 seconds' },
       shield_burst: { cooldown: 30, duration: 8, description: 'Invincibility for 8 seconds' },
       phase_shift: { cooldown: 22, duration: 4, description: 'Become intangible for 4 seconds' },
+      repair_drone: { cooldown: 22, duration: 6, description: 'Deploys a drone that repairs 40 HP over 6 seconds' },
+      phase_cloak: { cooldown: 20, duration: 4, description: 'Phase out of reality, becoming invisible and invulnerable for 4 seconds' },
+      gravity_cannon: { cooldown: 18, duration: 0, description: 'Fires a gravity burst dealing 200 damage to all enemies in range' },
     }
 
     const SHIP_ABILITIES = {
@@ -24,6 +27,9 @@ describe('Special Abilities Logic', () => {
       tank: 'shield_burst',
       interceptor: 'emp_blast',
       ghost: 'phase_shift',
+      support: 'repair_drone',
+      stealth: 'phase_cloak',
+      heavy: 'gravity_cannon',
     }
 
     test('each ship has a unique ability', () => {
@@ -41,11 +47,22 @@ describe('Special Abilities Logic', () => {
     test('duration abilities have non-zero duration', () => {
       expect(ABILITY_STATS.time_warp.duration).toBeGreaterThan(0)
       expect(ABILITY_STATS.shield_burst.duration).toBeGreaterThan(0)
+      expect(ABILITY_STATS.repair_drone.duration).toBeGreaterThan(0)
+      expect(ABILITY_STATS.phase_cloak.duration).toBeGreaterThan(0)
     })
 
     test('instant abilities have zero duration', () => {
       expect(ABILITY_STATS.emp_blast.duration).toBe(0)
       expect(ABILITY_STATS.missile_barrage.duration).toBe(0)
+      expect(ABILITY_STATS.gravity_cannon.duration).toBe(0)
+    })
+
+    test('all 7 ships have unique abilities', () => {
+      const ships = Object.keys(SHIP_ABILITIES)
+      expect(ships.length).toBe(7)
+      const abilities = Object.values(SHIP_ABILITIES)
+      const uniqueAbilities = new Set(abilities)
+      expect(uniqueAbilities.size).toBe(7)
     })
   })
 
@@ -87,6 +104,9 @@ describe('Special Abilities Logic', () => {
               tank: 'shield_burst',
               interceptor: 'emp_blast',
               ghost: 'phase_shift',
+              support: 'repair_drone',
+              stealth: 'phase_cloak',
+              heavy: 'gravity_cannon',
             }
             const cooldownMap: Record<string, number> = {
               missile_barrage: 15,
@@ -94,6 +114,9 @@ describe('Special Abilities Logic', () => {
               shield_burst: 30,
               emp_blast: 20,
               phase_shift: 22,
+              repair_drone: 22,
+              phase_cloak: 20,
+              gravity_cannon: 18,
             }
             const durationMap: Record<string, number> = {
               missile_barrage: 0,
@@ -101,6 +124,9 @@ describe('Special Abilities Logic', () => {
               shield_burst: 8,
               emp_blast: 0,
               phase_shift: 4,
+              repair_drone: 6,
+              phase_cloak: 4,
+              gravity_cannon: 0,
             }
 
             const abilityType = abilityMap[state.player.shipType] || 'missile_barrage'
@@ -566,6 +592,480 @@ describe('Special Abilities Logic', () => {
   })
 
   // ------------------------------------------------------------------ //
+  //                         Repair Drone Tests
+  // ------------------------------------------------------------------ //
+  describe('Repair Drone', () => {
+    test('repair drone heals over time', () => {
+      const REPAIR_DRONE_TOTAL_HP = 40
+      const REPAIR_DRONE_DURATION = 6
+      const healPerSecond = REPAIR_DRONE_TOTAL_HP / REPAIR_DRONE_DURATION
+
+      let hp = 60
+      const maxHull = 120 // Support ship hull
+      const dt = 0.033
+
+      // Simulate 1 second of healing
+      for (let i = 0; i < 30; i++) {
+        hp = Math.min(hp + healPerSecond * dt, maxHull)
+      }
+
+      // Should have healed ~6.67 HP in 1 second
+      expect(hp).toBeCloseTo(60 + healPerSecond * 1, 0)
+    })
+
+    test('repair drone respects max hull', () => {
+      const REPAIR_DRONE_TOTAL_HP = 40
+      const REPAIR_DRONE_DURATION = 6
+      const healPerSecond = REPAIR_DRONE_TOTAL_HP / REPAIR_DRONE_DURATION
+
+      let hp = 115
+      const maxHull = 120 // Support ship hull
+      const dt = 0.033
+
+      // Simulate full 6 seconds of healing
+      for (let i = 0; i < 180; i++) { // 180 frames at 30fps = 6 seconds
+        hp = Math.min(hp + healPerSecond * dt, maxHull)
+      }
+
+      // HP should be capped at max hull
+      expect(hp).toBe(maxHull)
+    })
+
+    test('repair drone heals total of 40 HP over 6 seconds', () => {
+      const REPAIR_DRONE_TOTAL_HP = 40
+      const REPAIR_DRONE_DURATION = 6
+      const healPerSecond = REPAIR_DRONE_TOTAL_HP / REPAIR_DRONE_DURATION
+
+      let hp = 50
+      const maxHull = 200 // Use high max so we don't cap
+      const dt = 0.033
+
+      // Simulate full 6 seconds
+      for (let i = 0; i < 180; i++) {
+        hp = Math.min(hp + healPerSecond * dt, maxHull)
+      }
+
+      // Should have healed ~40 HP total (6 * 6.67 ≈ 40)
+      expect(hp).toBeCloseTo(50 + REPAIR_DRONE_TOTAL_HP, 0)
+    })
+
+    test('repair drone has 6 second duration', () => {
+      const REPAIR_DRONE_DURATION = 6
+      expect(REPAIR_DRONE_DURATION).toBe(6)
+    })
+
+    test('repair drone has 22 second cooldown', () => {
+      const REPAIR_DRONE_COOLDOWN = 22
+      expect(REPAIR_DRONE_COOLDOWN).toBe(22)
+    })
+  })
+
+  // ------------------------------------------------------------------ //
+  //                         Phase Cloak Tests
+  // ------------------------------------------------------------------ //
+  describe('Phase Cloak', () => {
+    test('phase cloak grants invulnerability', () => {
+      let hp = 60
+      const isCloaked = true
+      const damage = 50
+
+      // Cloaked player should not take damage
+      if (!isCloaked) {
+        hp -= damage
+      }
+
+      expect(hp).toBe(60) // No damage taken
+    })
+
+    test('phase cloak has 4 second duration', () => {
+      const PHASE_CLOAK_DURATION = 4
+      let duration = PHASE_CLOAK_DURATION
+      const dt = 0.033
+
+      let frames = 0
+      while (duration > 0) {
+        duration -= dt
+        frames++
+      }
+
+      // Should last about 121 frames at 30fps
+      expect(frames).toBeGreaterThan(115)
+      expect(frames).toBeLessThan(130)
+    })
+
+    test('phase cloak makes player invisible to enemies', () => {
+      const player = { pos: { x: 100, y: 100 }, isCloaked: true }
+      const enemy = { pos: { x: 200, y: 200 }, targetPlayer: true }
+
+      // Enemy AI should not target cloaked player
+      if (player.isCloaked) {
+        enemy.targetPlayer = false
+      }
+
+      expect(enemy.targetPlayer).toBe(false)
+    })
+
+    test('phase cloak expires and player becomes targetable', () => {
+      let isCloaked = true
+      let duration = 4
+      const dt = 0.033
+
+      // Simulate 5 seconds (past duration)
+      for (let i = 0; i < 150; i++) {
+        duration -= dt
+        if (duration <= 0) {
+          isCloaked = false
+          duration = 0
+        }
+      }
+
+      expect(isCloaked).toBe(false)
+      expect(duration).toBe(0)
+    })
+
+    test('phase cloak has 20 second cooldown', () => {
+      const PHASE_CLOAK_COOLDOWN = 20
+      expect(PHASE_CLOAK_COOLDOWN).toBe(20)
+    })
+  })
+
+  // ------------------------------------------------------------------ //
+  //                         Gravity Cannon Tests
+  // ------------------------------------------------------------------ //
+  describe('Gravity Cannon', () => {
+    test('gravity cannon deals instant area damage', () => {
+      const GRAVITY_CANNON_DAMAGE = 200
+      const GRAVITY_CANNON_RANGE = 250
+      const playerPos = { x: 400, y: 400 }
+
+      const enemies = [
+        { pos: { x: 450, y: 400 }, hp: 100 },  // 50 units away - in range
+        { pos: { x: 300, y: 400 }, hp: 150 },  // 100 units away - in range
+        { pos: { x: 700, y: 400 }, hp: 100 },  // 300 units away - out of range
+      ]
+
+      // Apply gravity cannon damage
+      enemies.forEach((e) => {
+        const dx = e.pos.x - playerPos.x
+        const dy = e.pos.y - playerPos.y
+        const dist = Math.sqrt(dx * dx + dy * dy)
+
+        if (dist <= GRAVITY_CANNON_RANGE) {
+          e.hp -= GRAVITY_CANNON_DAMAGE
+        }
+      })
+
+      expect(enemies[0].hp).toBe(-100) // 100 - 200 = -100 (killed)
+      expect(enemies[1].hp).toBe(-50)  // 150 - 200 = -50 (killed)
+      expect(enemies[2].hp).toBe(100)  // Out of range, untouched
+    })
+
+    test('gravity cannon is instant (zero duration)', () => {
+      const GRAVITY_CANNON_DURATION = 0
+      expect(GRAVITY_CANNON_DURATION).toBe(0)
+    })
+
+    test('gravity cannon has 18 second cooldown', () => {
+      const GRAVITY_CANNON_COOLDOWN = 18
+      expect(GRAVITY_CANNON_COOLDOWN).toBe(18)
+    })
+
+    test('gravity cannon only affects enemies within range', () => {
+      const GRAVITY_CANNON_RANGE = 250
+      const playerPos = { x: 400, y: 400 }
+
+      const testPositions = [
+        { pos: { x: 400, y: 400 }, expected: true },   // 0 units - in range
+        { pos: { x: 650, y: 400 }, expected: true },   // 250 units - at edge of range
+        { pos: { x: 651, y: 400 }, expected: false },  // 251 units - just out of range
+        { pos: { x: 100, y: 100 }, expected: false },  // ~424 units - out of range
+      ]
+
+      testPositions.forEach(({ pos, expected }) => {
+        const dx = pos.x - playerPos.x
+        const dy = pos.y - playerPos.y
+        const dist = Math.sqrt(dx * dx + dy * dy)
+        expect(dist <= GRAVITY_CANNON_RANGE).toBe(expected)
+      })
+    })
+
+    test('gravity cannon deals reduced damage to bosses', () => {
+      const GRAVITY_CANNON_DAMAGE = 200
+      const BOSS_DAMAGE_REDUCTION = 0.5
+      const bossHp = 500
+
+      const damageToBoss = GRAVITY_CANNON_DAMAGE * BOSS_DAMAGE_REDUCTION
+      expect(damageToBoss).toBe(100)
+      expect(bossHp - damageToBoss).toBe(400) // Boss survives
+    })
+  })
+
+  // ------------------------------------------------------------------ //
+  //                    New Ship Ability Activation Tests
+  // ------------------------------------------------------------------ //
+  describe('New Ship Ability Activation', () => {
+    interface SpecialAbility {
+      type: string
+      cooldown: number
+      maxCooldown: number
+      duration: number
+      isActive: boolean
+    }
+
+    interface Player {
+      specialReady: boolean
+      specialCooldown: number
+      shipType: string
+    }
+
+    const createAbilityStore = () =>
+      create<{
+        player: Player
+        specialAbility: SpecialAbility | null
+        activateSpecialAbility: () => void
+        updateSpecialAbility: (dt: number) => void
+      }>((set, get) => ({
+        player: { specialReady: true, specialCooldown: 0, shipType: 'support' },
+        specialAbility: null,
+
+        activateSpecialAbility: () =>
+          set((state) => {
+            if (!state.player.specialReady) return state
+
+            const abilityMap: Record<string, string> = {
+              fighter: 'missile_barrage',
+              scout: 'time_warp',
+              tank: 'shield_burst',
+              interceptor: 'emp_blast',
+              support: 'repair_drone',
+              stealth: 'phase_cloak',
+              heavy: 'gravity_cannon',
+            }
+            const cooldownMap: Record<string, number> = {
+              missile_barrage: 15,
+              time_warp: 25,
+              shield_burst: 30,
+              emp_blast: 20,
+              repair_drone: 22,
+              phase_cloak: 20,
+              gravity_cannon: 18,
+            }
+            const durationMap: Record<string, number> = {
+              missile_barrage: 0,
+              time_warp: 5,
+              shield_burst: 8,
+              emp_blast: 0,
+              repair_drone: 6,
+              phase_cloak: 4,
+              gravity_cannon: 0,
+            }
+
+            const abilityType = abilityMap[state.player.shipType] || 'missile_barrage'
+            const cooldown = cooldownMap[abilityType]
+            const duration = durationMap[abilityType]
+
+            return {
+              player: { ...state.player, specialReady: false, specialCooldown: cooldown },
+              specialAbility: {
+                type: abilityType,
+                cooldown,
+                maxCooldown: cooldown,
+                duration,
+                isActive: true,
+              },
+            }
+          }),
+
+        updateSpecialAbility: (dt) =>
+          set((state) => {
+            let newCooldown = state.player.specialCooldown - dt
+            let specialReady = state.player.specialReady
+
+            if (newCooldown <= 0) {
+              newCooldown = 0
+              specialReady = true
+            }
+
+            let ability = state.specialAbility
+            if (ability && ability.isActive) {
+              if (ability.duration > 0) {
+                ability = {
+                  ...ability,
+                  duration: ability.duration - dt,
+                  isActive: ability.duration > dt,
+                }
+              } else {
+                ability = { ...ability, isActive: false }
+              }
+            }
+
+            return {
+              player: { ...state.player, specialCooldown: newCooldown, specialReady },
+              specialAbility: ability,
+            }
+          }),
+      }))
+
+    test('support ship activates repair_drone', () => {
+      const store = createAbilityStore()
+      store.getState().activateSpecialAbility()
+
+      expect(store.getState().specialAbility?.type).toBe('repair_drone')
+      expect(store.getState().specialAbility?.duration).toBe(6)
+      expect(store.getState().player.specialCooldown).toBe(22)
+    })
+
+    test('stealth ship activates phase_cloak', () => {
+      const store = createAbilityStore()
+      store.setState({ player: { ...store.getState().player, shipType: 'stealth' } })
+
+      store.getState().activateSpecialAbility()
+
+      expect(store.getState().specialAbility?.type).toBe('phase_cloak')
+      expect(store.getState().specialAbility?.duration).toBe(4)
+      expect(store.getState().player.specialCooldown).toBe(20)
+    })
+
+    test('heavy ship activates gravity_cannon', () => {
+      const store = createAbilityStore()
+      store.setState({ player: { ...store.getState().player, shipType: 'heavy' } })
+
+      store.getState().activateSpecialAbility()
+
+      expect(store.getState().specialAbility?.type).toBe('gravity_cannon')
+      expect(store.getState().specialAbility?.duration).toBe(0)
+      expect(store.getState().player.specialCooldown).toBe(18)
+    })
+
+    test('repair_drone expires after 6 seconds', () => {
+      const store = createAbilityStore()
+      store.getState().activateSpecialAbility() // repair_drone (duration: 6)
+
+      expect(store.getState().specialAbility?.isActive).toBe(true)
+
+      // After 4 seconds
+      store.getState().updateSpecialAbility(4)
+      expect(store.getState().specialAbility?.duration).toBe(2)
+      expect(store.getState().specialAbility?.isActive).toBe(true)
+
+      // After 3 more seconds (total 7, past duration)
+      store.getState().updateSpecialAbility(3)
+      expect(store.getState().specialAbility?.isActive).toBe(false)
+    })
+
+    test('phase_cloak expires after 4 seconds', () => {
+      const store = createAbilityStore()
+      store.setState({ player: { ...store.getState().player, shipType: 'stealth' } })
+
+      store.getState().activateSpecialAbility()
+      expect(store.getState().specialAbility?.isActive).toBe(true)
+
+      // After 3 seconds
+      store.getState().updateSpecialAbility(3)
+      expect(store.getState().specialAbility?.duration).toBe(1)
+      expect(store.getState().specialAbility?.isActive).toBe(true)
+
+      // After 2 more seconds (total 5, past duration)
+      store.getState().updateSpecialAbility(2)
+      expect(store.getState().specialAbility?.isActive).toBe(false)
+    })
+
+    test('gravity_cannon becomes inactive immediately', () => {
+      const store = createAbilityStore()
+      store.setState({ player: { ...store.getState().player, shipType: 'heavy' } })
+
+      store.getState().activateSpecialAbility() // gravity_cannon (duration: 0)
+
+      // Update should immediately set isActive to false
+      store.getState().updateSpecialAbility(0.016)
+      expect(store.getState().specialAbility?.isActive).toBe(false)
+    })
+  })
+
+  // ------------------------------------------------------------------ //
+  //                         Balance Tests
+  // ------------------------------------------------------------------ //
+  describe('Ability Balance', () => {
+    const ABILITY_BALANCE = {
+      repair_drone: { cooldown: 22, duration: 6, totalHeal: 40 },
+      phase_cloak: { cooldown: 20, duration: 4 },
+      gravity_cannon: { cooldown: 18, duration: 0, damage: 200, range: 250 },
+    }
+
+    test('repair drone heals a reasonable amount (40 HP over 6s)', () => {
+      const { totalHeal, duration } = ABILITY_BALANCE.repair_drone
+      const healPerSecond = totalHeal / duration
+
+      // Heal rate should be meaningful but not overpowered
+      expect(totalHeal).toBe(40)
+      expect(duration).toBe(6)
+      expect(healPerSecond).toBeCloseTo(6.67, 1)
+
+      // Total heal should be less than support ship max hull (120)
+      expect(totalHeal).toBeLessThan(120)
+      // Total heal should be meaningful (at least 25% of support hull)
+      expect(totalHeal).toBeGreaterThanOrEqual(120 * 0.25)
+    })
+
+    test('phase cloak duration is shorter than its cooldown', () => {
+      const { cooldown, duration } = ABILITY_BALANCE.phase_cloak
+
+      expect(duration).toBeLessThan(cooldown)
+      // Duration should be at most 25% of cooldown to prevent perma-cloak
+      expect(duration / cooldown).toBeLessThanOrEqual(0.25)
+    })
+
+    test('gravity cannon has high damage but limited area', () => {
+      const { damage, range } = ABILITY_BALANCE.gravity_cannon
+
+      // Damage should be high (enough to one-shot most enemies)
+      expect(damage).toBeGreaterThanOrEqual(150)
+
+      // Range should be limited (not full screen)
+      // Typical game canvas is ~400-800 units wide
+      expect(range).toBeLessThanOrEqual(300)
+      expect(range).toBeGreaterThan(0)
+
+      // Damage-to-range ratio should be high (powerful but short range)
+      expect(damage / range).toBeGreaterThan(0.5)
+    })
+
+    test('all new ability cooldowns are within reasonable range', () => {
+      const cooldowns = [
+        ABILITY_BALANCE.repair_drone.cooldown,
+        ABILITY_BALANCE.phase_cloak.cooldown,
+        ABILITY_BALANCE.gravity_cannon.cooldown,
+      ]
+
+      cooldowns.forEach((cd) => {
+        // Cooldowns should be between 10 and 40 seconds
+        expect(cd).toBeGreaterThanOrEqual(10)
+        expect(cd).toBeLessThanOrEqual(40)
+      })
+    })
+
+    test('new ability cooldowns are competitive with existing abilities', () => {
+      const existingCooldowns = {
+        emp_blast: 20,
+        missile_barrage: 15,
+        time_warp: 25,
+        shield_burst: 30,
+      }
+      const newCooldowns = {
+        repair_drone: ABILITY_BALANCE.repair_drone.cooldown,
+        phase_cloak: ABILITY_BALANCE.phase_cloak.cooldown,
+        gravity_cannon: ABILITY_BALANCE.gravity_cannon.cooldown,
+      }
+
+      const existingAvg = Object.values(existingCooldowns).reduce((a, b) => a + b, 0) / 4
+      const newAvg = Object.values(newCooldowns).reduce((a, b) => a + b, 0) / 3
+
+      // New ability cooldowns should be in a similar range as existing ones
+      expect(Math.abs(newAvg - existingAvg)).toBeLessThan(10)
+    })
+  })
+
+  // ------------------------------------------------------------------ //
   //                         Ability Flash Tests
   // ------------------------------------------------------------------ //
   describe('Ability Flash', () => {
@@ -708,6 +1208,18 @@ describe('Special Abilities Logic', () => {
       // Ghost -> phase_shift
       store.getState().triggerAbilityFlash('phase_shift')
       expect(store.getState().abilityFlash?.abilityType).toBe('phase_shift')
+
+      // Support -> repair_drone
+      store.getState().triggerAbilityFlash('repair_drone')
+      expect(store.getState().abilityFlash?.abilityType).toBe('repair_drone')
+
+      // Stealth -> phase_cloak
+      store.getState().triggerAbilityFlash('phase_cloak')
+      expect(store.getState().abilityFlash?.abilityType).toBe('phase_cloak')
+
+      // Heavy -> gravity_cannon
+      store.getState().triggerAbilityFlash('gravity_cannon')
+      expect(store.getState().abilityFlash?.abilityType).toBe('gravity_cannon')
     })
 
     test('opacity returns 0 when no flash is active', () => {

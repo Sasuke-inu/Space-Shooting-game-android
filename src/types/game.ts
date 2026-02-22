@@ -108,7 +108,7 @@ export const BOSS_STATS: Record<BossType, { hp: number; phases: number; points: 
 //                         Ship Types
 // ------------------------------------------------------------------ //
 
-export type ShipType = 'fighter' | 'scout' | 'tank' | 'interceptor' | 'ghost'
+export type ShipType = 'fighter' | 'scout' | 'tank' | 'interceptor' | 'ghost' | 'support' | 'stealth' | 'heavy'
 
 export interface ShipStats {
   speed: number       // Movement multiplier
@@ -124,6 +124,9 @@ export const SHIP_STATS: Record<ShipType, ShipStats> = {
   tank: { speed: 0.7, fireRate: 0.8, damage: 1.5, hull: 150, special: 'Shield Burst' },
   interceptor: { speed: 1.2, fireRate: 1.5, damage: 0.9, hull: 80, special: 'EMP Blast' },
   ghost: { speed: 1.1, fireRate: 1.0, damage: 1.0, hull: 90, special: 'Phase Shift' },
+  support: { speed: 0.9, fireRate: 0.9, damage: 0.7, hull: 120, special: 'Repair Drone' },
+  stealth: { speed: 1.3, fireRate: 1.0, damage: 1.1, hull: 60, special: 'Phase Cloak' },
+  heavy: { speed: 0.5, fireRate: 0.6, damage: 2.0, hull: 200, special: 'Gravity Cannon' },
 }
 
 export interface Player {
@@ -323,6 +326,105 @@ export const SHIP_SKINS: Record<ShipType, Record<SkinId, ShipSkin>> = {
       achievementRequired: 'pacifist',
     },
   },
+  support: {
+    default: {
+      id: 'default',
+      name: 'Standard',
+      description: 'Standard support colors',
+      colors: { primary: '#00ff88', secondary: '#ffffff', fill: '#004422' },
+    },
+    stealth: {
+      id: 'stealth',
+      name: 'Stealth',
+      description: 'Covert medic scheme',
+      colors: { primary: '#2a2a2a', secondary: '#555555', fill: '#0a0a0a' },
+    },
+    neon: {
+      id: 'neon',
+      name: 'Neon',
+      description: 'Bio-luminescent style',
+      colors: { primary: '#00ff00', secondary: '#88ff88', fill: '#003300', glow: '#00ff00' },
+    },
+    gold: {
+      id: 'gold',
+      name: 'Gold',
+      description: 'Golden healer finish',
+      colors: { primary: '#ffd700', secondary: '#88ff44', fill: '#554400', glow: '#ffd700' },
+    },
+    veteran: {
+      id: 'veteran',
+      name: 'Veteran',
+      description: 'Field surgeon colors',
+      colors: { primary: '#ff4488', secondary: '#ffffff', fill: '#440022', glow: '#ff4488' },
+      achievementRequired: 'power_collector',
+    },
+  },
+  stealth: {
+    default: {
+      id: 'default',
+      name: 'Standard',
+      description: 'Standard stealth colors',
+      colors: { primary: '#8844ff', secondary: '#cccccc', fill: '#220044' },
+    },
+    stealth: {
+      id: 'stealth',
+      name: 'Stealth',
+      description: 'Ghost operative scheme',
+      colors: { primary: '#1a1a1a', secondary: '#333333', fill: '#000000' },
+    },
+    neon: {
+      id: 'neon',
+      name: 'Neon',
+      description: 'Phantom glow style',
+      colors: { primary: '#cc00ff', secondary: '#ff00cc', fill: '#330044', glow: '#cc00ff' },
+    },
+    gold: {
+      id: 'gold',
+      name: 'Gold',
+      description: 'Shadow gold finish',
+      colors: { primary: '#ffd700', secondary: '#aa88ff', fill: '#664400', glow: '#ffd700' },
+    },
+    veteran: {
+      id: 'veteran',
+      name: 'Veteran',
+      description: 'Phase walker colors',
+      colors: { primary: '#00ccff', secondary: '#ffffff', fill: '#003344', glow: '#00ccff' },
+      achievementRequired: 'untouchable',
+    },
+  },
+  heavy: {
+    default: {
+      id: 'default',
+      name: 'Standard',
+      description: 'Standard heavy colors',
+      colors: { primary: '#ff4400', secondary: '#ffaa00', fill: '#441100' },
+    },
+    stealth: {
+      id: 'stealth',
+      name: 'Stealth',
+      description: 'Dark fortress scheme',
+      colors: { primary: '#555555', secondary: '#777777', fill: '#222222' },
+    },
+    neon: {
+      id: 'neon',
+      name: 'Neon',
+      description: 'Molten core style',
+      colors: { primary: '#ff4400', secondary: '#ffff00', fill: '#441100', glow: '#ff4400' },
+    },
+    gold: {
+      id: 'gold',
+      name: 'Gold',
+      description: 'Armored gold plating',
+      colors: { primary: '#ffd700', secondary: '#ff8800', fill: '#664400', glow: '#ffd700' },
+    },
+    veteran: {
+      id: 'veteran',
+      name: 'Veteran',
+      description: 'Dreadnought slayer colors',
+      colors: { primary: '#ff0044', secondary: '#ffffff', fill: '#440011', glow: '#ff0044' },
+      achievementRequired: 'boss_slayer',
+    },
+  },
 }
 
 export const SKIN_COSTS: Record<SkinId, number> = {
@@ -357,7 +459,7 @@ export const UPGRADE_COSTS: Record<keyof WeaponUpgrades, number[]> = {
 //                         Special Abilities
 // ------------------------------------------------------------------ //
 
-export type AbilityType = 'emp_blast' | 'missile_barrage' | 'time_warp' | 'shield_burst' | 'phase_shift'
+export type AbilityType = 'emp_blast' | 'missile_barrage' | 'time_warp' | 'shield_burst' | 'phase_shift' | 'repair_drone' | 'phase_cloak' | 'gravity_cannon'
 
 export interface SpecialAbility {
   type: AbilityType
@@ -373,6 +475,9 @@ export const ABILITY_STATS: Record<AbilityType, { cooldown: number; duration: nu
   time_warp: { cooldown: 25, duration: 5, description: 'Slows time by 50% for 5 seconds' },
   shield_burst: { cooldown: 30, duration: 8, description: 'Invincibility for 8 seconds' },
   phase_shift: { cooldown: 22, duration: 4, description: 'Become intangible for 4 seconds' },
+  repair_drone: { cooldown: 22, duration: 6, description: 'Deploys a drone that repairs 40 HP over 6 seconds' },
+  phase_cloak: { cooldown: 20, duration: 4, description: 'Phase out of reality, becoming invisible and invulnerable for 4 seconds' },
+  gravity_cannon: { cooldown: 18, duration: 0, description: 'Fires a gravity burst dealing 200 damage to all enemies in range' },
 }
 
 // ------------------------------------------------------------------ //

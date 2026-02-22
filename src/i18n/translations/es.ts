@@ -65,6 +65,18 @@ export const es: Translations = {
       name: 'Interceptor',
       description: 'Súper rápido con capacidades de disparo rápido',
     },
+    support: {
+      name: 'Soporte',
+      description: 'Nave sanadora que repara el casco en combate',
+    },
+    stealth: {
+      name: 'Sigilo',
+      description: 'Nave de camuflaje que atraviesa enemigos',
+    },
+    heavy: {
+      name: 'Pesado',
+      description: 'Potencia de fuego devastadora con ataques cargados',
+    },
   },
   achievements: {
     firstKill: {
@@ -298,6 +310,72 @@ export const es: Translations = {
       veteran: {
         name: 'Veterano',
         description: 'Colores de especialista EMP',
+      },
+    },
+    support: {
+      default: {
+        name: 'Estándar',
+        description: 'Colores estándar del soporte',
+      },
+      stealth: {
+        name: 'Sigilo',
+        description: 'Esquema de médico encubierto',
+      },
+      neon: {
+        name: 'Neón',
+        description: 'Estilo de sanador bioluminiscente',
+      },
+      gold: {
+        name: 'Oro',
+        description: 'Acabado de guardián sagrado',
+      },
+      veteran: {
+        name: 'Veterano',
+        description: 'Colores de cirujano de campo',
+      },
+    },
+    stealth: {
+      default: {
+        name: 'Estándar',
+        description: 'Colores estándar del sigilo',
+      },
+      stealth: {
+        name: 'Sigilo',
+        description: 'Esquema de operativo fantasma',
+      },
+      neon: {
+        name: 'Neón',
+        description: 'Estilo de cambio de fase',
+      },
+      gold: {
+        name: 'Oro',
+        description: 'Acabado de élite fantasma',
+      },
+      veteran: {
+        name: 'Veterano',
+        description: 'Colores de asesino en las sombras',
+      },
+    },
+    heavy: {
+      default: {
+        name: 'Estándar',
+        description: 'Colores estándar del pesado',
+      },
+      stealth: {
+        name: 'Sigilo',
+        description: 'Esquema de destructor oscuro',
+      },
+      neon: {
+        name: 'Neón',
+        description: 'Estilo de cañón de plasma',
+      },
+      gold: {
+        name: 'Oro',
+        description: 'Acabado de almirante de buque de guerra',
+      },
+      veteran: {
+        name: 'Veterano',
+        description: 'Colores de rompedor de asedios',
       },
     },
   },

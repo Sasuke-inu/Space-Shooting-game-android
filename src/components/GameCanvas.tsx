@@ -1,12 +1,12 @@
 import React, { useMemo } from "react"
 import { Canvas, Group, Path, Circle, Line, Text, Skia, vec, matchFont, Rect, Shadow } from "@shopify/react-native-skia"
 import { Platform } from "react-native"
-import type { Asteroid, Enemy, Vec2, PowerUp, ActivePowerUp, ComboState, Boss, HomingMissile, EnemyType, AbilityFlash, SpecialAbility } from "../types/game"
+import type { Asteroid, Enemy, Vec2, PowerUp, ActivePowerUp, ComboState, Boss, HomingMissile, EnemyType, AbilityFlash, SpecialAbility, ShipType } from "../types/game"
 import type { ThemeColors } from "../theme/types"
 import type { QualityLevel } from "../types/performance"
 import { QUALITY_PRESETS } from "../types/performance"
 import { fromAngle } from "../utils/vectorMath"
-import { SHIP_SKINS } from "../types/game"
+import { SHIP_SKINS, SHIP_STATS } from "../types/game"
 import { useUpgradesStore } from "../state/progressStore"
 import { COMBO_TIMEOUT } from "../state/gameStore"
 
@@ -39,6 +39,8 @@ interface GameCanvasProps {
   abilityFlash?: AbilityFlash | null
   abilityFlashOpacity?: number
   specialAbility?: SpecialAbility | null
+  repairDroneActive?: boolean
+  phaseCloakActive?: boolean
 }
 
 // Helper to get power-up color from theme
@@ -73,6 +75,9 @@ const getAbilityFlashColor = (abilityType: string): string => {
     case 'time_warp': return '100, 150, 255' // blue
     case 'shield_burst': return '0, 255, 100' // green
     case 'phase_shift': return '200, 100, 255' // purple
+    case 'repair_drone': return '0, 255, 100' // green (healing)
+    case 'phase_cloak': return '136, 68, 255' // purple (stealth)
+    case 'gravity_cannon': return '255, 68, 0' // red-orange (destructive)
     default: return '255, 255, 255' // white fallback
   }
 }
@@ -112,6 +117,8 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
   phaseShiftActive = false,
   abilityFlash = null,
   abilityFlashOpacity = 0,
+  repairDroneActive = false,
+  phaseCloakActive = false,
 }) => {
   // Get selected skin for player ship
   const getSelectedSkin = useUpgradesStore((state) => state.getSelectedSkin)
@@ -128,6 +135,9 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
     stroke: colors.playerShip,
     thruster: colors.thrusterFlame,
   }
+
+  // Dynamic max hull based on ship type (e.g., heavy has 200 hull)
+  const maxHull = SHIP_STATS[player.shipType as ShipType]?.hull ?? 100
 
   // Background stars
   const stars = useMemo(() => {
@@ -232,6 +242,52 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
     return path
   }, [])
 
+  // Memoized support path (cross/plus shape suggesting healing)
+  const supportPath = useMemo(() => {
+    const path = Skia.Path.Make()
+    path.moveTo(16, -5)
+    path.lineTo(16, 5)
+    path.lineTo(5, 5)
+    path.lineTo(5, 14)
+    path.lineTo(-5, 14)
+    path.lineTo(-5, 5)
+    path.lineTo(-16, 5)
+    path.lineTo(-16, -5)
+    path.lineTo(-5, -5)
+    path.lineTo(-5, -14)
+    path.lineTo(5, -14)
+    path.lineTo(5, -5)
+    path.close()
+    return path
+  }, [])
+
+  // Memoized stealth path (sleek diamond/arrow shape)
+  const stealthPath = useMemo(() => {
+    const path = Skia.Path.Make()
+    path.moveTo(22, 0)
+    path.lineTo(2, 8)
+    path.lineTo(-14, 5)
+    path.lineTo(-20, 0)
+    path.lineTo(-14, -5)
+    path.lineTo(2, -8)
+    path.close()
+    return path
+  }, [])
+
+  // Memoized heavy path (wide bulky hexagon shape)
+  const heavyPath = useMemo(() => {
+    const path = Skia.Path.Make()
+    path.moveTo(16, 0)
+    path.lineTo(10, 16)
+    path.lineTo(-10, 18)
+    path.lineTo(-20, 8)
+    path.lineTo(-20, -8)
+    path.lineTo(-10, -18)
+    path.lineTo(10, -16)
+    path.close()
+    return path
+  }, [])
+
   // Memoized boss paths
   const bossPaths = useMemo(() => ({
     destroyer: (() => {
@@ -316,6 +372,17 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
       case 'tank': return tankPath
       case 'sniper': return sniperPath
       case 'bomber': return bomberPath
+      default: return shipPath
+    }
+  }
+
+  // Get player ship path based on ship type
+  const getPlayerShipPath = (shipType: string) => {
+    switch (shipType) {
+      case 'tank': return tankPath
+      case 'support': return supportPath
+      case 'stealth': return stealthPath
+      case 'heavy': return heavyPath
       default: return shipPath
     }
   }
@@ -744,6 +811,19 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
           </Group>
         ))}
 
+        {/* Gravity cannon shockwave ring effect */}
+        {abilityFlash && abilityFlash.abilityType === 'gravity_cannon' && (
+          <Circle
+            cx={player.pos.x}
+            cy={player.pos.y}
+            r={20 + (abilityFlash.elapsed / abilityFlash.duration) * 200}
+            color="#ff4400"
+            style="stroke"
+            strokeWidth={4 * Math.max(0.5, 1 - abilityFlash.elapsed / abilityFlash.duration)}
+            opacity={abilityFlashOpacity}
+          />
+        )}
+
         {/* Player ship */}
         {!blink && (
           <Group
@@ -752,7 +832,7 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
               { translateY: player.pos.y },
               { rotate: player.ang },
             ]}
-            opacity={phaseShiftActive ? 0.5 : 1.0}
+            opacity={phaseShiftActive ? 0.5 : phaseCloakActive ? 0.3 + Math.sin(time * 6) * 0.15 : 1}
           >
             {/* Phase shift ghostly glow effect */}
             {phaseShiftActive && (
@@ -787,6 +867,37 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
                 opacity={0.6 + Math.sin(time * 4) * 0.2}
               />
             )}
+            {/* Phase cloak shimmer effect */}
+            {phaseCloakActive && (
+              <Circle
+                cx={0}
+                cy={0}
+                r={26 + Math.sin(time * 8) * 4}
+                color="#8844ff"
+                style="stroke"
+                strokeWidth={1.5}
+                opacity={0.4 + Math.sin(time * 5) * 0.2}
+              />
+            )}
+            {/* Repair drone healing particles */}
+            {repairDroneActive && (
+              <>
+                {[0, 1, 2, 3, 4, 5].map((i) => {
+                  const angle = time * 2 + i * (Math.PI / 3)
+                  const r = 24 + Math.sin(time * 4 + i) * 4
+                  return (
+                    <Circle
+                      key={`heal-${i}`}
+                      cx={r * Math.cos(angle)}
+                      cy={r * Math.sin(angle)}
+                      r={2.5}
+                      color="#00ff66"
+                      opacity={0.6 + Math.sin(time * 6 + i * 2) * 0.3}
+                    />
+                  )
+                })}
+              </>
+            )}
             {/* Premium skin glow effect */}
             {selectedSkin?.colors.glow && (
               <Circle
@@ -798,12 +909,12 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
               />
             )}
             <Path
-              path={shipPath}
+              path={getPlayerShipPath(player.shipType)}
               color={colors.playerShipFill}
               style="fill"
             />
             <Path
-              path={shipPath}
+              path={getPlayerShipPath(player.shipType)}
               color={colors.playerShip}
               style="stroke"
               strokeWidth={2}
@@ -1058,12 +1169,12 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
           strokeWidth={2}
         />
         <Path
-          path={Skia.Path.Make().addRect(Skia.XYWHRect(60, height - 48, 1.6 * Math.max(0, Math.min(100, player.hp)), 12))}
+          path={Skia.Path.Make().addRect(Skia.XYWHRect(60, height - 48, (Math.max(0, Math.min(maxHull, player.hp)) / maxHull) * 160, 12))}
           color={colors.hullBar}
           style="fill"
         />
 
-        {/* HUD - Lives (small ships) */}
+        {/* HUD - Lives (small ships matching player ship type) */}
         {Array.from({ length: lives }).map((_, i) => (
           <Group
             key={`life-${i}`}
@@ -1074,12 +1185,12 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
             ]}
           >
             <Path
-              path={shipPath}
+              path={getPlayerShipPath(player.shipType)}
               color={colors.playerShipFill}
               style="fill"
             />
             <Path
-              path={shipPath}
+              path={getPlayerShipPath(player.shipType)}
               color={colors.playerShip}
               style="stroke"
               strokeWidth={2}

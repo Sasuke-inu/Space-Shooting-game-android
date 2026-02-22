@@ -1,7 +1,7 @@
 import { useCallback } from "react"
 import type { Particle, Vec2, PowerUp, Enemy, Boss, HomingMissile, Bullet, GameState, PowerUpType, EnemyType, BossType, Asteroid } from "../types/game"
 import type { ThemeColors } from "../theme/types"
-import { ENEMY_STATS, BOSS_STATS, SHIP_STATS } from "../types/game"
+import { ENEMY_STATS, BOSS_STATS, SHIP_STATS, ABILITY_STATS } from "../types/game"
 import {
   useGameStore,
   PLAYER_ACCEL,
@@ -21,6 +21,7 @@ import {
   POWERUP_LIFETIME,
   ASTEROID_BASE_RADIUS,
   BOSS_WAVE_INTERVAL,
+  REPAIR_DRONE_TOTAL_HP,
   getEnemySpawnWeights,
   getAsteroidHp,
 } from "../state/gameStore"
@@ -321,7 +322,7 @@ export const useGameEngine = () => {
     const effectiveDt = dt * state.timeWarpMultiplier
 
     // Batch all state updates - collect changes locally first
-    const stateUpdates: Partial<GameState> = {}
+    const stateUpdates: Partial<GameState> & { playerCloaked?: boolean; repairActive?: boolean } = {}
 
     // Update time (real time always progresses)
     stateUpdates.time = state.time + dt
@@ -415,9 +416,47 @@ export const useGameEngine = () => {
     }
     stateUpdates.specialAbility = updatedSpecialAbility
 
-    // Check for shield power-up or shield burst ability
+    // Track ability state flags based on updated special ability
+    const updatedPlayerCloaked = updatedSpecialAbility?.type === 'phase_cloak' && updatedSpecialAbility.isActive
+    const updatedRepairActive = updatedSpecialAbility?.type === 'repair_drone' && updatedSpecialAbility.isActive
+
+    // Gravity cannon: detect activation (instant ability, duration=0, isActive on first frame)
+    const gravityCannonFired = state.specialAbility?.type === 'gravity_cannon' && state.specialAbility.isActive
+    if (gravityCannonFired) {
+      // Create large explosion particles centered on player
+      const cannonParticles = state.acquireParticles(36)
+      for (let i = 0; i < cannonParticles.length; i++) {
+        const p = cannonParticles[i]
+        const angle = (i / cannonParticles.length) * Math.PI * 2
+        const speed = rand(100, 250)
+        p.pos.x = state.player.pos.x
+        p.pos.y = state.player.pos.y
+        p.vel.x = Math.cos(angle) * speed
+        p.vel.y = Math.sin(angle) * speed
+        p.life = rand(0.5, 1.0)
+        p.color = '#ff4400'
+        p.active = true
+      }
+      // Secondary ring of particles for gravity wave visual
+      const waveParticles = state.acquireParticles(24)
+      for (let i = 0; i < waveParticles.length; i++) {
+        const p = waveParticles[i]
+        const angle = (i / waveParticles.length) * Math.PI * 2
+        const startDist = rand(20, 60)
+        p.pos.x = state.player.pos.x + Math.cos(angle) * startDist
+        p.pos.y = state.player.pos.y + Math.sin(angle) * startDist
+        p.vel.x = Math.cos(angle) * rand(150, 300)
+        p.vel.y = Math.sin(angle) * rand(150, 300)
+        p.life = rand(0.3, 0.7)
+        p.color = '#ffaa00'
+        p.active = true
+      }
+    }
+
+    // Check for shield power-up or shield burst ability or phase cloak
     const hasShield = updatedActivePowerUps.some((p) => p.type === 'shield') ||
-      (updatedSpecialAbility?.type === 'shield_burst' && updatedSpecialAbility.isActive)
+      (updatedSpecialAbility?.type === 'shield_burst' && updatedSpecialAbility.isActive) ||
+      (updatedSpecialAbility?.type === 'phase_cloak' && updatedSpecialAbility.isActive)
     const hasPhaseShift = updatedSpecialAbility?.type === 'phase_shift' && updatedSpecialAbility.isActive
     const hasMagnet = updatedActivePowerUps.some((p) => p.type === 'magnet')
 
@@ -471,13 +510,56 @@ export const useGameEngine = () => {
     updatedPlayer.specialCooldown = newCooldown
     updatedPlayer.specialReady = specialReady
 
+    // Repair drone: heal player over ability duration
+    if (updatedRepairActive) {
+      const healPerSecond = REPAIR_DRONE_TOTAL_HP / ABILITY_STATS.repair_drone.duration // ~6.67 HP/sec
+      const maxHull = SHIP_STATS[updatedPlayer.shipType].hull
+      updatedPlayer.hp = Math.min(updatedPlayer.hp + healPerSecond * dt, maxHull)
+
+      // Green particle effect around player while healing
+      if (Math.random() < 0.3) {
+        const healParticles = state.acquireParticles(3)
+        for (let i = 0; i < healParticles.length; i++) {
+          const p = healParticles[i]
+          const angle = rand(0, Math.PI * 2)
+          const radius = rand(15, 30)
+          p.pos.x = updatedPlayer.pos.x + Math.cos(angle) * radius
+          p.pos.y = updatedPlayer.pos.y + Math.sin(angle) * radius
+          p.vel.x = rand(-15, 15)
+          p.vel.y = -rand(30, 60) // Float upward
+          p.life = rand(0.4, 0.8)
+          p.color = '#00ff88'
+          p.active = true
+        }
+      }
+    }
+
+    // Phase cloak: shimmer/fade visual effect around cloaked player
+    if (updatedPlayerCloaked) {
+      if (Math.random() < 0.25) {
+        const shimmerParticles = state.acquireParticles(2)
+        for (let i = 0; i < shimmerParticles.length; i++) {
+          const p = shimmerParticles[i]
+          const angle = rand(0, Math.PI * 2)
+          const radius = rand(10, 25)
+          p.pos.x = updatedPlayer.pos.x + Math.cos(angle) * radius
+          p.pos.y = updatedPlayer.pos.y + Math.sin(angle) * radius
+          p.vel.x = rand(-15, 15)
+          p.vel.y = rand(-15, 15)
+          p.life = rand(0.2, 0.5)
+          p.color = '#8844ff'
+          p.active = true
+        }
+      }
+    }
+
     // Track bullets to add
     let bulletsToAdd: Bullet[] = []
     let sessionShotsFired = state.sessionShotsFired
     let sessionLastShotTime = state.sessionLastShotTime
 
-    // Fire weapon
-    if (wantsFire && newPlayerCooldown <= 0) {
+    // Fire weapon (cloaked player cannot fire)
+    if (wantsFire && newPlayerCooldown <= 0 && !updatedPlayerCloaked) {
       const hasSpreadShot = updatedActivePowerUps.some((p) => p.type === 'spread_shot')
       const cooldown = hasRapidFire ? FIRE_COOLDOWN_RAPID : FIRE_COOLDOWN_PLAYER
 
@@ -589,6 +671,7 @@ export const useGameEngine = () => {
       time: stateUpdates.time!,
       enemySpeedMult: eventModifiers?.enemySpeedMultiplier ?? 1,
       enemyFireRateMult: eventModifiers?.enemyFireRateMultiplier ?? 1,
+      playerCloaked: updatedPlayerCloaked ?? false,
     }
 
     // Update enemies - in-place mutation pattern
@@ -1382,6 +1465,8 @@ export const useGameEngine = () => {
         updatedCombo.timer = 0
         stateUpdates.timeWarpActive = false
         stateUpdates.timeWarpMultiplier = 1
+        stateUpdates.playerCloaked = false
+        stateUpdates.repairActive = false
       } else {
         // Mutate player respawn directly
         updatedPlayer.pos = v(state.w / 2, state.h / 2)
@@ -1394,6 +1479,8 @@ export const useGameEngine = () => {
         updatedCombo.timer = 0
         stateUpdates.timeWarpActive = false
         stateUpdates.timeWarpMultiplier = 1
+        stateUpdates.playerCloaked = false
+        stateUpdates.repairActive = false
       }
     }
 
@@ -1422,6 +1509,14 @@ export const useGameEngine = () => {
     stateUpdates.sessionLastShotTime = sessionLastShotTime
     stateUpdates.screenShake = newScreenShake
 
+    // Update ability tracking flags (only if not already set by death handling)
+    if (stateUpdates.playerCloaked === undefined) {
+      stateUpdates.playerCloaked = updatedPlayerCloaked
+    }
+    if (stateUpdates.repairActive === undefined) {
+      stateUpdates.repairActive = updatedRepairActive
+    }
+
     // Apply all updates at once
     useGameStore.setState(stateUpdates)
   }, [boom])
@@ -1446,20 +1541,27 @@ interface EnemyUpdateContext {
   time: number
   enemySpeedMult: number
   enemyFireRateMult: number
+  playerCloaked: boolean
 }
 
 function updateEnemyBehaviorBatched(
   e: Enemy,
   context: EnemyUpdateContext
 ): void {
-  const { state, effectiveDt: dt, difficultyProgress: difficulty, aimInaccuracy, animSpeedMultiplier: animSpeed, bulletsToAdd, enemySpeedMult = 1, enemyFireRateMult = 1 } = context
+  const { state, effectiveDt: dt, difficultyProgress: difficulty, aimInaccuracy, animSpeedMultiplier: animSpeed, bulletsToAdd, enemySpeedMult = 1, enemyFireRateMult = 1, playerCloaked = false } = context
   const stats = ENEMY_STATS[e.type]
 
   // Reusable temp Vec2s for mutable operations to avoid allocations
   const toP = v()
-  toP.x = state.player.pos.x - e.pos.x
-  toP.y = state.player.pos.y - e.pos.y
-  const d = len(toP)
+  // When player is cloaked, enemies wander randomly instead of targeting
+  if (playerCloaked) {
+    toP.x = Math.cos(e.aiTimer * 0.5 + e.ang) * 100
+    toP.y = Math.sin(e.aiTimer * 0.5 + e.ang) * 100
+  } else {
+    toP.x = state.player.pos.x - e.pos.x
+    toP.y = state.player.pos.y - e.pos.y
+  }
+  const d = playerCloaked ? 9999 : len(toP) // Treat as far away so enemies don't fire when cloaked
   const dir = v()
   dir.x = toP.x
   dir.y = toP.y
@@ -1872,8 +1974,13 @@ function updateEnemyBehavior(
   earlyGameFireRate: number = 1.0
 ): Enemy {
   const stats = ENEMY_STATS[e.type]
-  const toP = sub(state.player.pos, e.pos)
-  const d = len(toP)
+
+  // When player is cloaked, enemies wander randomly instead of targeting
+  const isCloaked = state.playerCloaked
+  const toP = isCloaked
+    ? fromAngle(e.aiTimer * 0.5 + e.ang, 100)
+    : sub(state.player.pos, e.pos)
+  const d = isCloaked ? 9999 : len(toP)
   const dir = nor(toP)
 
   let newEnemy = { ...e }

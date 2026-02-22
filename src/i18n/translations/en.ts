@@ -65,6 +65,18 @@ export const en: Translations = {
       name: 'Interceptor',
       description: 'Lightning fast with rapid-fire capabilities',
     },
+    support: {
+      name: 'Support',
+      description: 'Healing ship that repairs hull mid-combat',
+    },
+    stealth: {
+      name: 'Stealth',
+      description: 'Cloaking ship that phases through enemies',
+    },
+    heavy: {
+      name: 'Heavy',
+      description: 'Devastating firepower with charged attacks',
+    },
   },
   achievements: {
     firstKill: {
@@ -298,6 +310,72 @@ export const en: Translations = {
       veteran: {
         name: 'Veteran',
         description: 'EMP specialist colors',
+      },
+    },
+    support: {
+      default: {
+        name: 'Standard',
+        description: 'Standard support colors',
+      },
+      stealth: {
+        name: 'Stealth',
+        description: 'Covert medic scheme',
+      },
+      neon: {
+        name: 'Neon',
+        description: 'Bio-luminescent healer style',
+      },
+      gold: {
+        name: 'Gold',
+        description: 'Sacred guardian finish',
+      },
+      veteran: {
+        name: 'Veteran',
+        description: 'Field surgeon colors',
+      },
+    },
+    stealth: {
+      default: {
+        name: 'Standard',
+        description: 'Standard stealth colors',
+      },
+      stealth: {
+        name: 'Stealth',
+        description: 'Ghost operative scheme',
+      },
+      neon: {
+        name: 'Neon',
+        description: 'Phase shift style',
+      },
+      gold: {
+        name: 'Gold',
+        description: 'Phantom elite finish',
+      },
+      veteran: {
+        name: 'Veteran',
+        description: 'Shadow assassin colors',
+      },
+    },
+    heavy: {
+      default: {
+        name: 'Standard',
+        description: 'Standard heavy colors',
+      },
+      stealth: {
+        name: 'Stealth',
+        description: 'Dark destroyer scheme',
+      },
+      neon: {
+        name: 'Neon',
+        description: 'Plasma cannon style',
+      },
+      gold: {
+        name: 'Gold',
+        description: 'Warship admiral finish',
+      },
+      veteran: {
+        name: 'Veteran',
+        description: 'Siege breaker colors',
       },
     },
   },

@@ -77,6 +77,13 @@ export const BOSS_WARNING_TIME = 3        // Warning duration before boss spawns
 // Enemy spawn constants
 export const SAFE_SPAWN_DISTANCE = 150    // Minimum distance from player when spawning enemies
 
+// Gravity cannon constants
+export const GRAVITY_CANNON_DAMAGE = 200  // Damage dealt to enemies in range
+export const GRAVITY_CANNON_RANGE = 250   // Radius of gravity cannon blast
+
+// Repair drone constants
+export const REPAIR_DRONE_TOTAL_HP = 40   // Total HP restored over ability duration
+
 // Particle pooling constants
 export const PARTICLE_POOL_SIZE = 500
 
@@ -155,6 +162,10 @@ interface GameStore extends GameState {
   // Countdown
   showCountdown: boolean
   countdownValue: number
+
+  // New ability tracking
+  playerCloaked: boolean    // Phase cloak active (stealth ship)
+  repairActive: boolean     // Repair drone active (support ship)
 
   // Actions
   setGameMode: (mode: GameMode) => void
@@ -236,6 +247,9 @@ interface GameStore extends GameState {
   // Event mode
   startEventGame: (eventId: string, modifiers: EventModifierType[]) => void
   getEventModifiers: () => ModifiableGameConstants | null
+
+  // Gravity cannon blast - damage all enemies in range
+  gravityCannonBlast: (damage: number, range: number) => void
 
   // Particle pooling methods
   acquireParticles: (count: number) => PooledParticle[]
@@ -331,6 +345,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
   sessionShotsHit: 0,
   sessionLastShotTime: 0,
 
+  // New ability tracking
+  playerCloaked: false,
+  repairActive: false,
+
   // Particle pool
   particlePool: createParticlePool(),
   particlePoolIndex: 0,
@@ -389,6 +407,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
           combo: { ...initialCombo },
           timeWarpActive: false,
           timeWarpMultiplier: 1,
+          playerCloaked: false,
+          repairActive: false,
         }
       }
       return {
@@ -404,6 +424,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
         combo: { ...initialCombo },
         timeWarpActive: false,
         timeWarpMultiplier: 1,
+        playerCloaked: false,
+        repairActive: false,
       }
     }),
 
@@ -439,6 +461,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
         homingMissiles: [],
         eventMode: false,
         activeEventId: null,
+        playerCloaked: false,
+        repairActive: false,
         sessionDamageTaken: false,
         sessionKillsRecent: 0,
         sessionKillTimer: 0,
@@ -970,17 +994,28 @@ export const useGameStore = create<GameStore>((set, get) => ({
       case 'tank': abilityType = 'shield_burst'; break
       case 'interceptor': abilityType = 'emp_blast'; break
       case 'ghost': abilityType = 'phase_shift'; break
+      case 'support': abilityType = 'repair_drone'; break
+      case 'stealth': abilityType = 'phase_cloak'; break
+      case 'heavy': abilityType = 'gravity_cannon'; break
       default: abilityType = 'missile_barrage'
     }
 
     const stats = ABILITY_STATS[abilityType]
 
+    // Base state updates for all abilities
+    const playerUpdate = {
+      ...state.player,
+      specialReady: false,
+      specialCooldown: stats.cooldown,
+    }
+
+    // Phase cloak: make player invulnerable for ability duration
+    if (abilityType === 'phase_cloak') {
+      playerUpdate.inv = stats.duration
+    }
+
     set({
-      player: {
-        ...state.player,
-        specialReady: false,
-        specialCooldown: stats.cooldown,
-      },
+      player: playerUpdate,
       specialAbility: {
         type: abilityType,
         cooldown: stats.cooldown,
@@ -988,7 +1023,15 @@ export const useGameStore = create<GameStore>((set, get) => ({
         duration: stats.duration,
         isActive: true,
       },
+      // Activate cloak/repair tracking flags
+      playerCloaked: abilityType === 'phase_cloak' ? true : state.playerCloaked,
+      repairActive: abilityType === 'repair_drone' ? true : state.repairActive,
     })
+
+    // Gravity cannon: instant area damage (like EMP but damage-based)
+    if (abilityType === 'gravity_cannon') {
+      get().gravityCannonBlast(GRAVITY_CANNON_DAMAGE, GRAVITY_CANNON_RANGE)
+    }
 
     get().triggerAbilityFlash(abilityType)
   },
@@ -1006,12 +1049,26 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
       // Update active ability
       let ability = state.specialAbility
+      let playerCloaked = state.playerCloaked
+      let repairActive = state.repairActive
+
       if (ability && ability.isActive) {
         if (ability.duration > 0) {
+          const wasActive = ability.duration > dt
           ability = {
             ...ability,
             duration: ability.duration - dt,
-            isActive: ability.duration > dt,
+            isActive: wasActive,
+          }
+
+          // Clean up ability-specific state when duration expires
+          if (!wasActive) {
+            if (ability.type === 'phase_cloak') {
+              playerCloaked = false
+            }
+            if (ability.type === 'repair_drone') {
+              repairActive = false
+            }
           }
         } else {
           ability = { ...ability, isActive: false }
@@ -1025,6 +1082,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
           specialReady,
         },
         specialAbility: ability,
+        playerCloaked,
+        repairActive,
       }
     }),
 
@@ -1108,6 +1167,44 @@ export const useGameStore = create<GameStore>((set, get) => ({
         }
         : null,
     })),
+
+  // Gravity cannon blast - deal damage to all enemies within range of the player
+  gravityCannonBlast: (damage, range) =>
+    set((state) => {
+      const playerPos = state.player.pos
+      const rangeSq = range * range
+
+      const newEnemies = state.enemies.map((e) => {
+        const dx = e.pos.x - playerPos.x
+        const dy = e.pos.y - playerPos.y
+        const distSq = dx * dx + dy * dy
+
+        if (distSq <= rangeSq) {
+          return { ...e, hp: e.hp - damage }
+        }
+        return e
+      })
+
+      // Boss takes reduced damage (50%)
+      let newBoss = state.boss
+      if (state.boss) {
+        const dx = state.boss.pos.x - playerPos.x
+        const dy = state.boss.pos.y - playerPos.y
+        const distSq = dx * dx + dy * dy
+
+        if (distSq <= rangeSq) {
+          newBoss = {
+            ...state.boss,
+            hp: state.boss.hp - Math.floor(damage * 0.5),
+          }
+        }
+      }
+
+      return {
+        enemies: newEnemies,
+        boss: newBoss,
+      }
+    }),
 
   // ------------------------------------------------------------------ //
   //                         Particle Pooling
