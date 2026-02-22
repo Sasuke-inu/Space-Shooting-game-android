@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import { View, Text, Pressable, Modal, ScrollView } from 'react-native'
+import { LinearGradient } from 'expo-linear-gradient'
 import { ThemeColors, ThemeId, GameTheme } from '../../../theme/types'
 import { ShipType, GameStatistics } from '../../../types/game'
 import { ThemeSelector, ShipSelector, StatsDisplay, Slider, Toggle } from '../index'
@@ -116,58 +117,76 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             ))}
           </View>
 
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            style={{ maxHeight: 400 }}
-            onScroll={handleScroll}
-            scrollEventThrottle={16}
-          >
-            {activeTab === 'general' && (
-              <>
-                {/* Theme Section */}
-                <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginBottom: 12 }}>
-                  🎨 Theme
-                </Text>
-                <ThemeSelector themeList={themeList} currentThemeId={currentThemeId} onThemeSelect={onThemeSelect} colors={colors} />
+          {/* ScrollView container with fade indicator */}
+          <View style={{ position: 'relative' }}>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              style={{ maxHeight: 400 }}
+              onScroll={handleScroll}
+              scrollEventThrottle={16}
+            >
+              {activeTab === 'general' && (
+                <>
+                  {/* Theme Section */}
+                  <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginBottom: 12 }}>
+                    🎨 Theme
+                  </Text>
+                  <ThemeSelector themeList={themeList} currentThemeId={currentThemeId} onThemeSelect={onThemeSelect} colors={colors} />
 
-                {/* Audio Section */}
-                <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginTop: 20, marginBottom: 12 }}>
-                  🔊 Audio
-                </Text>
-                <Slider value={musicVolume} onValueChange={setMusicVolume} label="Music Volume" colors={colors} />
-                <Slider value={sfxVolume} onValueChange={setSfxVolume} label="SFX Volume" colors={colors} />
+                  {/* Audio Section */}
+                  <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginTop: 20, marginBottom: 12 }}>
+                    🔊 Audio
+                  </Text>
+                  <Slider value={musicVolume} onValueChange={setMusicVolume} label="Music Volume" colors={colors} />
+                  <Slider value={sfxVolume} onValueChange={setSfxVolume} label="SFX Volume" colors={colors} />
 
-                {/* Controls Section */}
-                <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginTop: 8, marginBottom: 12 }}>
-                  🎮 Controls
-                </Text>
-                <Slider value={joystickSensitivity} onValueChange={setJoystickSensitivity} label="Joystick Sensitivity" colors={colors} />
-                <Toggle value={autoFire} onValueChange={setAutoFire} label="Auto-Fire" colors={colors} />
-                <Toggle value={hapticsEnabled} onValueChange={setHapticsEnabled} label="Haptic Feedback" colors={colors} />
-              </>
+                  {/* Controls Section */}
+                  <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginTop: 8, marginBottom: 12 }}>
+                    🎮 Controls
+                  </Text>
+                  <Slider value={joystickSensitivity} onValueChange={setJoystickSensitivity} label="Joystick Sensitivity" colors={colors} />
+                  <Toggle value={autoFire} onValueChange={setAutoFire} label="Auto-Fire" colors={colors} />
+                  <Toggle value={hapticsEnabled} onValueChange={setHapticsEnabled} label="Haptic Feedback" colors={colors} />
+                </>
+              )}
+
+              {activeTab === 'ship' && (
+                <>
+                  <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginBottom: 12 }}>
+                    🚀 Select Ship
+                  </Text>
+                  <ShipSelector currentShip={currentShip} unlockedShips={unlockedShips} onShipSelect={onShipSelect} colors={colors} />
+                </>
+              )}
+
+              {activeTab === 'stats' && (
+                <>
+                  <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginBottom: 12 }}>
+                    📊 Statistics
+                  </Text>
+                  <Text style={{ color: colors.comboText, fontSize: 14, marginBottom: 12 }}>
+                    Total Credits: {upgradesCredits}
+                  </Text>
+                  <StatsDisplay stats={stats} colors={colors} />
+                </>
+              )}
+            </ScrollView>
+
+            {/* Fade gradient indicator at bottom */}
+            {canScrollDown && (
+              <LinearGradient
+                colors={['transparent', colors.panelBg]}
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: 50,
+                  pointerEvents: 'none',
+                }}
+              />
             )}
-
-            {activeTab === 'ship' && (
-              <>
-                <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginBottom: 12 }}>
-                  🚀 Select Ship
-                </Text>
-                <ShipSelector currentShip={currentShip} unlockedShips={unlockedShips} onShipSelect={onShipSelect} colors={colors} />
-              </>
-            )}
-
-            {activeTab === 'stats' && (
-              <>
-                <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '600', marginBottom: 12 }}>
-                  📊 Statistics
-                </Text>
-                <Text style={{ color: colors.comboText, fontSize: 14, marginBottom: 12 }}>
-                  Total Credits: {upgradesCredits}
-                </Text>
-                <StatsDisplay stats={stats} colors={colors} />
-              </>
-            )}
-          </ScrollView>
+          </View>
 
           <Pressable
             style={{
