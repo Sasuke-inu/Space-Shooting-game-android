@@ -350,6 +350,180 @@ Tests located in `src/__tests__/`:
 - `backupManager.test.ts` - Backup/restore operations
 - `storageHealth.test.ts` - Data validation and corruption detection
 - `dataRecovery.test.ts` - Integration tests for full backup/restore cycle
+- `vec2Pool.test.ts` - Vec2 pooling and mutable operations
+
+## Performance Optimization & Object Pooling
+
+The game uses object pooling and mutable operations to eliminate garbage collection pressure in hot code paths.
+
+### Object Pools
+
+Three object pools eliminate allocations for frequently created/destroyed entities:
+
+**Particle Pool** (`gameStore.ts`):
+- 500 pre-allocated particles
+- Circular buffer pattern
+- Used for explosions and visual effects
+
+**Bullet Pool** (`gameStore.ts`):
+- 300 pre-allocated bullets
+- Index-based allocation
+- Used for all projectiles (player, enemy, boss)
+
+**Vec2 Pool** (`src/utils/vec2Pool.ts`):
+- 100 pre-allocated Vec2 instances
+- Generic ObjectPool infrastructure
+- Used for temporary vector calculations
+
+```typescript
+import { acquire, acquireWith, release, releaseMany } from '@/utils/vec2Pool';
+
+// Acquire a Vec2 from pool
+const temp = acquire();
+temp.x = 5;
+temp.y = 10;
+// ... use temp ...
+release(temp);
+
+// Or with initial values
+const temp2 = acquireWith(5, 10);
+// ... use temp2 ...
+release(temp2);
+```
+
+### Mutable Vec2 Operations
+
+The `vectorMath.ts` module provides both **immutable** (pure) and **mutable** (in-place) vector operations.
+
+**Immutable operations** (original API):
+```typescript
+import { add, sub, mul, nor } from '@/utils/vectorMath';
+
+const result = add(a, b);  // Creates new Vec2
+const scaled = mul(v, 2);  // Creates new Vec2
+```
+
+**Mutable operations** (zero-allocation):
+```typescript
+import { addTo, subTo, mulTo, norTo } from '@/utils/vectorMath';
+
+addTo(a, b);   // Modifies a in-place: a += b
+subTo(a, b);   // Modifies a in-place: a -= b
+mulTo(a, 2);   // Modifies a in-place: a *= 2
+norTo(a);      // Modifies a in-place: a = normalize(a)
+```
+
+All mutable operations return the modified Vec2 for chaining:
+```typescript
+const result = norTo(addTo(mulTo(temp, 2), offset));
+```
+
+### Zero-Allocation Update Pattern
+
+The game loop uses a **zero-allocation pattern** for entity updates to eliminate GC pressure:
+
+**Pattern 1: Reusable Temp Vec2s**
+```typescript
+// Create temp Vec2 outside loop
+const tempVec = v();
+
+for (const entity of entities) {
+  // Reuse temp for calculations
+  tempVec.x = entity.vel.x;
+  tempVec.y = entity.vel.y;
+  mulTo(tempVec, dt);
+  addTo(entity.pos, tempVec);
+}
+```
+
+**Pattern 2: Zustand Immutability with In-Place Mutation**
+```typescript
+// Start with shallow copy for Zustand immutability
+const updated = state.entities.slice();
+
+// Then mutate entity properties in-place
+for (let i = 0; i < updated.length; i++) {
+  const e = updated[i];
+  e.life -= dt;
+  addTo(e.pos, e.vel);  // Mutate pos in-place
+}
+```
+
+**Pattern 3: Inline Calculations**
+```typescript
+// Avoid: const wrapped = wrap(pos, w, h);  // Creates new Vec2
+// Instead: Inline wrap calculation
+entity.pos.x = ((entity.pos.x % w) + w) % w;
+entity.pos.y = ((entity.pos.y % h) + h) % h;
+
+// Avoid: const vel = fromAngle(angle, speed);  // Creates new Vec2
+// Instead: Inline angle calculation
+entity.vel.x = Math.cos(angle) * speed;
+entity.vel.y = Math.sin(angle) * speed;
+```
+
+**Pattern 4: Write-Index Array Filtering**
+```typescript
+// Avoid: const alive = bullets.filter(b => b.life > 0);  // Creates new array
+
+// Instead: In-place compaction
+let writeIdx = 0;
+for (let i = 0; i < bullets.length; i++) {
+  if (bullets[i].life > 0) {
+    if (writeIdx !== i) {
+      bullets[writeIdx] = bullets[i];
+    }
+    writeIdx++;
+  }
+}
+bullets.length = writeIdx;  // Truncate array
+```
+
+### When to Use Each Approach
+
+**Use immutable operations** (add, sub, mul, nor) when:
+- Writing new code outside hot paths
+- Readability is more important than performance
+- Creating long-lived objects (not in game loop)
+- Working with Zustand state updates (top level)
+
+**Use mutable operations** (addTo, subTo, mulTo, norTo) when:
+- Inside game loop (called every frame)
+- Working with temporary calculations
+- You own the Vec2 and can safely mutate it
+- Performance is critical (collision detection, physics)
+
+**Use Vec2 pool** when:
+- You need temporary Vec2s for calculations
+- The Vec2 lifetime is short (single function/frame)
+- You can reliably release after use
+
+**Use inline calculations** when:
+- Inside innermost loops (per-entity updates)
+- The calculation is simple (wrap, fromAngle)
+- Maximum performance is needed
+
+### Performance Monitoring
+
+The `performanceMonitor.ts` tracks GC pauses to measure optimization effectiveness:
+
+```typescript
+import { usePerformanceMonitor } from '@/utils/performanceMonitor';
+
+const monitor = usePerformanceMonitor();
+
+// In game loop
+monitor.startFrame();
+// ... render game ...
+monitor.endFrame();  // Detects GC pauses
+
+// Check stats
+const stats = monitor.getStats();
+console.log(`GC Pauses: ${stats.gcPauses}`);
+console.log(`Frame Drops: ${stats.frameDrops}`);
+```
+
+**GC Pause Detection**: A frame is flagged as a GC pause when frame time exceeds 2.5× the recent average AND exceeds 16ms (60fps threshold).
 
 ## Notes
 

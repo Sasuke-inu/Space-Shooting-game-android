@@ -28,7 +28,7 @@ export type PerformanceWarningLevel = 'none' | 'low' | 'medium' | 'high' | 'crit
 /** Performance warning event */
 export interface PerformanceWarning {
   level: PerformanceWarningLevel
-  type: 'fps' | 'memory' | 'frameTime'
+  type: 'fps' | 'memory' | 'frameTime' | 'gcPause'
   message: string
   value: number              // Current problematic value
   threshold: number          // Threshold that was exceeded
@@ -75,6 +75,7 @@ export interface PerformanceStats {
   minFps: number             // Minimum FPS recorded
   maxFps: number             // Maximum FPS recorded
   frameDrops: number         // Number of significant frame drops
+  gcPauses: number           // Number of detected GC pauses
   warnings: number           // Total warnings triggered
   avgMemory: number          // Average memory usage (MB)
   peakMemory: number         // Peak memory usage (MB)
@@ -144,6 +145,7 @@ export type PerformanceEventType =
   | 'memory_warning'     // Memory usage exceeded threshold
   | 'memory_critical'    // Memory usage critical
   | 'frame_skip'         // Frame took too long to render
+  | 'gc_pause'           // Potential garbage collection pause detected
   | 'quality_change'     // Quality level changed
   | 'monitoring_start'   // Performance monitoring started
   | 'monitoring_stop'    // Performance monitoring stopped
