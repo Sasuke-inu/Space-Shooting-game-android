@@ -29,6 +29,7 @@ export interface Asteroid {
   spin: number
   ang: number
   tier: 1 | 2 | 3
+  hp: number
 }
 
 // ------------------------------------------------------------------ //
