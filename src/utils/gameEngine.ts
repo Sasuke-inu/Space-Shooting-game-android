@@ -25,6 +25,7 @@ import {
   getAsteroidHp,
 } from "../state/gameStore"
 import { useChallengesStore } from "../state/challengesStore"
+import { useAchievementTracker } from "./achievementTracker"
 import {
   add,
   mul,
@@ -241,6 +242,15 @@ const canSpawnEnemyBullets = (
 }
 
 export const useGameEngine = () => {
+  const {
+    checkKillAchievements,
+    checkComboAchievements,
+    checkWaveAchievements,
+    checkBossAchievements,
+    checkPowerUpAchievements,
+    checkGameEndAchievements,
+  } = useAchievementTracker()
+
   const boom = useCallback((pos: Vec2, color: string, count = 24, speed = 120) => {
     const state = useGameStore.getState()
     const particles = state.acquireParticles(count)
@@ -851,6 +861,7 @@ export const useGameEngine = () => {
                 playSfx('explosion_large')
                 state.incrementCombo()
                 state.recordKill()
+                checkKillAchievements()
                 const enemyPoints = ENEMY_STATS[e.type].points
                 const enemyScoreWithMultiplier = state.hasPowerUp('score_multiplier') ? enemyPoints * 2 : enemyPoints
                 state.addScore(enemyScoreWithMultiplier)
@@ -893,11 +904,14 @@ export const useGameEngine = () => {
             if (updatedState.boss && updatedState.boss.hp <= 0) {
               boom(bossPos, themeColors.particleExplosion, 60, 300)
               playSfx('explosion_boss')
+              const defeatedBossType = updatedBoss.type
               state.defeatBoss()
               useChallengesStore.getState().recordBossDefeat(1)
+              checkBossAchievements(defeatedBossType)
               state.triggerShake(20, 500)
               hapticHeavy()
             }
+
 
           }
         }
@@ -1172,6 +1186,7 @@ export const useGameEngine = () => {
           boom(p.pos, getPowerUpColor(p.type, themeColors), 16, 100)
           playSfx('powerup_pickup')
           hapticMedium()
+          checkPowerUpAchievements()
         }
       }
     })
@@ -1191,11 +1206,19 @@ export const useGameEngine = () => {
     // Update combo based on collected changes
     updatedCombo = { count: comboCount, multiplier: comboMultiplier, timer: comboTimer }
 
+    // Check combo achievements
+    if (comboCount > 0) {
+      checkComboAchievements(comboCount)
+    }
+
     // Wave progression
     let wave = state.wave
     let bossWarning = state.bossWarning
     let bossWarningStartTime = state.bossWarningStartTime
     if (updatedAsteroids.length === 0 && !updatedBoss && !state.bossWarning) {
+      // Check wave achievements before incrementing wave
+      checkWaveAchievements(wave, sessionDamageTaken)
+
       wave++
       const isBossWave = wave % BOSS_WAVE_INTERVAL === 0
       bossWarning = isBossWave
@@ -1275,6 +1298,9 @@ export const useGameEngine = () => {
           score += Math.floor(ENEMY_STATS[enemy.type].points * updatedCombo.multiplier)
           sessionKillsRecent++
           newSessionKillTimer = 10
+          state.recordKill()
+          useChallengesStore.getState().recordKill(1)
+          checkKillAchievements()
         } else {
           const damagedEnemy = { ...enemy }
           damagedEnemy.hp = newHp
@@ -1330,6 +1356,12 @@ export const useGameEngine = () => {
       lives--
       newScreenShake = { intensity: 15, duration: 400, elapsed: 0 }
       if (lives <= 0) {
+        // Game over - check end-of-game achievements
+        const accuracy = sessionShotsFired > 0 ? (sessionShotsHit / sessionShotsFired) * 100 : 0
+        const survivalTime = stateUpdates.time || 0
+        const finalScore = score
+        checkGameEndAchievements(accuracy, survivalTime, finalScore)
+
         paused = true
         updatedActivePowerUps.length = 0
         updatedCombo.count = 0

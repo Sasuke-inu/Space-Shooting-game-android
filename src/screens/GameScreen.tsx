@@ -275,12 +275,13 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
         sendAchievementNotification(achievement.name)
       }
 
+      // Clear after notification completes (4s display + 300ms fade = 4300ms, use 4500ms for safety)
       const timer = setTimeout(() => {
         clearRecentUnlock()
-      }, 3000)
+      }, 4500)
       return () => clearTimeout(timer)
     }
-  }, [recentUnlock])
+  }, [recentUnlock, clearRecentUnlock])
 
   // Enhanced haptics for boss events (Android)
   const prevBossRef = useRef(boss)
