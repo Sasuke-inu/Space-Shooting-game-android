@@ -1,25 +1,25 @@
 {
   "active": true,
-  "spec": "021-sound-effects-system",
-  "state": "building",
+  "spec": "046-remove-40-unused-dependencies-for-massive-bundle-r",
+  "state": "planning",
   "subtasks": {
-    "completed": 11,
-    "total": 12,
+    "completed": 0,
+    "total": 0,
     "in_progress": 1,
     "failed": 0
   },
   "phase": {
-    "current": "Testing and Verification",
+    "current": "Remove Unused Dependencies",
     "id": null,
-    "total": 3
+    "total": 6
   },
   "workers": {
     "active": 0,
     "max": 1
   },
   "session": {
-    "number": 13,
-    "started_at": "2026-01-22T09:44:54.986438"
+    "number": 2,
+    "started_at": "2026-02-22T11:25:27.513392"
   },
-  "last_update": "2026-01-22T10:16:59.654663"
+  "last_update": "2026-02-22T11:30:18.731806"
 }
