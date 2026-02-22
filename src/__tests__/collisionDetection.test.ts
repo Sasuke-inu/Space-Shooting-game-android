@@ -212,6 +212,229 @@ describe('Collision Detection Logic', () => {
       expect(wrapDist).toBe(10)
     })
   })
+
+  // ------------------------------------------------------------------ //
+  //                         Homing Missile Collision Tests
+  // ------------------------------------------------------------------ //
+  describe('Homing Missile Collision Detection', () => {
+    const MISSILE_DAMAGE = 40
+    const MISSILE_ENEMY_THRESHOLD = 20 * 20 // 400
+    const MISSILE_BOSS_THRESHOLD = 50 * 50 // 2500
+
+    interface MockHomingMissile {
+      pos: { x: number; y: number }
+      removed: boolean
+    }
+
+    interface MockEnemy {
+      pos: { x: number; y: number }
+      hp: number
+      removed: boolean
+    }
+
+    interface MockBoss {
+      pos: { x: number; y: number }
+      hp: number
+    }
+
+    test('missile-enemy collision threshold', () => {
+      expect(MISSILE_ENEMY_THRESHOLD).toBe(400) // 20^2
+
+      // Just inside collision
+      const pos1 = v(0, 0)
+      const pos2 = v(19, 0)
+      expect(dist2(pos1, pos2)).toBeLessThan(MISSILE_ENEMY_THRESHOLD)
+
+      // Just outside collision
+      const pos3 = v(21, 0)
+      expect(dist2(pos1, pos3)).toBeGreaterThan(MISSILE_ENEMY_THRESHOLD)
+    })
+
+    test('missile-boss collision threshold', () => {
+      expect(MISSILE_BOSS_THRESHOLD).toBe(2500) // 50^2
+
+      // Just inside collision
+      const pos1 = v(0, 0)
+      const pos2 = v(49, 0)
+      expect(dist2(pos1, pos2)).toBeLessThan(MISSILE_BOSS_THRESHOLD)
+
+      // Just outside collision
+      const pos3 = v(51, 0)
+      expect(dist2(pos1, pos3)).toBeGreaterThan(MISSILE_BOSS_THRESHOLD)
+    })
+
+    test('missile hits enemy and deals 40 damage', () => {
+      const missile: MockHomingMissile = { pos: v(100, 100), removed: false }
+      const enemy: MockEnemy = { pos: v(100, 100), hp: 100, removed: false }
+
+      const enemiesToDamage = new Map<number, number>()
+      const missilesToRemove = new Set<number>()
+
+      // Simulate collision detection
+      if (dist2(missile.pos, enemy.pos) < MISSILE_ENEMY_THRESHOLD) {
+        enemiesToDamage.set(0, (enemiesToDamage.get(0) || 0) + MISSILE_DAMAGE)
+        missilesToRemove.add(0)
+      }
+
+      expect(enemiesToDamage.get(0)).toBe(40)
+      expect(missilesToRemove.has(0)).toBe(true)
+    })
+
+    test('missile hits boss and deals 40 damage', () => {
+      const missile: MockHomingMissile = { pos: v(200, 200), removed: false }
+      const boss: MockBoss = { pos: v(200, 200), hp: 500 }
+
+      let bossDamage = 0
+      const missilesToRemove = new Set<number>()
+
+      // Simulate collision detection
+      if (dist2(missile.pos, boss.pos) < MISSILE_BOSS_THRESHOLD) {
+        bossDamage += MISSILE_DAMAGE
+        missilesToRemove.add(0)
+      }
+
+      expect(bossDamage).toBe(40)
+      expect(missilesToRemove.has(0)).toBe(true)
+    })
+
+    test('missile is removed after hitting enemy', () => {
+      const missiles: MockHomingMissile[] = [
+        { pos: v(100, 100), removed: false },
+      ]
+      const enemies: MockEnemy[] = [
+        { pos: v(100, 100), hp: 100, removed: false },
+      ]
+
+      const missilesToRemove = new Set<number>()
+      const enemiesToDamage = new Map<number, number>()
+
+      // Simulate collision detection
+      missiles.forEach((m, mIdx) => {
+        if (missilesToRemove.has(mIdx)) return
+
+        enemies.forEach((e, eIdx) => {
+          if (dist2(m.pos, e.pos) < MISSILE_ENEMY_THRESHOLD) {
+            enemiesToDamage.set(eIdx, (enemiesToDamage.get(eIdx) || 0) + MISSILE_DAMAGE)
+            missilesToRemove.add(mIdx)
+          }
+        })
+      })
+
+      expect(missilesToRemove.has(0)).toBe(true)
+      expect(enemiesToDamage.get(0)).toBe(40)
+
+      // Filter missiles
+      const remainingMissiles = missiles.filter((_, idx) => !missilesToRemove.has(idx))
+      expect(remainingMissiles.length).toBe(0)
+    })
+
+    test('multiple missiles can hit same enemy', () => {
+      const missiles: MockHomingMissile[] = [
+        { pos: v(100, 100), removed: false },
+        { pos: v(105, 100), removed: false },
+        { pos: v(110, 100), removed: false },
+      ]
+      const enemy: MockEnemy = { pos: v(100, 100), hp: 150, removed: false }
+
+      const enemiesToDamage = new Map<number, number>()
+      const missilesToRemove = new Set<number>()
+
+      // Simulate collision detection
+      missiles.forEach((m, mIdx) => {
+        if (dist2(m.pos, enemy.pos) < MISSILE_ENEMY_THRESHOLD) {
+          enemiesToDamage.set(0, (enemiesToDamage.get(0) || 0) + MISSILE_DAMAGE)
+          missilesToRemove.add(mIdx)
+        }
+      })
+
+      // All 3 missiles should hit
+      expect(enemiesToDamage.get(0)).toBe(120) // 3 * 40
+      expect(missilesToRemove.size).toBe(3)
+
+      // Enemy should be dead
+      const totalDamage = enemiesToDamage.get(0) || 0
+      expect(enemy.hp - totalDamage).toBeLessThanOrEqual(0)
+    })
+
+    test('deferred damage application for missiles', () => {
+      const enemies: MockEnemy[] = [
+        { pos: v(100, 100), hp: 30, removed: false }, // Will die
+        { pos: v(200, 200), hp: 100, removed: false }, // Will survive
+        { pos: v(300, 300), hp: 40, removed: false }, // Will die
+      ]
+
+      const enemiesToDamage = new Map<number, number>()
+      const missilesToRemove = new Set<number>()
+
+      // Simulate missile hits
+      enemiesToDamage.set(0, 40) // Kill first enemy
+      enemiesToDamage.set(1, 40) // Damage second enemy
+      enemiesToDamage.set(2, 40) // Kill third enemy
+
+      // Apply damage and determine removals
+      const enemiesToRemove = new Set<number>()
+      enemies.forEach((e, idx) => {
+        const dmg = enemiesToDamage.get(idx) || 0
+        if (e.hp - dmg <= 0) {
+          enemiesToRemove.add(idx)
+        }
+      })
+
+      expect(enemiesToRemove.has(0)).toBe(true) // 30 - 40 = -10 (dead)
+      expect(enemiesToRemove.has(1)).toBe(false) // 100 - 40 = 60 (alive)
+      expect(enemiesToRemove.has(2)).toBe(true) // 40 - 40 = 0 (dead)
+
+      // Filter enemies
+      const remaining = enemies.filter((_, idx) => !enemiesToRemove.has(idx))
+      expect(remaining.length).toBe(1)
+      expect(remaining[0].pos.x).toBe(200)
+    })
+
+    test('missile only hits one target per frame', () => {
+      const missile: MockHomingMissile = { pos: v(100, 100), removed: false }
+      const enemies: MockEnemy[] = [
+        { pos: v(100, 100), hp: 50, removed: false }, // Same position
+        { pos: v(105, 100), hp: 50, removed: false }, // 5 units away
+      ]
+
+      const enemiesToDamage = new Map<number, number>()
+      const missilesToRemove = new Set<number>()
+
+      // Simulate collision detection - missile should stop after first hit
+      enemies.forEach((e, idx) => {
+        if (missilesToRemove.has(0)) return // Missile already hit something
+
+        if (dist2(missile.pos, e.pos) < MISSILE_ENEMY_THRESHOLD) {
+          enemiesToDamage.set(idx, (enemiesToDamage.get(idx) || 0) + MISSILE_DAMAGE)
+          missilesToRemove.add(0)
+        }
+      })
+
+      // Missile should only hit ONE enemy
+      expect(enemiesToDamage.size).toBe(1)
+      expect(missilesToRemove.has(0)).toBe(true)
+    })
+
+    test('missile damage stacks on same enemy from multiple missiles', () => {
+      const missiles: MockHomingMissile[] = [
+        { pos: v(100, 100), removed: false },
+        { pos: v(102, 100), removed: false },
+      ]
+      const enemy: MockEnemy = { pos: v(100, 100), hp: 100, removed: false }
+
+      const enemiesToDamage = new Map<number, number>()
+
+      // Simulate both missiles hitting same enemy
+      missiles.forEach((m) => {
+        if (dist2(m.pos, enemy.pos) < MISSILE_ENEMY_THRESHOLD) {
+          enemiesToDamage.set(0, (enemiesToDamage.get(0) || 0) + MISSILE_DAMAGE)
+        }
+      })
+
+      // Both missiles should contribute damage
+      expect(enemiesToDamage.get(0)).toBe(80) // 2 * 40
+    })
+  })
 })
 
 describe('Bullet Behavior Tests', () => {
