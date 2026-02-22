@@ -58,6 +58,7 @@ const getEnemyColor = (type: EnemyType, colors: ThemeColors): string => {
     case 'tank': return colors.enemyTank
     case 'sniper': return colors.enemySniper
     case 'bomber': return colors.enemyBomber
+    case 'teleporter': return colors.enemyTeleporter
     default: return colors.enemyShip
   }
 }
