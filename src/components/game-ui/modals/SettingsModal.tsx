@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { View, Text, Pressable, Modal, ScrollView } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { ThemeColors, ThemeId, GameTheme } from '../../../theme/types'
@@ -62,6 +62,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   // Scroll state tracking
   const [canScrollDown, setCanScrollDown] = useState(false)
   const [canScrollUp, setCanScrollUp] = useState(false)
+  const [hasScrolled, setHasScrolled] = useState(false)
 
   const handleScroll = useCallback((event: any) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent
@@ -70,7 +71,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
     setCanScrollUp(!isAtTop)
     setCanScrollDown(!isAtBottom)
+
+    // Hide scroll hint after user scrolls down slightly
+    if (contentOffset.y > 5) {
+      setHasScrolled(true)
+    }
   }, [])
+
+  // Reset scroll hint when tab changes
+  useEffect(() => {
+    setHasScrolled(false)
+  }, [activeTab])
 
   if (!visible) return null
 
@@ -185,6 +196,27 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   pointerEvents: 'none',
                 }}
               />
+            )}
+
+            {/* Scroll hint indicator */}
+            {canScrollDown && !hasScrolled && (
+              <View
+                style={{
+                  position: 'absolute',
+                  bottom: 8,
+                  left: 0,
+                  right: 0,
+                  alignItems: 'center',
+                  pointerEvents: 'none',
+                }}
+              >
+                <Text style={{ color: colors.textSecondary, fontSize: 20 }}>
+                  ▼
+                </Text>
+                <Text style={{ color: colors.textSecondary, fontSize: 10, marginTop: 2 }}>
+                  Scroll for more
+                </Text>
+              </View>
             )}
           </View>
 
