@@ -84,6 +84,7 @@ fun GameScreen(
             lives = gameState.lives,
             combo = gameState.combo,
             specialAbility = gameState.player.specialAbility,
+            activePowerUps = gameState.activePowerUps,
             paused = gameState.paused,
             onPause = { viewModel.pauseGame() },
             colors = colors,
@@ -176,6 +177,79 @@ private fun FireButton(
 }
 
 /**
+ * Helper function to get power-up color based on type.
+ */
+private fun getPowerUpColor(
+    type: com.spaceshooter.domain.model.PowerUpType,
+    colors: com.spaceshooter.theme.ThemeColors
+): Color {
+    return when (type) {
+        com.spaceshooter.domain.model.PowerUpType.SHIELD -> colors.powerUpShield
+        com.spaceshooter.domain.model.PowerUpType.RAPID_FIRE -> colors.powerUpRapidFire
+        com.spaceshooter.domain.model.PowerUpType.SPREAD_SHOT -> colors.powerUpSpreadShot
+        com.spaceshooter.domain.model.PowerUpType.MAGNET -> colors.powerUpMagnet
+    }
+}
+
+/**
+ * Power-up indicator showing type and remaining duration.
+ */
+@Composable
+private fun PowerUpIndicator(
+    powerUp: com.spaceshooter.domain.model.ActivePowerUp,
+    colors: com.spaceshooter.theme.ThemeColors,
+    modifier: Modifier = Modifier
+) {
+    val powerUpColor = getPowerUpColor(powerUp.type, colors)
+    val progress = powerUp.remainingDuration / powerUp.type.duration
+
+    Row(
+        modifier = modifier
+            .width(100.dp)
+            .height(24.dp)
+            .background(
+                color = Color(0x33000000), // Semi-transparent black background
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(4.dp)
+            )
+            .padding(4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        // Icon/emoji for power-up type
+        Text(
+            text = when (powerUp.type) {
+                com.spaceshooter.domain.model.PowerUpType.SHIELD -> "🛡"
+                com.spaceshooter.domain.model.PowerUpType.RAPID_FIRE -> "🔥"
+                com.spaceshooter.domain.model.PowerUpType.SPREAD_SHOT -> "💥"
+                com.spaceshooter.domain.model.PowerUpType.MAGNET -> "🧲"
+            },
+            fontSize = 12.sp
+        )
+
+        // Progress bar
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .height(12.dp)
+                .background(
+                    color = Color(0x44000000), // Dark background for bar
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(2.dp)
+                )
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(progress.coerceIn(0f, 1f))
+                    .background(
+                        color = powerUpColor,
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(2.dp)
+                    )
+            )
+        }
+    }
+}
+
+/**
  * HUD overlay showing game information.
  */
 @Composable
@@ -188,6 +262,7 @@ private fun GameHUD(
     lives: Int,
     combo: com.spaceshooter.domain.model.ComboState,
     specialAbility: com.spaceshooter.domain.model.SpecialAbilityState,
+    activePowerUps: List<com.spaceshooter.domain.model.ActivePowerUp>,
     paused: Boolean,
     onPause: () -> Unit,
     colors: com.spaceshooter.theme.ThemeColors,
@@ -320,12 +395,29 @@ private fun GameHUD(
             }
         }
 
-        // Top-right: Special ability cooldown and pause button
+        // Top-right: Power-ups, Special ability cooldown and pause button
         Column(
             modifier = Modifier.align(Alignment.TopEnd),
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            // Active power-up indicators
+            if (activePowerUps.isNotEmpty()) {
+                Column(
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    activePowerUps.forEach { powerUp ->
+                        PowerUpIndicator(
+                            powerUp = powerUp,
+                            colors = colors
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+            }
+
             Text(
                 text = specialAbility.type.displayName,
                 color = if (specialAbility.isReady) colors.hudAccent else colors.textMuted,
