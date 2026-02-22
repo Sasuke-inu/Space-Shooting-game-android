@@ -12,6 +12,7 @@ import {
   AchievementNotification,
   TopBar,
   TutorialOverlay,
+  PauseButton,
   useBackgroundMusic,
   useGameGestures,
   useGameLoop,
@@ -172,6 +173,10 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   const handleResume = useCallback(() => {
     useGameStore.getState().setPaused(false)
   }, [])
+
+  const handleTogglePause = useCallback(() => {
+    useGameStore.getState().setPaused(!paused)
+  }, [paused])
 
   useAndroidGameFeatures(
     !paused && !showInstructions, // isPlaying
@@ -585,6 +590,16 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
         onRestartPress={handleRestart}
         colors={colors}
       />
+
+      {/* Pause button - visible during active gameplay */}
+      {!showInstructions && (
+        <PauseButton
+          topInset={insets.top}
+          paused={paused}
+          onPress={handleTogglePause}
+          colors={colors}
+        />
+      )}
 
       {/* Game canvas with tap and swipe gestures */}
       <GestureDetector gesture={combinedGesture}>

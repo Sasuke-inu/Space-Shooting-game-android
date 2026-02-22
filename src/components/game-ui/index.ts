@@ -25,6 +25,9 @@ export type { AchievementNotificationProps } from './AchievementNotification'
 export { TopBar } from './TopBar'
 export type { TopBarProps } from './TopBar'
 
+export { PauseButton } from './PauseButton'
+export type { PauseButtonProps } from './PauseButton'
+
 // Modal Components
 export { InstructionsModal } from './modals/InstructionsModal'
 export type { InstructionsModalProps } from './modals/InstructionsModal'
