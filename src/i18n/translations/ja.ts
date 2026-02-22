@@ -171,20 +171,6 @@ export const ja: Translations = {
     sessionAccuracy: '精度',
     sessionTime: '生存時間',
     noRecentSession: '最近のセッションなし',
-  },
-  enemyTypes: {
-    scout: 'スカウト',
-    tank: 'タンク',
-    sniper: 'スナイパー',
-    bomber: 'ボマー',
-  },
-  bossTypes: {
-    destroyer: 'デストロイヤー',
-    carrier: 'キャリア',
-    dreadnought: 'ドレッドノート',
-  },
-  statistics: {
-    title: '統計',
     tabs: {
       overview: '概要',
       perShip: '機体別統計',
@@ -204,6 +190,17 @@ export const ja: Translations = {
       noDataYet: 'データなし',
       playToUnlock: 'プレイして解除',
     },
+  },
+  enemyTypes: {
+    scout: 'スカウト',
+    tank: 'タンク',
+    sniper: 'スナイパー',
+    bomber: 'ボマー',
+  },
+  bossTypes: {
+    destroyer: 'デストロイヤー',
+    carrier: 'キャリア',
+    dreadnought: 'ドレッドノート',
   },
   general: {
     confirm: '確認',

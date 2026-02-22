@@ -171,20 +171,6 @@ export const zh: Translations = {
     sessionAccuracy: '准确率',
     sessionTime: '生存时间',
     noRecentSession: '无最近会话',
-  },
-  enemyTypes: {
-    scout: '侦察兵',
-    tank: '坦克',
-    sniper: '狙击手',
-    bomber: '轰炸机',
-  },
-  bossTypes: {
-    destroyer: '驱逐舰',
-    carrier: '航母',
-    dreadnought: '无畏舰',
-  },
-  statistics: {
-    title: '统计',
     tabs: {
       overview: '概览',
       perShip: '各飞船统计',
@@ -204,6 +190,17 @@ export const zh: Translations = {
       noDataYet: '暂无数据',
       playToUnlock: '游戏以解锁',
     },
+  },
+  enemyTypes: {
+    scout: '侦察兵',
+    tank: '坦克',
+    sniper: '狙击手',
+    bomber: '轰炸机',
+  },
+  bossTypes: {
+    destroyer: '驱逐舰',
+    carrier: '航母',
+    dreadnought: '无畏舰',
   },
   general: {
     confirm: '确认',

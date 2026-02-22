@@ -304,7 +304,7 @@ function ComboPracticeStep({ colors }: { colors: ThemeColors }) {
               <Text style={{ color: colors.hudAccent, fontSize: 24, fontWeight: 'bold' }}>✓</Text>
             </View>
             <Text style={[tutorialStyles.completionText, { color: colors.hudAccent }]}>
-              Amazing! You've mastered the combo system!
+              Amazing! You&apos;ve mastered the combo system!
             </Text>
           </>
         ) : (
@@ -461,7 +461,7 @@ function SpecialAbilitiesPracticeStep({ colors }: { colors: ThemeColors }) {
               <Text style={{ color: colors.hudAccent, fontSize: 24, fontWeight: 'bold' }}>✓</Text>
             </View>
             <Text style={[tutorialStyles.completionText, { color: colors.hudAccent }]}>
-              Perfect! You've learned to use special abilities!
+              Perfect! You&apos;ve learned to use special abilities!
             </Text>
           </>
         ) : (
@@ -614,7 +614,7 @@ function PowerUpsExplanationStep({ colors }: { colors: ThemeColors }) {
               <Text style={{ color: colors.hudAccent, fontSize: 24, fontWeight: 'bold' }}>✓</Text>
             </View>
             <Text style={[tutorialStyles.completionText, { color: colors.hudAccent }]}>
-              You've learned about all power-ups!
+              You&apos;ve learned about all power-ups!
             </Text>
           </>
         ) : (
@@ -974,7 +974,7 @@ function MovementPracticeStep({ colors }: { colors: ThemeColors }) {
               <Text style={{ color: colors.hudAccent, fontSize: 24, fontWeight: 'bold' }}>✓</Text>
             </View>
             <Text style={[tutorialStyles.completionText, { color: colors.hudAccent }]}>
-              Great! You've mastered the movement controls!
+              Great! You&apos;ve mastered the movement controls!
             </Text>
           </>
         ) : (

@@ -224,13 +224,17 @@ export async function clearBackup(storeKey: StorageKey): Promise<boolean> {
 export async function clearAllBackups(): Promise<boolean> {
   try {
     const storeKeys = Object.keys(STORAGE_KEYS) as StorageKey[]
+    let allSucceeded = true
 
     for (const storeKey of storeKeys) {
-      await clearBackup(storeKey)
+      const result = await clearBackup(storeKey)
+      if (!result) {
+        allSucceeded = false
+      }
     }
 
     await AsyncStorage.removeItem(BACKUP_METADATA_KEY)
-    return true
+    return allSucceeded
   } catch (error) {
     console.error('Failed to clear all backups:', error)
     return false

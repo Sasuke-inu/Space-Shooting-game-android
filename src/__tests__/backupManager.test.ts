@@ -389,7 +389,11 @@ describe('backupManager', () => {
           issues: ['Corrupted data'],
           canRecover: true,
         })
-        mockAsyncStorage.getItem.mockResolvedValueOnce(JSON.stringify({ data: 'backup' }))
+        // Mock getItem twice: once for hasBackup(), once for restoreStore()
+        const backupData = JSON.stringify({ data: 'backup' })
+        mockAsyncStorage.getItem
+          .mockResolvedValueOnce(backupData) // hasBackup check
+          .mockResolvedValueOnce(backupData) // restoreStore read
         mockAsyncStorage.setItem.mockResolvedValueOnce()
 
         const result = await recoverStore('achievements')

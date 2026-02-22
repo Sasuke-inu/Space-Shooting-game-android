@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react"
-import { View, useWindowDimensions, Keyboard } from "react-native"
+import { View, Text, Modal, ScrollView, Pressable, useWindowDimensions, Keyboard } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { GestureDetector } from "react-native-gesture-handler"
 import { GameCanvas } from "../components/GameCanvas"
@@ -11,6 +11,7 @@ import {
   PauseGameOverModal,
   AchievementNotification,
   TopBar,
+  TutorialOverlay,
   useBackgroundMusic,
   useGameGestures,
   useGameLoop,
@@ -23,7 +24,7 @@ import { useStatisticsStore, useAchievementStore, useUpgradesStore } from "../st
 import { useTutorialStore } from "../state/tutorialStore"
 import { themeList } from "../theme/themes"
 import type { ShipType } from "../types/game"
-import { ACHIEVEMENTS } from "../types/game"
+import { ACHIEVEMENTS, SHIP_STATS } from "../types/game"
 import { useGameEngine } from "../utils/gameEngine"
 import { len } from "../utils/vectorMath"
 import type { Vec2 } from "../types/game"
