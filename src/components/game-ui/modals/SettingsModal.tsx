@@ -3,7 +3,11 @@ import { View, Text, Pressable, Modal, ScrollView } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { ThemeColors, ThemeId, GameTheme } from '../../../theme/types'
 import { ShipType, GameStatistics } from '../../../types/game'
-import { ThemeSelector, ShipSelector, StatsDisplay, Slider, Toggle } from '../index'
+import { ThemeSelector } from '../ThemeSelector'
+import { ShipSelector } from '../ShipSelector'
+import { StatsDisplay } from '../StatsDisplay'
+import { Slider } from '../Slider'
+import { Toggle } from '../Toggle'
 
 export interface SettingsModalProps {
   visible: boolean

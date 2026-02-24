@@ -44,6 +44,8 @@
     "expo-splash-screen": "~0.30.8",
     "expo-status-bar": "~2.2.3",
     "expo-system-ui": "~5.0.7",
+    "expo-video": "~2.2.2",
+    "expo-web-browser": "~14.2.0",
     "nativewind": "^4.1.23",
     "patch-package": "^8.0.0",
     "react": "19.0.0",
