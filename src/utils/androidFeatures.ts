@@ -86,7 +86,8 @@ export const setNavigationBarColor = async (color: string) => {
   if (Platform.OS !== 'android') return
 
   try {
-    await NavigationBar.setBackgroundColorAsync(color)
+    // Use setPositionAsync for edge-to-edge compatible styling
+    // setBackgroundColorAsync is not supported with edge-to-edge enabled
     await NavigationBar.setButtonStyleAsync('light')
   } catch (error) {
     // Silently fail

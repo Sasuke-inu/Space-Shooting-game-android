@@ -25,12 +25,33 @@ interface GameLoopParams {
 /**
  * Custom hook to manage the game loop
  * Handles frame updates, player movement, and firing
+ *
+ * PERF: Uses refs for frequently-changing values to avoid
+ * tearing down and recreating the RAF loop every frame.
  */
 export function useGameLoop(params: GameLoopParams) {
   const lastTimeRef = useRef(Date.now())
   const rafRef = useRef<number | null>(null)
-  const fireOnceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const swipeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Store frequently-changing params in refs to avoid effect re-runs
+  const joystickRef = useRef(params.joystickValue)
+  const playerAngRef = useRef(params.playerAng)
+  const playerVelRef = useRef(params.playerVel)
+  const swipeImpulseRef = useRef(params.swipeImpulse)
+  const autoFireRef = useRef(params.autoFire)
+  const colorsRef = useRef(params.colors)
+  const updateGameRef = useRef(params.updateGame)
+  const fireOnceRef = useRef(params.fireOnce)
+
+  // Update refs on every render (cheap, no effect re-run)
+  joystickRef.current = params.joystickValue
+  playerAngRef.current = params.playerAng
+  playerVelRef.current = params.playerVel
+  swipeImpulseRef.current = params.swipeImpulse
+  autoFireRef.current = params.autoFire
+  colorsRef.current = params.colors
+  updateGameRef.current = params.updateGame
+  fireOnceRef.current = params.fireOnce
 
   useEffect(() => {
     if (params.paused) {
@@ -41,43 +62,48 @@ export function useGameLoop(params: GameLoopParams) {
       return
     }
 
+    lastTimeRef.current = Date.now()
+
     const loop = () => {
       const now = Date.now()
       const dt = Math.min((now - lastTimeRef.current) / 1000, MAX_DT)
       lastTimeRef.current = now
 
+      const joystickValue = joystickRef.current
+      const playerAng = playerAngRef.current
+      const playerVel = playerVelRef.current
+      const swipeImpulse = swipeImpulseRef.current
+
       // Apply swipe impulse to player velocity
-      if (params.swipeImpulse.x !== 0 || params.swipeImpulse.y !== 0) {
-        const currentVel = params.playerVel
+      if (swipeImpulse.x !== 0 || swipeImpulse.y !== 0) {
         const newVel = {
-          x: currentVel.x + params.swipeImpulse.x * 150 * dt,
-          y: currentVel.y + params.swipeImpulse.y * 150 * dt,
+          x: playerVel.x + swipeImpulse.x * 150 * dt,
+          y: playerVel.y + swipeImpulse.y * 150 * dt,
         }
         useGameStore.getState().updatePlayer({ vel: newVel })
 
-        const swipeAngle = angleOf(params.swipeImpulse)
+        const swipeAngle = angleOf(swipeImpulse)
         useGameStore.getState().updatePlayer({ ang: swipeAngle })
       }
 
       // Calculate thrust and angle from joystick
-      const joyMag = len(params.joystickValue)
+      const joyMag = len(joystickValue)
       let thrusting = false
-      let desiredAng = params.playerAng
 
       if (joyMag > JOY_DEADZONE) {
-        desiredAng = angleOf(params.joystickValue)
+        const desiredAng = angleOf(joystickValue)
         thrusting = true
 
-        let da = ((desiredAng - params.playerAng + Math.PI * 3) % (Math.PI * 2)) - Math.PI
+        let da = ((desiredAng - playerAng + Math.PI * 3) % (Math.PI * 2)) - Math.PI
         const turnSpeed = 8
-        const newAng = params.playerAng + Math.max(-1, Math.min(1, da)) * turnSpeed * dt
+        const newAng = playerAng + Math.max(-1, Math.min(1, da)) * turnSpeed * dt
         useGameStore.getState().updatePlayer({ ang: newAng })
       }
 
       // Auto-fire support
-      const shouldFire = params.autoFire && joyMag > JOY_DEADZONE
+      const shouldFire = autoFireRef.current && joyMag > JOY_DEADZONE
 
-      params.updateGame(dt, params.joystickValue, shouldFire, thrusting, params.colors)
+      updateGameRef.current(dt, joystickValue, shouldFire, thrusting, colorsRef.current)
 
       rafRef.current = requestAnimationFrame(loop)
     }
@@ -87,24 +113,8 @@ export function useGameLoop(params: GameLoopParams) {
     return () => {
       if (rafRef.current) {
         cancelAnimationFrame(rafRef.current)
-      }
-      // Cleanup timeouts to prevent memory leaks
-      if (fireOnceTimeoutRef.current) {
-        clearTimeout(fireOnceTimeoutRef.current)
-      }
-      if (swipeTimeoutRef.current) {
-        clearTimeout(swipeTimeoutRef.current)
+        rafRef.current = null
       }
     }
-  }, [
-    params.paused,
-    params.joystickValue,
-    params.playerAng,
-    params.swipeImpulse,
-    params.playerVel,
-    params.fireOnce,
-    params.updateGame,
-    params.autoFire,
-    params.colors,
-  ])
+  }, [params.paused]) // Only restart loop when pause state changes
 }

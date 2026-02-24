@@ -17,11 +17,16 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
   removeItem: jest.fn(),
 }))
 
-// Mock expo-av
-jest.mock('expo-av', () => ({
-  Audio: {
-    setAudioModeAsync: jest.fn().mockResolvedValue(undefined),
-  },
+// Mock expo-audio
+jest.mock('expo-audio', () => ({
+  createAudioPlayer: jest.fn(() => ({
+    volume: 1,
+    loop: false,
+    play: jest.fn(),
+    pause: jest.fn(),
+    seekTo: jest.fn(),
+    remove: jest.fn(),
+  })),
 }))
 
 import { audioManager } from '../utils/audioManager'

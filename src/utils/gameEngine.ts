@@ -303,7 +303,6 @@ export const useGameEngine = () => {
       state.updatePlayer({ cooldown })
       playSfx('shoot_player')
       hapticLight()
-      playSfx('shoot_player')
     }
   }, [])
 
@@ -1091,18 +1090,31 @@ export const useGameEngine = () => {
       }
     })
 
-    // Remove hit bullets, asteroids, and missiles
+    // Remove hit bullets, asteroids, and missiles using write-index compaction (zero-allocation)
     if (bulletsToRemove.size > 0) {
-      updatedBullets = updatedBullets.filter((_, i) => !bulletsToRemove.has(i))
+      let w = 0
+      for (let i = 0; i < updatedBullets.length; i++) {
+        if (!bulletsToRemove.has(i)) {
+          if (w !== i) updatedBullets[w] = updatedBullets[i]
+          w++
+        }
+      }
+      updatedBullets.length = w
     }
-    if (asteroidsToRemove.size > 0) {
-      updatedAsteroids = updatedAsteroids.filter((_, i) => !asteroidsToRemove.has(i))
-    }
+    // NOTE: asteroid compaction is deferred until after asteroidDamage is applied below,
+    // because asteroidDamage keys reference the original (pre-compaction) indices.
     if (missilesToRemove.size > 0) {
-      updatedHomingMissiles = updatedHomingMissiles.filter((_, i) => !missilesToRemove.has(i))
+      let w = 0
+      for (let i = 0; i < updatedHomingMissiles.length; i++) {
+        if (!missilesToRemove.has(i)) {
+          if (w !== i) updatedHomingMissiles[w] = updatedHomingMissiles[i]
+          w++
+        }
+      }
+      updatedHomingMissiles.length = w
     }
 
-    // Apply asteroid damage (deferred to avoid race conditions)
+    // Apply asteroid accumulated damage (deferred to avoid race conditions)
     if (asteroidDamage.size > 0) {
       for (let idx = 0; idx < updatedAsteroids.length; idx++) {
         const a = updatedAsteroids[idx]
@@ -1112,7 +1124,7 @@ export const useGameEngine = () => {
 
           // Check if asteroid died from accumulated damage
           if (newHp <= 0) {
-            // Mark for removal (will be filtered out later)
+            // Mark for removal (will be filtered out below)
             asteroidsToRemove.add(idx)
 
             // Add to death effects for splitting
@@ -1154,9 +1166,18 @@ export const useGameEngine = () => {
           }
         }
       }
+    }
 
-      // Filter out destroyed asteroids
-      updatedAsteroids = updatedAsteroids.filter((_, i) => !asteroidsToRemove.has(i))
+    // Compact destroyed asteroids (handles both instant-kill and accumulated-damage deaths)
+    if (asteroidsToRemove.size > 0) {
+      let wa = 0
+      for (let i = 0; i < updatedAsteroids.length; i++) {
+        if (!asteroidsToRemove.has(i)) {
+          if (wa !== i) updatedAsteroids[wa] = updatedAsteroids[i]
+          wa++
+        }
+      }
+      updatedAsteroids.length = wa
     }
 
     // Apply enemy damage and removals (deferred to avoid race conditions) - mutate during iteration
@@ -1277,14 +1298,24 @@ export const useGameEngine = () => {
           state.collectPowerUp(pIdx)
           playSfx('powerup_pickup')
           boom(p.pos, getPowerUpColor(p.type, themeColors), 16, 100)
-          playSfx('powerup_pickup')
           hapticMedium()
           checkPowerUpAchievements()
         }
       }
     })
+    // Compact collected power-ups in-place
+    if (powerUpsCollected.size > 0) {
+      let wp = 0
+      for (let i = 0; i < updatedPowerUps.length; i++) {
+        if (!powerUpsCollected.has(i)) {
+          if (wp !== i) updatedPowerUps[wp] = updatedPowerUps[i]
+          wp++
+        }
+      }
+      updatedPowerUps.length = wp
+    }
     const finalPowerUps = [
-      ...updatedPowerUps.filter((_, i) => !powerUpsCollected.has(i)),
+      ...updatedPowerUps,
       ...newPowerUpsToSpawn.map((pos) => {
         const types: PowerUpType[] = ['shield', 'rapid_fire', 'spread_shot', 'magnet']
         const powerUpType = types[Math.floor(Math.random() * types.length)]
@@ -3184,30 +3215,32 @@ function updateHomingMissiles(
     }
   }
 
-  // Apply damage to enemies using Set for proper filtering
+  // Apply damage to enemies - single pass with write-index compaction
   if (enemiesToDamage.size > 0) {
-    const deadIndices = new Set<number>()
+    const result: Enemy[] = []
 
-    // First pass: apply damage and identify dead enemies
-    const damagedEnemies = state.enemies.map((enemy, idx) => {
+    for (let idx = 0; idx < state.enemies.length; idx++) {
+      const enemy = state.enemies[idx]
       const damage = enemiesToDamage.get(idx)
-      if (!damage) return enemy
+      if (!damage) {
+        result.push(enemy)
+        continue
+      }
 
       const newHp = enemy.hp - damage
       if (newHp <= 0) {
-        deadIndices.add(idx)
+        // Enemy dead - score and skip (don't push)
         const missileEnemyPoints = ENEMY_STATS[enemy.type].points
         const missileScoreWithMultiplier = state.hasPowerUp('score_multiplier') ? missileEnemyPoints * 2 : missileEnemyPoints
         state.addScore(missileScoreWithMultiplier)
         state.recordKill()
         useChallengesStore.getState().recordKill(1)
-        return { ...enemy, hp: newHp }
+      } else {
+        result.push({ ...enemy, hp: newHp })
       }
-      return { ...enemy, hp: newHp }
-    })
+    }
 
-    // Second pass: filter out dead enemies
-    state.updateEnemies(damagedEnemies.filter((_, idx) => !deadIndices.has(idx)))
+    state.updateEnemies(result)
   }
 
   state.updateHomingMissiles(updatedMissiles)

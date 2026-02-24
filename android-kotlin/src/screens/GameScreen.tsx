@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from "react"
 import { View, Text, Pressable, Modal, useWindowDimensions, TextInput, Keyboard, ScrollView } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Gesture, GestureDetector } from "react-native-gesture-handler"
-import { Audio } from "expo-av"
+import { useAudioPlayer } from "expo-audio"
 import { GameCanvas } from "../components/GameCanvas"
 import { VirtualControls } from "../components/VirtualControls"
 import { useGameStore, MAX_DT, JOY_DEADZONE } from "../state/gameStore"
@@ -85,7 +85,7 @@ export default function GameScreen() {
   const initializedRef = useRef(false)
   const fireOnceRef = useRef(false)
   const fireOnceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const soundRef = useRef<Audio.Sound | null>(null)
+  const bgPlayer = useAudioPlayer(require("../../assets/background-music.mp3"))
   const swipeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lastAbilityActivationRef = useRef<string | null>(null) // Track last activated ability
   const [showInstructions, setShowInstructions] = useState(true)
@@ -162,46 +162,25 @@ export default function GameScreen() {
 
   // Setup and play background music
   useEffect(() => {
-    let isMounted = true
-
-    const setupAudio = async () => {
-      try {
-        await Audio.setAudioModeAsync({
-          playsInSilentModeIOS: true,
-          staysActiveInBackground: true,
-          shouldDuckAndroid: true,
-        })
-
-        const { sound } = await Audio.Sound.createAsync(
-          require("../../assets/music-1762534655955.mp3"),
-          { isLooping: true, volume: musicVolume }
-        )
-
-        if (isMounted) {
-          soundRef.current = sound
-          await sound.playAsync()
-        }
-      } catch (error) {
-        console.warn("Failed to load background music:", error)
-      }
+    if (!bgPlayer) return
+    try {
+      bgPlayer.loop = true
+      bgPlayer.volume = musicVolume
+      bgPlayer.play()
+    } catch (error) {
+      console.warn("Failed to play background music:", error)
     }
-
-    setupAudio()
-
     return () => {
-      isMounted = false
-      if (soundRef.current) {
-        soundRef.current.unloadAsync()
-      }
+      try { bgPlayer.pause() } catch { /* ignore */ }
     }
-  }, [])
+  }, [bgPlayer])
 
   // Update music volume when changed
   useEffect(() => {
-    if (soundRef.current) {
-      soundRef.current.setVolumeAsync(musicVolume)
+    if (bgPlayer) {
+      bgPlayer.volume = musicVolume
     }
-  }, [musicVolume])
+  }, [bgPlayer, musicVolume])
 
   // Double tap to activate special ability
   const doubleTapGesture = Gesture.Tap()

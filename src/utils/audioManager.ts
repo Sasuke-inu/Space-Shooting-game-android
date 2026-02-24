@@ -2,7 +2,7 @@
 //                         Audio Manager
 // ------------------------------------------------------------------ //
 
-import { Audio } from 'expo-av'
+import { AudioPlayer, createAudioPlayer } from 'expo-audio'
 import { useSettingsStore } from '../theme/themeStore'
 
 // Sound effect types
@@ -24,10 +24,8 @@ export type SoundEffect =
 
 // Sound pool for reusable sounds
 interface SoundPool {
-  [key: string]: Audio.Sound | null
+  [key: string]: AudioPlayer | null
 }
-
-
 
 // Track concurrent playback per sound
 interface PlaybackTracker {
@@ -66,16 +64,9 @@ export class AudioManager {
     if (this.initialized) return
 
     try {
-      await Audio.setAudioModeAsync({
-        playsInSilentModeIOS: true,
-        staysActiveInBackground: true,
-        shouldDuckAndroid: true,
-      })
-      await this.preloadSounds()
+      this.preloadSounds()
       this.setupVolumeCache()
       this.initialized = true
-      // Sound loading is handled by preloadSounds called above
-
     } catch (error) {
       console.warn('AudioManager init failed:', error)
     }
@@ -96,14 +87,13 @@ export class AudioManager {
     }
   }
 
-  private async preloadSounds() {
+  private preloadSounds() {
     // Load all sound files into the pool
     for (const [effect, assetPath] of Object.entries(SOUND_FILES)) {
       try {
-        const { sound } = await Audio.Sound.createAsync(assetPath, {
-          shouldPlay: false,
-        })
-        this.sounds[effect] = sound
+        const player = createAudioPlayer(assetPath)
+        player.volume = this.cachedVolume
+        this.sounds[effect] = player
         this.playbackCount[effect] = 0
       } catch (error) {
         console.warn(`Failed to load sound: ${effect}`, error)
@@ -125,8 +115,8 @@ export class AudioManager {
     try {
       await this.init()
 
-      const sound = this.sounds[effect]
-      if (!sound) {
+      const player = this.sounds[effect]
+      if (!player) {
         // Sound failed to load during preload
         return
       }
@@ -134,22 +124,17 @@ export class AudioManager {
       // Increment playback counter
       this.playbackCount[effect] = (this.playbackCount[effect] || 0) + 1
 
-      // Set volume and replay the sound (fire-and-forget for performance)
-      // Don't await to allow simultaneous sounds without blocking
-      sound.setVolumeAsync(this.cachedVolume).catch(() => {
-        // Silently ignore volume errors
-      })
+      // Set volume and replay the sound
+      player.volume = this.cachedVolume
+      player.seekTo(0)
+      player.play()
 
-      sound.replayAsync().then(() => {
-        // Decrement counter when sound finishes
+      // Decrement counter after estimated playback (fire-and-forget)
+      setTimeout(() => {
         this.playbackCount[effect] = Math.max(0, (this.playbackCount[effect] || 0) - 1)
-      }).catch(() => {
-        // Decrement counter on error too
-        this.playbackCount[effect] = Math.max(0, (this.playbackCount[effect] || 0) - 1)
-      })
+      }, 500)
     } catch (error) {
       // Silently fail - sound effects are non-critical
-      // Ensure counter is decremented on error
       this.playbackCount[effect] = Math.max(0, (this.playbackCount[effect] || 0) - 1)
     }
   }
@@ -161,11 +146,11 @@ export class AudioManager {
       this.volumeUnsubscribe = null
     }
 
-    // Unload all sounds
-    for (const sound of Object.values(this.sounds)) {
-      if (sound) {
+    // Release all players
+    for (const player of Object.values(this.sounds)) {
+      if (player) {
         try {
-          await sound.unloadAsync()
+          player.remove()
         } catch (e) {
           // Ignore cleanup errors
         }

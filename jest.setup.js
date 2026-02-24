@@ -22,21 +22,24 @@ jest.mock("expo-haptics", () => ({
   }
 }));
 
-// Mock expo-av for audio
-jest.mock("expo-av", () => ({
-  Audio: {
-    Sound: {
-      createAsync: jest.fn().mockResolvedValue({
-        sound: {
-          playAsync: jest.fn().mockResolvedValue(undefined),
-          replayAsync: jest.fn().mockResolvedValue(undefined),
-          unloadAsync: jest.fn().mockResolvedValue(undefined),
-          setVolumeAsync: jest.fn().mockResolvedValue(undefined)
-        }
-      })
-    },
-    setAudioModeAsync: jest.fn().mockResolvedValue(undefined)
-  }
+// Mock expo-audio
+jest.mock("expo-audio", () => ({
+  createAudioPlayer: jest.fn(() => ({
+    volume: 1,
+    loop: false,
+    play: jest.fn(),
+    pause: jest.fn(),
+    seekTo: jest.fn(),
+    remove: jest.fn(),
+  })),
+  useAudioPlayer: jest.fn(() => ({
+    volume: 1,
+    loop: false,
+    play: jest.fn(),
+    pause: jest.fn(),
+    seekTo: jest.fn(),
+    remove: jest.fn(),
+  })),
 }));
 
 // Mock react-native-reanimated

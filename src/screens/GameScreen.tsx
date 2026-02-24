@@ -594,6 +594,10 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
 
   const joyMag = len(joystickValue)
   const thrusting = joyMag > 0
+  const shakeOffset = getShakeOffset()
+  const hasShield = hasPowerUp('shield') || (specialAbility?.type === 'shield_burst' && specialAbility?.isActive)
+  const completedChallenge = recentChallengeCompletion ? challenges.find((c) => c.id === recentChallengeCompletion) || null : null
+  const abilityFlashOpacity = getAbilityFlashOpacityFn()
 
   return (
     <View
@@ -767,20 +771,20 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
             wave={wave}
             lives={lives}
             colors={colors}
-            shakeOffset={getShakeOffset()}
-            hasShield={hasPowerUp('shield') || (specialAbility?.type === 'shield_burst' && specialAbility?.isActive)}
+            shakeOffset={shakeOffset}
+            hasShield={hasShield}
             boss={boss}
             bossWarning={bossWarning}
             homingMissiles={homingMissiles}
             showRadar={true}
             timeWarpActive={timeWarpActive}
             abilityFlash={abilityFlash}
-            abilityFlashOpacity={getAbilityFlashOpacityFn()}
+            abilityFlashOpacity={abilityFlashOpacity}
             specialAbility={specialAbility}
             repairDroneActive={repairActive}
             phaseCloakActive={playerCloaked}
             activeChallenge={activeChallenge}
-            completedChallenge={recentChallengeCompletion ? challenges.find((c) => c.id === recentChallengeCompletion) || null : null}
+            completedChallenge={completedChallenge}
           />
         </View>
       </GestureDetector>
