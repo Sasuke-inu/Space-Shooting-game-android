@@ -94,7 +94,7 @@ describe('backupManager', () => {
       test('backs up all stores with metadata', async () => {
         // Mock all stores have data
         mockAsyncStorage.getItem.mockImplementation((key) => {
-          if (key.startsWith('space-shooter') || key.startsWith('app-settings') || key.startsWith('high-scores')) {
+          if (key.startsWith('space-shooter') || key.startsWith('app-settings') || key.startsWith('high-scores') || key.startsWith('weekly-events')) {
             return Promise.resolve(JSON.stringify({ data: 'test' }))
           }
           return Promise.resolve(null)
@@ -104,7 +104,7 @@ describe('backupManager', () => {
         const result = await backupAllStores()
 
         expect(result).not.toBeNull()
-        expect(result?.stores).toHaveLength(5)
+        expect(result?.stores).toHaveLength(6)
         expect(result?.version).toBe('1.0.0')
         expect(result?.timestamp).toBeGreaterThan(0)
       })
@@ -192,7 +192,7 @@ describe('backupManager', () => {
 
         const result = await restoreAllStores()
 
-        expect(result).toHaveLength(5)
+        expect(result).toHaveLength(6)
         expect(result).toContain('achievements')
         expect(result).toContain('statistics')
         expect(result).toContain('upgrades')
@@ -348,7 +348,7 @@ describe('backupManager', () => {
         const result = await clearAllBackups()
 
         expect(result).toBe(true)
-        expect(mockAsyncStorage.removeItem).toHaveBeenCalledTimes(6) // 5 stores + metadata
+        expect(mockAsyncStorage.removeItem).toHaveBeenCalledTimes(7) // 5 stores + metadata
         expect(mockAsyncStorage.removeItem).toHaveBeenCalledWith('backup-metadata')
       })
 

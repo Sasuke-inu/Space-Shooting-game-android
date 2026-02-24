@@ -116,7 +116,7 @@ export default function MenuScreen({
             className="p-6 rounded-2xl border-2"
             style={{
               backgroundColor: theme.colors.panelBg,
-              borderColor: theme.colors.accent,
+              borderColor: theme.colors.hudAccent,
             }}
             onPress={() => handleModeSelect('endless')}
             activeOpacity={0.8}
@@ -134,7 +134,7 @@ export default function MenuScreen({
               </Text>
               <View
                 className="px-3 py-1 rounded-full"
-                style={{ backgroundColor: theme.colors.accent }}
+                style={{ backgroundColor: theme.colors.hudAccent }}
               >
                 <Text
                   className="text-xs font-bold"

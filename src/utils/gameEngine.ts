@@ -976,7 +976,7 @@ export const useGameEngine = () => {
       // Bullets vs boss
       if (updatedBoss && b.friendly && !bulletsToRemove.has(bIdx)) {
         // Check if boss is in nearby entities
-        const bossNearby = nearby.find(ent => ent.pos === updatedBoss.pos)
+        const bossNearby = nearby.find(ent => ent.pos === updatedBoss!.pos)
         if (bossNearby) {
           const bossHitRadius = 50
           if (dist2(b.pos, updatedBoss.pos) < bossHitRadius * bossHitRadius) {
@@ -1038,6 +1038,7 @@ export const useGameEngine = () => {
                     spin: rand(-2, 2),
                     ang: rand(0, Math.PI * 2),
                     tier: newTier,
+                    hp: getAsteroidHp(newTier),
                   })
                 }
               }
@@ -1336,6 +1337,7 @@ export const useGameEngine = () => {
           spin: rand(-1, 1),
           ang: rand(0, Math.PI * 2),
           tier: 3,
+          hp: getAsteroidHp(3),
         })
       }
 

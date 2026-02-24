@@ -28,7 +28,7 @@ export const InstructionsModal: React.FC<InstructionsModalProps> = ({ visible, o
           width: 340,
         }}
         accessible={true}
-        accessibilityRole="dialog"
+        accessibilityRole="none"
         accessibilityLabel="Game instructions"
       >
         <Text style={{ color: colors.textPrimary, fontSize: 28, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>

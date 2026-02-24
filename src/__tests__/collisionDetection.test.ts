@@ -334,7 +334,7 @@ describe('Collision Detection Logic', () => {
         { pos: v(105, 100), removed: false },
         { pos: v(110, 100), removed: false },
       ]
-      const enemy: MockEnemy = { pos: v(100, 100), hp: 150, removed: false }
+      const enemy: MockEnemy = { pos: v(100, 100), hp: 100, removed: false }
 
       const enemiesToDamage = new Map<number, number>()
       const missilesToRemove = new Set<number>()

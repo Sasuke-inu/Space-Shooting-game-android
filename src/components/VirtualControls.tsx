@@ -11,7 +11,7 @@ import Animated, {
 import type { Vec2, Player, ShipType } from "../types/game"
 import { SHIP_STATS } from "../types/game"
 import type { ThemeColors } from "../theme/types"
-import type { JoystickSize, JoystickPosition } from "../theme/themeStore"
+import type { JoystickSize, JoystickPosition } from "../theme/types"
 import { hapticLight, hapticSelection } from "../utils/haptics"
 
 interface VirtualControlsProps {
@@ -171,6 +171,11 @@ const VirtualControlsComponent: React.FC<VirtualControlsProps> = ({
     ],
   }))
 
+  const cooldownOverlayStyle = useAnimatedStyle(() => ({
+    opacity: cooldownProgress.value > 0 ? 0.6 : 0,
+    transform: [{ scaleY: cooldownProgress.value }],
+  }))
+
   const dynamicStyles = useMemo(() => ({
     joystickPad: {
       width: sizeConfig.pad,
@@ -287,5 +292,32 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 18,
+  },
+  abilityButtonContainer: {
+    marginLeft: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  abilityButton: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  abilityText: {
+    fontSize: 13,
+    fontWeight: '700',
+    textAlign: 'center',
+  },
+  cooldownOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    top: 0,
+    borderRadius: 36,
+    transformOrigin: 'bottom',
   },
 })

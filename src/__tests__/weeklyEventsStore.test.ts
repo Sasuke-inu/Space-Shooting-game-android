@@ -16,6 +16,7 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
 }))
 
 jest.mock('../utils/secureStorage', () => ({
+  __esModule: true,
   default: {
     getItem: jest.fn(() => Promise.resolve(null)),
     setItem: jest.fn(() => Promise.resolve()),
@@ -77,16 +78,17 @@ describe('weeklyEventsStore', () => {
     })
 
     test('event rotation cycles through all 10 events in schedule', () => {
+      jest.useFakeTimers()
       const eventNames = new Set<string>()
 
-      // Test rotation calculation for 10 different weeks
+      // Test rotation calculation for 10 different weeks using fake timers
       const oneWeekMs = 7 * 24 * 60 * 60 * 1000
+      // Start from a known Monday (Jan 6, 2025 is a Monday)
+      const baseTime = new Date('2025-01-06T00:00:00.000Z').getTime()
 
       for (let i = 0; i < 10; i++) {
-        // Simulate different weeks by setting lastRefreshTime to past dates
-        useWeeklyEventsStore.setState({
-          lastRefreshTime: Date.now() - (i * oneWeekMs * 2), // 2 weeks apart
-        })
+        // Advance time by i weeks using fake timers
+        jest.setSystemTime(baseTime + i * oneWeekMs)
 
         useWeeklyEventsStore.getState().generateWeeklyEvent()
         const event = useWeeklyEventsStore.getState().currentEvent
@@ -95,6 +97,8 @@ describe('weeklyEventsStore', () => {
           eventNames.add(event.name)
         }
       }
+
+      jest.useRealTimers()
 
       // Should have multiple different events (at least 5 different ones out of 10)
       expect(eventNames.size).toBeGreaterThanOrEqual(5)

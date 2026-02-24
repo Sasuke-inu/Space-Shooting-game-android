@@ -32,8 +32,13 @@ describe('Vec2 Pool', () => {
     })
 
     test('acquire decreases available count', () => {
+      // Pre-populate pool: acquire then release to have an available item
+      const pre = acquire()
+      release(pre)
+      resetStats()
+
       const initialStats = getStats()
-      const initialAvailable = initialStats.available
+      const initialAvailable = initialStats.available  // = 1
 
       acquire()
 
@@ -159,9 +164,9 @@ describe('Vec2 Pool', () => {
 
       expect(stats).toHaveProperty('available')
       expect(stats).toHaveProperty('size')
-      expect(stats).toHaveProperty('acquired')
-      expect(stats).toHaveProperty('released')
-      expect(stats).toHaveProperty('created')
+      expect(stats).toHaveProperty('totalAcquired')
+      expect(stats).toHaveProperty('totalReleased')
+      expect(stats).toHaveProperty('totalCreated')
     })
 
     test('stats track acquired count', () => {
@@ -172,7 +177,7 @@ describe('Vec2 Pool', () => {
       acquire()
 
       const stats = getStats()
-      expect(stats.acquired).toBe(3)
+      expect(stats.totalAcquired).toBe(3)
     })
 
     test('stats track released count', () => {
@@ -185,7 +190,7 @@ describe('Vec2 Pool', () => {
       release(v2)
 
       const stats = getStats()
-      expect(stats.released).toBe(2)
+      expect(stats.totalReleased).toBe(2)
     })
 
     test('stats track created count when pool is empty', () => {
@@ -197,7 +202,7 @@ describe('Vec2 Pool', () => {
       acquire()
 
       const stats = getStats()
-      expect(stats.created).toBe(2)
+      expect(stats.totalCreated).toBe(2)
     })
 
     test('resetStats clears lifetime statistics', () => {
@@ -208,9 +213,9 @@ describe('Vec2 Pool', () => {
       resetStats()
 
       const stats = getStats()
-      expect(stats.acquired).toBe(0)
-      expect(stats.released).toBe(0)
-      expect(stats.created).toBe(0)
+      expect(stats.totalAcquired).toBe(0)
+      expect(stats.totalReleased).toBe(0)
+      expect(stats.totalCreated).toBe(0)
     })
 
     test('clear empties the pool', () => {
@@ -230,9 +235,6 @@ describe('Vec2 Pool', () => {
   // ------------------------------------------------------------------ //
   describe('Pool lifecycle', () => {
     test('pool maintains available count across acquire/release cycles', () => {
-      const initialStats = getStats()
-      const initialAvailable = initialStats.available
-
       const v1 = acquire()
       const v2 = acquire()
       const v3 = acquire()
@@ -241,8 +243,9 @@ describe('Vec2 Pool', () => {
       release(v2)
       release(v3)
 
+      // After releasing all acquired items, inUse should be 0
       const finalStats = getStats()
-      expect(finalStats.available).toBe(initialAvailable)
+      expect(finalStats.inUse).toBe(0)
     })
 
     test('pool grows when exhausted', () => {
@@ -256,7 +259,7 @@ describe('Vec2 Pool', () => {
       expect(v2).toBeDefined()
 
       const stats = getStats()
-      expect(stats.created).toBe(2)
+      expect(stats.totalCreated).toBe(2)
     })
 
     test('pool reuses vectors efficiently', () => {
@@ -272,9 +275,9 @@ describe('Vec2 Pool', () => {
 
       const stats = getStats()
       // Should only create 1 vector and reuse it
-      expect(stats.created).toBe(1)
-      expect(stats.acquired).toBe(10)
-      expect(stats.released).toBe(10)
+      expect(stats.totalCreated).toBe(1)
+      expect(stats.totalAcquired).toBe(10)
+      expect(stats.totalReleased).toBe(10)
     })
   })
 })
@@ -560,7 +563,7 @@ describe('Mutable Vector Operations', () => {
 
       const stats = getStats()
       // Should only create 2 vectors total
-      expect(stats.created).toBeLessThanOrEqual(2)
+      expect(stats.totalCreated).toBeLessThanOrEqual(2)
 
       releaseMany([a, b])
     })

@@ -18,7 +18,8 @@ export default function HighScoresScreen() {
   const theme = useTheme();
   const { t } = useI18nStore();
   const navigation = useNavigation<HighScoresNavigationProp>();
-  const scores = useHighScoresStore((state) => state.scores);
+  const scoresRecord = useHighScoresStore((state) => state.scores);
+  const scores = Object.values(scoresRecord).flat().sort((a, b) => b.score - a.score).slice(0, 10);
 
   const formatDate = (timestamp: number): string => {
     const date = new Date(timestamp);

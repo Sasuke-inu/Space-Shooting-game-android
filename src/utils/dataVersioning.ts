@@ -15,6 +15,7 @@ export const STORE_VERSIONS: Record<StorageKey, number> = {
   upgrades: 1,
   settings: 1,
   highScores: 1,
+  weeklyEvents: 1,
 } as const
 
 export interface VersionInfo {

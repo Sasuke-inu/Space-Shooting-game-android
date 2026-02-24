@@ -564,21 +564,21 @@ describe('progressStore logic', () => {
       store.getState().addCredits(2000)
       store.getState().unlockShip('support')
       expect(store.getState().unlockedShips).toContain('support')
-      expect(store.getState().credits).toBe(2000 - 1250)
+      expect(store.getState().credits).toBe(500)
     })
 
     test('unlockShip unlocks stealth ship', () => {
       store.getState().addCredits(2000)
       store.getState().unlockShip('stealth')
       expect(store.getState().unlockedShips).toContain('stealth')
-      expect(store.getState().credits).toBe(2000 - 1500)
+      expect(store.getState().credits).toBe(250)
     })
 
     test('unlockShip unlocks heavy ship', () => {
       store.getState().addCredits(2000)
       store.getState().unlockShip('heavy')
       expect(store.getState().unlockedShips).toContain('heavy')
-      expect(store.getState().credits).toBe(2000 - 1750)
+      expect(store.getState().credits).toBe(0)
     })
 
     test('unlockShip fails with insufficient credits for new ships', () => {

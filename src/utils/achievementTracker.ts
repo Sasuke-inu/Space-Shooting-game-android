@@ -164,7 +164,7 @@ export const useAchievementTracker = () => {
    * Call this when weapon upgrades are purchased
    */
   const checkUpgradeAchievements = useCallback(() => {
-    const upgrades = useUpgradesStore.getState().weaponUpgrades
+    const upgrades = useUpgradesStore.getState().upgrades
     const achievementStore = useAchievementStore.getState()
 
     // Fully Loaded - Max out all weapon upgrades

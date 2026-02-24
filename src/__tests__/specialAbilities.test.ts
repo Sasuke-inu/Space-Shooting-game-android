@@ -57,12 +57,12 @@ describe('Special Abilities Logic', () => {
       expect(ABILITY_STATS.gravity_cannon.duration).toBe(0)
     })
 
-    test('all 7 ships have unique abilities', () => {
+    test('all 8 ships have unique abilities', () => {
       const ships = Object.keys(SHIP_ABILITIES)
-      expect(ships.length).toBe(7)
+      expect(ships.length).toBe(8)
       const abilities = Object.values(SHIP_ABILITIES)
       const uniqueAbilities = new Set(abilities)
-      expect(uniqueAbilities.size).toBe(7)
+      expect(uniqueAbilities.size).toBe(8)
     })
   })
 

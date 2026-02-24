@@ -858,7 +858,7 @@ export default function SettingsScreen() {
               borderWidth: 1,
             }}
             onStartShouldSetResponder={() => true}
-            accessibilityRole="dialog"
+            accessibilityRole="none"
           >
             <Text
               className="text-xl font-bold mb-4 text-center"
@@ -925,7 +925,7 @@ export default function SettingsScreen() {
               borderWidth: 1,
             }}
             onStartShouldSetResponder={() => true}
-            accessibilityRole="dialog"
+            accessibilityRole="none"
           >
             <Text
               className="text-xl font-bold mb-4 text-center"
@@ -1016,7 +1016,7 @@ export default function SettingsScreen() {
               borderWidth: 1,
             }}
             onStartShouldSetResponder={() => true}
-            accessibilityRole="dialog"
+            accessibilityRole="none"
           >
             <Text
               className="text-xl font-bold mb-4 text-center"
@@ -1083,7 +1083,7 @@ export default function SettingsScreen() {
               borderWidth: 1,
             }}
             onStartShouldSetResponder={() => true}
-            accessibilityRole="dialog"
+            accessibilityRole="none"
           >
             <Text
               className="text-xl font-bold mb-4 text-center"

@@ -41,6 +41,7 @@ interface GameCanvasProps {
   specialAbility?: SpecialAbility | null
   repairDroneActive?: boolean
   phaseCloakActive?: boolean
+  gameMode?: string
   activeChallenge?: Challenge | null
   completedChallenge?: Challenge | null
 }
@@ -123,6 +124,8 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
   abilityFlashOpacity = 0,
   repairDroneActive = false,
   phaseCloakActive = false,
+  specialAbility = null,
+  gameMode = 'campaign',
   activeChallenge = null,
   completedChallenge = null,
 }) => {
@@ -144,6 +147,9 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
 
   // Dynamic max hull based on ship type (e.g., heavy has 200 hull)
   const maxHull = SHIP_STATS[player.shipType as ShipType]?.hull ?? 100
+
+  // Glow effects enabled by default (can be toggled based on performance)
+  const enableGlow = true
 
   // Background stars
   const stars = useMemo(() => {
@@ -543,7 +549,7 @@ const GameCanvasComponent: React.FC<GameCanvasProps> = ({
             y={0}
             width={width}
             height={height}
-            color={`rgba(${getAbilityFlashColor(abilityFlash.type)}, ${abilityFlashOpacity})`}
+            color={`rgba(${getAbilityFlashColor(abilityFlash.abilityType)}, ${abilityFlashOpacity})`}
           />
         )}
 

@@ -170,7 +170,7 @@ describe('gameStore', () => {
     })
 
     test('tier-1 asteroid does not split', () => {
-      const tier1 = { pos: { x: 100, y: 100 }, vel: { x: 0, y: 0 }, radius: 15, spin: 0, ang: 0, tier: 1 as const }
+      const tier1 = { pos: { x: 100, y: 100 }, vel: { x: 0, y: 0 }, radius: 15, spin: 0, ang: 0, tier: 1 as const, hp: 1 }
       useGameStore.setState({ asteroids: [tier1] })
       useGameStore.getState().splitAsteroid(tier1)
       // No new asteroids added

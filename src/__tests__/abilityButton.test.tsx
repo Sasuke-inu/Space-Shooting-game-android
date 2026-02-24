@@ -261,8 +261,8 @@ describe('Ability Button', () => {
       state.activateSpecialAbility()
 
       const newState = useGameStore.getState()
-      expect(newState.timeWarp.isActive).toBe(true)
-      expect(newState.timeWarp.duration).toBe(5)
+      expect(newState.specialAbility?.isActive).toBe(true)
+      expect(newState.specialAbility?.type).toBe('time_warp')
     })
 
     test('button activates shield burst for tank', () => {

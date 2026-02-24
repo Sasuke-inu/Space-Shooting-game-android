@@ -771,6 +771,9 @@ export const deepSpaceTheme: GameTheme = {
     enemyTank: '#7744cc',
     enemySniper: '#c088ff',
     enemyBomber: '#9955dd',
+    enemyTeleporter: '#9966ff',
+    enemyHealer: '#33cc66',
+    enemyJuggernaut: '#cc3366',
 
     // Objects
     asteroid: '#4a3f6a',

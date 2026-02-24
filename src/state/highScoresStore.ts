@@ -1,6 +1,8 @@
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
 import secureStorage from "../utils/secureStorage"
+import { GameMode, ShipType } from "../types/game"
+import { backupStore, restoreStore } from "../utils/backupManager"
 
 export interface HighScore {
   name: string
@@ -11,10 +13,10 @@ export interface HighScore {
 }
 
 interface HighScoresState {
-  scores: HighScore[]
-  addScore: (score: number, wave: number, name: string, ship: ShipType) => void
-  isTopTen: (score: number) => boolean
-  getScores: () => HighScore[]
+  scores: Record<GameMode, HighScore[]>
+  addScore: (score: number, wave: number, name: string, gameMode: GameMode) => void
+  isTopFive: (score: number, gameMode: GameMode) => boolean
+  getScores: () => Record<GameMode, HighScore[]>
   backup: () => Promise<boolean>
   restore: () => Promise<boolean>
 }
@@ -25,7 +27,7 @@ export const useHighScoresStore = create<HighScoresState>()(
       scores: {
         campaign: [],
         endless: [],
-      },
+      } as Record<GameMode, HighScore[]>,
 
       addScore: (score: number, wave: number, name: string, gameMode: GameMode) => {
         set((state) => {

@@ -1,5 +1,6 @@
 import React, { useMemo } from "react"
 import { View, Text, StyleSheet } from "react-native"
+import type { ViewStyle } from "react-native"
 import type { ThemeColors } from "../theme/types"
 
 interface StatBarProps {
@@ -33,7 +34,7 @@ export const StatBar: React.FC<StatBarProps> = ({
     barFill: {
       backgroundColor: colors.hudAccent,
       width: `${percentage}%`,
-    },
+    } as ViewStyle,
     value: {
       color: colors.textSecondary,
     },

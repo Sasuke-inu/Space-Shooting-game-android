@@ -168,13 +168,13 @@ export function EventLeaderboardModal({
                       paddingVertical: 10,
                       marginBottom: 4,
                       backgroundColor: isPlayerEntry
-                        ? `${colors.accent}30`
+                        ? `${colors.hudAccent}30`
                         : isTopThree
-                          ? `${colors.accent}10`
+                          ? `${colors.hudAccent}10`
                           : colors.buttonSecondary,
                       borderRadius: 8,
                       borderWidth: isPlayerEntry ? 2 : 0,
-                      borderColor: isPlayerEntry ? colors.accent : "transparent",
+                      borderColor: isPlayerEntry ? colors.hudAccent : "transparent",
                     }}
                   >
                     {/* Top Row: Rank, Name, Score, Wave */}
@@ -185,9 +185,9 @@ export function EventLeaderboardModal({
                         style={{
                           color:
                             index === 0
-                              ? colors.accent
+                              ? colors.hudAccent
                               : isPlayerEntry
-                                ? colors.accent
+                                ? colors.hudAccent
                                 : colors.textPrimary,
                           fontSize: 16,
                           fontWeight: "bold",
@@ -205,7 +205,7 @@ export function EventLeaderboardModal({
                       <Text
                         style={{
                           color: isPlayerEntry
-                            ? colors.accent
+                            ? colors.hudAccent
                             : colors.textPrimary,
                           fontSize: 14,
                           fontWeight: isPlayerEntry ? "bold" : "600",
@@ -217,7 +217,7 @@ export function EventLeaderboardModal({
                       </Text>
                       <Text
                         style={{
-                          color: colors.accent,
+                          color: colors.hudAccent,
                           fontSize: 16,
                           fontWeight: "bold",
                           width: 70,

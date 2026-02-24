@@ -24,6 +24,7 @@ const SHIP_COSTS: Record<ShipType, number> = {
   support: 1250,
   stealth: 1500,
   heavy: 1750,
+  ghost: 0,
 };
 
 const ABILITY_MAP: Record<ShipType, AbilityType> = {
@@ -34,6 +35,7 @@ const ABILITY_MAP: Record<ShipType, AbilityType> = {
   support: 'repair_drone',
   stealth: 'phase_cloak',
   heavy: 'gravity_cannon',
+  ghost: 'phase_shift',
 };
 
 interface ShipSelectionScreenProps {

@@ -604,6 +604,7 @@ export const useUpgradesStore = create<UpgradesState>()(
             support: ['default'],
             stealth: ['default'],
             heavy: ['default'],
+            ghost: ['default'],
           },
           selectedSkins: {
             fighter: 'default',
@@ -613,6 +614,7 @@ export const useUpgradesStore = create<UpgradesState>()(
             support: 'default',
             stealth: 'default',
             heavy: 'default',
+            ghost: 'default',
           },
         }),
 

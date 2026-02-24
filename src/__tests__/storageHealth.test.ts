@@ -722,8 +722,8 @@ describe('storageHealth', () => {
         const result = await checkStorageHealth()
 
         expect(result.overallHealth).toBe('critical')
-        expect(result.corruptedStores).toHaveLength(5)
-        expect(result.recoverableStores).toHaveLength(5)
+        expect(result.corruptedStores).toHaveLength(6)
+        expect(result.recoverableStores).toHaveLength(6)
       })
     })
 

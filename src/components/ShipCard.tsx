@@ -23,6 +23,7 @@ const SHIP_ICONS: Record<ShipType, string> = {
   support: "💚",
   stealth: "👻",
   heavy: "💀",
+  ghost: "🌀",
 }
 
 // Map ship special abilities to ability types
@@ -34,6 +35,7 @@ const SHIP_ABILITY_MAP: Record<ShipType, keyof typeof ABILITY_STATS> = {
   support: "repair_drone",
   stealth: "phase_cloak",
   heavy: "gravity_cannon",
+  ghost: "phase_shift",
 }
 
 // Maximum values for stat normalization (for progress bars)
@@ -96,7 +98,7 @@ export const ShipCard: React.FC<ShipCardProps> = ({
         color: colors.textPrimary,
       },
       costText: {
-        color: canAfford ? colors.hudAccent : colors.hullBarDanger,
+        color: canAfford ? colors.hudAccent : colors.hullBar,
       },
       selectedBadge: {
         backgroundColor: colors.buttonPrimary,

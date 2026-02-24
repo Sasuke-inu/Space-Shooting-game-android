@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import secureStorage from '../utils/secureStorage';
 import { LanguageCode } from '../i18n/types';
 import { backupStore, restoreStore } from '../utils/backupManager';
+import { QualityLevel } from '../types/performance';
 
 export type JoystickSize = 'small' | 'medium' | 'large';
 

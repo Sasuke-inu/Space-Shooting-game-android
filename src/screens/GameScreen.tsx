@@ -13,7 +13,6 @@ import {
   PauseGameOverModal,
   AchievementNotification,
   TopBar,
-  TutorialOverlay,
   PauseButton,
   CountdownOverlay,
   useBackgroundMusic,
@@ -24,19 +23,19 @@ import { useGameStore, JOY_DEADZONE } from "../state/gameStore"
 import { useHighScoresStore } from "../state/highScoresStore"
 import { useSettingsStore, useThemeColors } from "../theme/themeStore"
 import { useAppSettingsStore } from "../state/settingsStore"
-import { useStatisticsStore, useAchievementStore, useUpgradesStore } from "../state/progressStore"
+import { useStatisticsStore, useAchievementStore, useUpgradesStore, SHIP_COSTS } from "../state/progressStore"
 import { useTutorialStore } from "../state/tutorialStore"
 import { useWeeklyEventsStore } from "../state/weeklyEventsStore"
 import { useChallengesStore } from "../state/challengesStore"
 import { themeList } from "../theme/themes"
-import type { ShipType } from "../types/game"
-import { ACHIEVEMENTS, SHIP_STATS } from "../types/game"
+import type { ShipType, SkinId, AchievementId } from "../types/game"
+import { ACHIEVEMENTS, SHIP_STATS, SHIP_SKINS, SKIN_COSTS } from "../types/game"
 import { useGameEngine } from "../utils/gameEngine"
 import { len } from "../utils/vectorMath"
 import type { Vec2 } from "../types/game"
 // Android-specific features
 import { useAndroidGameFeatures, sendAchievementNotification } from "../utils/androidFeatures"
-import { hapticBossSpawn, hapticBossDefeat, hapticWaveComplete, hapticCombo, hapticSpecialAbility } from "../utils/haptics"
+import { hapticBossSpawn, hapticBossDefeat, hapticWaveComplete, hapticCombo, hapticSpecialAbility, hapticSelection } from "../utils/haptics"
 
 interface GameScreenProps {
   onBackToMenu?: () => void;
@@ -69,8 +68,6 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   const setSfxVolume = useSettingsStore((s) => s.setSfxVolume)
   const screenShakeEnabled = useSettingsStore((s) => s.screenShakeEnabled)
   const setScreenShakeEnabled = useSettingsStore((s) => s.setScreenShakeEnabled)
-  const difficulty = useSettingsStore((s) => s.difficulty)
-  const setDifficulty = useSettingsStore((s) => s.setDifficulty)
   const resetSettings = useSettingsStore((s) => s.resetSettings)
 
   // Game state - primitives (use default equality)
@@ -117,6 +114,8 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   const startCountdown = useGameStore((s) => s.startCountdown)
   const stopCountdown = useGameStore((s) => s.stopCountdown)
   const setPaused = useGameStore((s) => s.setPaused)
+  const abilityFlash = useGameStore((s) => s.abilityFlash)
+  const getAbilityFlashOpacityFn = useGameStore((s) => s.getAbilityFlashOpacity)
 
   // Progress stores - objects and arrays (use shallow equality)
   const stats = useStatisticsStore(useShallow((s) => s.stats))
@@ -142,14 +141,9 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   const startTutorial = useTutorialStore((s) => s.startTutorial)
   const resetTutorial = useTutorialStore((s) => s.resetTutorial)
   const markFirstLaunchComplete = useTutorialStore((s) => s.markFirstLaunchComplete)
-
-  // Tutorial store
-  const hasCompletedTutorial = useTutorialStore((s) => s.hasCompletedTutorial)
   const tutorialStep = useTutorialStore((s) => s.currentStep)
-  const completeStep = useTutorialStore((s) => s.completeStep)
   const skipTutorial = useTutorialStore((s) => s.skipTutorial)
   const completeTutorial = useTutorialStore((s) => s.completeTutorial)
-  const resetTutorial = useTutorialStore((s) => s.resetTutorial)
 
   const [joystickValue, setJoystickValue] = useState<Vec2>({ x: 0, y: 0 })
   const [swipeImpulse, setSwipeImpulse] = useState<Vec2>({ x: 0, y: 0 })
@@ -163,7 +157,11 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   const [showShipSelect, setShowShipSelect] = useState(false)
   const [showStats, setShowStats] = useState(false)
   const [showAchievements, setShowAchievements] = useState(false)
-  const [showTutorial, setShowTutorial] = useState(false)
+  const [showLeaderboard, setShowLeaderboard] = useState(false)
+  const [showShop, setShowShop] = useState(false)
+  const [selectedShipForPurchase, setSelectedShipForPurchase] = useState<ShipType | null>(null)
+  const [showPurchaseConfirm, setShowPurchaseConfirm] = useState(false)
+  const [recentShipPurchase, setRecentShipPurchase] = useState<ShipType | null>(null)
   const [playerName, setPlayerName] = useState("")
   const [settingsTab, setSettingsTab] = useState<'general' | 'ship' | 'stats'>('general')
   const [purchaseFeedback, setPurchaseFeedback] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
@@ -332,24 +330,24 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
   }, [wave, recordWaveChallenge])
 
   // Track no-damage waves for challenges
-  const waveStartHealthRef = useRef(player.health)
+  const waveStartHealthRef = useRef(player.hp)
   const prevWaveForNoDamageRef = useRef(wave)
   useEffect(() => {
     // When wave increments, check if player completed previous wave without damage
     if (wave > prevWaveForNoDamageRef.current && wave > 1) {
       // If health is the same as at wave start, no damage was taken
-      if (player.health === waveStartHealthRef.current) {
+      if (player.hp === waveStartHealthRef.current) {
         recordNoDamageWaveChallenge(1)
       }
       // Reset health tracker for new wave
-      waveStartHealthRef.current = player.health
+      waveStartHealthRef.current = player.hp
     } else if (wave === 1 && prevWaveForNoDamageRef.current === 0) {
       // Initialize health tracker at game start
-      waveStartHealthRef.current = player.health
+      waveStartHealthRef.current = player.hp
     }
 
     prevWaveForNoDamageRef.current = wave
-  }, [wave, player.health, recordNoDamageWaveChallenge])
+  }, [wave, player.hp, recordNoDamageWaveChallenge])
 
   // Enhanced haptics for combos (Android)
   const prevComboRef = useRef(combo.count)
@@ -449,6 +447,41 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
     setPaused(false)
   }
 
+  // Tutorial handlers
+  const handleTutorialNextStep = () => {
+    completeTutorial()
+  }
+
+  const handleTutorialSkip = () => {
+    skipTutorial()
+    setShowTutorial(false)
+  }
+
+  const handleTutorialComplete = () => {
+    completeTutorial()
+    setShowTutorial(false)
+  }
+
+  // Shop handlers
+  const handleCancelPurchase = () => {
+    setSelectedShipForPurchase(null)
+    setShowPurchaseConfirm(false)
+  }
+
+  const handleConfirmPurchase = () => {
+    if (!selectedShipForPurchase) return
+    const cost = SHIP_COSTS[selectedShipForPurchase]
+    if (upgradesCredits < cost) return
+    const upgradesStore = useUpgradesStore.getState()
+    upgradesStore.unlockShip(selectedShipForPurchase)
+    setShipType(selectedShipForPurchase)
+    setRecentShipPurchase(selectedShipForPurchase)
+    setTimeout(() => setRecentShipPurchase(null), 3000)
+    setSelectedShipForPurchase(null)
+    setShowPurchaseConfirm(false)
+    setShowShop(false)
+  }
+
   const recordGameEndStats = () => {
     // Record game end statistics
     const state = useGameStore.getState()
@@ -466,7 +499,7 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
 
   const handleSubmitScore = () => {
     const name = playerName.trim() || "Anonymous"
-    addScore(score, wave, name, gameMode, gameMode === 'endless' ? time : undefined)
+    addScore(score, wave, name, gameMode)
 
     // Submit to event leaderboard if in event mode
     if (eventMode && activeEventId) {
@@ -568,36 +601,6 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
       accessible={true}
       accessibilityLabel="Game screen"
     >
-      {/* Performance FPS Counter */}
-      {performanceConfig.showFpsCounter && (
-        <View
-          style={{
-            position: 'absolute',
-            top: insets.top + 60,
-            right: 12,
-            backgroundColor: 'rgba(0, 0, 0, 0.6)',
-            borderWidth: 1,
-            borderColor: colors.hudAccent,
-            borderRadius: 6,
-            padding: 8,
-            zIndex: 100,
-            minWidth: 80,
-          }}
-          accessible={true}
-          accessibilityLabel={`Performance counter: ${getMetrics().fps} FPS, average ${getMetrics().avgFps} FPS`}
-        >
-          <Text style={{ color: colors.hudAccent, fontSize: 11, fontWeight: 'bold', textAlign: 'center' }}>
-            FPS
-          </Text>
-          <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: 'bold', textAlign: 'center' }}>
-            {getMetrics().fps}
-          </Text>
-          <Text style={{ color: colors.textMuted, fontSize: 9, textAlign: 'center' }}>
-            avg: {getMetrics().avgFps}
-          </Text>
-        </View>
-      )}
-
       {/* Achievement unlock notification */}
       <AchievementNotification
         achievement={recentUnlock ? ACHIEVEMENTS[recentUnlock] : null}
@@ -772,7 +775,7 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
             showRadar={true}
             timeWarpActive={timeWarpActive}
             abilityFlash={abilityFlash}
-            abilityFlashOpacity={getAbilityFlashOpacity()}
+            abilityFlashOpacity={getAbilityFlashOpacityFn()}
             specialAbility={specialAbility}
             repairDroneActive={repairActive}
             phaseCloakActive={playerCloaked}
@@ -793,15 +796,6 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
         player={player}
         onAbilityPress={activateSpecialAbility}
         cooldownProgress={cooldownProgress}
-      />
-
-      {/* Tutorial Overlay */}
-      <TutorialOverlay
-        visible={showTutorial}
-        currentStep={tutorialStep}
-        onNextStep={handleTutorialNextStep}
-        onSkip={handleTutorialSkip}
-        onComplete={handleTutorialComplete}
       />
 
       {/* Settings Modal */}
@@ -847,7 +841,7 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
                 maxHeight: '85%',
               }}
               accessible={true}
-              accessibilityRole="dialog"
+              accessibilityRole="none"
               accessibilityLabel="Ship shop"
             >
               <Text
@@ -1001,7 +995,7 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
                 width: 340,
               }}
               accessible={true}
-              accessibilityRole="dialog"
+              accessibilityRole="none"
               accessibilityLabel="Purchase confirmation"
             >
               <Text
@@ -1157,7 +1151,7 @@ export default function GameScreen({ onBackToMenu }: GameScreenProps) {
         score={score}
         wave={wave}
         credits={credits}
-        highScores={highScores}
+        highScores={highScores[gameMode] ?? []}
         onRestart={handleRestart}
         onContinue={() => startCountdown()}
         colors={colors}

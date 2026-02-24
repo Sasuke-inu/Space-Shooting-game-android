@@ -12,7 +12,8 @@ interface LeaderboardModalProps {
 
 export function LeaderboardModal({ visible, onClose }: LeaderboardModalProps) {
   const colors = useThemeColors()
-  const scores = useHighScoresStore((s) => s.scores)
+  const scoresRecord = useHighScoresStore((s) => s.scores)
+  const scores = Object.values(scoresRecord).flat().sort((a, b) => b.score - a.score).slice(0, 10)
   const t = useI18nStore((s) => s.t)
 
   return (
@@ -36,7 +37,7 @@ export function LeaderboardModal({ visible, onClose }: LeaderboardModalProps) {
             width: 380,
             maxHeight: "85%",
           }}
-          accessibilityRole="dialog"
+          accessibilityRole="none"
           accessibilityLabel="Leaderboard dialog"
         >
           {/* Header */}
@@ -136,7 +137,6 @@ export function LeaderboardModal({ visible, onClose }: LeaderboardModalProps) {
             ) : (
               scores.map((score, index) => {
                 const rankText = index === 0 ? "First place" : index === 1 ? "Second place" : index === 2 ? "Third place" : `Rank ${index + 1}`
-                const shipName = score.ship.charAt(0).toUpperCase() + score.ship.slice(1)
                 const dateText = format(new Date(score.date), "MMM d, yyyy")
 
                 return (
@@ -149,20 +149,20 @@ export function LeaderboardModal({ visible, onClose }: LeaderboardModalProps) {
                       marginBottom: 4,
                       backgroundColor:
                         index === 0
-                          ? `${colors.accent}20`
+                          ? `${colors.hudAccent}20`
                           : colors.buttonSecondary,
                       borderRadius: 8,
                       borderWidth: index === 0 ? 2 : 0,
-                      borderColor: index === 0 ? colors.accent : "transparent",
+                      borderColor: index === 0 ? colors.hudAccent : "transparent",
                     }}
                     accessible={true}
-                    accessibilityLabel={`${rankText}: ${score.name} with ${score.score.toLocaleString()} points, wave ${score.wave}, using ${shipName} ship, achieved on ${dateText}`}
+                    accessibilityLabel={`${rankText}: ${score.name} with ${score.score.toLocaleString()} points, wave ${score.wave}, achieved on ${dateText}`}
                   >
                     {/* Top Row: Rank, Name, Score, Wave */}
                     <View style={{ flexDirection: "row", alignItems: "center" }} importantForAccessibility="no-hide-descendants">
                       <Text
                         style={{
-                          color: index === 0 ? colors.accent : colors.textPrimary,
+                          color: index === 0 ? colors.hudAccent : colors.textPrimary,
                           fontSize: 16,
                           fontWeight: "bold",
                           width: 40,
@@ -182,7 +182,7 @@ export function LeaderboardModal({ visible, onClose }: LeaderboardModalProps) {
                       </Text>
                       <Text
                         style={{
-                          color: colors.accent,
+                          color: colors.hudAccent,
                           fontSize: 16,
                           fontWeight: "bold",
                           width: 70,
@@ -220,7 +220,7 @@ export function LeaderboardModal({ visible, onClose }: LeaderboardModalProps) {
                           flex: 1,
                         }}
                       >
-                        🚀 {shipName}
+                        🚀
                       </Text>
                       <Text
                         style={{
