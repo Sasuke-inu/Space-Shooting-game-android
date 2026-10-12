@@ -195,11 +195,22 @@ For detailed performance test results and methodologies, see:
 ## Development
 
 The game uses:
-- **Expo SDK 53** with React Native 0.76.7
+- **Expo SDK 53** with React Native 0.79
 - **TypeScript** for type safety
 - **Nativewind** for styling (Tailwind for React Native)
 - **react-native-reanimated** for smooth animations
 - **react-native-gesture-handler** for touch gestures
+
+Run the same checks as CI before opening a PR:
+
+```bash
+npm ci
+npm run lint        # must report 0 errors (react-hooks/rules-of-hooks is enforced)
+npm run typecheck
+npm test
+```
+
+Note: `collisionPerformance.test.ts` and `spatialGrid.test.ts` contain wall-clock timing assertions and can fail intermittently on a heavily loaded machine; re-run them before assuming a regression.
 
 ## Future Enhancement Ideas
 

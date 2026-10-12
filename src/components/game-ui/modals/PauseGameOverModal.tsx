@@ -33,8 +33,6 @@ export const PauseGameOverModal: React.FC<PauseGameOverModalProps> = ({
   onContinue,
   colors,
 }) => {
-  if (!visible) return null
-
   const isGameOver = lives <= 0
 
   // Animation state for game over screen
@@ -151,6 +149,12 @@ export const PauseGameOverModal: React.FC<PauseGameOverModalProps> = ({
     opacity: buttonOpacity.value,
     transform: [{ scale: buttonScale.value }],
   }))
+
+  // Early return must come after every hook call so React sees the same hook
+  // order on every render (rules-of-hooks). Returning before the hooks crashed
+  // with "Rendered more hooks than during the previous render" when the modal
+  // switched from hidden to visible.
+  if (!visible) return null
 
   return (
     <Modal visible={true} transparent animationType="fade">

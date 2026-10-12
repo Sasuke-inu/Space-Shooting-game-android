@@ -1,3 +1,16 @@
+# Changelog
+
+All notable changes to this project are documented in this file.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+## [Unreleased]
+
+### Fixed
+- Pause / Game Over modal (`PauseGameOverModal`) returned early before calling its React hooks, violating the rules of hooks. This made `npm run lint` fail with 19 `react-hooks/rules-of-hooks` errors (breaking the CI **Lint** job on `main`) and could corrupt the modal's animation state when it was hidden and shown again. The early return now happens after all hooks run, so the reset-on-close animation branch also works as intended.
+
+### Added
+- Regression test `src/__tests__/pauseGameOverModal.test.ts` asserting the modal calls the same hooks whether hidden or visible, and can be toggled hidden → visible → hidden.
+
 ## [1.5.0] - 2026-01-21
 
 ### ✨ Added
