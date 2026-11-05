@@ -91,6 +91,7 @@ This project includes automated continuous integration and deployment via GitHub
 - **Automated Testing**: Runs lint, type check, and unit tests on every PR
 - **Quality Gates**: Prevents merging broken code into main branch
 - **Fast Feedback**: Get results within minutes of pushing code
+- **Node.js 22**: CI and Build & Deploy both use Node 22. Current `eas-cli` will not install on Node 20
 
 ### 🚀 Continuous Deployment
 - **Automated Builds**: iOS and Android builds on every push to main
@@ -195,6 +196,7 @@ For detailed performance test results and methodologies, see:
 ## Development
 
 The game uses:
+- **Node.js 22** (same major version as GitHub Actions; required by current `eas-cli`)
 - **Expo SDK 53** with React Native 0.79
 - **TypeScript** for type safety
 - **Nativewind** for styling (Tailwind for React Native)

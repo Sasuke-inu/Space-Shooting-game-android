@@ -49,17 +49,21 @@ Builds and deploys the app to iOS and Android platforms using Expo EAS.
 
 ### Prerequisites
 
-1. **Expo Account**
+1. **Node.js 22**
+   - `ci.yml` and `build-deploy.yml` install Node 22 via `actions/setup-node`
+   - Current `eas-cli` (installed by `expo/expo-github-action` with `eas-version: latest`) requires Node >= 22. Node 20 fails in **Setup Expo** with `The engine "node" is incompatible with this module. Expected version ">=22.0.0"`
+
+2. **Expo Account**
    - Sign up at [expo.dev](https://expo.dev)
    - Create a project for your app
-   - Install EAS CLI: `npm install -g eas-cli`
+   - Install EAS CLI: `npm install -g eas-cli` (requires Node >= 22)
 
-2. **Apple Developer Account** (for iOS)
+3. **Apple Developer Account** (for iOS)
    - Enroll at [developer.apple.com](https://developer.apple.com)
    - Create App Store Connect API Key
    - Configure app in App Store Connect
 
-3. **Google Play Developer Account** (for Android)
+4. **Google Play Developer Account** (for Android)
    - Register at [play.google.com/console](https://play.google.com/console)
    - Create service account with API access
    - Download service account JSON key
@@ -408,7 +412,7 @@ git push
 **Problem:** Environment differences between local and CI.
 
 **Solution:**
-- Check Node.js version matches (CI uses Node 20)
+- Check Node.js version matches (CI and Build & Deploy use Node 22; `eas-cli` requires Node >= 22)
 - Ensure all dependencies are in `package.json` (not just `devDependencies`)
 - Look for hardcoded paths or environment-specific code
 - Run `npm ci` locally to replicate CI environment

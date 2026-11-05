@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 - Pause / Game Over modal (`PauseGameOverModal`) returned early before calling its React hooks, violating the rules of hooks. This made `npm run lint` fail with 19 `react-hooks/rules-of-hooks` errors (breaking the CI **Lint** job on `main`) and could corrupt the modal's animation state when it was hidden and shown again. The early return now happens after all hooks run, so the reset-on-close animation branch also works as intended.
+- **Build & Deploy** failed on `main` while installing `eas-cli@24.13.0`: `@oclif/plugin-autocomplete` requires Node >= 22, and every job pinned Node 20 (runners had 20.20.2). `build-deploy.yml` and `ci.yml` now use Node 22. Failing run: https://github.com/Sasuke-inu/Space-Shooting-game-android/actions/runs/38322085413
 
 ### Added
 - Regression test `src/__tests__/pauseGameOverModal.test.ts` asserting the modal calls the same hooks whether hidden or visible, and can be toggled hidden → visible → hidden.
